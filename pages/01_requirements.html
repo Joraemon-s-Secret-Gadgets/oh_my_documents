@@ -12,14 +12,21 @@
     <style>
       /* ── TOKENS ── */
       :root {
-        --navy: #1b3e6f;
-        --navy2: #142e55;
-        --navy-lt: #e8eff8;
-        --navy-xlt: #f3f7fc;
-        --green: #2e6b4e;
-        --green-lt: #e4f0ea;
-        --terra: #b8520c;
-        --terra-lt: #fdf3eb;
+        --brand-green: #1B3B32;
+        --brand-green-900: #10251F;
+        --brand-green-800: #173329;
+        --brand-green-100: #E6EEE9;
+        --brand-gold: #D4AF37;
+        --brand-gold-700: #A9821E;
+        --brand-gold-100: #F6EBC4;
+        --navy: #1B3B32;
+        --navy2: #10251F;
+        --navy-lt: #E6EEE9;
+        --navy-xlt: #F7F3EA;
+        --green: #1B3B32;
+        --green-lt: #E6EEE9;
+        --terra: #A9821E;
+        --terra-lt: #F6EBC4;
         --ink: #111827;
         --ink2: #374151;
         --ink3: #6b7280;
@@ -160,8 +167,8 @@
       }
       .toc-link.active {
         color: #fff;
-        border-left-color: #60a5fa;
-        background: rgba(96, 165, 250, 0.1);
+        border-left-color: #D4AF37;
+        background: rgba(212, 175, 55, 0.14);
       }
       .aside-footer {
         padding: 16px 20px;
@@ -257,6 +264,56 @@
       }
       .meta-val.green {
         color: var(--green);
+      }
+      .detail-docs {
+        margin: 0 0 44px;
+        padding: 24px;
+        border: 1px solid var(--rule);
+        border-left: 4px solid var(--green);
+        border-radius: 8px;
+        background: var(--white);
+      }
+      .detail-docs h2 {
+        margin: 0 0 8px;
+        color: var(--navy);
+        font-family: "Noto Serif KR", serif;
+        font-size: 1.2rem;
+      }
+      .detail-docs p {
+        margin: 0 0 18px;
+        color: var(--ink3);
+        font-size: 0.9rem;
+      }
+      .detail-doc-list {
+        display: grid;
+        gap: 10px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .detail-doc-list a {
+        display: block;
+        padding: 13px 15px;
+        border: 1px solid var(--rule);
+        border-radius: 8px;
+        color: var(--ink);
+        text-decoration: none;
+        background: var(--navy-xlt);
+      }
+      .detail-doc-list a:hover {
+        border-color: var(--green);
+        background: var(--green-lt);
+      }
+      .detail-doc-list strong {
+        display: block;
+        color: var(--navy);
+        font-size: 0.92rem;
+      }
+      .detail-doc-list span {
+        display: block;
+        margin-top: 3px;
+        color: var(--ink3);
+        font-size: 0.8rem;
       }
 
       /* ── SECTION ── */
@@ -769,7 +826,7 @@
           break-inside: avoid;
         }
         .req-tbl thead th {
-          background: #1b3e6f !important;
+          background: #1B3B32 !important;
           -webkit-print-color-adjust: exact;
           print-color-adjust: exact;
         }
@@ -791,6 +848,7 @@
         <nav class="toc">
           <div class="toc-section">
             <a class="toc-link active" href="#cover">표지 / 문서 정보</a>
+            <a class="toc-link" href="#detail-requirements">세부 기능 요구사항</a>
           </div>
           <div class="toc-section">
             <div class="toc-section-hd">1. 문서 개요</div>
@@ -882,6 +940,46 @@
             </div>
           </div>
         </div>
+
+        <section class="detail-docs" id="detail-requirements">
+          <h2>세부 기능 요구사항</h2>
+          <p>
+            아래 문서는 모두 본 요구사항 정의서에 속한 세부 기능 요구사항이다.
+            각 항목은 별도 HTML로 생성하지만, 정보 구조상 <code>01_requirements.html</code>의 하위 문서로 관리한다.
+          </p>
+          <ul class="detail-doc-list">
+            <li>
+              <a href="./02_overturizim.html">
+                <strong>02. 오버투어리즘 대응 여행 추천 서비스</strong>
+                <span>혼잡도 분산과 지역 관광 균형을 위한 기능 요구사항</span>
+              </a>
+            </li>
+            <li>
+              <a href="./03_korea_japan.html">
+                <strong>03. 한일 축제 여행 챗봇</strong>
+                <span>한국과 일본 축제 정보를 활용한 챗봇 기능 요구사항</span>
+              </a>
+            </li>
+            <li>
+              <a href="./04_trip_train.html">
+                <strong>04. RailRoute-RAG</strong>
+                <span>철도 여행 경로 추천과 RAG 응답 기능 요구사항</span>
+              </a>
+            </li>
+            <li>
+              <a href="./05_astro_rag_proposal.html">
+                <strong>05. StarryNight-RAG</strong>
+                <span>아스트로 투어리즘 플랫폼 기능 요구사항</span>
+              </a>
+            </li>
+            <li>
+              <a href="./06_kdrama-pipeline.html">
+                <strong>06. K-drama 촬영지 데이터 파이프라인</strong>
+                <span>촬영지 데이터 수집, 정제, 제공 파이프라인 요구사항</span>
+              </a>
+            </li>
+          </ul>
+        </section>
 
         <!-- ═══ 1. 문서 개요 ═══ -->
         <div class="doc-section" id="s1">
