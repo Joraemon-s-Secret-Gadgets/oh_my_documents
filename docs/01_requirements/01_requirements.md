@@ -2186,13 +2186,339 @@
               <tr>
                 <th>ID</th>
                 <th>요구사항 내용</th>
-                <th>우선순위... (10KB 남음)</th>
+                <th>우선순위</th>
+                <th>비고</th>
               </tr>
             </thead>
+            <tbody>
+              <tr>
+                <td class="req-id">NFR-020</td>
+                <td>Chrome, Safari, Edge 최신 버전에서 정상 동작해야 한다</td>
+                <td><span class="pri p0">P0</span></td>
+                <td class="req-note">—</td>
+              </tr>
+              <tr>
+                <td class="req-id">NFR-021</td>
+                <td>모바일(iOS/Android) 브라우저에서 사용 가능해야 한다</td>
+                <td><span class="pri p0">P0</span></td>
+                <td class="req-note">반응형 레이아웃</td>
+              </tr>
+              <tr>
+                <td class="req-id">NFR-022</td>
+                <td>
+                  화면 너비 375px 이상에서 주요 기능이 모두 사용 가능해야 한다
+                </td>
+                <td><span class="pri p0">P0</span></td>
+                <td class="req-note">iPhone SE 기준</td>
+              </tr>
+              <tr>
+                <td class="req-id">NFR-023</td>
+                <td>다크 모드를 지원해야 한다</td>
+                <td><span class="pri p2">P2</span></td>
+                <td class="req-note">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ═══ 6. 데이터 요구사항 ═══ -->
+        <div class="doc-section" id="s6">
+          <div class="section-num">Section 06</div>
+          <h1 class="s-h1">6. 데이터 요구사항</h1>
+
+          <h2 class="s-h2" id="s6-1">6.1 소도시 DB 구조</h2>
+          <p class="doc-p">각 목적지는 다음 데이터 항목을 포함해야 한다.</p>
+          <table class="info-tbl">
+            <thead>
+              <tr>
+                <th style="width:20%">필드</th>
+                <th style="width:18%">타입</th>
+                <th>설명</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="key-cell"><code>id</code></td>
+                <td>String</td>
+                <td>고유 식별자 (영문 소문자, 예: <code>yeongwol</code>)</td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>nameKo</code></td>
+                <td>String</td>
+                <td>한국어 목적지명 (예: 강원 영월)</td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>nameJa</code></td>
+                <td>String (선택)</td>
+                <td>일본어 목적지명 (일본 소도시 한정)</td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>region</code></td>
+                <td>String</td>
+                <td>행정 구역명 (예: 강원도, 石川県)</td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>type</code></td>
+                <td>Enum</td>
+                <td>
+                  국가 구분 — <code>KR</code> (국내) / <code>JP</code> (일본)
+                </td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>coords</code></td>
+                <td>Object</td>
+                <td>
+                  위도(<code>lat</code>), 경도(<code>lng</code>) 좌표 (WGS84)
+                </td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>desc</code></td>
+                <td>String</td>
+                <td>30자 이내 핵심 설명문</td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>reasons</code></td>
+                <td>String[]</td>
+                <td>추천 이유 3가지 (각 40자 이내)</td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>themes</code></td>
+                <td>Object</td>
+                <td>
+                  6개 테마별 가중치 점수 (온천·바다·역사·미식·자연·예술, 0~100)
+                </td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>seasonScore</code></td>
+                <td>Object</td>
+                <td>
+                  계절 적합도 —
+                  <code>spring</code
+                  >/<code>summer</code>/<code>autumn</code>/<code>winter</code>
+                  (각 0~100)
+                </td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>festivals</code></td>
+                <td>Object[]</td>
+                <td>축제·행사 목록 — 명칭, 시기(월·계절 단위), 간단 설명</td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>embedding</code></td>
+                <td>Float[]</td>
+                <td>RAG 검색용 벡터 임베딩 (desc·reasons·themes 기반)</td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>tags</code></td>
+                <td>Object[]</td>
+                <td>태그 레이블 및 스타일 타입 목록</td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>travel</code></td>
+                <td>String</td>
+                <td>주요 출발지 기준 이동 방법 및 소요 시간</td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>tip</code></td>
+                <td>String</td>
+                <td>시즌·코스 등 여행 팁 (100자 이내)</td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>googleQuery</code></td>
+                <td>String</td>
+                <td>Google Places 검색 쿼리 문자열</td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>links</code></td>
+                <td>Object</td>
+                <td>플랫폼별 외부 링크 URL 맵</td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>naverBlogs</code></td>
+                <td>Object[] (KR)</td>
+                <td>네이버 블로그 추천 검색 키워드 목록</td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>yahooLinks</code></td>
+                <td>Object[] (JP)</td>
+                <td>Yahoo Japan 계열 딥링크 목록</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2 class="s-h2" id="s6-2">6.2 DB 규모 목표</h2>
+          <table class="info-tbl">
+            <thead>
+              <tr>
+                <th style="width:25%">구분</th>
+                <th style="width:22%">목표 수량</th>
+                <th>포함 지역 / 기준</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="key-cell">국내 소도시</td>
+                <td>50개 이상</td>
+                <td>강원·충청·전북·전남·경남·경북·제주 포함</td>
+              </tr>
+              <tr>
+                <td class="key-cell">일본 소도시</td>
+                <td>40개 이상</td>
+                <td>호쿠리쿠·긴키·주부·주고쿠·시코쿠·규슈 포함</td>
+              </tr>
+              <tr>
+                <td class="key-cell">테마 커버리지</td>
+                <td>테마당 5곳 이상</td>
+                <td>
+                  6개 테마 각각 최소 5개 소도시 보유 (여정 구성 가능 수량)
+                </td>
+              </tr>
+              <tr>
+                <td class="key-cell">축제·행사</td>
+                <td>도시당 1개 이상</td>
+                <td>월·계절 단위 표기 (대표 축제 우선 수집)</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="note-box">
+            <strong>핵심 트릭:</strong> 한·일이 동일한 6개 테마 체계와
+            RAG·에이전트 파이프라인을 공유하므로, 한국 트랙을 먼저 완성·검증한
+            뒤 일본은 <strong>벡터DB 데이터만 교체</strong>하여 적용한다. 개발
+            효율을 높이고 리스크를 분산한다.
+          </div>
+        </div>
+
+        <!-- ═══ 7. 제약사항 및 가정 ═══ -->
+        <div class="doc-section" id="s7">
+          <div class="section-num">Section 07</div>
+          <h1 class="s-h1">7. 제약사항 및 가정</h1>
+
+          <h2 class="s-h2" id="s7-1">7.1 기술적 제약사항</h2>
+          <div class="warn-box">
+            <strong>Yahoo Japan Maps SDK 지원 중단:</strong> Yahoo Japan Maps
+            JavaScript SDK(Yjans)가 지원 중단되어 일본 소도시 지도는 Google Maps
+            API로 대체 제공한다.
+          </div>
+          <div class="warn-box">
+            <strong>Naver Local Search REST API CORS:</strong> 브라우저에서 직접
+            호출 시 CORS 오류가 발생한다. 현재 블로그 검색은 딥링크로 대체하며,
+            향후 백엔드 프록시를 통해 실시간 데이터를 제공한다.
+          </div>
+          <div class="warn-box">
+            <strong>Yahoo Japan REST API CORS:</strong> Local Search 등 REST
+            API는 CORS 제한이 있다. 향후 백엔드 프록시 서버를 통해 연동한다. App
+            ID는 향후 사용을 위해 입력 항목만 준비한다.
+          </div>
+          <div class="warn-box">
+            <strong>Kakao REST API 도메인 제약:</strong> 로컬 파일
+            환경(<code>file://</code>)에서는 CORS 정책으로 Kakao Local REST API
+            호출이 제한될 수 있다. 등록된 도메인 환경에서 정상 동작한다.
+          </div>
+          <div class="warn-box">
+            <strong>Google Places API 과금:</strong> Places API는 무료 한도 초과
+            시 과금이 발생한다. 서비스 규모에 따른 비용 산정이 필요하다.
+          </div>
+
+          <h2 class="s-h2" id="s7-2">7.2 가정사항</h2>
+          <ul class="bullet-list">
+            <li>
+              서비스 초기에는 단일 HTML 파일 기반 데모로 운영하며, API 키는
+              사용자가 직접 입력한다.
+            </li>
+            <li>
+              소도시 DB는 정적 JSON + 벡터 임베딩 형태로 관리하며, 향후 동적
+              DB로 전환한다.
+            </li>
+            <li>
+              추천 엔진은 RAG(검색증강) + 멀티스텝 에이전트 구조로 구현하며, LLM
+              API를 활용한다.
+            </li>
+            <li>
+              자체 모델 학습(sLLM)은 본 범위에서 제외하며, 기성 LLM API + RAG +
+              에이전트 설계로 품질을 확보한다.
+            </li>
+            <li>
+              축제·계절 정보는 월·계절 단위로만 관리하여 연도별 갱신 부담과 환각
+              위험을 최소화한다.
+            </li>
+            <li>
+              이동 동선은 방문 순서 제안 수준으로 한정하며, 실시간 교통·항공편
+              최적화는 제외한다.
+            </li>
+            <li>
+              Open-Meteo API는 무료 플랜을 사용하며 상업적 서비스 전환 시
+              라이선스를 재확인한다.
+            </li>
+          </ul>
+        </div>
+
+        <!-- ═══ 8. 변경 이력 ═══ -->
+        <div class="doc-section" id="s8">
+          <div class="section-num">Section 08</div>
+          <h1 class="s-h1">8. 변경 이력</h1>
+          <table class="log-tbl">
+            <thead>
+              <tr>
+                <th style="width:70px">버전</th>
+                <th style="width:130px">날짜</th>
+                <th style="width:160px">작성자</th>
+                <th>변경 내용</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>v1.0</td>
+                <td id="logDate"></td>
+                <td>로컬루트 기획팀</td>
+                <td>
+                  최초 작성 — 기능 요구사항, API 연동 명세, 비기능 요구사항 초안
+                </td>
+              </tr>
+              <tr>
+                <td>v1.1</td>
+                <td id="logDate2"></td>
+                <td>로컬루트 기획팀</td>
+                <td>
+                  6개 테마 여정 추천 도입, 계절·축제 연동 추가, RAG·멀티스텝
+                  에이전트 기반으로 추천 엔진 정의 (규칙기반→RAG 전환), 소도시
+                  DB에 테마·계절·축제·임베딩 필드 추가
+                </td>
+              </tr>
+            </tbody>
           </table>
         </div>
       </main>
     </div>
+
+    <script>
+      // Date
+      const d = new Date();
+      const ds = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
+      document.getElementById("todayDate").textContent = ds;
+      document.getElementById("logDate").textContent = ds;
+      const logDate2 = document.getElementById("logDate2");
+      if (logDate2) logDate2.textContent = ds;
+
+      // Active TOC
+      const links = document.querySelectorAll(".toc-link");
+      const sections = [...document.querySelectorAll("[id]")].filter(
+        (el) => el.id !== "cover",
+      );
+
+      function updateTOC() {
+        const scrollY = window.scrollY + 80;
+        let current = "cover";
+        sections.forEach((s) => {
+          if (s.offsetTop <= scrollY) current = s.id;
+        });
+        links.forEach((l) => {
+          const href = l.getAttribute("href").slice(1);
+          l.classList.toggle("active", href === current);
+        });
+      }
+      window.addEventListener("scroll", updateTOC, { passive: true });
+      updateTOC();
+    </script>
   </body>
 </html>
 ```
