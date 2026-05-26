@@ -653,6 +653,18 @@
                 <td>추천 대상에는 지도, 블로그, 예약, 현지 플랫폼 등 사용자가 후속 행동을 할 수 있는 외부 링크를 제공해야 한다.</td>
                 <td>예약/탐색 연결</td>
               </tr>
+              <tr>
+                <td class="req-id">FR-API-005</td>
+                <td>애니메이션 성지 데이터</td>
+                <td>시스템은 Anime Tourism 88, JNTO, KTO TourAPI, OSM, Wikidata, 지자체·공식 사이트 등에서 애니메이션 성지 후보와 장소 기본 정보를 수집·검증할 수 있어야 한다.</td>
+                <td>외부 데이터 출처와 공식성 검증 필요</td>
+              </tr>
+              <tr>
+                <td class="req-id">FR-API-006</td>
+                <td>일본 현지 플랫폼</td>
+                <td>일본 목적지에는 Yahoo Travel, じゃらん, 楽天トラベル, 食べログ 등 숙박·맛집·카페 탐색을 위한 외부 딥링크를 제공해야 한다.</td>
+                <td>직접 API보다 딥링크 우선 적용</td>
+              </tr>
             </tbody>
           </table>
 
@@ -661,28 +673,36 @@
             <h3>서비스별 세부 기능 범위</h3>
             <p>
               로브의 서비스별 세부 기능 요구사항은 아래 영역을 기준으로 정의한다.<br />
-            각 영역은 사용자에게 제공되는 기능, 시스템 처리, 데이터 활용, 검증 기준을 기능 요구사항 표에서 추적할 수 있어야 한다.
+              각 영역은 사용자에게 제공되는 기능, 시스템 처리, 데이터 활용, 검증 기준을 기능 요구사항 표에서 추적할 수 있어야 한다.
             </p>
             <ul class="detail-doc-list">
               <li>
-                <strong>오버투어리즘 대응 여행 추천 서비스</strong>
+                <strong>혼잡 회피 대체 여행지 추천</strong>
                 <span>혼잡도 분산과 지역 관광 균형을 위한 추천 기능</span>
               </li>
               <li>
-                <strong>한일 축제 여행 챗봇</strong>
+                <strong>한일 축제 기반 여정 추천</strong>
                 <span>한국과 일본 축제 정보를 활용한 대화형 추천 기능</span>
               </li>
               <li>
-                <strong>RailRoute-RAG</strong>
+                <strong>철도 패스 기반 소도시 경로 추천</strong>
                 <span>철도 여행 경로 추천과 RAG 기반 응답 기능</span>
               </li>
               <li>
-                <strong>StarryNight-RAG</strong>
+                <strong>별 관측 조건 기반 여행지 추천</strong>
                 <span>아스트로 투어리즘 후보 추천과 관측 조건 분석 기능</span>
               </li>
               <li>
-                <strong>K-drama 촬영지 데이터 파이프라인</strong>
+                <strong>K-drama 촬영지 탐색·검증</strong>
                 <span>촬영지 데이터 수집, 정제, 검증, 탐색 기능</span>
+              </li>
+              <li>
+                <strong>애니메이션 성지순례 여정 추천</strong>
+                <span>작품·장소 관계와 신뢰도 기반 일본 성지순례 추천 기능</span>
+              </li>
+              <li>
+                <strong>일본 소도시 맞춤 추천</strong>
+                <span>대도시 대체지, 접근성, 교통패스, 현지 검색 링크를 포함한 일본 특화 추천 기능</span>
               </li>
             </ul>
           </section>
@@ -700,61 +720,151 @@
                 <td class="req-id">FR-OTR-001</td>
                 <td>오버투어리즘</td>
                 <td>시스템은 관광지별 혼잡도를 조회하고 혼잡도가 높은 지역의 대체 관광지와 대체 방문 시간대를 추천해야 한다.</td>
-                <td>FR-01~FR-05 통합</td>
+                <td>혼잡도 기준과 대체지 선정 근거 필요</td>
               </tr>
               <tr>
                 <td class="req-id">FR-OTR-002</td>
                 <td>오버투어리즘</td>
                 <td>운영자는 지역별 혼잡도, 추천 분산 결과, 데이터 수집 상태를 모니터링할 수 있어야 한다.</td>
-                <td>관리자 요구사항</td>
+                <td>운영 화면에서 지역·기간별 필터 필요</td>
               </tr>
               <tr>
                 <td class="req-id">FR-FES-001</td>
                 <td>한일 축제</td>
                 <td>사용자는 국가, 언어, 날짜, 지역, 테마, 동행자 조건을 입력해 한국 또는 일본 축제를 추천받을 수 있어야 한다.</td>
-                <td>F1~F3 통합</td>
+                <td>국가별 추천 흐름은 분리 운영</td>
               </tr>
               <tr>
                 <td class="req-id">FR-FES-002</td>
                 <td>한일 축제</td>
                 <td>축제 추천 결과에는 축제명, 기간, 지역, 추천 이유, 주변 관광 자원, 후속 질의응답 진입점을 포함해야 한다.</td>
-                <td>F4~F6 통합</td>
+                <td>축제 기간과 개최 상태 최신성 표시</td>
               </tr>
               <tr>
                 <td class="req-id">FR-RAIL-001</td>
-                <td>RailRoute-RAG</td>
+                <td>철도 패스 기반 경로 추천</td>
                 <td>시스템은 철도망, 교통 패스, 소도시 관광 상품을 결합해 이동 가능한 소도시 여정을 추천해야 한다.</td>
-                <td>철도 기반 추천</td>
+                <td>출발지·이동시간·환승 난이도 반영</td>
               </tr>
               <tr>
                 <td class="req-id">FR-RAIL-002</td>
-                <td>RailRoute-RAG</td>
+                <td>철도 패스 기반 경로 추천</td>
                 <td>시스템은 패스권 구매비, 절약 금액, 추천 경로, 연결 상품을 비교해 사용자가 비용 효율을 판단할 수 있게 해야 한다.</td>
-                <td>패스 절약 계산기</td>
+                <td>패스 가격과 구간 요금 갱신 기준 필요</td>
               </tr>
               <tr>
                 <td class="req-id">FR-ASTRO-001</td>
-                <td>StarryNight-RAG</td>
+                <td>별 관측 여행지 추천</td>
                 <td>시스템은 관측지, 날씨, 달 위상, 빛공해, 장비 또는 프로그램 정보를 바탕으로 아스트로 투어리즘 후보를 추천해야 한다.</td>
-                <td>천문 관광 추천</td>
+                <td>관측 가능성 점수와 날씨 조건 표시</td>
               </tr>
               <tr>
                 <td class="req-id">FR-ASTRO-002</td>
-                <td>StarryNight-RAG</td>
+                <td>별 관측 여행지 추천</td>
                 <td>사용자는 관측회, 장비 대여, 숙박 또는 프로그램 예약으로 이어지는 후속 링크를 확인할 수 있어야 한다.</td>
-                <td>예약 연계</td>
+                <td>외부 링크 유효성 확인 필요</td>
               </tr>
               <tr>
                 <td class="req-id">FR-KDRAMA-001</td>
-                <td>K-drama 파이프라인</td>
+                <td>K-drama 촬영지 탐색·검증</td>
                 <td>시스템은 K-drama 촬영지 데이터를 수집, 정제, 검증하고 장소별 메타데이터를 구조화해야 한다.</td>
-                <td>데이터 파이프라인</td>
+                <td>수집 출처와 검증 상태 필수</td>
               </tr>
               <tr>
                 <td class="req-id">FR-KDRAMA-002</td>
-                <td>K-drama 파이프라인</td>
+                <td>K-drama 촬영지 탐색·검증</td>
                 <td>촬영지 결과는 작품명, 위치, 검증 상태, 신뢰도, 태그, 참조 링크와 함께 탐색 가능해야 한다.</td>
-                <td>검색/검증 화면</td>
+                <td>작품·장소 매핑 근거 표시</td>
+              </tr>
+              <tr>
+                <td class="req-id">FR-ANIME-001</td>
+                <td>애니메이션 성지순례</td>
+                <td>사용자는 작품명, 하위 테마, 지역 조건을 입력해 애니메이션 작품과 관계가 있는 일본 소도시 또는 주변 여정을 추천받을 수 있어야 한다.</td>
+                <td>작품명·지역명 다국어 검색 지원 필요</td>
+              </tr>
+              <tr>
+                <td class="req-id">FR-ANIME-002</td>
+                <td>애니메이션 성지순례</td>
+                <td>성지순례 추천 결과에는 작품과 장소의 관계 유형, 공식성, 신뢰도, 근거 URL, 방문 가능 여부를 함께 표시해야 한다.</td>
+                <td>팬 성지와 공식 배경지는 구분 표시</td>
+              </tr>
+              <tr>
+                <td class="req-id">FR-ANIME-003</td>
+                <td>애니메이션 성지순례</td>
+                <td>시스템은 애니메이션 성지 후보를 주변 소도시, 온천, 미식, 교통 조건과 결합해 여행 가능한 여정으로 구성해야 한다.</td>
+                <td>성지 단독 추천이 아닌 주변 여행 요소 결합</td>
+              </tr>
+              <tr>
+                <td class="req-id">FR-JP-001</td>
+                <td>일본 소도시 맞춤 추천</td>
+                <td>사용자가 일본 유명 관광지를 입력하면 유사한 분위기의 소도시 대체지를 추천해야 한다.</td>
+                <td>대체 이유와 유사 분위기 기준 표시</td>
+              </tr>
+              <tr>
+                <td class="req-id">FR-JP-002</td>
+                <td>일본 소도시 맞춤 추천</td>
+                <td>일본 목적지는 주요 도시 기준 이동시간, 환승 횟수, JR 패스 활용 여부를 표시해야 한다.</td>
+                <td>도쿄·오사카·교토·후쿠오카·나고야 기준</td>
+              </tr>
+              <tr>
+                <td class="req-id">FR-JP-003</td>
+                <td>일본 소도시 맞춤 추천</td>
+                <td>사용자는 온천, 료칸, 성하마을, 바다마을, 애니/성지순례, 기차 여행 등 일본 여행 스타일 프리셋을 선택할 수 있어야 한다.</td>
+                <td>복수 선택과 자연어 입력 병행 지원</td>
+              </tr>
+              <tr>
+                <td class="req-id">FR-JP-004</td>
+                <td>일본 소도시 맞춤 추천</td>
+                <td>일본 목적지는 계절별 추천 시기와 비추천 시기를 표시해야 한다.</td>
+                <td>추천 월과 비추천 사유 함께 표시</td>
+              </tr>
+              <tr>
+                <td class="req-id">FR-JP-005</td>
+                <td>일본 소도시 맞춤 추천</td>
+                <td>목적지별로 현지 검색에 활용할 수 있는 일본어 검색 키워드를 제공해야 한다.</td>
+                <td>관광·카페·모델코스·숨은 명소 키워드 포함</td>
+              </tr>
+              <tr>
+                <td class="req-id">FR-JP-006</td>
+                <td>일본 소도시 맞춤 추천</td>
+                <td>일본 목적지 상세에서는 숙박 플랫폼 딥링크를 제공해야 한다.</td>
+                <td>예약 가능 여부는 외부 플랫폼에서 확인</td>
+              </tr>
+              <tr>
+                <td class="req-id">FR-JP-007</td>
+                <td>일본 소도시 맞춤 추천</td>
+                <td>일본 목적지별 맛집, 카페, 로컬 상점 검색 링크를 제공해야 한다.</td>
+                <td>검색 링크는 지역명과 카테고리 조합으로 생성</td>
+              </tr>
+              <tr>
+                <td class="req-id">FR-JP-008</td>
+                <td>일본 소도시 맞춤 추천</td>
+                <td>목적지별 사용 가능한 JR 패스와 지역 교통패스 정보를 제공해야 한다.</td>
+                <td>패스 적용 구간과 절약 가능성 표시</td>
+              </tr>
+              <tr>
+                <td class="req-id">FR-JP-009</td>
+                <td>일본 소도시 맞춤 추천</td>
+                <td>일본 목적지는 혼잡 회피 근거를 최소 2개 이상 표시해야 한다.</td>
+                <td>대도시 대비 혼잡 완화 근거 필요</td>
+              </tr>
+              <tr>
+                <td class="req-id">FR-JP-010</td>
+                <td>일본 소도시 맞춤 추천</td>
+                <td>사용자의 일본 여행 경험 수준에 따라 추천 기준을 다르게 적용해야 한다.</td>
+                <td>초행자는 접근성, N회차는 로컬성 가중</td>
+              </tr>
+              <tr>
+                <td class="req-id">FR-JP-011</td>
+                <td>일본 소도시 맞춤 추천</td>
+                <td>추천 목적지를 기반으로 여행 일정을 자동 생성해야 한다.</td>
+                <td>이동시간과 체류시간을 함께 고려</td>
+              </tr>
+              <tr>
+                <td class="req-id">FR-JP-012</td>
+                <td>일본 소도시 맞춤 추천</td>
+                <td>사용자는 당일치기, 1박2일, 2박3일 일정 유형을 선택할 수 있어야 한다.</td>
+                <td>일정 유형별 방문지 수 제한 필요</td>
               </tr>
             </tbody>
           </table>
@@ -1037,6 +1147,13 @@
                 <td>
                   Yahoo Japan Maps 링크, Yahoo Travel 링크, じゃらん, 食べログ,
                   楽天トラベル 링크
+                </td>
+              </tr>
+              <tr>
+                <td class="key-cell red-key">추가 딥링크</td>
+                <td>
+                  一休, Booking.com, Agoda, Google Hotels, Retty, Hot Pepper,
+                  Instagram 해시태그 검색 링크
                 </td>
               </tr>
               <tr>
@@ -1326,6 +1443,18 @@
               <tr>
                 <td class="key-cell">추천 근거 정보</td>
                 <td>추천 이유, 사용자 조건과의 매칭 근거, 참고 출처, 검증 상태, 신뢰도 표시 정보</td>
+              </tr>
+              <tr>
+                <td class="key-cell">애니메이션 성지 정보</td>
+                <td>작품명, 장소명, 도시/지역, 국가, 작품과의 관계, 공식 배경지 여부, 작가 고향, 공식 콜라보, 팬 성지 여부, 분위기 유사 태그, 근거 URL, 신뢰도, 방문 가능 여부, 장소 유형</td>
+              </tr>
+              <tr>
+                <td class="key-cell">일본 목적지 특화 정보</td>
+                <td>일본어 명칭, 도도부현, 지역권, 여행 스타일 태그, 추천·비추천 계절, 주요 도시 기준 이동시간, 환승 횟수, 가까운 공항, 뚜벅이 가능 여부, JR/지역 교통패스, 일본어 검색 키워드</td>
+              </tr>
+              <tr>
+                <td class="key-cell">일본 현지 탐색 링크</td>
+                <td>Yahoo Travel, じゃらん, 楽天トラベル, 一休, Booking.com, Agoda, Google Hotels, 食べログ, Retty, Hot Pepper, Google Maps, Instagram 해시태그 검색 링크</td>
               </tr>
               <tr>
                 <td class="key-cell">외부 행동 링크</td>
