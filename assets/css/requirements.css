@@ -523,6 +523,20 @@
         width: 150px;
         text-align: left;
       }
+      .role-permission-tbl {
+        font-size: 0.76rem;
+      }
+      .role-permission-tbl thead th:first-child,
+      .role-permission-tbl thead th:nth-child(2),
+      .role-permission-tbl thead th:nth-child(3),
+      .role-permission-tbl thead th:last-child {
+        width: auto;
+        text-align: left;
+      }
+      .role-permission-tbl td {
+        word-break: keep-all;
+        overflow-wrap: anywhere;
+      }
       .req-tbl tbody td {
         padding: 9px 12px;
         border-bottom: 1px solid var(--rule);

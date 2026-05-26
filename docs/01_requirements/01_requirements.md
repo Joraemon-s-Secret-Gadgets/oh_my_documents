@@ -37,6 +37,9 @@
           <div class="toc-section">
             <div class="toc-section-hd">2. 이해관계자</div>
             <a class="toc-link" href="#s2">2. 이해관계자</a>
+            <a class="toc-link" href="#s2-1">2.1 역할 모델</a>
+            <a class="toc-link" href="#s2-2">2.2 권한 매트릭스</a>
+            <a class="toc-link" href="#s2-3">2.3 권한 원칙</a>
           </div>
           <div class="toc-section">
             <div class="toc-section-hd">3. 서비스 개요</div>
@@ -281,6 +284,164 @@
                 (한국관광공사·JNTO 등).
               </div>
             </div>
+          </div>
+
+          <h2 class="s-h2" id="s2-1">2.1 역할 모델</h2>
+          <p class="doc-p">
+            이해관계자는 실제 서비스 권한 체계에서 다음 역할(Role)로 관리한다.
+            하나의 기관 또는 사용자가 여러 역할을 가질 수 있으며, MVP 단계에서는
+            조회·제안·승인·관리 권한을 중심으로 단순화한다.
+          </p>
+          <table class="info-tbl">
+            <thead>
+              <tr>
+                <th style="width:18%">Role ID</th>
+                <th style="width:22%">역할</th>
+                <th>주요 사용자</th>
+                <th style="width:20%">인증</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="key-cell"><code>R-USER</code></td>
+                <td>일반 여행 사용자</td>
+                <td>자유여행자(FIT)</td>
+                <td>비로그인 또는 선택 로그인</td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>R-LOCAL-OPERATOR</code></td>
+                <td>관광 운영자</td>
+                <td>지자체·관광 운영자</td>
+                <td>로그인 필수</td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>R-ADMIN</code></td>
+                <td>서비스 관리자</td>
+                <td>내부 운영·기획 담당자</td>
+                <td>로그인 필수</td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>R-DATA-PROVIDER</code></td>
+                <td>데이터 제공 기관</td>
+                <td>공공 데이터 제공 기관/API 제공자</td>
+                <td>기관 인증 또는 API Key</td>
+              </tr>
+              <tr>
+                <td class="key-cell"><code>R-SYSTEM</code></td>
+                <td>시스템·외부 API</td>
+                <td>Google Maps, Kakao Maps, Yahoo Japan, WeatherAPI 등</td>
+                <td>시스템 키</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2 class="s-h2" id="s2-2">2.2 권한 매트릭스</h2>
+          <table class="req-tbl role-permission-tbl">
+            <thead>
+              <tr>
+                <th>기능/데이터</th>
+                <th>일반 여행 사용자</th>
+                <th>관광 운영자</th>
+                <th>서비스 관리자</th>
+                <th>데이터 제공 기관</th>
+                <th>시스템/API</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="req-id">추천 요청</td>
+                <td>가능</td>
+                <td>가능</td>
+                <td>가능</td>
+                <td>불가</td>
+                <td>불가</td>
+              </tr>
+              <tr>
+                <td class="req-id">추천 결과 조회</td>
+                <td>가능</td>
+                <td>가능</td>
+                <td>가능</td>
+                <td>제한적</td>
+                <td>불가</td>
+              </tr>
+              <tr>
+                <td class="req-id">지도·날씨·링크</td>
+                <td>조회 가능</td>
+                <td>조회 가능</td>
+                <td>조회 가능</td>
+                <td>불가</td>
+                <td>조회·보강</td>
+              </tr>
+              <tr>
+                <td class="req-id">소도시 데이터</td>
+                <td>공개 범위 조회</td>
+                <td>담당 지역 조회·제안</td>
+                <td>전체 승인·수정</td>
+                <td>제공 데이터 등록</td>
+                <td>자동 갱신</td>
+              </tr>
+              <tr>
+                <td class="req-id">축제·행사 데이터</td>
+                <td>공개 범위 조회</td>
+                <td>담당 지역 조회·제안</td>
+                <td>전체 승인·수정</td>
+                <td>제공 데이터 등록</td>
+                <td>자동 갱신</td>
+              </tr>
+              <tr>
+                <td class="req-id">추천 정책</td>
+                <td>불가</td>
+                <td>불가</td>
+                <td>수정 가능</td>
+                <td>불가</td>
+                <td>적용</td>
+              </tr>
+              <tr>
+                <td class="req-id">운영 지표</td>
+                <td>불가 또는 요약</td>
+                <td>담당 지역 조회</td>
+                <td>전체 조회</td>
+                <td>불가</td>
+                <td>산출</td>
+              </tr>
+              <tr>
+                <td class="req-id">대화 로그</td>
+                <td>본인 세션만</td>
+                <td>불가</td>
+                <td>익명·집계 범위</td>
+                <td>불가</td>
+                <td>처리 가능</td>
+              </tr>
+              <tr>
+                <td class="req-id">API Key</td>
+                <td>불가</td>
+                <td>불가</td>
+                <td>관리 가능</td>
+                <td>기관 키 범위</td>
+                <td>사용</td>
+              </tr>
+              <tr>
+                <td class="req-id">공지사항</td>
+                <td>조회</td>
+                <td>제안 가능</td>
+                <td>등록·수정·삭제</td>
+                <td>불가</td>
+                <td>불가</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2 class="s-h2" id="s2-3">2.3 권한 원칙</h2>
+          <ul class="bullet-list">
+            <li>각 역할은 수행 목적에 필요한 최소 범위의 데이터와 기능만 사용한다.</li>
+            <li>여행자에게 노출되는 공개 데이터와 내부 운영 지표, 추천 정책, API Key는 분리한다.</li>
+            <li>관광 운영자와 데이터 제공 기관은 데이터를 제안·제공할 수 있으나 공개 반영은 서비스 관리자 승인 후 적용한다.</li>
+            <li>사용자 취향 입력과 대화 내용은 추천 목적에 한정해 처리하며, 저장 시 익명화·보관 기간·삭제 기준을 명확히 한다.</li>
+            <li>배포 환경의 외부 API Key는 서버 환경 변수 또는 백엔드 프록시에서 관리하고 클라이언트 노출을 최소화한다.</li>
+          </ul>
+          <div class="note-box">
+            <strong>권한 실패 처리:</strong> 비로그인 사용자가 관리자 기능에 접근하면 로그인 또는 접근 불가 안내를 표시한다.<br />
+            담당 지역 외 데이터 접근, 승인 권한 없는 데이터 변경, API Key 미설정·만료 상황은 각각 접근 제한, 제안 상태 저장, 기본 정보 폴백으로 처리한다.
           </div>
         </div>
 
