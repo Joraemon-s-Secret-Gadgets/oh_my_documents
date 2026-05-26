@@ -67,10 +67,10 @@ FR-OPS-###  운영/관리 기능
 ID | 서비스/영역 | 요구사항 내용 | 우선순위 | 출처 문서 | 비고
 ```
 
-출처 문서는 하위 문서 링크를 사용한다.
+출처 문서는 `01_requirements.html` 내부 섹션 참조를 사용한다. 별도 `02_`~`06_` HTML이 삭제되는 경우에도 링크가 깨지지 않아야 한다.
 
 ```html
-<a href="./02_overturizim.html">02_overturizim</a>
+<a href="#s3-6">02_overturizim</a>
 ```
 
 ## Task List
@@ -82,13 +82,13 @@ ID | 서비스/영역 | 요구사항 내용 | 우선순위 | 출처 문서 | 비
 **Description:** `02_`~`06_` Markdown 원본에서 서비스 기능, 사용자 행동, 시스템 기능, 데이터 처리 기능, 외부 연동 기능을 추출한다.
 
 **Acceptance criteria:**
-- [ ] 각 세부 문서별 핵심 기능 목록이 정리된다.
-- [ ] 기능이 사용자 기능, 시스템 기능, 데이터 기능, 외부 연동 기능으로 분류된다.
-- [ ] 단순 설명 문장과 실제 요구사항 후보가 구분된다.
+- [x] 각 세부 문서별 핵심 기능 목록이 정리된다.
+- [x] 기능이 사용자 기능, 시스템 기능, 데이터 기능, 외부 연동 기능으로 분류된다.
+- [x] 단순 설명 문장과 실제 요구사항 후보가 구분된다.
 
 **Verification:**
-- [ ] 각 문서에서 최소 5개 이상의 기능 후보가 추출된다.
-- [ ] 추출 기능마다 출처 문서명이 연결된다.
+- [x] 각 문서에서 최소 5개 이상의 기능 후보가 추출된다.
+- [x] 추출 기능마다 출처 문서명이 연결된다.
 
 **Dependencies:** None
 
@@ -102,13 +102,13 @@ ID | 서비스/영역 | 요구사항 내용 | 우선순위 | 출처 문서 | 비
 **Description:** 세부 문서에서 추출한 기능 중 중복되는 요구사항을 병합하고, 공통 기능과 서비스별 기능을 분리한다.
 
 **Acceptance criteria:**
-- [ ] 공통 기능과 서비스별 기능이 분리된다.
-- [ ] 같은 의미의 요구사항은 하나로 병합된다.
-- [ ] 병합된 요구사항은 모든 출처 문서를 유지한다.
+- [x] 공통 기능과 서비스별 기능이 분리된다.
+- [x] 같은 의미의 요구사항은 하나로 병합된다.
+- [x] 병합된 요구사항은 모든 출처 문서를 유지한다.
 
 **Verification:**
-- [ ] 챗봇, 추천, 지도, 외부 API, 데이터 파이프라인 기능이 중복 없이 분류된다.
-- [ ] 서비스별 고유 기능은 별도 섹션에 남아 있다.
+- [x] 챗봇, 추천, 지도, 외부 API, 데이터 파이프라인 기능이 중복 없이 분류된다.
+- [x] 서비스별 고유 기능은 별도 섹션에 남아 있다.
 
 **Dependencies:** Task 1
 
@@ -118,9 +118,9 @@ ID | 서비스/영역 | 요구사항 내용 | 우선순위 | 출처 문서 | 비
 **Estimated scope:** Medium
 
 ### Checkpoint: Extraction Complete
-- [ ] 기능 후보 목록이 문서별로 존재한다.
-- [ ] 공통 기능과 서비스별 기능이 구분된다.
-- [ ] 상위 문서에 넣을 요구사항 ID 체계가 확정된다.
+- [x] 기능 후보 목록이 문서별로 존재한다.
+- [x] 공통 기능과 서비스별 기능이 구분된다.
+- [x] 상위 문서에 넣을 요구사항 ID 체계가 확정된다.
 
 ### Phase 2: Parent Requirement Update
 
@@ -129,15 +129,15 @@ ID | 서비스/영역 | 요구사항 내용 | 우선순위 | 출처 문서 | 비
 **Description:** `docs/01_requirements/01_requirements.md`의 `3. 기능 요구사항` 섹션을 새 분류 체계와 ID convention에 맞게 정리한다.
 
 **Acceptance criteria:**
-- [ ] `3. 기능 요구사항`에 공통 기능 섹션이 있다.
-- [ ] `3. 기능 요구사항`에 서비스별 세부 기능 섹션이 있다.
-- [ ] 각 요구사항은 ID, 서비스/영역, 내용, 우선순위, 출처, 비고를 가진다.
-- [ ] 기존 요구사항 중 유효한 내용은 보존하거나 새 ID로 매핑한다.
+- [x] `3. 기능 요구사항`에 공통 기능 섹션이 있다.
+- [x] `3. 기능 요구사항`에 서비스별 세부 기능 섹션이 있다.
+- [x] 각 요구사항은 ID, 서비스/영역, 내용, 우선순위, 출처, 비고를 가진다.
+- [x] 기존 요구사항 중 유효한 내용은 보존하거나 새 ID로 매핑한다.
 
 **Verification:**
-- [ ] `FR-COM`, `FR-REC`, `FR-MAP`, `FR-RAG`, `FR-API` 계열 요구사항이 존재한다.
-- [ ] `FR-OTR`, `FR-FES`, `FR-RAIL`, `FR-ASTRO`, `FR-KDRAMA` 계열 요구사항이 존재한다.
-- [ ] 출처 링크가 `pages/` 기준 상대 링크로 동작한다.
+- [x] `FR-COM`, `FR-REC`, `FR-MAP`, `FR-RAG`, `FR-API` 계열 요구사항이 존재한다.
+- [x] `FR-OTR`, `FR-FES`, `FR-RAIL`, `FR-ASTRO`, `FR-KDRAMA` 계열 요구사항이 존재한다.
+- [x] 출처 링크가 `pages/` 기준 상대 링크로 동작한다.
 
 **Dependencies:** Task 2
 
@@ -151,13 +151,13 @@ ID | 서비스/영역 | 요구사항 내용 | 우선순위 | 출처 문서 | 비
 **Description:** 기능 요구사항 섹션이 바뀌면 TOC, anchor ID, 세부 기능 요구사항 링크를 함께 갱신한다.
 
 **Acceptance criteria:**
-- [ ] TOC의 `3. 기능 요구사항` 하위 항목이 실제 섹션 ID와 일치한다.
-- [ ] 세부 기능 요구사항 문서 링크가 유지된다.
-- [ ] 중복 anchor ID가 없다.
+- [x] TOC의 `3. 기능 요구사항` 하위 항목이 실제 섹션 ID와 일치한다.
+- [x] 세부 기능 요구사항 문서 링크가 유지된다.
+- [x] 중복 anchor ID가 없다.
 
 **Verification:**
-- [ ] `Select-String`으로 `href="#..."`와 실제 `id="..."`를 spot check한다.
-- [ ] `pages/01_requirements.html` 재생성 후 TOC 클릭이 가능한 구조다.
+- [x] `Select-String`으로 `href="#..."`와 실제 `id="..."`를 spot check한다.
+- [x] `pages/01_requirements.html` 재생성 후 TOC 클릭이 가능한 구조다.
 
 **Dependencies:** Task 3
 
@@ -167,10 +167,10 @@ ID | 서비스/영역 | 요구사항 내용 | 우선순위 | 출처 문서 | 비
 **Estimated scope:** Small
 
 ### Checkpoint: Parent Source Updated
-- [ ] 상위 요구사항 문서가 모든 세부 기능을 요약한다.
-- [ ] 세부 문서는 상세 근거 문서로 계속 유지된다.
-- [ ] 요구사항 ID가 중복되지 않는다.
-- [ ] 출처 링크가 유지된다.
+- [x] 상위 요구사항 문서가 모든 세부 기능을 요약한다.
+- [x] 세부 문서는 상세 근거 문서로 계속 유지된다.
+- [x] 요구사항 ID가 중복되지 않는다.
+- [x] 출처 링크가 유지된다.
 
 ### Phase 3: Regeneration and Verification
 
@@ -179,14 +179,14 @@ ID | 서비스/영역 | 요구사항 내용 | 우선순위 | 출처 문서 | 비
 **Description:** 수정된 `docs/` 원본을 기준으로 `pages/*.html`을 다시 생성한다.
 
 **Acceptance criteria:**
-- [ ] `pages/01_requirements.html`에 새 기능 요구사항 섹션이 반영된다.
-- [ ] `pages/*.html`에 Markdown 코드펜스가 남지 않는다.
-- [ ] 6개 generated HTML 파일이 유지된다.
+- [x] `pages/01_requirements.html`에 새 기능 요구사항 섹션이 반영된다.
+- [x] `pages/*.html`에 Markdown 코드펜스가 남지 않는다.
+- [x] 6개 generated HTML 파일이 유지된다.
 
 **Verification:**
-- [ ] `Select-String -Path pages\*.html -Pattern '^```'` returns no matches.
-- [ ] `Get-ChildItem pages\*.html` shows 6 files.
-- [ ] `pages/01_requirements.html` contains the new `FR-*` IDs.
+- [x] `Select-String -Path pages\*.html -Pattern '^```'` returns no matches.
+- [x] `Get-ChildItem pages\*.html` shows 6 files.
+- [x] `pages/01_requirements.html` contains the new `FR-*` IDs.
 
 **Dependencies:** Task 4
 
@@ -201,14 +201,14 @@ ID | 서비스/영역 | 요구사항 내용 | 우선순위 | 출처 문서 | 비
 **Description:** 상위 기능 요구사항과 하위 세부 문서 간 추적성을 검증한다.
 
 **Acceptance criteria:**
-- [ ] 각 서비스별 요구사항에는 출처 문서 링크가 있다.
-- [ ] 상위 문서에서 `02_`~`06_` 세부 문서로 이동할 수 있다.
-- [ ] `index.html`의 요구사항 문서 계층 구조와 상위 문서 내부 구조가 일치한다.
+- [x] 각 서비스별 요구사항에는 출처 문서 링크가 있다.
+- [x] 상위 문서에서 `02_`~`06_` 세부 문서로 이동할 수 있다.
+- [x] `index.html`의 요구사항 문서 계층 구조와 상위 문서 내부 구조가 일치한다.
 
 **Verification:**
-- [ ] `index.html` links to `01_requirements.html` as parent and `02_`~`06_` as children.
-- [ ] `pages/01_requirements.html` links to `02_`~`06_`.
-- [ ] 각 서비스 prefix 요구사항이 최소 1개 이상 존재한다.
+- [x] `index.html` links to `01_requirements.html` as parent and `02_`~`06_` as children.
+- [x] `pages/01_requirements.html` links to `02_`~`06_`.
+- [x] 각 서비스 prefix 요구사항이 최소 1개 이상 존재한다.
 
 **Dependencies:** Task 5
 
@@ -218,9 +218,9 @@ ID | 서비스/영역 | 요구사항 내용 | 우선순위 | 출처 문서 | 비
 **Estimated scope:** Small
 
 ### Checkpoint: Ready To Commit
-- [ ] `docs/01_requirements/01_requirements.md` contains integrated functional requirements.
-- [ ] `pages/01_requirements.html` reflects the integrated requirements.
-- [ ] Detail documents remain available as supporting requirement documents.
+- [x] `docs/01_requirements/01_requirements.md` contains integrated functional requirements.
+- [x] `pages/01_requirements.html` reflects the integrated requirements.
+- [x] Detail documents remain available as supporting requirement documents.
 - [ ] Changes can be committed as `docs(requirements): integrate service features`.
 
 ## Risks and Mitigations
@@ -238,10 +238,10 @@ ID | 서비스/영역 | 요구사항 내용 | 우선순위 | 출처 문서 | 비
 - 요구사항 우선순위는 세부 문서에 있는 값을 따를 것인가, 상위 문서에서 재평가할 것인가?
 
 ## Definition of Done
-- [ ] `02_`~`06_` 세부 문서에서 서비스 기능이 추출되어 있다.
-- [ ] `01_requirements.md`의 `3. 기능 요구사항`에 공통 기능과 서비스별 기능이 통합되어 있다.
-- [ ] 요구사항 ID가 중복되지 않는다.
-- [ ] 각 서비스별 요구사항은 출처 문서 링크를 가진다.
-- [ ] `pages/01_requirements.html`이 재생성되어 변경사항을 반영한다.
-- [ ] `pages/*.html`에 Markdown 코드펜스가 없다.
-- [ ] `index.html`의 문서 계층 구조와 상위 요구사항 문서 내부 구조가 일치한다.
+- [x] `02_`~`06_` 세부 문서에서 서비스 기능이 추출되어 있다.
+- [x] `01_requirements.md`의 `3. 기능 요구사항`에 공통 기능과 서비스별 기능이 통합되어 있다.
+- [x] 요구사항 ID가 중복되지 않는다.
+- [x] 각 서비스별 요구사항은 출처 문서 링크를 가진다.
+- [x] `pages/01_requirements.html`이 재생성되어 변경사항을 반영한다.
+- [x] `pages/*.html`에 Markdown 코드펜스가 없다.
+- [x] `index.html`의 문서 계층 구조와 상위 요구사항 문서 내부 구조가 일치한다.
