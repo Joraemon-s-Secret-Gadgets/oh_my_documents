@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — 요구사항 정의서 v1.1</title>
+    <title>로브 (Lovv) — 요구사항 정의서 v1.2</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -18,7 +18,7 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">🗺 로브</div>
-          <div class="aside-ver">Requirements Spec · v1.1</div>
+          <div class="aside-ver">Requirements Spec · v1.2</div>
           <div class="aside-status">
             <div class="status-dot"></div>
             <span>기획 단계</span>
@@ -85,7 +85,16 @@
             <a class="toc-link" href="#s8-2">8.2 가정사항</a>
           </div>
           <div class="toc-section">
-            <a class="toc-section-hd toc-section-link" href="#s9">9. 변경 이력</a>
+            <div class="toc-section-hd">9. 예산안·인력 분배·개발 기한</div>
+            <a class="toc-link" href="#s9-1">9.1 예산 산정 기준</a>
+            <a class="toc-link" href="#s9-2">9.2 예산안</a>
+            <a class="toc-link" href="#s9-3">9.3 인력 역할 정의</a>
+            <a class="toc-link" href="#s9-4">9.4 단계별 인력 분배</a>
+            <a class="toc-link" href="#s9-5">9.5 개발 기한 및 마일스톤</a>
+            <a class="toc-link" href="#s9-6">9.6 예산·인력·일정 관리 원칙</a>
+          </div>
+          <div class="toc-section">
+            <a class="toc-section-hd toc-section-link" href="#s10">10. 변경 이력</a>
           </div>
         </nav>
         <div class="aside-footer">
@@ -110,7 +119,7 @@
           <div class="cover-meta">
             <div class="meta-item">
               <div class="meta-key">문서 버전</div>
-              <div class="meta-val">v1.1 — 기획 개정</div>
+              <div class="meta-val">v1.2 — 예산·인력·일정 반영</div>
             </div>
             <div class="meta-item">
               <div class="meta-key">작성일</div>
@@ -1806,10 +1815,304 @@
           </ul>
         </div>
 
-        <!-- ═══ 9. 변경 이력 ═══ -->
+        <!-- ═══ 9. 예산안·인력 분배·개발 기한 ═══ -->
         <div class="doc-section" id="s9">
           <div class="section-num">Section 09</div>
-          <h1 class="s-h1">9. 변경 이력</h1>
+          <h1 class="s-h1">9. 예산안·인력 분배·개발 기한</h1>
+          <p class="doc-p">
+            본 섹션은 로브 서비스의 MVP 개발을 위한 예산, 수행 인력, 개발 기간을 정의한다.<br />
+            금액과 일정은 요구사항 정의 단계의 기준값이며, 외부 API 사용량, 데이터 확보 범위, Production 전환 승인 여부에 따라 조정될 수 있다.
+          </p>
+
+          <h2 class="s-h2" id="s9-1">9.1 예산 산정 기준</h2>
+          <table class="info-tbl">
+            <thead>
+              <tr>
+                <th style="width:22%">구분</th>
+                <th>산정 기준</th>
+                <th style="width:24%">비용 유형</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="key-cell">초기 구축비</td>
+                <td>기획, UI/UX, 프론트엔드, 백엔드, 데이터 구축, QA 등 개발 착수부터 최종 정리까지 필요한 일회성 작업 비용</td>
+                <td>고정비 또는 인건비</td>
+              </tr>
+              <tr>
+                <td class="key-cell">사용량 기반 비용</td>
+                <td>AWS, OpenAPI, 외부 지도·날씨 API처럼 호출량, 저장량, 실행 시간에 따라 달라지는 비용</td>
+                <td>변동비</td>
+              </tr>
+              <tr>
+                <td class="key-cell">운영비</td>
+                <td>배포 이후 모니터링, 장애 대응, 데이터 갱신, API Key 관리에 필요한 반복 비용</td>
+                <td>월 운영비</td>
+              </tr>
+              <tr>
+                <td class="key-cell">미정 항목</td>
+                <td>인건비, 외부 API 호출량, 데이터 확보 범위가 확정되지 않은 항목은 <code>TBD</code>로 표시하고 상세 설계 후 확정한다.</td>
+                <td>추후 산정</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2 class="s-h2" id="s9-2">9.2 예산안</h2>
+          <table class="req-tbl">
+            <thead>
+              <tr>
+                <th>예산 구분</th>
+                <th>예산</th>
+                <th>포함 항목</th>
+                <th>반영 방향</th>
+                <th>비고</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="req-id">기획·PM</td>
+                <td>TBD</td>
+                <td>요구사항 정리, 일정 관리, 이해관계자 조율</td>
+                <td>문서화 및 일정 관리 비용으로 분리</td>
+                <td>인건비 산정 필요</td>
+              </tr>
+              <tr>
+                <td class="req-id">UI/UX</td>
+                <td>TBD</td>
+                <td>화면 설계, 사용자 흐름, 디자인 시스템</td>
+                <td>데모와 MVP 범위를 구분</td>
+                <td>인건비 산정 필요</td>
+              </tr>
+              <tr>
+                <td class="req-id">프론트엔드</td>
+                <td>TBD</td>
+                <td>챗봇 UI, 지도, 결과 화면, 반응형 구현</td>
+                <td>사용자-facing 개발 비용으로 분리</td>
+                <td>인건비 산정 필요</td>
+              </tr>
+              <tr>
+                <td class="req-id">백엔드/API</td>
+                <td>TBD</td>
+                <td>RAG 파이프라인, 외부 API 프록시, 인증·인가</td>
+                <td>서버 구현 및 API 연동 비용으로 분리</td>
+                <td>인건비 산정 필요</td>
+              </tr>
+              <tr>
+                <td class="req-id">데이터 구축</td>
+                <td>TBD</td>
+                <td>소도시, 축제, 장소, 출처 데이터 정리</td>
+                <td>초기 구축과 정기 갱신 비용 구분</td>
+                <td>데이터 범위 확정 후 산정</td>
+              </tr>
+              <tr>
+                <td class="req-id">AI/LLM 사용</td>
+                <td>300,000원</td>
+                <td>OpenAPI, LLM API, 임베딩, 벡터 검색</td>
+                <td>사용량 기반 변동비로 정의</td>
+                <td>OpenAPI는 Runpod으로 대체될 수 있음</td>
+              </tr>
+              <tr>
+                <td class="req-id">외부 API</td>
+                <td>TBD</td>
+                <td>Google Maps, Kakao Maps, WeatherAPI 등</td>
+                <td>무료 한도와 과금 전환 조건 명시</td>
+                <td>호출량 확정 후 산정</td>
+              </tr>
+              <tr>
+                <td class="req-id">인프라</td>
+                <td>300,000원</td>
+                <td>AWS 호스팅, DB, 스토리지, 모니터링</td>
+                <td>MVP와 운영 전환 비용 분리</td>
+                <td>AWS 예산</td>
+              </tr>
+              <tr>
+                <td class="req-id">QA/검증</td>
+                <td>TBD</td>
+                <td>기능 테스트, 접근 제어, 데이터 품질 검증</td>
+                <td>릴리스 전 필수 검증 비용으로 정의</td>
+                <td>인건비 산정 필요</td>
+              </tr>
+              <tr>
+                <td class="req-id">운영·유지보수</td>
+                <td>TBD</td>
+                <td>장애 대응, 데이터 갱신, API Key 관리</td>
+                <td>월별 운영 비용으로 정의</td>
+                <td>운영 범위 확정 후 산정</td>
+              </tr>
+              <tr>
+                <td class="req-id">확정 예산 합계</td>
+                <td>600,000원</td>
+                <td>AWS, OpenAPI</td>
+                <td>현재 확정된 사용 예산 합계</td>
+                <td>OpenAPI는 Runpod으로 대체 가능</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2 class="s-h2" id="s9-3">9.3 인력 역할 정의</h2>
+          <table class="info-tbl">
+            <thead>
+              <tr>
+                <th style="width:24%">역할</th>
+                <th>주요 책임</th>
+                <th style="width:20%">MVP 기준 투입</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="key-cell">PM/기획</td>
+                <td>범위 관리, 요구사항 정리, 일정·리스크 관리</td>
+                <td>1명</td>
+              </tr>
+              <tr>
+                <td class="key-cell">UI/UX 디자이너</td>
+                <td>사용자 흐름, 화면 설계, 디자인 가이드</td>
+                <td>1명</td>
+              </tr>
+              <tr>
+                <td class="key-cell">프론트엔드 개발자</td>
+                <td>챗봇 UI, 추천 결과, 지도·날씨 화면 구현</td>
+                <td>1~2명</td>
+              </tr>
+              <tr>
+                <td class="key-cell">백엔드 개발자</td>
+                <td>API, 인증·인가, 외부 API 프록시, 운영 기능</td>
+                <td>1~2명</td>
+              </tr>
+              <tr>
+                <td class="key-cell">AI/RAG 엔지니어</td>
+                <td>추천 파이프라인, RAG, 프롬프트, 평가 기준</td>
+                <td>1명</td>
+              </tr>
+              <tr>
+                <td class="key-cell">데이터 담당자</td>
+                <td>목적지·축제 데이터 수집, 정제, 출처 관리</td>
+                <td>1명</td>
+              </tr>
+              <tr>
+                <td class="key-cell">QA 담당자</td>
+                <td>테스트 계획, 기능 검증, 권한·데이터 품질 검증</td>
+                <td>0.5~1명</td>
+              </tr>
+              <tr>
+                <td class="key-cell">운영 담당자</td>
+                <td>배포, 모니터링, API Key, 장애 대응</td>
+                <td>0.5~1명</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="note-box">
+            <strong>역할 구분:</strong> 본 절의 PM, 개발자, QA 등은 프로젝트 수행 인력 역할이다.<br />
+            `2. 이해관계자`의 <code>R-USER</code>, <code>R-LOCAL-OPERATOR</code>, <code>R-ADMIN</code> 등 서비스 권한 Role ID와 구분한다.
+          </div>
+
+          <h2 class="s-h2" id="s9-4">9.4 단계별 인력 분배</h2>
+          <table class="req-tbl">
+            <thead>
+              <tr>
+                <th>구분</th>
+                <th>기간</th>
+                <th>핵심 투입</th>
+                <th>보조 투입</th>
+                <th>목표</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="req-id">PoC</td>
+                <td>2026-06-01 ~ 2026-06-16</td>
+                <td>PM/기획, UI/UX, AI/RAG</td>
+                <td>프론트엔드, 데이터 담당자</td>
+                <td>요구사항, 화면 흐름, 추천 가능성, Production 범위 검증</td>
+              </tr>
+              <tr>
+                <td class="req-id">Production</td>
+                <td>2026-06-17 ~ 2026-07-20</td>
+                <td>프론트엔드, 백엔드, AI/RAG, 데이터 담당자</td>
+                <td>PM/기획, QA, 운영 담당자</td>
+                <td>MVP 구현, 통합 검증, 최종 문서와 운영 준비</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2 class="s-h2" id="s9-5">9.5 개발 기한 및 마일스톤</h2>
+          <table class="req-tbl">
+            <thead>
+              <tr>
+                <th>구분</th>
+                <th>단계</th>
+                <th>기간</th>
+                <th>주요 산출물</th>
+                <th>일정 의존성</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="req-id">PoC</td>
+                <td>기획 확정</td>
+                <td>2026-06-01 ~ 2026-06-07</td>
+                <td>요구사항 확정, 범위 동결, 예산·인력 기준 확정</td>
+                <td>이해관계자 합의</td>
+              </tr>
+              <tr>
+                <td class="req-id">PoC</td>
+                <td>UX/UI 설계</td>
+                <td>2026-06-08 ~ 2026-06-15</td>
+                <td>화면 흐름, 와이어프레임, 디자인 가이드</td>
+                <td>요구사항 확정</td>
+              </tr>
+              <tr>
+                <td class="req-id">PoC</td>
+                <td>중간 보고</td>
+                <td>2026-06-16</td>
+                <td>PoC 결과, 진행 현황, 예산 사용 계획, 일정 리스크, Production 범위 점검</td>
+                <td>기획·설계 초안 완료</td>
+              </tr>
+              <tr>
+                <td class="req-id">Production</td>
+                <td>데이터 준비</td>
+                <td>2026-06-17 ~ 2026-06-24</td>
+                <td>초기 목적지·축제 데이터, 출처 목록, 검증 기준</td>
+                <td>PoC 범위 승인, 데이터 제공처 접근</td>
+              </tr>
+              <tr>
+                <td class="req-id">Production</td>
+                <td>MVP 개발</td>
+                <td>2026-06-25 ~ 2026-07-10</td>
+                <td>챗봇 UI, 추천 결과, 지도·날씨 연동, RAG 초안</td>
+                <td>설계·데이터 초안</td>
+              </tr>
+              <tr>
+                <td class="req-id">Production</td>
+                <td>통합 검증</td>
+                <td>2026-07-11 ~ 2026-07-17</td>
+                <td>기능 검증, 권한 검증, API Key 장애 폴백 검증</td>
+                <td>MVP 기능 완료</td>
+              </tr>
+              <tr>
+                <td class="req-id">Production</td>
+                <td>최종 정리</td>
+                <td>2026-07-18 ~ 2026-07-20</td>
+                <td>최종 문서, 발표 가능 산출물, 운영 체크리스트</td>
+                <td>검증 완료</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2 class="s-h2" id="s9-6">9.6 예산·인력·일정 관리 원칙</h2>
+          <ul class="bullet-list">
+            <li>AWS와 OpenAPI 예산은 현재 확정 예산으로 관리하며, OpenAPI는 필요 시 Runpod으로 대체할 수 있다.</li>
+            <li>PoC 기간에는 구현 완성보다 추천 가능성, 화면 흐름, Production 범위 검증을 우선한다.</li>
+            <li>Production 진행 여부와 범위는 2026-06-16 중간 보고에서 점검한다.</li>
+            <li>외부 API Key 승인, 데이터 확보, RAG 품질 검증이 지연되면 MVP 범위를 조정하거나 후순위 기능을 분리한다.</li>
+            <li>예산 사용량은 AWS, OpenAPI 또는 Runpod, 외부 API 호출량을 중심으로 주기적으로 확인한다.</li>
+          </ul>
+        </div>
+
+        <!-- ═══ 10. 변경 이력 ═══ -->
+        <div class="doc-section" id="s10">
+          <div class="section-num">Section 10</div>
+          <h1 class="s-h1">10. 변경 이력</h1>
           <table class="log-tbl">
             <thead>
               <tr>
@@ -1836,6 +2139,15 @@
                   6개 테마 여정 추천 도입, 계절·축제 연동 추가, RAG·멀티스텝
                   에이전트 기반으로 추천 엔진 정의 (규칙기반→RAG 전환), 소도시
                   필요 데이터 항목에 테마·계절·축제·추천 근거 정보 추가
+                </td>
+              </tr>
+              <tr>
+                <td>v1.2</td>
+                <td>2026-05-27</td>
+                <td>로브 기획팀</td>
+                <td>
+                  예산안, 인력 분배, 개발 기한 섹션 추가. AWS 300,000원,
+                  OpenAPI 300,000원 예산과 PoC/Production 일정 기준 반영
                 </td>
               </tr>
             </tbody>
