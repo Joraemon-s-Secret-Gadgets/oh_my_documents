@@ -1,564 +1,190 @@
-```html
-<!DOCTYPE html>
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>요구사항정의서 — 오버투어리즘 대응 여행 추천 서비스</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=Pretendard:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <!-- SIDEBAR -->
-    <nav class="sidenav">
-      <div class="sidenav-logo">
-        요구사항정의서
-        <span>오버투어리즘 대응<br />여행 추천 서비스</span>
-      </div>
+# 오버투어리즘 대응 여행 추천 서비스
 
-      <div class="nav-section">
-        <div class="nav-section-label">문서 구성</div>
-        <a href="#overview" class="nav-link active"
-          ><span class="dot"></span>문서 개요</a
-        >
-        <a href="#background" class="nav-link"
-          ><span class="dot"></span>프로젝트 배경</a
-        >
-        <a href="#goals" class="nav-link"
-          ><span class="dot"></span>프로젝트 목적</a
-        >
-        <a href="#stakeholders" class="nav-link"
-          ><span class="dot"></span>이해관계자</a
-        >
-        <a href="#scope" class="nav-link"
-          ><span class="dot"></span>서비스 범위</a
-        >
-        <a href="#scenario" class="nav-link"
-          ><span class="dot"></span>사용자 시나리오</a
-        >
-        <a href="#functional" class="nav-link"
-          ><span class="dot"></span>기능 요구사항</a
-        >
-        <a href="#nonfunctional" class="nav-link"
-          ><span class="dot"></span>비기능 요구사항</a
-        >
-        <a href="#data" class="nav-link"
-          ><span class="dot"></span>데이터 요구사항</a
-        >
-        <a href="#admin" class="nav-link"
-          ><span class="dot"></span>관리자 요구사항</a
-        >
-        <a href="#constraints" class="nav-link"
-          ><span class="dot"></span>제약사항</a
-        >
-        <a href="#output" class="nav-link"
-          ><span class="dot"></span>산출물 기준</a
-        >
-      </div>
+관광 수요 분산을 목표로 하는 웹 기반 여행 추천 플랫폼의 기능 및 비기능 요구사항을 정의합니다.
 
-      <div class="sidenav-footer">
-        v0.1 DRAFT<br />
-        초안 · 검토 전
-      </div>
-    </nav>
+**문서 버전**
 
-    <!-- MAIN -->
-    <div class="main">
-      <!-- HEADER -->
-      <header class="doc-header">
-        <div class="doc-header-inner">
-          <div class="doc-tag">REQUIREMENTS DEFINITION</div>
-          <h1>오버투어리즘 대응<br />여행 추천 서비스</h1>
-          <p>
-            관광 수요 분산을 목표로 하는 웹 기반 여행 추천 플랫폼의 기능 및
-            비기능 요구사항을 정의합니다.
-          </p>
-          <div class="doc-meta">
-            <div class="meta-item"><strong>문서 버전</strong>v0.1 DRAFT</div>
-            <div class="meta-item">
-              <strong>문서 유형</strong>요구사항정의서
-            </div>
-            <div class="meta-item"><strong>단계</strong>초안</div>
-            <div class="meta-item">
-              <strong>적용 범위</strong>국내 특정 지역
-            </div>
-          </div>
-        </div>
-      </header>
+v0.1 DRAFT
 
-      <!-- CONTENT -->
-      <div class="content">
-        <!-- 01 개요 -->
-        <div class="doc-section" id="overview">
-          <div class="section-header">
-            <span class="section-num">01</span>
-            <h2 class="section-title">문서 개요</h2>
-          </div>
-          <p class="prose">
-            본 문서는 오버투어리즘 문제를 완화하기 위한 웹 기반 여행 추천
-            서비스의 요구사항을 정의한다.
-          </p>
-          <div class="info-block">
-            <p>
-              요구사항정의서는 프로젝트 목적, 범위, 이해관계자, 기능 요구사항,
-              비기능 요구사항을 명확히 정리해 개발자와 기획자 간 해석 차이를
-              줄이는 데 사용된다. 이후 상세 설계 단계에서는 본 문서의 기능
-              요구사항 ID를 기준으로 화면, API, DB 항목을 추적 가능하게
-              연결한다.
-            </p>
-          </div>
-        </div>
+**문서 유형**
 
-        <!-- 02 배경 -->
-        <div class="doc-section" id="background">
-          <div class="section-header">
-            <span class="section-num">02</span>
-            <h2 class="section-title">프로젝트 배경</h2>
-          </div>
-          <p class="prose">
-            오버투어리즘은 특정 관광지와 시기에 방문 수요가 과도하게 집중되면서
-            혼잡, 주민 불편, 환경 훼손, 여행 만족도 저하를 유발하는 문제로
-            해석할 수 있다.
-          </p>
-          <div class="info-block amber">
-            <p>
-              따라서 서비스는 인기 관광지로 몰리는 수요를 분산시키고,
-              사용자에게는 덜 붐비는 대안을 제시하는 방향으로 설계할 필요가
-              있다.
-            </p>
-          </div>
-        </div>
+요구사항정의서
 
-        <!-- 03 목적 -->
-        <div class="doc-section" id="goals">
-          <div class="section-header">
-            <span class="section-num">03</span>
-            <h2 class="section-title">프로젝트 목적</h2>
-          </div>
-          <ul class="goal-list">
-            <li>
-              사용자가 여행 일정과 취향에 맞는 관광지를 탐색할 수 있도록
-              지원한다.
-            </li>
-            <li>
-              혼잡도가 높은 관광지 대신 대체 관광지와 시간대를 추천해 관광
-              수요를 분산한다.
-            </li>
-            <li>
-              운영자는 지역별 혼잡 현황과 추천 결과를 분석해 관광 정책과 운영
-              전략에 반영할 수 있다.
-            </li>
-          </ul>
-        </div>
+**단계**
 
-        <!-- 04 이해관계자 -->
-        <div class="doc-section" id="stakeholders">
-          <div class="section-header">
-            <span class="section-num">04</span>
-            <h2 class="section-title">이해관계자</h2>
-          </div>
-          <div class="stakeholder-grid">
-            <div class="stakeholder-card">
-              <div class="sh-type">최종 사용자</div>
-              <div class="sh-name">관광객</div>
-              <div class="sh-role">
-                일정, 취향, 이동수단, 예산을 입력하고 혼잡도를 고려한 여행지를
-                추천받는다.
-              </div>
-            </div>
-            <div class="stakeholder-card">
-              <div class="sh-type">운영 사용자</div>
-              <div class="sh-name">지자체 및 관광 운영자</div>
-              <div class="sh-role">
-                특정 지역의 관광 집중도를 모니터링하고 분산 전략을 검토한다.
-              </div>
-            </div>
-            <div class="stakeholder-card">
-              <div class="sh-type">내부 사용자</div>
-              <div class="sh-name">서비스 관리자</div>
-              <div class="sh-role">
-                관광지 데이터, 추천 정책, 공지사항을 관리한다.
-              </div>
-            </div>
-            <div class="stakeholder-card">
-              <div class="sh-type">연계 기관</div>
-              <div class="sh-name">공공 데이터 제공 기관</div>
-              <div class="sh-role">
-                교통, 날씨, 관광지, 행사 데이터를 API 형태로 제공한다.
-              </div>
-            </div>
-          </div>
-        </div>
+초안
 
-        <!-- 05 범위 -->
-        <div class="doc-section" id="scope">
-          <div class="section-header">
-            <span class="section-num">05</span>
-            <h2 class="section-title">서비스 범위</h2>
-          </div>
-          <div class="scope-cols">
-            <div class="scope-box in">
-              <h4>✔ 포함 범위</h4>
-              <ul class="scope-list">
-                <li><span class="icon">✓</span>관광지 혼잡도 조회 기능</li>
-                <li>
-                  <span class="icon">✓</span>사용자 조건 기반 여행지 추천 기능
-                </li>
-                <li>
-                  <span class="icon">✓</span>대체 관광지 및 대체 방문 시간 추천
-                  기능
-                </li>
-                <li>
-                  <span class="icon">✓</span>관리자용 혼잡도 모니터링 기능
-                </li>
-                <li><span class="icon">✓</span>외부 공공 데이터 연동 기능</li>
-              </ul>
-            </div>
-            <div class="scope-box out">
-              <h4>✖ 제외 범위</h4>
-              <ul class="scope-list">
-                <li><span class="icon">✗</span>항공권 및 숙박 결제 기능</li>
-                <li><span class="icon">✗</span>해외 전 지역 대상 추천 기능</li>
-                <li>
-                  <span class="icon">✗</span>오프라인 키오스크 전용 인터페이스
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
+**적용 범위**
 
-        <!-- 06 시나리오 -->
-        <div class="doc-section" id="scenario">
-          <div class="section-header">
-            <span class="section-num">06</span>
-            <h2 class="section-title">사용자 시나리오</h2>
-          </div>
-          <div class="scenario-steps">
-            <div class="step">
-              <div class="step-num">01</div>
-              <div class="step-body">
-                <div class="step-actor">사용자</div>
-                <div class="step-desc">
-                  여행 지역, 날짜, 관심사, 이동수단, 예산을 입력한다.
-                </div>
-              </div>
-            </div>
-            <div class="step">
-              <div class="step-num">02</div>
-              <div class="step-body">
-                <div class="step-actor">시스템</div>
-                <div class="step-desc">
-                  해당 기간의 관광지 혼잡도와 날씨, 교통 정보를 조회한다.
-                </div>
-              </div>
-            </div>
-            <div class="step">
-              <div class="step-num">03</div>
-              <div class="step-body">
-                <div class="step-actor">시스템</div>
-                <div class="step-desc">
-                  혼잡도가 낮거나 분산 효과가 높은 관광지와 시간대를 추천한다.
-                </div>
-              </div>
-            </div>
-            <div class="step">
-              <div class="step-num">04</div>
-              <div class="step-body">
-                <div class="step-actor">사용자</div>
-                <div class="step-desc">
-                  추천 결과를 저장하거나 일정 후보를 비교한다.
-                </div>
-              </div>
-            </div>
-            <div class="step">
-              <div class="step-num">05</div>
-              <div class="step-body">
-                <div class="step-actor">운영자</div>
-                <div class="step-desc">
-                  관리자 화면에서 특정 지역의 집중 현황과 추천 분산 결과를
-                  확인한다.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+국내 특정 지역
 
-        <!-- 07 기능 요구사항 -->
-        <div class="doc-section" id="functional">
-          <div class="section-header">
-            <span class="section-num">07</span>
-            <h2 class="section-title">기능 요구사항</h2>
-          </div>
-          <div style="overflow-x:auto;">
-            <table class="req-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>요구사항명</th>
-                  <th>설명</th>
-                  <th>우선순위</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>FR-01</td>
-                  <td>사용자 조건 입력</td>
-                  <td>
-                    사용자는 지역, 날짜, 인원, 관심사, 이동수단, 예산을 입력할
-                    수 있어야 한다.
-                  </td>
-                  <td><span class="badge high">높음</span></td>
-                </tr>
-                <tr>
-                  <td>FR-02</td>
-                  <td>관광지 목록 조회</td>
-                  <td>
-                    시스템은 지역별 관광지 목록과 기본 정보를 제공해야 한다.
-                  </td>
-                  <td><span class="badge high">높음</span></td>
-                </tr>
-                <tr>
-                  <td>FR-03</td>
-                  <td>혼잡도 조회</td>
-                  <td>
-                    시스템은 관광지별 현재 또는 예측 혼잡도를 표시해야 한다.
-                  </td>
-                  <td><span class="badge high">높음</span></td>
-                </tr>
-                <tr>
-                  <td>FR-04</td>
-                  <td>대체 관광지 추천</td>
-                  <td>
-                    시스템은 혼잡도가 높은 관광지와 유사한 대체 관광지를
-                    추천해야 한다.
-                  </td>
-                  <td><span class="badge high">높음</span></td>
-                </tr>
-                <tr>
-                  <td>FR-05</td>
-                  <td>시간대 분산 추천</td>
-                  <td>시스템은 혼잡도가 낮은 방문 시간대를 제안해야 한다.</td>
-                  <td><span class="badge high">높음</span></td>
-                </tr>
-                <tr>
-                  <td>FR-06</td>
-                  <td>개인화 추천</td>
-                  <td>
-                    시스템은 사용자 취향과 이동 조건을 반영해 추천 결과를
-                    정렬해야 한다.
-                  </td>
-                  <td><span class="badge mid">중간</span></td>
-                </tr>
-                <tr>
-                  <td>FR-07</td>
-                  <td>지도 시각화</td>
-                  <td>
-                    시스템은 추천 결과와 혼잡도를 지도 기반으로 표시해야 한다.
-                  </td>
-                  <td><span class="badge mid">중간</span></td>
-                </tr>
-                <tr>
-                  <td>FR-08</td>
-                  <td>즐겨찾기/일정 저장</td>
-                  <td>사용자는 추천 관광지나 코스를 저장할 수 있어야 한다.</td>
-                  <td><span class="badge mid">중간</span></td>
-                </tr>
-                <tr>
-                  <td>FR-09</td>
-                  <td>관리자 대시보드</td>
-                  <td>
-                    운영자는 지역별 혼잡도, 추천 현황, 데이터 수집 상태를 확인할
-                    수 있어야 한다.
-                  </td>
-                  <td><span class="badge high">높음</span></td>
-                </tr>
-                <tr>
-                  <td>FR-10</td>
-                  <td>데이터 연동 관리</td>
-                  <td>
-                    관리자는 외부 API 연동 상태와 갱신 주기를 관리할 수 있어야
-                    한다.
-                  </td>
-                  <td><span class="badge mid">중간</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+## 문서 개요
 
-        <!-- 08 비기능 요구사항 -->
-        <div class="doc-section" id="nonfunctional">
-          <div class="section-header">
-            <span class="section-num">08</span>
-            <h2 class="section-title">비기능 요구사항</h2>
-          </div>
-          <div class="nonfunc-grid">
-            <div class="nf-card">
-              <div class="nf-icon">⚡</div>
-              <div class="nf-label">PERFORMANCE</div>
-              <div class="nf-title">성능</div>
-              <div class="nf-desc">
-                주요 추천 결과는 사용자 요청 후 3초 이내에 조회되어야 한다.
-              </div>
-            </div>
-            <div class="nf-card">
-              <div class="nf-icon">🎯</div>
-              <div class="nf-label">ACCURACY</div>
-              <div class="nf-title">정확성</div>
-              <div class="nf-desc">
-                혼잡도 데이터는 정의된 주기 내에서 최신 상태로 갱신되어야 한다.
-              </div>
-            </div>
-            <div class="nf-card">
-              <div class="nf-icon">🖱️</div>
-              <div class="nf-label">USABILITY</div>
-              <div class="nf-title">사용성</div>
-              <div class="nf-desc">
-                사용자는 3단계 이내로 추천 결과를 확인할 수 있어야 한다.
-              </div>
-            </div>
-            <div class="nf-card">
-              <div class="nf-icon">📈</div>
-              <div class="nf-label">SCALABILITY</div>
-              <div class="nf-title">확장성</div>
-              <div class="nf-desc">
-                새로운 지역과 관광지 유형을 추가할 수 있는 데이터 구조를
-                제공해야 한다.
-              </div>
-            </div>
-            <div class="nf-card">
-              <div class="nf-icon">🔒</div>
-              <div class="nf-label">SECURITY</div>
-              <div class="nf-title">보안</div>
-              <div class="nf-desc">
-                사용자 계정 정보와 개인 선호 데이터는 안전하게 저장되어야 한다.
-              </div>
-            </div>
-            <div class="nf-card">
-              <div class="nf-icon">🟢</div>
-              <div class="nf-label">AVAILABILITY</div>
-              <div class="nf-title">가용성</div>
-              <div class="nf-desc">
-                성수기 트래픽 증가 상황에서도 핵심 조회 기능이 유지되어야 한다.
-              </div>
-            </div>
-          </div>
-        </div>
+본 문서는 오버투어리즘 문제를 완화하기 위한 웹 기반 여행 추천 서비스의 요구사항을 정의한다.
 
-        <!-- 09 데이터 요구사항 -->
-        <div class="doc-section" id="data">
-          <div class="section-header">
-            <span class="section-num">09</span>
-            <h2 class="section-title">데이터 요구사항</h2>
-          </div>
-          <div class="data-cols">
-            <div class="data-box">
-              <h4>🗺️ 관광지 기본 정보</h4>
-              <ul>
-                <li>관광지명, 위치, 카테고리</li>
-                <li>운영 시간, 대표 이미지</li>
-              </ul>
-            </div>
-            <div class="data-box">
-              <h4>📊 혼잡도 데이터</h4>
-              <ul>
-                <li>실시간 방문량</li>
-                <li>예측 혼잡도 지표</li>
-              </ul>
-            </div>
-            <div class="data-box">
-              <h4>👤 사용자 데이터</h4>
-              <ul>
-                <li>관심사, 예산, 이동수단</li>
-                <li>저장한 일정</li>
-              </ul>
-            </div>
-            <div class="data-box">
-              <h4>🔗 외부 연계 데이터</h4>
-              <ul>
-                <li>날씨, 대중교통</li>
-                <li>지역 행사, 공공 관광 데이터</li>
-              </ul>
-            </div>
-          </div>
-        </div>
+요구사항정의서는 프로젝트 목적, 범위, 이해관계자, 기능 요구사항, 비기능 요구사항을 명확히 정리해 개발자와 기획자 간 해석 차이를 줄이는 데 사용된다. 이후 상세 설계 단계에서는 본 문서의 기능 요구사항 ID를 기준으로 화면, API, DB 항목을 추적 가능하게 연결한다.
 
-        <!-- 10 관리자 요구사항 -->
-        <div class="doc-section" id="admin">
-          <div class="section-header">
-            <span class="section-num">10</span>
-            <h2 class="section-title">관리자 요구사항</h2>
-          </div>
-          <ul class="goal-list">
-            <li>특정 지역의 혼잡도 변화를 날짜별로 조회할 수 있어야 한다.</li>
-            <li>
-              혼잡 유발 관광지와 대체 추천 관광지의 매칭 기준을 관리할 수 있어야
-              한다.
-            </li>
-            <li>추천 노출 정책과 공지사항을 수정할 수 있어야 한다.</li>
-            <li>데이터 수집 실패 여부와 API 상태를 확인할 수 있어야 한다.</li>
-          </ul>
-        </div>
+## 프로젝트 배경
 
-        <!-- 11 제약사항 -->
-        <div class="doc-section" id="constraints">
-          <div class="section-header">
-            <span class="section-num">11</span>
-            <h2 class="section-title">제약사항</h2>
-          </div>
-          <ul class="constraint-list">
-            <li>
-              <div class="constraint-icon">⚠</div>
-              초기 버전은 국내 특정 지역만 대상으로 운영한다.
-            </li>
-            <li>
-              <div class="constraint-icon">⚠</div>
-              혼잡도 데이터 품질은 외부 API 제공 범위와 정확도에 영향을 받을 수
-              있다.
-            </li>
-            <li>
-              <div class="constraint-icon">⚠</div>
-              개인 위치 기반 추천 기능은 개인정보 처리 기준을 충족하는 범위
-              내에서만 제공한다.
-            </li>
-          </ul>
-        </div>
+오버투어리즘은 특정 관광지와 시기에 방문 수요가 과도하게 집중되면서 혼잡, 주민 불편, 환경 훼손, 여행 만족도 저하를 유발하는 문제로 해석할 수 있다.
 
-        <!-- 12 산출물 기준 -->
-        <div class="doc-section" id="output">
-          <div class="section-header">
-            <span class="section-num">12</span>
-            <h2 class="section-title">산출물 기준</h2>
-          </div>
-          <div class="output-box">
-            <p>
-              본 요구사항정의서는
-              <strong>화면설계서, API 명세서, 데이터 모델 설계서</strong>의 상위
-              기준 문서로 사용한다. 이후 상세 설계 단계에서는 본 문서의 기능
-              요구사항 ID를 기준으로 화면, API, DB 항목을 추적 가능하게
-              연결한다.
-            </p>
-            <div class="output-tag-row">
-              <span class="output-tag">화면설계서</span>
-              <span class="output-tag">API 명세서</span>
-              <span class="output-tag">데이터 모델 설계서</span>
-              <span class="output-tag">FR-ID 기반 추적</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- /content -->
+따라서 서비스는 인기 관광지로 몰리는 수요를 분산시키고, 사용자에게는 덜 붐비는 대안을 제시하는 방향으로 설계할 필요가 있다.
 
-      <footer class="doc-footer">
-        <span>요구사항정의서 — 오버투어리즘 대응 여행 추천 서비스</span>
-        <span>v0.1 DRAFT · 교육/기획 목적</span>
-      </footer>
-    </div>
-    <!-- /main -->
-  </body>
-</html>
-```
+## 프로젝트 목적
 
+- 사용자가 여행 일정과 취향에 맞는 관광지를 탐색할 수 있도록 지원한다.
+- 혼잡도가 높은 관광지 대신 대체 관광지와 시간대를 추천해 관광 수요를 분산한다.
+- 운영자는 지역별 혼잡 현황과 추천 결과를 분석해 관광 정책과 운영 전략에 반영할 수 있다.
 
+## 이해관계자
+
+최종 사용자
+
+관광객
+
+일정, 취향, 이동수단, 예산을 입력하고 혼잡도를 고려한 여행지를 추천받는다.
+
+운영 사용자
+
+지자체 및 관광 운영자
+
+특정 지역의 관광 집중도를 모니터링하고 분산 전략을 검토한다.
+
+내부 사용자
+
+서비스 관리자
+
+관광지 데이터, 추천 정책, 공지사항을 관리한다.
+
+연계 기관
+
+공공 데이터 제공 기관
+
+교통, 날씨, 관광지, 행사 데이터를 API 형태로 제공한다.
+
+## 서비스 범위
+
+#### ✔ 포함 범위
+
+- 관광지 혼잡도 조회 기능
+- 사용자 조건 기반 여행지 추천 기능
+- 대체 관광지 및 대체 방문 시간 추천 기능
+- 관리자용 혼잡도 모니터링 기능
+- 외부 공공 데이터 연동 기능
+
+#### ✖ 제외 범위
+
+- 항공권 및 숙박 결제 기능
+- 해외 전 지역 대상 추천 기능
+- 오프라인 키오스크 전용 인터페이스
+
+## 사용자 시나리오
+사용자
+
+여행 지역, 날짜, 관심사, 이동수단, 예산을 입력한다.
+시스템
+
+해당 기간의 관광지 혼잡도와 날씨, 교통 정보를 조회한다.
+시스템
+
+혼잡도가 낮거나 분산 효과가 높은 관광지와 시간대를 추천한다.
+사용자
+
+추천 결과를 저장하거나 일정 후보를 비교한다.
+운영자
+
+관리자 화면에서 특정 지역의 집중 현황과 추천 분산 결과를 확인한다.
+
+## 기능 요구사항
+
+| ID | 요구사항명 | 설명 | 우선순위 |
+| --- | --- | --- | --- |
+| FR-01 | 사용자 조건 입력 | 사용자는 지역, 날짜, 인원, 관심사, 이동수단, 예산을 입력할 수 있어야 한다. | 높음 |
+| FR-02 | 관광지 목록 조회 | 시스템은 지역별 관광지 목록과 기본 정보를 제공해야 한다. | 높음 |
+| FR-03 | 혼잡도 조회 | 시스템은 관광지별 현재 또는 예측 혼잡도를 표시해야 한다. | 높음 |
+| FR-04 | 대체 관광지 추천 | 시스템은 혼잡도가 높은 관광지와 유사한 대체 관광지를 추천해야 한다. | 높음 |
+| FR-05 | 시간대 분산 추천 | 시스템은 혼잡도가 낮은 방문 시간대를 제안해야 한다. | 높음 |
+| FR-06 | 개인화 추천 | 시스템은 사용자 취향과 이동 조건을 반영해 추천 결과를 정렬해야 한다. | 중간 |
+| FR-07 | 지도 시각화 | 시스템은 추천 결과와 혼잡도를 지도 기반으로 표시해야 한다. | 중간 |
+| FR-08 | 즐겨찾기/일정 저장 | 사용자는 추천 관광지나 코스를 저장할 수 있어야 한다. | 중간 |
+| FR-09 | 관리자 대시보드 | 운영자는 지역별 혼잡도, 추천 현황, 데이터 수집 상태를 확인할 수 있어야 한다. | 높음 |
+| FR-10 | 데이터 연동 관리 | 관리자는 외부 API 연동 상태와 갱신 주기를 관리할 수 있어야 한다. | 중간 |
+
+## 비기능 요구사항
+
+성능
+
+주요 추천 결과는 사용자 요청 후 3초 이내에 조회되어야 한다.
+
+정확성
+
+혼잡도 데이터는 정의된 주기 내에서 최신 상태로 갱신되어야 한다.
+
+사용성
+
+사용자는 3단계 이내로 추천 결과를 확인할 수 있어야 한다.
+
+확장성
+
+새로운 지역과 관광지 유형을 추가할 수 있는 데이터 구조를 제공해야 한다.
+
+보안
+
+사용자 계정 정보와 개인 선호 데이터는 안전하게 저장되어야 한다.
+
+가용성
+
+성수기 트래픽 증가 상황에서도 핵심 조회 기능이 유지되어야 한다.
+
+## 데이터 요구사항
+
+#### 🗺️ 관광지 기본 정보
+
+- 관광지명, 위치, 카테고리
+- 운영 시간, 대표 이미지
+
+#### 📊 혼잡도 데이터
+
+- 실시간 방문량
+- 예측 혼잡도 지표
+
+#### 👤 사용자 데이터
+
+- 관심사, 예산, 이동수단
+- 저장한 일정
+
+#### 🔗 외부 연계 데이터
+
+- 날씨, 대중교통
+- 지역 행사, 공공 관광 데이터
+
+## 관리자 요구사항
+
+- 특정 지역의 혼잡도 변화를 날짜별로 조회할 수 있어야 한다.
+- 혼잡 유발 관광지와 대체 추천 관광지의 매칭 기준을 관리할 수 있어야 한다.
+- 추천 노출 정책과 공지사항을 수정할 수 있어야 한다.
+- 데이터 수집 실패 여부와 API 상태를 확인할 수 있어야 한다.
+
+## 제약사항
+
+- ⚠
+
+  초기 버전은 국내 특정 지역만 대상으로 운영한다.
+- ⚠
+
+  혼잡도 데이터 품질은 외부 API 제공 범위와 정확도에 영향을 받을 수 있다.
+- ⚠
+
+  개인 위치 기반 추천 기능은 개인정보 처리 기준을 충족하는 범위 내에서만 제공한다.
+
+## 산출물 기준
+
+본 요구사항정의서는 **화면설계서, API 명세서, 데이터 모델 설계서** 의 상위 기준 문서로 사용한다. 이후 상세 설계 단계에서는 본 문서의 기능 요구사항 ID를 기준으로 화면, API, DB 항목을 추적 가능하게 연결한다.
+
+화면설계서
+
+API 명세서
+
+데이터 모델 설계서
+
+FR-ID 기반 추적

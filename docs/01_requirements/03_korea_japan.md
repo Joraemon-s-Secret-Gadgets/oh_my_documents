@@ -1,731 +1,484 @@
-```html
-<!DOCTYPE html>
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>한일 축제 여행 챗봇 — 요구사항 정의서</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <!-- NAV -->
-    <nav>
-      <div class="nav-logo">// 한일 축제 챗봇 · 요구사항 정의서</div>
-      <ul class="nav-links">
-        <li><a href="#overview">개요</a></li>
-        <li><a href="#features">기능</a></li>
-        <li><a href="#data">데이터</a></li>
-        <li><a href="#scenarios">시나리오</a></li>
-        <li><a href="#priority">우선순위</a></li>
-        <li><a href="#glossary">용어집</a></li>
-      </ul>
-    </nav>
+# 한일 축제 기반 자유여행 추천 챗봇
 
-    <!-- HERO -->
-    <div class="hero">
-      <div class="hero-grid"></div>
-      <div class="hero-glow"></div>
-      <div class="hero-badge">요구사항 정의서 v1.0</div>
-      <h1>한일 축제 기반<br /><em>자유여행 추천</em><br />챗봇</h1>
-      <p class="lead">
-        한국과 일본 양국 자유여행자를 위한 지역 축제 정보 기반 여행 일정 추천
-        서비스 — 기획부터 데이터까지 전체 요구사항을 정의합니다.
-      </p>
-      <div class="hero-meta">
-        <div class="hero-meta-item">
-          <span>대상 국가</span>
-          <span>🇰🇷 한국 · 🇯🇵 일본</span>
-        </div>
-        <div class="hero-meta-item">
-          <span>지원 언어</span>
-          <span>한국어 · 日本語</span>
-        </div>
-        <div class="hero-meta-item">
-          <span>서비스 유형</span>
-          <span>대화형 추천 챗봇</span>
-        </div>
-        <div class="hero-meta-item">
-          <span>문서 버전</span>
-          <span>2025 · MVP 기준</span>
-        </div>
-      </div>
-      <div class="hero-scroll">
-        <span>스크롤</span>
-        <div class="scroll-line"></div>
-      </div>
-    </div>
+한국과 일본 양국 자유여행자를 위한 지역 축제 정보 기반 여행 일정 추천 서비스 — 기획부터 데이터까지 전체 요구사항을 정의합니다.
 
-    <!-- OVERVIEW + SERVICE FLOW -->
-    <section id="overview">
-      <div class="reveal">
-        <div class="section-label">// 01 서비스 개요</div>
-        <h2 class="section-title">추진 배경과<br />서비스 흐름</h2>
-        <p class="section-sub">
-          자유여행자가 여행 의사결정을 빠르게 내릴 수 있도록, 축제·행사 정보를
-          중심으로 맞춤 일정을 추천하는 통합 챗봇 서비스입니다.
-        </p>
-      </div>
+대상 국가
 
-      <!-- 추진 배경 카드 -->
-      <div class="deep-cards reveal">
-        <div class="deep-card">
-          <div
-            class="card-accent"
-            style="background: var(--accent-coral);"
-          ></div>
-          <h3>🔍 문제 정의</h3>
-          <p>
-            현재 한일 양국 관광 정보는 공식 사이트, 지자체, SNS 등에 분산되어
-            있어 사용자가 직접 비교·판단해야 하는 부담이 큽니다.
-          </p>
-          <ul>
-            <li>정보 출처가 다원화되어 탐색 피로도가 높음</li>
-            <li>"지금 방문 가능한지", "내 일정에 맞는지" 빠른 판단이 어려움</li>
-            <li>기존 채널은 추천형보다 나열형 정보에 가까움</li>
-            <li>언어 장벽 + 지역 교통 정보 부족으로 방문 결정 망설임</li>
-          </ul>
-        </div>
-        <div class="deep-card">
-          <div
-            class="card-accent"
-            style="background: var(--accent-teal);"
-          ></div>
-          <h3>🎯 서비스 목표</h3>
-          <p>
-            사용자의 여행 국가, 방문 시기, 관심사, 동행 유형, 이동 가능 범위를
-            바탕으로 가장 적합한 축제와 주변 여행 코스를 추천합니다.
-          </p>
-          <ul>
-            <li>한·일 양국 축제 데이터 수집 및 표준화</li>
-            <li>날짜·지역·테마·동행자 조건 기반 필터링 추천</li>
-            <li>추천 이유와 주변 코스를 함께 제공</li>
-            <li>한국어·일본어 동일한 대화 흐름으로 제공</li>
-          </ul>
-        </div>
-        <div class="deep-card wide">
-          <div
-            class="card-accent"
-            style="background: var(--accent-blue);"
-          ></div>
-          <h3>👥 타깃 사용자</h3>
-          <p>
-            패키지여행 대신 직접 일정을 짜는 개별 자유여행자(FIT)를 주요
-            대상으로 합니다. 특정 도시만 보는 관광보다 현지 분위기와 계절감을
-            느낄 수 있는 경험을 선호하며, 여러 사이트를 오가는 정보 수집 과정에
-            피로를 느끼는 사용자입니다.
-          </p>
-          <ul>
-            <li>
-              <strong>한국 → 일본:</strong> 일본으로 자유여행 가는 한국인 여행자
-            </li>
-            <li>
-              <strong>일본 → 한국:</strong> 한국으로 자유여행 오는 일본인 여행자
-            </li>
-            <li>
-              <strong>공통:</strong> 현지 축제·행사 중심의 체험형 여행을
-              선호하는 FIT 여행자
-            </li>
-          </ul>
-        </div>
-      </div>
+🇰🇷 한국 · 🇯🇵 일본
 
-      <!-- 서비스 플로우 파이프라인 -->
-      <div class="pipeline reveal" style="margin-top: 4rem;">
-        <div class="pipeline-connector"></div>
+지원 언어
 
-        <div class="pipe-step">
-          <div class="pipe-icon blue">🌐</div>
-          <h3>국가 · 언어 선택</h3>
-          <p>한국 / 일본 중 여행 대상 국가와 인터페이스 언어를 선택합니다.</p>
-          <span class="pipe-tag blue">Step 1</span>
-        </div>
+한국어 · 日本語
 
-        <div class="pipe-step">
-          <div class="pipe-icon teal">📝</div>
-          <h3>조건 입력</h3>
-          <p>날짜, 지역, 테마, 동행 유형, 이동 범위를 대화형으로 입력합니다.</p>
-          <span class="pipe-tag teal">Step 2</span>
-        </div>
+서비스 유형
 
-        <div class="pipe-step">
-          <div class="pipe-icon purple">🎪</div>
-          <h3>축제 추천</h3>
-          <p>
-            적합도 기반 우선순위 산정 후 축제 + 주변 코스를 함께 제안합니다.
-          </p>
-          <span class="pipe-tag purple">Step 3</span>
-        </div>
+대화형 추천 챗봇
 
-        <div class="pipe-step">
-          <div class="pipe-icon amber">💬</div>
-          <h3>후속 질의응답</h3>
-          <p>
-            "아이와 가기 좋은가요?" 같은 추가 질문에 메타데이터 기반으로
-            답변합니다.
-          </p>
-          <span class="pipe-tag amber">Step 4</span>
-        </div>
-      </div>
-    </section>
+문서 버전
 
-    <hr class="full-divider" />
+2025 · MVP 기준
 
-    <!-- CORE FEATURES -->
-    <section id="features">
-      <div class="reveal">
-        <div class="section-label">// 02 핵심 기능 요구사항</div>
-        <h2 class="section-title">6가지 핵심<br />기능 정의</h2>
-        <p class="section-sub">
-          사용자 조건 입력부터 대화형 질의응답까지, 서비스를 구성하는 핵심 기능
-          요구사항을 정의합니다.
-        </p>
-      </div>
+## 추진 배경과
+서비스 흐름
 
-      <!-- 기능 1·2 -->
-      <div class="deep-cards reveal">
-        <div class="deep-card">
-          <div
-            class="card-accent"
-            style="background: var(--accent-blue);"
-          ></div>
-          <h3>🌐 F1. 국가 · 언어 선택</h3>
-          <p>
-            서비스 시작 시 사용자는 여행 대상 국가(한국/일본)와 인터페이스
-            언어를 선택합니다. 이후 추천 결과와 설명은 선택한 언어로 제공됩니다.
-          </p>
-          <ul>
-            <li>한국어 / 일본어 인터페이스 전환 지원</li>
-            <li>고유명사는 원어 + 현지 표기 병기 권장</li>
-            <li>국가별 데이터 분리, 추천 경험은 통일</li>
-          </ul>
-        </div>
-        <div class="deep-card">
-          <div
-            class="card-accent"
-            style="background: var(--accent-teal);"
-          ></div>
-          <h3>📝 F2. 사용자 조건 입력</h3>
-          <p>
-            사용자는 다음 조건을 대화 흐름 안에서 입력할 수 있어야 하며, 입력
-            단계는 최소화되어야 합니다.
-          </p>
-          <div class="code-block">
-            <span class="kw">필수</span>:
-            <span class="str">여행 기간 또는 방문 날짜</span><br />
-            <span class="kw">필수</span>:
-            <span class="str">방문 희망 지역 또는 도시</span><br />
-            <span class="kw">선택</span>:
-            <span class="str">테마 (축제, 먹거리, 전통, 야경 등)</span><br />
-            <span class="kw">선택</span>:
-            <span class="str">동행 유형 (혼자 / 친구 / 연인 / 가족)</span><br />
-            <span class="kw">선택</span>:
-            <span class="str">이동 가능 범위 / 교통 선호</span><br />
-            <span class="kw">선택</span>: <span class="str">예산 수준</span>
-          </div>
-        </div>
-      </div>
+자유여행자가 여행 의사결정을 빠르게 내릴 수 있도록, 축제·행사 정보를 중심으로 맞춤 일정을 추천하는 통합 챗봇 서비스입니다.
 
-      <!-- 기능 3·4 -->
-      <div class="deep-cards reveal" style="margin-top:1.5rem;">
-        <div class="deep-card">
-          <div
-            class="card-accent"
-            style="background: var(--accent-purple);"
-          ></div>
-          <h3>🎪 F3. 축제 탐색 및 추천</h3>
-          <p>
-            사용자 입력 조건에 맞는 축제를 검색하고, 적합도를 반영해 우선순위를
-            산정합니다. 적합한 축제가 없을 경우 유사 테마 행사 또는 지역 체험
-            코스를 대체 추천합니다.
-          </p>
-          <ul>
-            <li>날짜 적합성 + 지역 적합성 + 테마 일치도</li>
-            <li>동행자 적합도 + 운영 여부 반드시 반영</li>
-            <li>혼잡도, 우천 적합성, 야간 운영 여부 보조 점수</li>
-            <li>축제 없는 경우 대체 코스 자동 제안</li>
-          </ul>
-        </div>
-        <div class="deep-card">
-          <div
-            class="card-accent"
-            style="background: var(--accent-purple);"
-          ></div>
-          <h3>📋 F4. 추천 결과 구성</h3>
-          <p>
-            추천 결과에는 핵심 정보와 추천 이유가 먼저 표시되어야 합니다. 다음
-            항목을 반드시 포함합니다.
-          </p>
-          <div class="code-block">
-            <span class="cm"># 추천 결과 포함 항목</span><br /><br />
-            <span class="kw">축제명</span> ·
-            <span class="str">개최 기간</span> ·
-            <span class="str">개최 장소</span><br />
-            <span class="kw">성격 및 추천 이유</span><br />
-            <span class="kw">적합한 동행 유형</span> ·
-            <span class="str">예상 소요 시간</span><br />
-            <span class="kw">주변 관광지</span> ·
-            <span class="str">식당</span> · <span class="str">숙소 후보</span
-            ><br />
-            <span class="kw">이동 방법</span> ·
-            <span class="str">교통 참고 정보</span>
-          </div>
-        </div>
-      </div>
+### 🔍 문제 정의
 
-      <!-- 기능 5·6 -->
-      <div class="deep-cards reveal" style="margin-top:1.5rem;">
-        <div class="deep-card">
-          <div
-            class="card-accent"
-            style="background: var(--accent-amber);"
-          ></div>
-          <h3>💬 F5. 대화형 질의응답</h3>
-          <p>
-            추천 결과 이후에도 사용자가 추가 질문을 할 수 있어야 합니다. 축제
-            메타데이터와 추천 규칙을 기반으로 후속 질문에 답변합니다.
-          </p>
-          <ul>
-            <li>"비 오는 날에도 괜찮은가요?" → 우천 적합성 태그</li>
-            <li>"아이와 가기 좋은가요?" → 가족 친화 태그</li>
-            <li>"야간에도 즐길 수 있나요?" → 야간 운영 여부</li>
-            <li>"근처에 맛집이 있나요?" → 주변 식당 연계</li>
-          </ul>
-        </div>
-        <div class="deep-card">
-          <div
-            class="card-accent"
-            style="background: var(--accent-amber);"
-          ></div>
-          <h3>🔄 F6. 양국 공통 추천 구조</h3>
-          <p>
-            한국 여행과 일본 여행 추천은 동일한 대화 흐름과 결과 구조를
-            유지합니다. 단, 국가별 데이터와 문화 맥락은 분리 관리합니다.
-          </p>
-          <ul>
-            <li>공통 스키마 + 국가별 매핑 레이어 분리 설계</li>
-            <li>지역명 체계, 교통 정보, 문화 설명 요소 국가별 관리</li>
-            <li>추후 제3국 축제 데이터 추가 가능한 확장 구조</li>
-            <li>번역 품질 안정성 유지 — 핵심 항목명 번역 검수 필수</li>
-          </ul>
-        </div>
-      </div>
-    </section>
+현재 한일 양국 관광 정보는 공식 사이트, 지자체, SNS 등에 분산되어 있어 사용자가 직접 비교·판단해야 하는 부담이 큽니다.
 
-    <hr class="full-divider" />
+- 정보 출처가 다원화되어 탐색 피로도가 높음
+- "지금 방문 가능한지", "내 일정에 맞는지" 빠른 판단이 어려움
+- 기존 채널은 추천형보다 나열형 정보에 가까움
+- 언어 장벽 + 지역 교통 정보 부족으로 방문 결정 망설임
 
-    <!-- DATA SECTION -->
-    <section id="data">
-      <div class="reveal">
-        <div class="section-label">// 03 데이터 요구사항</div>
-        <h2 class="section-title">수집 데이터와<br />품질 기준</h2>
-        <p class="section-sub">
-          축제 데이터는 일정 변경 가능성이 높으므로 최신성 관리가 핵심입니다.
-        </p>
-      </div>
+### 🎯 서비스 목표
 
-      <div class="deep-cards reveal">
-        <div class="deep-card">
-          <div
-            class="card-accent"
-            style="background: var(--accent-teal);"
-          ></div>
-          <h3>📦 수집 대상 데이터 항목</h3>
-          <p>각 축제·행사 항목에 대해 다음 필드를 수집하고 표준화합니다.</p>
-          <ul>
-            <li>축제명 · 행사명 (국가별 원어 + 번역)</li>
-            <li>국가 · 광역지역 · 세부 지역</li>
-            <li>시작일 · 종료일 · 운영 시간</li>
-            <li>장소 정보 · 공식 웹사이트 URL</li>
-            <li>대표 카테고리 (전통, 음식, 야간, 공연, 자연, 가족체험)</li>
-            <li>사용자 태그 (가족친화, 커플추천, 혼자가능, 우천민감)</li>
-            <li>주변 관광 자원 연계 데이터</li>
-          </ul>
-        </div>
-        <div class="deep-card">
-          <div
-            class="card-accent"
-            style="background: var(--accent-coral);"
-          ></div>
-          <h3>✅ 데이터 품질 요구사항</h3>
-          <p>
-            축제 일정의 높은 변경 가능성을 고려해 최신성 관리 정책이 반드시
-            필요합니다.
-          </p>
-          <ul>
-            <li>최소 일 단위 갱신 여부 점검 또는 가능한 최대 주기</li>
-            <li>종료·취소·일정변경 행사는 사용자에게 명확히 구분 표시</li>
-            <li>마지막 확인 시각 또는 기준일 노출 필수</li>
-            <li>최신 확인 어려운 경우 참고용 정보임을 고지</li>
-            <li>공식 출처(관광청 · 지자체) 우선 수집</li>
-          </ul>
-        </div>
-        <div class="deep-card wide">
-          <div
-            class="card-accent"
-            style="background: var(--accent-blue);"
-          ></div>
-          <h3>🗂️ 데이터 소스 및 MVP 초기 범위</h3>
-          <p>
-            초기 MVP는 한일 양국 주요 도시를 중심으로 범위를 제한하는 것이
-            현실적입니다. 왕래 수요가 높은 지역부터 시작해 데이터 구축 부담을
-            줄이고, 이후 사용량에 따라 점진적으로 확대합니다.
-          </p>
-          <div class="code-block">
-            <span class="cm"># MVP 초기 대상 도시</span><br /><br />
-            <span class="kw">한국</span>:
-            <span class="str">서울 · 부산 · (수도권)</span><br />
-            <span class="kw">일본</span>:
-            <span class="str">도쿄 · 오사카 · 후쿠오카</span><br /><br />
-            <span class="cm"># 데이터 소스 예시</span><br /><br />
-            <span class="kw">한국</span>:
-            <span class="str">대한민국 구석구석 · 한국관광 데이터랩</span><br />
-            <span class="kw"> </span>
-            <span class="str">서울시 행사 페이지 · 지자체 행사 사이트</span
-            ><br />
-            <span class="kw">일본</span>:
-            <span class="str">JNTO 축제·행사 페이지</span><br />
-            <span class="kw"> </span>
-            <span class="str">지역 관광청 · 지자체 행사 페이지</span>
-          </div>
-        </div>
-      </div>
-    </section>
+사용자의 여행 국가, 방문 시기, 관심사, 동행 유형, 이동 가능 범위를 바탕으로 가장 적합한 축제와 주변 여행 코스를 추천합니다.
 
-    <hr class="full-divider" />
+- 한·일 양국 축제 데이터 수집 및 표준화
+- 날짜·지역·테마·동행자 조건 기반 필터링 추천
+- 추천 이유와 주변 코스를 함께 제공
+- 한국어·일본어 동일한 대화 흐름으로 제공
 
-    <!-- SCENARIOS -->
-    <section id="scenarios">
-      <div class="reveal">
-        <div class="section-label">// 04 사용자 시나리오</div>
-        <h2 class="section-title">주요<br />사용 시나리오</h2>
-        <p class="section-sub">
-          서비스가 실제로 동작해야 하는 대표 상황 두 가지를 정의합니다.
-        </p>
-      </div>
+### 👥 타깃 사용자
 
-      <div class="scenario-grid reveal">
-        <div class="scenario-card kr">
-          <div class="scenario-num kr">// SCENARIO 01 · 한국 → 일본</div>
-          <h3>🇯🇵 오사카 10월, 친구와 먹거리 축제</h3>
-          <p>
-            한국 사용자가 10월 오사카 여행을 계획하며 "친구와 함께 갈 만한 지역
-            축제와 먹거리 코스"를 요청합니다. 시스템은 해당 기간 오사카 인근
-            축제를 검색하고, 먹거리 연계성이 높은 행사와 주변 방문지를 함께
-            제안해야 합니다.
-          </p>
-          <div class="scenario-tags">
-            <span class="stag teal">10월 · 오사카</span>
-            <span class="stag blue">친구 동행</span>
-            <span class="stag amber">먹거리 테마</span>
-            <span class="stag teal">주변 코스 연계</span>
-          </div>
-        </div>
-        <div class="scenario-card jp">
-          <div class="scenario-num jp">// SCENARIO 02 · 일본 → 한국</div>
-          <h3>🇰🇷 봄 서울, 혼자 가는 야간 행사</h3>
-          <p>
-            일본 사용자가 봄철 서울 여행을 계획하며 "혼자 가도 부담 없는 야간
-            행사"를 요청합니다. 시스템은 서울·수도권의 진행 예정 행사 중 혼자
-            방문 가능한 축제와 야간 코스를 함께 안내해야 합니다.
-          </p>
-          <div class="scenario-tags">
-            <span class="stag coral">봄 · 서울</span>
-            <span class="stag purple">1인 여행</span>
-            <span class="stag coral">야간 행사</span>
-            <span class="stag amber">수도권 범위</span>
-          </div>
-        </div>
-      </div>
-    </section>
+패키지여행 대신 직접 일정을 짜는 개별 자유여행자(FIT)를 주요 대상으로 합니다. 특정 도시만 보는 관광보다 현지 분위기와 계절감을 느낄 수 있는 경험을 선호하며, 여러 사이트를 오가는 정보 수집 과정에 피로를 느끼는 사용자입니다.
 
-    <hr class="full-divider" />
+- **한국 → 일본:**
 
-    <!-- PRIORITY & RISK -->
-    <section id="priority">
-      <div class="reveal">
-        <div class="section-label">// 05 우선순위 · 리스크</div>
-        <h2 class="section-title">개발 우선순위와<br />리스크 대응</h2>
-        <p class="section-sub">
-          MVP 범위와 이후 확장 범위를 명확히 구분하고, 주요 리스크에 대한 대응
-          방향을 정의합니다.
-        </p>
-      </div>
+  일본으로 자유여행 가는 한국인 여행자
+- **일본 → 한국:**
 
-      <!-- 우선순위 테이블 -->
-      <div class="priority-hero reveal">
-        <div
-          style="font-family: var(--font-mono); font-size: 11px; color: var(--muted); letter-spacing: 0.1em; margin-bottom: 1.5rem;"
-        >
-          // 기능 우선순위 분류
-        </div>
-        <div style="overflow-x: auto;">
-          <table class="compare-table">
-            <thead>
-              <tr>
-                <th>우선순위</th>
-                <th>기능 요구사항</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><span class="priority-must">● 필수</span></td>
-                <td>
-                  한일 국가 선택 · 한국어·일본어 지원 · 날짜·지역 기반 축제 추천
-                  · 추천 이유 제공
-                </td>
-              </tr>
-              <tr>
-                <td><span class="priority-high">● 높음</span></td>
-                <td>
-                  주변 관광지·식당 연계 · 동행 유형 기반 필터 · 운영 일정 최신성
-                  표시
-                </td>
-              </tr>
-              <tr>
-                <td><span class="priority-mid">● 중간</span></td>
-                <td>우천 적합성 필터 · 혼잡도 추정 · 예산 기반 추천</td>
-              </tr>
-              <tr>
-                <td><span class="priority-low">● 낮음</span></td>
-                <td>
-                  개인화 학습 · 장기 여행 일정 자동 생성 · 외부 예약 서비스 연동
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+  한국으로 자유여행 오는 일본인 여행자
+- **공통:**
 
-        <!-- 제외 범위 -->
-        <div style="margin-top: 2rem;">
-          <div
-            style="font-family: var(--font-mono); font-size: 11px; color: var(--muted); letter-spacing: 0.1em; margin-bottom: 1rem;"
-          >
-            // 서비스 제외 범위 (명시적 Out-of-Scope)
-          </div>
-          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-            <span
-              style="font-family: var(--font-mono); font-size: 11px; padding: 4px 12px; border-radius: 100px; border: 0.5px solid rgba(240,112,88,0.3); color: var(--accent-coral); background: rgba(240,112,88,0.08);"
-              >항공권 발권 · 결제</span
-            >
-            <span
-              style="font-family: var(--font-mono); font-size: 11px; padding: 4px 12px; border-radius: 100px; border: 0.5px solid rgba(240,112,88,0.3); color: var(--accent-coral); background: rgba(240,112,88,0.08);"
-              >실시간 숙소 예약</span
-            >
-            <span
-              style="font-family: var(--font-mono); font-size: 11px; padding: 4px 12px; border-radius: 100px; border: 0.5px solid rgba(240,112,88,0.3); color: var(--accent-coral); background: rgba(240,112,88,0.08);"
-              >사용자 간 커뮤니티</span
-            >
-            <span
-              style="font-family: var(--font-mono); font-size: 11px; padding: 4px 12px; border-radius: 100px; border: 0.5px solid rgba(240,112,88,0.3); color: var(--accent-coral); background: rgba(240,112,88,0.08);"
-              >축제 주최 측 운영자 시스템</span
-            >
-          </div>
-        </div>
-      </div>
+  현지 축제·행사 중심의 체험형 여행을 선호하는 FIT 여행자
 
-      <!-- 리스크 -->
-      <div class="risk-grid reveal">
-        <div class="risk-card">
-          <div class="risk-label">RISK 01</div>
-          <h4>🗓️ 축제 일정 변경 및 취소</h4>
-          <p>
-            축제 정보는 일정 변경과 취소 가능성이 높아, 잘못된 정보를 노출할
-            위험이 존재합니다.
-          </p>
-          <div class="risk-response">
-            공식 출처 우선 수집, 갱신 주기 관리, 마지막 확인 시각 노출 정책 필수
-            적용
-          </div>
-        </div>
-        <div class="risk-card">
-          <div class="risk-label">RISK 02</div>
-          <h4>🌐 번역 품질 및 문화 맥락 차이</h4>
-          <p>
-            양국 간 지명 표기, 번역 품질, 문화적 맥락 차이로 추천 설명이
-            어색해질 수 있습니다.
-          </p>
-          <div class="risk-response">
-            국가별 로컬라이징 검수 프로세스 도입, 고유명사 원어+현지 표기 병기
-          </div>
-        </div>
-        <div class="risk-card">
-          <div class="risk-label">RISK 03</div>
-          <h4>📡 데이터 수집 접근성</h4>
-          <p>
-            일본 측 데이터는 공식 API 제공 범위가 제한적이며, 크롤링 가능 여부가
-            사이트마다 다릅니다.
-          </p>
-          <div class="risk-response">
-            MVP 단계에서 공식 API 제공 채널 우선 확보, 대안 수집 방법 사전 검토
-            필요
-          </div>
-        </div>
-        <div class="risk-card">
-          <div class="risk-label">RISK 04</div>
-          <h4>⚖️ 추천 로직 공정성</h4>
-          <p>
-            특정 지역·규모의 축제만 노출될 경우 편향된 추천 결과가 나올 수
-            있습니다.
-          </p>
-          <div class="risk-response">
-            지역 대표성, 계절성, 규모 다양성을 보조 점수에 반영하는 로직 설계
-          </div>
-        </div>
-      </div>
-    </section>
+🌐
 
-    <hr class="full-divider" />
+### 국가 · 언어 선택
 
-    <!-- KPI -->
-    <section>
-      <div class="reveal">
-        <div class="section-label">// 06 성공 지표</div>
-        <h2 class="section-title">서비스 성공을<br />측정하는 기준</h2>
-        <p class="section-sub">
-          정량·정성 양면에서 서비스 효과를 측정할 수 있는 핵심 지표를
-          정의합니다.
-        </p>
-      </div>
-      <div class="kpi-grid reveal">
-        <div class="kpi-card">
-          <div class="kpi-icon">🎯</div>
-          <h4>여행 후보 결정률</h4>
-          <p>추천 결과 확인 후 추가 탐색 없이 여행 후보를 결정하는 비율</p>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon">👆</div>
-          <h4>추천 결과 클릭률</h4>
-          <p>
-            추천된 축제 정보를 클릭해 상세 내용을 확인하는 비율 및 대화 지속률
-          </p>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon">🗺️</div>
-          <h4>주변 코스 전환율</h4>
-          <p>축제 추천 이후 주변 관광지·식당 코스 조회로 이어지는 전환율</p>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon">🌏</div>
-          <h4>언어별 만족도</h4>
-          <p>한국어 / 일본어 사용자 각각의 추천 품질 및 서비스 만족도</p>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon">⚠️</div>
-          <h4>최신성 오류 신고율</h4>
-          <p>
-            사용자가 실제 방문 후 축제 정보 오류를 신고하는 비율 (낮을수록 좋음)
-          </p>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon">💬</div>
-          <h4>후속 질문 발생률</h4>
-          <p>
-            추천 결과 이후 대화형 질의응답으로 이어지는 세션 내 후속 질문 비율
-          </p>
-        </div>
-      </div>
-    </section>
+한국 / 일본 중 여행 대상 국가와 인터페이스 언어를 선택합니다.
 
-    <hr class="full-divider" />
+Step 1
 
-    <!-- GLOSSARY -->
-    <section id="glossary">
-      <div class="reveal">
-        <div class="section-label">// 07 핵심 용어집</div>
-        <h2 class="section-title">문서 내<br />핵심 용어 정의</h2>
-        <p class="section-sub">
-          요구사항 정의서에서 사용된 핵심 개념과 약어를 정리합니다.
-        </p>
-      </div>
+📝
 
-      <div class="glossary reveal">
-        <div class="glos-card">
-          <div class="glos-term">FIT</div>
-          <h4>자유여행자</h4>
-          <p>
-            Foreign Independent Traveler. 여행사 패키지를 이용하지 않고 직접
-            일정을 계획하는 개별 여행자.
-          </p>
-        </div>
-        <div class="glos-card">
-          <div class="glos-term">MVP</div>
-          <h4>최소 기능 제품</h4>
-          <p>
-            Minimum Viable Product. 핵심 기능만 포함해 초기 출시하고, 이후
-            피드백을 반영해 확장하는 개발 전략.
-          </p>
-        </div>
-        <div class="glos-card">
-          <div class="glos-term">JNTO</div>
-          <h4>일본관광국</h4>
-          <p>
-            Japan National Tourism Organization. 일본 공식 관광 정보 제공
-            기관으로, 축제·행사 정보를 별도 카테고리로 제공.
-          </p>
-        </div>
-        <div class="glos-card">
-          <div class="glos-term">SCHEMA</div>
-          <h4>데이터 스키마</h4>
-          <p>
-            축제 데이터를 저장하는 구조 정의. 국가 공통 스키마와 국가별 매핑
-            레이어를 분리해 확장성을 확보.
-          </p>
-        </div>
-        <div class="glos-card">
-          <div class="glos-term">LOCALIZATION</div>
-          <h4>현지화</h4>
-          <p>
-            언어 번역을 넘어 지명 표기, 문화적 맥락, 교통 안내 방식을 국가별로
-            적합하게 조정하는 작업.
-          </p>
-        </div>
-        <div class="glos-card">
-          <div class="glos-term">FRESHNESS</div>
-          <h4>데이터 최신성</h4>
-          <p>
-            축제 일정, 취소, 변경 정보가 실제와 얼마나 일치하는지를 나타내는
-            데이터 품질 지표.
-          </p>
-        </div>
-        <div class="glos-card">
-          <div class="glos-term">METADATA</div>
-          <h4>축제 메타데이터</h4>
-          <p>
-            축제 기본 정보 외에 태그, 우천 적합성, 야간 운영 여부, 동행자 적합도
-            등 추천 로직에 활용되는 보조 데이터.
-          </p>
-        </div>
-        <div class="glos-card">
-          <div class="glos-term">FALLBACK</div>
-          <h4>대체 추천</h4>
-          <p>
-            사용자 조건에 맞는 축제가 없을 경우 유사 테마의 일반 행사 또는 지역
-            체험 코스를 대신 제안하는 로직.
-          </p>
-        </div>
-        <div class="glos-card">
-          <div class="glos-term">OUT-OF-SCOPE</div>
-          <h4>제외 범위</h4>
-          <p>
-            서비스에서 명시적으로 다루지 않는 기능의 범위. 항공권 결제, 숙소
-            예약, 커뮤니티 기능 등이 해당.
-          </p>
-        </div>
-      </div>
-    </section>
+### 조건 입력
 
-    <footer>
-      <p>// 한일 축제 기반 자유여행 추천 챗봇 — 요구사항 정의서 v1.0 · 2025</p>
-      <p style="margin-top:0.5rem; font-size:11px;">
-        본 문서는 서비스 기획 단계의 요구사항을 정의하며, 개발 진행에 따라
-        내용이 업데이트될 수 있습니다.
-      </p>
-    </footer>
-  </body>
-</html>
-```
+날짜, 지역, 테마, 동행 유형, 이동 범위를 대화형으로 입력합니다.
 
+Step 2
 
+🎪
+
+### 축제 추천
+
+적합도 기반 우선순위 산정 후 축제 + 주변 코스를 함께 제안합니다.
+
+Step 3
+
+💬
+
+### 후속 질의응답
+
+"아이와 가기 좋은가요?" 같은 추가 질문에 메타데이터 기반으로 답변합니다.
+
+Step 4
+
+---
+
+// 02 핵심 기능 요구사항
+
+## 6가지 핵심
+기능 정의
+
+사용자 조건 입력부터 대화형 질의응답까지, 서비스를 구성하는 핵심 기능 요구사항을 정의합니다.
+
+### 🌐 F1. 국가 · 언어 선택
+
+서비스 시작 시 사용자는 여행 대상 국가(한국/일본)와 인터페이스 언어를 선택합니다. 이후 추천 결과와 설명은 선택한 언어로 제공됩니다.
+
+- 한국어 / 일본어 인터페이스 전환 지원
+- 고유명사는 원어 + 현지 표기 병기 권장
+- 국가별 데이터 분리, 추천 경험은 통일
+
+### 📝 F2. 사용자 조건 입력
+
+사용자는 다음 조건을 대화 흐름 안에서 입력할 수 있어야 하며, 입력 단계는 최소화되어야 합니다.
+
+필수
+
+:
+
+여행 기간 또는 방문 날짜
+
+필수
+
+:
+
+방문 희망 지역 또는 도시
+
+선택
+
+:
+
+테마 (축제, 먹거리, 전통, 야경 등)
+
+선택
+
+:
+
+동행 유형 (혼자 / 친구 / 연인 / 가족)
+
+선택
+
+:
+
+이동 가능 범위 / 교통 선호
+
+선택
+
+:
+
+예산 수준
+
+### 🎪 F3. 축제 탐색 및 추천
+
+사용자 입력 조건에 맞는 축제를 검색하고, 적합도를 반영해 우선순위를 산정합니다. 적합한 축제가 없을 경우 유사 테마 행사 또는 지역 체험 코스를 대체 추천합니다.
+
+- 날짜 적합성 + 지역 적합성 + 테마 일치도
+- 동행자 적합도 + 운영 여부 반드시 반영
+- 혼잡도, 우천 적합성, 야간 운영 여부 보조 점수
+- 축제 없는 경우 대체 코스 자동 제안
+
+### 📋 F4. 추천 결과 구성
+
+추천 결과에는 핵심 정보와 추천 이유가 먼저 표시되어야 합니다. 다음 항목을 반드시 포함합니다.
+
+# 추천 결과 포함 항목
+
+축제명
+
+·
+
+개최 기간
+
+·
+
+개최 장소
+
+성격 및 추천 이유
+
+적합한 동행 유형
+
+·
+
+예상 소요 시간
+
+주변 관광지
+
+·
+
+식당
+
+·
+
+숙소 후보
+
+이동 방법
+
+·
+
+교통 참고 정보
+
+### 💬 F5. 대화형 질의응답
+
+추천 결과 이후에도 사용자가 추가 질문을 할 수 있어야 합니다. 축제 메타데이터와 추천 규칙을 기반으로 후속 질문에 답변합니다.
+
+- "비 오는 날에도 괜찮은가요?" → 우천 적합성 태그
+- "아이와 가기 좋은가요?" → 가족 친화 태그
+- "야간에도 즐길 수 있나요?" → 야간 운영 여부
+- "근처에 맛집이 있나요?" → 주변 식당 연계
+
+### 🔄 F6. 양국 공통 추천 구조
+
+한국 여행과 일본 여행 추천은 동일한 대화 흐름과 결과 구조를 유지합니다. 단, 국가별 데이터와 문화 맥락은 분리 관리합니다.
+
+- 공통 스키마 + 국가별 매핑 레이어 분리 설계
+- 지역명 체계, 교통 정보, 문화 설명 요소 국가별 관리
+- 추후 제3국 축제 데이터 추가 가능한 확장 구조
+- 번역 품질 안정성 유지 — 핵심 항목명 번역 검수 필수
+
+---
+
+// 03 데이터 요구사항
+
+## 수집 데이터와
+품질 기준
+
+축제 데이터는 일정 변경 가능성이 높으므로 최신성 관리가 핵심입니다.
+
+### 📦 수집 대상 데이터 항목
+
+각 축제·행사 항목에 대해 다음 필드를 수집하고 표준화합니다.
+
+- 축제명 · 행사명 (국가별 원어 + 번역)
+- 국가 · 광역지역 · 세부 지역
+- 시작일 · 종료일 · 운영 시간
+- 장소 정보 · 공식 웹사이트 URL
+- 대표 카테고리 (전통, 음식, 야간, 공연, 자연, 가족체험)
+- 사용자 태그 (가족친화, 커플추천, 혼자가능, 우천민감)
+- 주변 관광 자원 연계 데이터
+
+### ✅ 데이터 품질 요구사항
+
+축제 일정의 높은 변경 가능성을 고려해 최신성 관리 정책이 반드시 필요합니다.
+
+- 최소 일 단위 갱신 여부 점검 또는 가능한 최대 주기
+- 종료·취소·일정변경 행사는 사용자에게 명확히 구분 표시
+- 마지막 확인 시각 또는 기준일 노출 필수
+- 최신 확인 어려운 경우 참고용 정보임을 고지
+- 공식 출처(관광청 · 지자체) 우선 수집
+
+### 🗂️ 데이터 소스 및 MVP 초기 범위
+
+초기 MVP는 한일 양국 주요 도시를 중심으로 범위를 제한하는 것이 현실적입니다. 왕래 수요가 높은 지역부터 시작해 데이터 구축 부담을 줄이고, 이후 사용량에 따라 점진적으로 확대합니다.
+
+# MVP 초기 대상 도시
+
+한국
+
+:
+
+서울 · 부산 · (수도권)
+
+일본
+
+:
+
+도쿄 · 오사카 · 후쿠오카
+
+# 데이터 소스 예시
+
+한국
+
+:
+
+대한민국 구석구석 · 한국관광 데이터랩
+
+서울시 행사 페이지 · 지자체 행사 사이트
+
+일본
+
+:
+
+JNTO 축제·행사 페이지
+
+지역 관광청 · 지자체 행사 페이지
+
+---
+
+// 04 사용자 시나리오
+
+## 주요
+사용 시나리오
+
+서비스가 실제로 동작해야 하는 대표 상황 두 가지를 정의합니다.
+
+// SCENARIO 01 · 한국 → 일본
+
+### 🇯🇵 오사카 10월, 친구와 먹거리 축제
+
+한국 사용자가 10월 오사카 여행을 계획하며 "친구와 함께 갈 만한 지역 축제와 먹거리 코스"를 요청합니다. 시스템은 해당 기간 오사카 인근 축제를 검색하고, 먹거리 연계성이 높은 행사와 주변 방문지를 함께 제안해야 합니다.
+
+10월 · 오사카
+
+친구 동행
+
+먹거리 테마
+
+주변 코스 연계
+
+// SCENARIO 02 · 일본 → 한국
+
+### 🇰🇷 봄 서울, 혼자 가는 야간 행사
+
+일본 사용자가 봄철 서울 여행을 계획하며 "혼자 가도 부담 없는 야간 행사"를 요청합니다. 시스템은 서울·수도권의 진행 예정 행사 중 혼자 방문 가능한 축제와 야간 코스를 함께 안내해야 합니다.
+
+봄 · 서울
+
+1인 여행
+
+야간 행사
+
+수도권 범위
+
+---
+
+// 05 우선순위 · 리스크
+
+## 개발 우선순위와
+리스크 대응
+
+MVP 범위와 이후 확장 범위를 명확히 구분하고, 주요 리스크에 대한 대응 방향을 정의합니다.
+
+// 기능 우선순위 분류
+
+| 우선순위 | 기능 요구사항 |
+| --- | --- |
+| ● 필수 | 한일 국가 선택 · 한국어·일본어 지원 · 날짜·지역 기반 축제 추천 · 추천 이유 제공 |
+| ● 높음 | 주변 관광지·식당 연계 · 동행 유형 기반 필터 · 운영 일정 최신성 표시 |
+| ● 중간 | 우천 적합성 필터 · 혼잡도 추정 · 예산 기반 추천 |
+| ● 낮음 | 개인화 학습 · 장기 여행 일정 자동 생성 · 외부 예약 서비스 연동 |
+
+// 서비스 제외 범위 (명시적 Out-of-Scope)
+
+항공권 발권 · 결제
+
+실시간 숙소 예약
+
+사용자 간 커뮤니티
+
+축제 주최 측 운영자 시스템
+
+RISK 01
+
+#### 🗓️ 축제 일정 변경 및 취소
+
+축제 정보는 일정 변경과 취소 가능성이 높아, 잘못된 정보를 노출할 위험이 존재합니다.
+
+공식 출처 우선 수집, 갱신 주기 관리, 마지막 확인 시각 노출 정책 필수 적용
+
+RISK 02
+
+#### 🌐 번역 품질 및 문화 맥락 차이
+
+양국 간 지명 표기, 번역 품질, 문화적 맥락 차이로 추천 설명이 어색해질 수 있습니다.
+
+국가별 로컬라이징 검수 프로세스 도입, 고유명사 원어+현지 표기 병기
+
+RISK 03
+
+#### 📡 데이터 수집 접근성
+
+일본 측 데이터는 공식 API 제공 범위가 제한적이며, 크롤링 가능 여부가 사이트마다 다릅니다.
+
+MVP 단계에서 공식 API 제공 채널 우선 확보, 대안 수집 방법 사전 검토 필요
+
+RISK 04
+
+#### ⚖️ 추천 로직 공정성
+
+특정 지역·규모의 축제만 노출될 경우 편향된 추천 결과가 나올 수 있습니다.
+
+지역 대표성, 계절성, 규모 다양성을 보조 점수에 반영하는 로직 설계
+
+---
+
+// 06 성공 지표
+
+## 서비스 성공을
+측정하는 기준
+
+정량·정성 양면에서 서비스 효과를 측정할 수 있는 핵심 지표를 정의합니다.
+
+🎯
+
+#### 여행 후보 결정률
+
+추천 결과 확인 후 추가 탐색 없이 여행 후보를 결정하는 비율
+
+👆
+
+#### 추천 결과 클릭률
+
+추천된 축제 정보를 클릭해 상세 내용을 확인하는 비율 및 대화 지속률
+
+🗺️
+
+#### 주변 코스 전환율
+
+축제 추천 이후 주변 관광지·식당 코스 조회로 이어지는 전환율
+
+🌏
+
+#### 언어별 만족도
+
+한국어 / 일본어 사용자 각각의 추천 품질 및 서비스 만족도
+
+⚠️
+
+#### 최신성 오류 신고율
+
+사용자가 실제 방문 후 축제 정보 오류를 신고하는 비율 (낮을수록 좋음)
+
+💬
+
+#### 후속 질문 발생률
+
+추천 결과 이후 대화형 질의응답으로 이어지는 세션 내 후속 질문 비율
+
+---
+
+// 07 핵심 용어집
+
+## 문서 내
+핵심 용어 정의
+
+요구사항 정의서에서 사용된 핵심 개념과 약어를 정리합니다.
+
+FIT
+
+#### 자유여행자
+
+Foreign Independent Traveler. 여행사 패키지를 이용하지 않고 직접 일정을 계획하는 개별 여행자.
+
+MVP
+
+#### 최소 기능 제품
+
+Minimum Viable Product. 핵심 기능만 포함해 초기 출시하고, 이후 피드백을 반영해 확장하는 개발 전략.
+
+JNTO
+
+#### 일본관광국
+
+Japan National Tourism Organization. 일본 공식 관광 정보 제공 기관으로, 축제·행사 정보를 별도 카테고리로 제공.
+
+SCHEMA
+
+#### 데이터 스키마
+
+축제 데이터를 저장하는 구조 정의. 국가 공통 스키마와 국가별 매핑 레이어를 분리해 확장성을 확보.
+
+LOCALIZATION
+
+#### 현지화
+
+언어 번역을 넘어 지명 표기, 문화적 맥락, 교통 안내 방식을 국가별로 적합하게 조정하는 작업.
+
+FRESHNESS
+
+#### 데이터 최신성
+
+축제 일정, 취소, 변경 정보가 실제와 얼마나 일치하는지를 나타내는 데이터 품질 지표.
+
+METADATA
+
+#### 축제 메타데이터
+
+축제 기본 정보 외에 태그, 우천 적합성, 야간 운영 여부, 동행자 적합도 등 추천 로직에 활용되는 보조 데이터.
+
+FALLBACK
+
+#### 대체 추천
+
+사용자 조건에 맞는 축제가 없을 경우 유사 테마의 일반 행사 또는 지역 체험 코스를 대신 제안하는 로직.
+
+OUT-OF-SCOPE
+
+#### 제외 범위
+
+서비스에서 명시적으로 다루지 않는 기능의 범위. 항공권 결제, 숙소 예약, 커뮤니티 기능 등이 해당.
