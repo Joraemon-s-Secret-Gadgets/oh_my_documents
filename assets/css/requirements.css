@@ -815,6 +815,58 @@
         font-size: 0.78rem;
       }
 
+      /* ── FLOW BRANCH ── */
+      .flow-branch-hd {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 22px 0 6px;
+      }
+      .flow-branch-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3px 14px;
+        border-radius: 20px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .branch-a {
+        background: var(--navy);
+        color: #fff;
+      }
+      .branch-b {
+        background: var(--terra-lt);
+        color: var(--navy2);
+        border: 1px solid #dac87a;
+      }
+      .flow-branch-title {
+        font-weight: 700;
+        font-size: 0.88rem;
+        color: var(--navy);
+      }
+      .flow-branch-desc {
+        font-size: 0.81rem;
+        color: var(--ink3);
+        margin: 0 0 8px;
+        line-height: 1.6;
+      }
+      .flow-tbl th.th-branch-a {
+        background: var(--navy);
+      }
+      .flow-tbl th.th-branch-b {
+        background: var(--terra);
+      }
+      .flow-tbl td em {
+        font-size: 0.79rem;
+        color: var(--ink3);
+        font-style: italic;
+      }
+
       /* ── CONSTRAINT / NOTE BOX ── */
       .note-box {
         background: var(--navy-lt);
