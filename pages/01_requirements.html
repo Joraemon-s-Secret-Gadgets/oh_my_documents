@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — 요구사항 정의서 v1.3</title>
+    <title>로브 (Lovv) — 요구사항 정의서 v1.4.2</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -17,7 +17,7 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">🗺 로브</div>
-          <div class="aside-ver">Requirements Spec · v1.3</div>
+          <div class="aside-ver">Requirements Spec · v1.4.2</div>
           <div class="aside-status">
             <div class="status-dot"></div>
             <span>기획 단계</span>
@@ -116,7 +116,7 @@
           <div class="cover-meta">
             <div class="meta-item">
               <div class="meta-key">문서 버전</div>
-              <div class="meta-val">v1.3 — 신규 테마·직접 질의 진입점 반영</div>
+              <div class="meta-val">v1.4.2 — 인프라·AI 달러 예산 분리</div>
             </div>
             <div class="meta-item">
               <div class="meta-key">작성일</div>
@@ -2032,7 +2032,7 @@
               </tr>
               <tr>
                 <td class="key-cell">사용량 기반 비용</td>
-                <td>AWS, OpenAPI, 외부 지도·날씨 API처럼 호출량, 저장량, 실행 시간에 따라 달라지는 비용</td>
+                <td>AWS, Runpod, OpenAPI, 외부 지도·날씨 API처럼 호출량, 저장량, 실행 시간에 따라 달라지는 비용</td>
                 <td>변동비</td>
               </tr>
               <tr>
@@ -2096,11 +2096,18 @@
                 <td>데이터 범위 확정 후 산정</td>
               </tr>
               <tr>
-                <td class="req-id">AI/LLM 사용</td>
-                <td>300,000원</td>
-                <td>OpenAPI, LLM API, 임베딩, 벡터 검색</td>
-                <td>사용량 기반 변동비로 정의</td>
-                <td>OpenAPI는 Runpod으로 대체될 수 있음</td>
+                <td class="req-id">AI 실행 (Runpod)</td>
+                <td>$300</td>
+                <td>GPU 실행, 모델 서빙, 배치 작업</td>
+                <td>AI 실행 사용량 기반 변동비로 정의</td>
+                <td>Runpod 사용량 기준 관리</td>
+              </tr>
+              <tr>
+                <td class="req-id">LLM/API 사용 (OpenAPI)</td>
+                <td>$300</td>
+                <td>LLM API, 임베딩, 벡터 검색</td>
+                <td>LLM·임베딩 사용량 기반 변동비로 정의</td>
+                <td>OpenAPI 사용량 기준 관리</td>
               </tr>
               <tr>
                 <td class="req-id">외부 API</td>
@@ -2132,10 +2139,10 @@
               </tr>
               <tr>
                 <td class="req-id">확정 예산 합계</td>
-                <td>600,000원</td>
-                <td>AWS, OpenAPI</td>
-                <td>현재 확정된 사용 예산 합계</td>
-                <td>OpenAPI는 Runpod으로 대체 가능</td>
+                <td>300,000원 + $600</td>
+                <td>AWS 300,000원, Runpod $300, OpenAPI $300</td>
+                <td>통화별 확정 예산 합계</td>
+                <td>원화와 달러 예산을 분리 관리</td>
               </tr>
             </tbody>
           </table>
@@ -2292,11 +2299,11 @@
 
           <h2 class="s-h2" id="s9-6">9.6 예산·인력·일정 관리 원칙</h2>
           <ul class="bullet-list">
-            <li>AWS와 OpenAPI 예산은 현재 확정 예산으로 관리하며, OpenAPI는 필요 시 Runpod으로 대체할 수 있다.</li>
+            <li>AWS 인프라 예산은 300,000원으로 관리하고, Runpod과 OpenAPI는 각각 $300 한도로 분리 관리한다.</li>
             <li>PoC 기간에는 구현 완성보다 추천 가능성, 화면 흐름, Production 범위 검증을 우선한다.</li>
             <li>Production 진행 여부와 범위는 2026-06-16 중간 보고에서 점검한다.</li>
             <li>외부 API Key 승인, 데이터 확보, RAG 품질 검증이 지연되면 MVP 범위를 조정하거나 후순위 기능을 분리한다.</li>
-            <li>예산 사용량은 AWS, OpenAPI 또는 Runpod, 외부 API 호출량을 중심으로 주기적으로 확인한다.</li>
+            <li>예산 사용량은 AWS 인프라, Runpod AI 실행, OpenAPI LLM/API, 외부 API 호출량을 중심으로 주기적으로 확인한다.</li>
           </ul>
         </div>
 
@@ -2337,8 +2344,8 @@
                 <td>2026-05-27</td>
                 <td>로브 기획팀</td>
                 <td>
-                  예산안, 인력 분배, 개발 기한 섹션 추가. AWS 300,000원,
-                  OpenAPI 300,000원 예산과 PoC/Production 일정 기준 반영
+                  예산안, 인력 분배, 개발 기한 섹션 추가.
+                  PoC/Production 일정 기준 반영
                 </td>
               </tr>
               <tr>
@@ -2348,6 +2355,24 @@
                 <td>
                   공예·장인 체험, 치유·웰니스, 사계절 액티비티 확장 테마와
                   예산 역산·날씨 기반 직접 질의 진입점 반영
+                </td>
+              </tr>
+              <tr>
+                <td>v1.4</td>
+                <td>2026-05-27</td>
+                <td>로브 기획팀</td>
+                <td>
+                  Runpod $300과 OpenAPI $300을 AI 실행·LLM 통합 예산으로
+                  관리하도록 예산안과 관리 원칙 수정
+                </td>
+              </tr>
+              <tr>
+                <td>v1.4.2</td>
+                <td>2026-05-27</td>
+                <td>로브 기획팀</td>
+                <td>
+                  인프라 300,000원 예산을 복원하고 Runpod AI 실행 $300,
+                  OpenAPI LLM/API $300으로 달러 예산 분리
                 </td>
               </tr>
             </tbody>
