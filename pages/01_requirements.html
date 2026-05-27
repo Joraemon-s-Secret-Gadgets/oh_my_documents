@@ -111,9 +111,7 @@
           <div class="cover-label">Requirements Specification Document</div>
           <div class="cover-title">로브 (Lovv)</div>
           <div class="cover-subtitle">
-            Local(소도시) + Vibe(분위기·감성), 또는 Voyage(항해·여행)를 뜻한다.<br />
-            일반적인 Love와 달리 알파벳 v를 겹쳐 써서 트렌디한 스타트업이나
-            테크 서비스 같은 힙한 인상을 준다.
+            Local(소도시) + Vibe(분위기·감성), Voyage(항해·여행)를 뜻한다.<br />
           </div>
           <div class="cover-meta">
             <div class="meta-item">
@@ -557,11 +555,8 @@
             운영된다.
           </p>
           <p class="doc-p">
-            서비스명 로브(Lovv)는 Local(소도시)과 Vibe(분위기·감성), 또는
+            서비스명 로브(Lovv)는 Local(소도시)과 Vibe(분위기·감성),
             Voyage(항해·여행)의 의미를 결합한 이름이다.<br />
-            일반적인 Love와 달리
-            알파벳 v를 겹쳐 사용해 감성적인 여행 서비스이면서도 트렌디한
-            스타트업·테크 서비스의 인상을 전달한다.
           </p>
           <p class="doc-p">
             추천 시 여행 시기(달/계절)에 빛나는 소도시와 그 시기 열리는
@@ -708,6 +703,32 @@
                 <td class="flow-num">6</td>
                 <td class="flow-in">외부 연동</td>
                 <td>Kakao / Yahoo Japan 딥링크로 추가 정보 확인</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- ── 서비스 진입 경로 요약 ── -->
+          <p class="doc-p" style="margin-top:1.5rem;">
+            서비스에는 두 가지 진입 경로가 있으며, 두 경로 모두 추천 결과 단계에서 공통 흐름으로 합류한다.
+          </p>
+          <table class="info-tbl" style="margin-top:0.75rem;">
+            <thead>
+              <tr>
+                <th style="width:22%">진입 경로</th>
+                <th>사용자 행동</th>
+                <th style="width:38%">시스템 처리 방식</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="key-cell">테마 직접 선택</td>
+                <td>6개 테마(온천·바다·역사·미식·자연·예술) 중 하나 이상 선택</td>
+                <td>선택 테마 기반 RAG 파이프라인 실행 → 추천 결과 표시</td>
+              </tr>
+              <tr>
+                <td class="key-cell">챗봇 자연어 입력</td>
+                <td>취향·여행 시기·동행자·이동수단·예산을 자연어 또는 조건 칩으로 입력</td>
+                <td>멀티스텝 에이전트 처리(분류 → RAG 검색 → 군집 → 여정 생성) → 추천 결과 표시</td>
               </tr>
             </tbody>
           </table>
