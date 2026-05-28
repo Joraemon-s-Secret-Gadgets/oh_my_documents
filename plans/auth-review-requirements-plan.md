@@ -24,12 +24,12 @@
 ## Proposed Requirement Rows
 
 | ID | 서비스/영역 | 요구사항 내용 | 비고 |
-|---|---|---|---|
-| `FR-AUTH-001` | 인증 | 서비스는 관리자, 관광 운영자, 데이터 제공 기관 등 권한이 필요한 역할에 대해 로그인 기반 인증을 제공해야 한다. | Production 운영 기능 |
-| `FR-AUTH-002` | 인가 | 서비스는 역할별 권한에 따라 데이터 조회, 제안, 승인, 정책 관리 기능 접근을 제한해야 한다. | 권한 매트릭스 연계 |
-| `FR-REVIEW-001` | 데이터 제안 | 관광 운영자와 데이터 제공 기관은 소도시·축제·행사 데이터를 제안하거나 제공할 수 있어야 한다. | 제안 상태 관리 |
-| `FR-REVIEW-002` | 데이터 검토 | 서비스 관리자는 제안·제공된 데이터를 검토하고 승인, 반려, 수정 요청할 수 있어야 한다. | 승인 책임 분리 |
-| `FR-REVIEW-003` | 이력 관리 | 시스템은 데이터 제안, 검토, 승인, 반려, 수정 요청 이력을 추적할 수 있어야 한다. | 감사 로그 후보 |
+| --- | --- | --- | --- |
+| FR-AUTH-001 | 인증 | 서비스는 관리자, 관광 운영자, 데이터 제공 기관 등 권한이 필요한 역할에 대해 로그인 기반 인증을 제공해야 한다. | Production 운영 기능 |
+| FR-AUTH-002 | 인가 | 서비스는 역할별 권한에 따라 데이터 조회, 제안, 승인, 정책 관리 기능 접근을 제한해야 한다. | 권한 매트릭스 연계 |
+| FR-REVIEW-001 | 데이터 제안 | 관광 운영자와 데이터 제공 기관은 소도시·축제·행사 데이터를 제안하거나 제공할 수 있어야 한다. | 제안 상태 관리 |
+| FR-REVIEW-002 | 데이터 검토 | 서비스 관리자는 제안·제공된 데이터를 검토하고 승인, 반려, 수정 요청할 수 있어야 한다. | 승인 책임 분리 |
+| FR-REVIEW-003 | 이력 관리 | 시스템은 데이터 제안, 검토, 승인, 반려, 수정 요청 이력을 추적할 수 있어야 한다. | 감사 로그 후보 |
 
 ## Task List
 
@@ -38,12 +38,12 @@
 **Description:** `4.7 운영·관리·검증 기능`에 인증과 인가 기능 요구사항을 추가한다.
 
 **Acceptance criteria:**
-- [ ] `FR-AUTH-001`이 로그인 기반 인증 요구사항으로 추가된다.
-- [ ] `FR-AUTH-002`가 역할별 접근 제한 요구사항으로 추가된다.
-- [ ] 구현 방식이나 토큰 구조는 작성하지 않는다.
+- [x] `FR-AUTH-001`이 로그인 기반 인증 요구사항으로 추가된다.
+- [x] `FR-AUTH-002`가 역할별 접근 제한 요구사항으로 추가된다.
+- [x] 구현 방식이나 토큰 구조는 작성하지 않는다.
 
 **Verification:**
-- [ ] `rg -n "FR-AUTH-001|FR-AUTH-002|인증|인가" docs/01_requirements/01_requirements.md`
+- [x] `rg -n "FR-AUTH-001|FR-AUTH-002|인증|인가" docs/01_requirements/01_requirements.md`
 
 **Dependencies:** None
 
@@ -58,13 +58,13 @@
 **Description:** `4.7 운영·관리·검증 기능`에 데이터 제안, 검토, 승인, 반려, 이력 추적 요구사항을 추가한다.
 
 **Acceptance criteria:**
-- [ ] `FR-REVIEW-001`이 데이터 제안 요구사항으로 추가된다.
-- [ ] `FR-REVIEW-002`가 데이터 검토/승인 요구사항으로 추가된다.
-- [ ] `FR-REVIEW-003`이 이력 추적 요구사항으로 추가된다.
-- [ ] DB 테이블, 승인 워크플로 구현 방식, API 엔드포인트 상세는 작성하지 않는다.
+- [x] `FR-REVIEW-001`이 데이터 제안 요구사항으로 추가된다.
+- [x] `FR-REVIEW-002`가 데이터 검토/승인 요구사항으로 추가된다.
+- [x] `FR-REVIEW-003`이 이력 추적 요구사항으로 추가된다.
+- [x] DB 테이블, 승인 워크플로 구현 방식, API 엔드포인트 상세는 작성하지 않는다.
 
 **Verification:**
-- [ ] `rg -n "FR-REVIEW-001|FR-REVIEW-002|FR-REVIEW-003|승인|반려|이력" docs/01_requirements/01_requirements.md`
+- [x] `rg -n "FR-REVIEW-001|FR-REVIEW-002|FR-REVIEW-003|승인|반려|이력" docs/01_requirements/01_requirements.md`
 
 **Dependencies:** Task 1
 
@@ -79,12 +79,12 @@
 **Description:** Markdown 요구사항 문서에 추가한 Auth·Review 요구사항을 HTML 요구사항 페이지의 `4.7 운영·관리·검증 기능` 표에 동일하게 반영한다.
 
 **Acceptance criteria:**
-- [ ] HTML에 `FR-AUTH-*`와 `FR-REVIEW-*` 행이 추가된다.
-- [ ] Markdown과 HTML의 ID, 서비스/영역, 요구사항 내용, 비고가 일치한다.
-- [ ] 기존 TOC와 섹션 ID는 변경하지 않는다.
+- [x] HTML에 `FR-AUTH-*`와 `FR-REVIEW-*` 행이 추가된다.
+- [x] Markdown과 HTML의 ID, 서비스/영역, 요구사항 내용, 비고가 일치한다.
+- [x] 기존 TOC와 섹션 ID는 변경하지 않는다.
 
 **Verification:**
-- [ ] `rg -n "FR-AUTH|FR-REVIEW" docs/01_requirements/01_requirements.md pages/01_requirements.html`
+- [x] `rg -n "FR-AUTH|FR-REVIEW" docs/01_requirements/01_requirements.md pages/01_requirements.html`
 
 **Dependencies:** Task 1, Task 2
 
@@ -98,13 +98,13 @@
 **Description:** 요구사항 정의서 수준을 벗어난 구현 상세가 들어가지 않았는지 확인하고, 문서 간 정합성을 검증한다.
 
 **Acceptance criteria:**
-- [ ] Auth·Review 요구사항은 기능 요구사항 문장으로만 작성된다.
-- [ ] DB/API/토큰/화면 구현 상세는 포함되지 않는다.
-- [ ] `git diff --check`가 통과한다.
+- [x] Auth·Review 요구사항은 기능 요구사항 문장으로만 작성된다.
+- [x] DB/API/토큰/화면 구현 상세는 포함되지 않는다.
+- [x] `git diff --check`가 통과한다.
 
 **Verification:**
-- [ ] `rg -n "token|JWT|endpoint|테이블|컬렉션|인덱스" docs/01_requirements/01_requirements.md pages/01_requirements.html`
-- [ ] `git diff --check`
+- [x] `rg -n "token|JWT|endpoint|테이블|컬렉션|인덱스" docs/01_requirements/01_requirements.md pages/01_requirements.html`
+- [x] `git diff --check`
 
 **Dependencies:** Task 3
 
@@ -125,5 +125,5 @@
 
 ## Open Questions
 
-- Auth·Review 요구사항을 이번 차수에 바로 요구사항 정의서에 반영할지, 별도 설계 문서 작성 후 반영할지 결정이 필요하다.
+- Auth·Review 요구사항은 이번 차수에 요구사항 정의서에 반영했다.
 - 데이터 제공 기관의 인증 방식을 사용자 로그인으로 볼지, 기관 API Key 또는 계정 기반 인증으로 분리할지 후속 설계에서 결정이 필요하다.
