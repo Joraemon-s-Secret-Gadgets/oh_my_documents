@@ -1,8 +1,10 @@
       // Date
       const d = new Date();
       const ds = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
-      document.getElementById("todayDate").textContent = ds;
-      document.getElementById("logDate").textContent = ds;
+      const todayDate = document.getElementById("todayDate");
+      if (todayDate) todayDate.textContent = ds;
+      const logDate = document.getElementById("logDate");
+      if (logDate) logDate.textContent = ds;
       const logDate2 = document.getElementById("logDate2");
       if (logDate2) logDate2.textContent = ds;
 

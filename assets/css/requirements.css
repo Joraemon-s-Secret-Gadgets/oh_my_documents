@@ -199,6 +199,44 @@
         max-width: calc(var(--doc-max) + 96px);
         min-width: 0;
       }
+      main#cover > h1#cover-title {
+        padding: 56px 0 10px;
+        border-bottom: none;
+        color: var(--navy);
+        font-family: "Noto Serif KR", serif;
+        font-size: 2.4rem;
+        line-height: 1.2;
+        margin-bottom: 6px;
+      }
+      main#cover > h1#cover-title + p {
+        color: var(--ink3);
+        font-size: 1rem;
+        font-style: italic;
+        margin-bottom: 8px;
+      }
+      main#cover > blockquote {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        margin: 26px 0 44px;
+        border: 1px solid var(--rule);
+        border-radius: 8px;
+        overflow: hidden;
+        background: var(--white);
+      }
+      main#cover > blockquote p {
+        margin: 0;
+        padding: 11px 16px;
+        border-right: 1px solid var(--rule);
+        color: var(--ink);
+        font-size: 0.82rem;
+        font-weight: 600;
+      }
+      main#cover > blockquote p:last-child {
+        border-right: 0;
+      }
+      main#cover > h1.s-h1:not(#cover-title) {
+        margin-top: 52px;
+      }
 
       /* ── DOCUMENT COVER ── */
       .doc-cover {
@@ -429,6 +467,18 @@
         font-size: 0.82rem;
         margin: 12px 0 20px;
       }
+      .table-wrap {
+        width: 100%;
+        overflow-x: auto;
+        margin: 12px 0 20px;
+        border: 1px solid var(--rule);
+        border-radius: 8px;
+        background: var(--white);
+      }
+      .table-wrap .info-tbl {
+        min-width: 720px;
+        margin: 0;
+      }
       .info-tbl th {
         background: var(--navy);
         color: #fff;
@@ -479,6 +529,21 @@
         padding: 1px 5px;
         border-radius: 3px;
         border: 1px solid var(--rule);
+      }
+      pre {
+        margin: 12px 0 20px;
+        padding: 14px 16px;
+        overflow-x: auto;
+        border: 1px solid var(--rule);
+        border-radius: 8px;
+        background: #10251F;
+        color: #F7F3EA;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.78rem;
+        line-height: 1.7;
+      }
+      pre code {
+        font-family: inherit;
       }
 
       /* ── REQUIREMENTS TABLE ── */
