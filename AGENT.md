@@ -1,6 +1,6 @@
 # Agent Instructions
 
-이 저장소는 GitHub Pages로 공유할 개발 문서를 관리한다. 에이전트는 Markdown 원본 문서를 기준으로 HTML 공유 문서를 생성하거나 갱신한다.
+이 저장소는 GitHub Pages로 공유할 로브(Lovv) 개발 문서를 관리한다. 에이전트는 Markdown 원본 문서를 기준으로 HTML 공유 문서를 생성하거나 갱신한다.
 
 ## Core Rule
 
@@ -8,70 +8,64 @@
 
 `index.html`과 `pages/*.html`은 공유용 생성물로 취급한다. HTML을 직접 수정해야 하는 경우에도, 같은 변경이 반드시 대응하는 Markdown 원본에 반영되어 있어야 한다.
 
+`docs/00_project_plan/00_project_plan.md`는 다른 상세 문서의 내용을 반영하는 상위 기획 문서다. LLM이 이 파일을 수정할 때는 `docs/01_requirements`부터 `docs/06_agent_spec`까지의 최신 내용을 읽기 전용 기준으로 확인하고, 상세 문서와 모순되지 않게 요약·동기화한다.
+
+프로젝트 기획서 동기화 작업만으로 상세 문서를 수정하지 않는다. 상세 문서는 사용자가 해당 문서 수정을 요청했거나, 그 문서 자체의 내용을 업데이트하는 작업일 때만 Agent가 수정한다.
+
 ## Repository Roles
 
 ```text
-docs/*.md       원본 개발 문서
-docs/*/index.md 폴더형 원본 문서의 시작점
-index.html      GitHub Pages 첫 화면
-pages/*.html    Markdown 원본을 바탕으로 생성된 공유용 HTML 문서
-assets/         공통 CSS, 이미지 등 정적 리소스
-plans/          문서 사이트 구축 및 운영 계획
-README.md       저장소 소개와 운영 방식 요약
+docs/00_project_plan/      상위 프로젝트 기획서. 다른 문서의 내용을 반영한다.
+docs/01_requirements/      요구사항 정의서와 요구사항 보조 자료
+docs/02_service_flow/      서비스 흐름 명세서
+docs/03_technical_spec/    기술 명세서
+docs/04_api_spec/          API 명세서
+docs/05_database_design/   데이터베이스 설계 명세서
+docs/06_agent_spec/        Agent 명세서
+index.html                 GitHub Pages 첫 화면
+pages/*.html               Markdown 원본을 바탕으로 생성된 공유용 HTML 문서
+assets/                    공통 CSS, JS, 이미지 등 정적 리소스
+plans/                     문서 사이트 구축 및 운영 계획
+README.md                  저장소 소개와 운영 방식 요약
 ```
 
 ## Document Flow
 
 개발 문서는 아래 순서를 기본으로 한다.
 
-1. 요구사항 정의서
-2. 사용자 시나리오 / 유저 스토리
-3. 화면 흐름 / 정보 구조
-4. 시스템 아키텍처
-5. 데이터베이스 설계
-6. API 명세서
-7. UI/UX 가이드
-8. 테스트 계획서
-9. 배포 가이드
-10. 운영 가이드
+1. 프로젝트 기획서
+2. 요구사항 정의서
+3. 서비스 흐름 명세서
+4. 기술 명세서
+5. API 명세서
+6. 데이터베이스 설계 명세서
+7. Agent 명세서
+8. UI/UX 가이드
+9. 테스트 계획서
+10. 배포·운영 가이드
 
 ## Source Document Naming
 
-기본 문서 구조는 다음을 권장한다.
+현재 문서 구조는 다음을 기준으로 한다.
 
 ```text
 docs/
-├── 01_requirements.md
-├── 02_user_stories.md
-├── 03_information_architecture.md
-├── 04_system_architecture.md
-├── 05_database_design.md
-├── 06_api_specification.md
-├── 07_ui_ux_guidelines.md
-├── 08_test_plan.md
-├── 09_deployment_guide.md
-└── 10_operations_guide.md
+├── 00_project_plan/00_project_plan.md
+├── 01_requirements/01_requirements.md
+├── 02_service_flow/02_service_flow.md
+├── 03_technical_spec/03_technical_spec.md
+├── 04_api_spec/04_api_spec.md
+├── 05_database_design/05_database_design.md
+└── 06_agent_spec/06_agent_spec.md
 ```
 
-문서 내용이 많아지면 폴더로 분리할 수 있다. 이 경우 `index.md`를 해당 문서의 시작점으로 사용한다.
-
-```text
-docs/
-├── 01_requirements/
-│   ├── index.md
-│   ├── functional_requirements.md
-│   └── non_functional_requirements.md
-└── 06_api_specification/
-    ├── index.md
-    ├── auth.md
-    └── documents.md
-```
+문서 내용이 많아지면 같은 폴더 안에 보조 문서를 추가할 수 있다. 단, 각 폴더의 대표 문서는 위 경로를 유지한다.
 
 ## HTML Generation Rules
 
 - `index.html`은 전체 문서 목차, 문서별 요약, 상태를 보여주는 GitHub Pages 첫 화면으로 생성한다.
 - `pages/*.html`은 `docs/*.md` 또는 `docs/*/index.md`를 바탕으로 생성한다.
-- 모든 HTML 문서는 `assets/css/site.css`를 공유한다.
+- 모든 HTML 문서는 `assets/css/requirements.css`를 공유한다.
 - HTML 문서에는 공통 헤더, 본문, 이전/다음 문서 링크, 푸터를 포함한다.
 - 생성된 HTML 링크는 모두 상대 경로를 사용한다.
 - 문서 상태는 `Draft`, `Review`, `Complete` 중 하나를 사용한다.
@@ -88,4 +82,4 @@ HTML 생성 또는 문서 구조 변경 후 다음을 확인한다.
 
 ## Reference
 
-자세한 계획은 `plans/github-pages-documents-plan.md`를 따른다.
+자세한 문서 복구 및 최신화 계획은 `plans/requirements-restore-reapply-plan.md`와 `plans/requirements_update_plan.md`를 참고한다.
