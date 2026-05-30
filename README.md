@@ -110,6 +110,8 @@ docs/
 
 문서 내용이 많아지면 같은 폴더 안에 보조 Markdown을 추가할 수 있습니다. 단, 각 폴더의 대표 문서는 위 경로를 유지합니다.
 
+보조 Markdown에는 수정할 내용, 근거, 초안을 먼저 작성할 수 있습니다. 이후 Claude나 Codex 같은 LLM Agent가 보조 Markdown의 내용을 검토해 해당 폴더의 대표 문서에 반영하고, 필요한 경우 `pages/`의 HTML 생성물도 최신화합니다.
+
 ## GitHub Pages
 
 GitHub Pages는 저장소 루트의 `index.html`을 첫 화면으로 사용합니다. `docs/`는 원본 Markdown 보관 위치로 사용하고, 공유용 HTML은 `pages/`에 생성합니다.
