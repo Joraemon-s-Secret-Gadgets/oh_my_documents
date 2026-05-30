@@ -1,1 +1,10 @@
 backups/
+
+# LaTeX build intermediates
+pdf/*.aux
+pdf/*.log
+pdf/*.out
+pdf/*.toc
+
+# Requirements PDFs generated outside the committed package
+pdf/01_*.pdf
