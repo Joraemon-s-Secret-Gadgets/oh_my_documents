@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로브 (Lovv) — 서비스 흐름 명세서 v0.1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/requirements.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside>
+        <div class="aside-brand">
+          <div class="aside-logo">로브</div>
+          <div class="aside-ver">Service Flow · v0.1</div>
+          <div class="aside-status"><div class="status-dot"></div><span>기획 단계</span></div>
+        </div>
+        <nav class="toc">
+<div class="toc-section"><a class="toc-link active" href="#cover">표지 / 문서 정보</a></div>
+<div class="toc-section">
+<div class="toc-section-hd">1. 문서 개요</div>
+<a class="toc-link" href="#s1">1. 문서 개요</a>
+<a class="toc-link" href="#s1-1">1.1 목적</a>
+<a class="toc-link" href="#s1-2">1.2 적용 범위</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">2. 사용자 유형과 진입점</div>
+<a class="toc-link" href="#s2">2. 사용자 유형과 진입점</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">3. 전체 서비스 흐름</div>
+<a class="toc-link" href="#s3">3. 전체 서비스 흐름</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">4. 온보딩 흐름</div>
+<a class="toc-link" href="#s4">4. 온보딩 흐름</a>
+<a class="toc-link" href="#s4-1">4.1 조건</a>
+<a class="toc-link" href="#s4-2">4.2 질문 구조</a>
+<a class="toc-link" href="#s4-3">4.3 대도시 스타일 매핑</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">5. 지도 진입 흐름</div>
+<a class="toc-link" href="#s5">5. 지도 진입 흐름</a>
+<a class="toc-link" href="#s5-1">5.1 메인 지도 상태</a>
+<a class="toc-link" href="#s5-2">5.2 마커 클릭 후 흐름</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">6. 챗봇 진입 흐름</div>
+<a class="toc-link" href="#s6">6. 챗봇 진입 흐름</a>
+<a class="toc-link" href="#s6-1">6.1 자연어 입력 예시</a>
+<a class="toc-link" href="#s6-2">6.2 챗봇 추천 생성 전 필수 확인</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">7. 추천 결과 흐름</div>
+<a class="toc-link" href="#s7">7. 추천 결과 흐름</a>
+<a class="toc-link" href="#s7-1">7.1 결과 카드 구성</a>
+<a class="toc-link" href="#s7-2">7.2 대체 일정 토글</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">8. 저장·피드백·마이페이지 흐름</div>
+<a class="toc-link" href="#s8">8. 저장·피드백·마이페이지 흐름</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">9. 예외 흐름</div>
+<a class="toc-link" href="#s9">9. 예외 흐름</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">10. 변경 이력</div>
+<a class="toc-link" href="#s10">10. 변경 이력</a>
+</div>
+        </nav>
+      </aside>
+      <main id="cover">
+<h1 id="cover-title" class="s-h1">로브 (Lovv) 서비스 흐름 명세서</h1>
+<blockquote>
+<p class="doc-p">문서 버전: v0.1</p>
+<p class="doc-p">문서 상태: 기획 단계 (Planning)</p>
+<p class="doc-p">기준 문서: <code>docs/01_requirements/01_requirements.md</code> v1.5</p>
+</blockquote>
+<h1 id="s1" class="s-h1">1. 문서 개요</h1>
+<h2 id="s1-1" class="s-h2">1.1 목적</h2>
+<p class="doc-p">본 문서는 로브 서비스의 사용자 진입, 온보딩, 지도 탐색, 챗봇 추천, 결과 확인, 저장·피드백 흐름을 화면과 상태 전이 관점에서 정의한다. 요구사항 정의서의 기능 요구사항을 화면 흐름과 사용자 행동 단위로 연결해 UX 설계와 프론트엔드 구현의 기준으로 사용한다.</p>
+<h2 id="s1-2" class="s-h2">1.2 적용 범위</h2>
+<ul class="bullet-list">
+<li>신규 사용자 필수 온보딩</li>
+<li>메인 지도 기반 소도시 탐색</li>
+<li>지도 마커 클릭 추천 진입</li>
+<li>챗봇 직접 질의 추천 진입</li>
+<li>축제·행사 포함 여부 확인</li>
+<li>소도시 1곳 집중 일정 추천 결과</li>
+<li>일정 저장, 좋아요/싫어요 피드백, 마이페이지 조회</li>
+</ul>
+<h1 id="s2" class="s-h1">2. 사용자 유형과 진입점</h1>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>사용자</th><th>진입점</th><th>핵심 목적</th></tr></thead><tbody>
+<tr><td>신규 자유여행자</td><td>온보딩 → 메인 지도 또는 챗봇</td><td>선호 테마를 설정하고 첫 추천을 받는다</td></tr>
+<tr><td>재방문 자유여행자</td><td>메인 지도 또는 챗봇</td><td>저장 선호와 피드백을 반영한 추천을 받는다</td></tr>
+<tr><td>관광 운영자</td><td>운영 화면</td><td>담당 지역 데이터와 제안 상태를 확인한다</td></tr>
+<tr><td>서비스 관리자</td><td>관리자 화면</td><td>데이터 제안 승인, 추천 정책, 공지사항을 관리한다</td></tr>
+</tbody></table></div>
+<h1 id="s3" class="s-h1">3. 전체 서비스 흐름</h1>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>단계</th><th>화면/상태</th><th>사용자 행동</th><th>시스템 처리</th><th>다음 상태</th></tr></thead><tbody>
+<tr><td>1</td><td>서비스 진입</td><td>앱 또는 웹 첫 화면 접근</td><td>온보딩 완료 여부 확인</td><td>온보딩 또는 메인</td></tr>
+<tr><td>2</td><td>온보딩</td><td>대도시 스타일 선택</td><td>선택지를 6개 기본 테마로 매핑</td><td>메인 지도</td></tr>
+<tr><td>3</td><td>메인 지도</td><td>국가·월·테마 필터 조정</td><td>소도시 마커 목록 필터링</td><td>지도 탐색</td></tr>
+<tr><td>4A</td><td>지도 마커 팝업</td><td>소도시 마커 클릭</td><td>목적지 고정</td><td>일정 유형 선택</td></tr>
+<tr><td>4B</td><td>챗봇</td><td>자연어 조건 입력</td><td>조건 구조화 및 진입점 분류</td><td>축제 포함 여부 확인</td></tr>
+<tr><td>5</td><td>추천 직전 확인</td><td>축제·행사 포함 여부 선택</td><td>세션 추천 조건에 반영</td><td>추천 생성</td></tr>
+<tr><td>6</td><td>추천 결과</td><td>일정 카드 확인</td><td>소도시 1곳 일별 세부 일정 표시</td><td>저장·피드백</td></tr>
+<tr><td>7</td><td>상세 패널</td><td>지도, 현재 날씨, 외부 링크 확인</td><td>외부 API/딥링크 정보 표시</td><td>결과 화면 유지</td></tr>
+<tr><td>8</td><td>저장·피드백</td><td>저장, 좋아요/싫어요 선택</td><td>로컬 스토리지 또는 계정 저장</td><td>마이페이지/다음 추천</td></tr>
+</tbody></table></div>
+<h1 id="s4" class="s-h1">4. 온보딩 흐름</h1>
+<h2 id="s4-1" class="s-h2">4.1 조건</h2>
+<ul class="bullet-list">
+<li>온보딩은 신규 사용자에게 필수로 제공한다.</li>
+<li>PoC에서는 브라우저 로컬 스토리지에 완료 여부와 선호 프로필을 저장한다.</li>
+<li>Production에서는 로그인 사용자 계정에 선호 프로필을 저장한다.</li>
+</ul>
+<h2 id="s4-2" class="s-h2">4.2 질문 구조</h2>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>단계</th><th>질문</th><th>선택 결과</th></tr></thead><tbody>
+<tr><td>1</td><td>어떤 스타일의 여행지를 선호하나요?</td><td>한국 또는 일본 대도시 스타일 선택</td></tr>
+<tr><td>2</td><td>선택 확인</td><td>대도시 스타일을 기본 테마로 매핑</td></tr>
+<tr><td>3</td><td>완료</td><td>선호 테마 프로필 저장</td></tr>
+</tbody></table></div>
+<h2 id="s4-3" class="s-h2">4.3 대도시 스타일 매핑</h2>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>기본 테마</th><th>한국 예시</th><th>일본 예시</th></tr></thead><tbody>
+<tr><td>온천·휴양</td><td>아산/온양</td><td>벳푸</td></tr>
+<tr><td>바다·해안</td><td>부산</td><td>오키나와</td></tr>
+<tr><td>역사·전통</td><td>경주</td><td>교토</td></tr>
+<tr><td>미식·노포</td><td>전주</td><td>오사카</td></tr>
+<tr><td>자연·트레킹</td><td>제주</td><td>닛코</td></tr>
+<tr><td>예술·감성</td><td>강릉</td><td>가나자와</td></tr>
+</tbody></table></div>
+<h1 id="s5" class="s-h1">5. 지도 진입 흐름</h1>
+<h2 id="s5-1" class="s-h2">5.1 메인 지도 상태</h2>
+<p class="doc-p">메인 지도는 추천 대상 소도시를 마커로 표시한다. 사용자는 국가, 월, 테마 필터를 조합해 마커를 좁힐 수 있다.</p>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>UI 요소</th><th>동작</th></tr></thead><tbody>
+<tr><td>국가 필터</td><td>한국, 일본, 전체 중 선택</td></tr>
+<tr><td>월 필터</td><td>1월~12월 중 선택</td></tr>
+<tr><td>테마 필터</td><td>기본 테마와 확장 테마 선택</td></tr>
+<tr><td>소도시 마커</td><td>클릭 시 목적지 후보로 고정</td></tr>
+</tbody></table></div>
+<h2 id="s5-2" class="s-h2">5.2 마커 클릭 후 흐름</h2>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>단계</th><th>사용자 행동</th><th>시스템 처리</th></tr></thead><tbody>
+<tr><td>1</td><td>마커 클릭</td><td>소도시명, 대표 태그, 추천 월 표시</td></tr>
+<tr><td>2</td><td>일정 유형 선택</td><td>당일치기~4박5일 중 하나를 추천 조건에 추가</td></tr>
+<tr><td>3</td><td>축제·행사 포함 여부 선택</td><td>세션 조건에만 저장</td></tr>
+<tr><td>4</td><td>추천 시작</td><td>해당 소도시 1곳의 일별 세부 일정 생성</td></tr>
+</tbody></table></div>
+<h1 id="s6" class="s-h1">6. 챗봇 진입 흐름</h1>
+<h2 id="s6-1" class="s-h2">6.1 자연어 입력 예시</h2>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>입력 예시</th><th>구조화 조건</th></tr></thead><tbody>
+<tr><td>&quot;6월에 비 덜 오는 일본 소도시 추천해줘&quot;</td><td>국가=일본, 월=6월, 진입점=월별 기상 경향</td></tr>
+<tr><td>&quot;혼자 조용히 쉬는 바다 여행 가고 싶어&quot;</td><td>동행=혼자, 테마=바다·해안/휴양</td></tr>
+<tr><td>&quot;가을에 축제 있는 한국 소도시 알려줘&quot;</td><td>국가=한국, 시기=가을, 축제 포함 후보</td></tr>
+</tbody></table></div>
+<h2 id="s6-2" class="s-h2">6.2 챗봇 추천 생성 전 필수 확인</h2>
+<p class="doc-p">챗봇은 추천 생성 직전 아래 항목을 확인한다.</p>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>확인 항목</th><th>기본 처리</th></tr></thead><tbody>
+<tr><td>국가</td><td>명시되지 않으면 한국/일본 중 선택 질문</td></tr>
+<tr><td>여행 시기</td><td>월 또는 계절 입력 요청</td></tr>
+<tr><td>일정 유형</td><td>명시되지 않으면 당일치기~4박5일 선택 질문</td></tr>
+<tr><td>축제·행사 포함 여부</td><td>예/아니오 선택 질문</td></tr>
+</tbody></table></div>
+<h1 id="s7" class="s-h1">7. 추천 결과 흐름</h1>
+<h2 id="s7-1" class="s-h2">7.1 결과 카드 구성</h2>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>영역</th><th>표시 내용</th></tr></thead><tbody>
+<tr><td>추천 대상</td><td>소도시명, 국가, 지역, 대표 이미지</td></tr>
+<tr><td>추천 이유</td><td>사용자 조건, 계절 적합도, 혼잡도, 월별 기상 경향 중 2개 이상</td></tr>
+<tr><td>일정</td><td>일정 유형에 맞춘 일별 방문 순서</td></tr>
+<tr><td>축제·행사</td><td>사용자가 포함을 선택한 경우 해당 월 행사 정보</td></tr>
+<tr><td>외부 링크</td><td>지도, 공식 관광 정보, 숙소 검색 링크, 현지 플랫폼 링크</td></tr>
+<tr><td>피드백</td><td>좋아요, 싫어요, 저장</td></tr>
+</tbody></table></div>
+<h2 id="s7-2" class="s-h2">7.2 대체 일정 토글</h2>
+<p class="doc-p">월별 기상 경향상 우천, 폭설, 장마, 태풍 가능성이 높은 목적지는 &quot;기상 악화 시 대체 일정 보기&quot; 토글을 제공한다. 토글을 활성화하면 동일 목적지 안에서 실내 중심 일정으로 전환한다.</p>
+<h1 id="s8" class="s-h1">8. 저장·피드백·마이페이지 흐름</h1>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>기능</th><th>PoC</th><th>Production</th></tr></thead><tbody>
+<tr><td>일정 저장</td><td>로컬 스토리지</td><td>로그인 계정 서버 저장</td></tr>
+<tr><td>온보딩 선호</td><td>로컬 스토리지</td><td>사용자 프로필 저장</td></tr>
+<tr><td>좋아요/싫어요</td><td>로컬 스토리지</td><td>추천 피드백 테이블 저장</td></tr>
+<tr><td>마이페이지</td><td>기본 조회</td><td>일정 상세, 선호 재설정, 피드백 이력</td></tr>
+</tbody></table></div>
+<h1 id="s9" class="s-h1">9. 예외 흐름</h1>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>상황</th><th>처리</th></tr></thead><tbody>
+<tr><td>필수 조건 누락</td><td>챗봇이 국가, 월, 일정 유형을 추가 질문</td></tr>
+<tr><td>추천 후보 없음</td><td>조건 완화 제안 및 다른 월/테마 안내</td></tr>
+<tr><td>외부 API 실패</td><td>기본 데이터 표시 후 현재 날씨 또는 장소 상세 미제공 안내</td></tr>
+<tr><td>로컬 저장 실패</td><td>저장 실패 메시지와 재시도 제공</td></tr>
+<tr><td>권한 없는 운영 화면 접근</td><td>로그인 또는 접근 불가 안내</td></tr>
+</tbody></table></div>
+<h1 id="s10" class="s-h1">10. 변경 이력</h1>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+<tr><td>v0.1</td><td>2026-05-29</td><td>로브 기획팀</td><td>서비스 흐름 명세서 초안 작성</td></tr>
+</tbody></table></div>
+      </main>
+    </div>
+    <script src="../assets/js/requirements.js" defer></script>
+  </body>
+</html>

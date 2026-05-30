@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로브 (Lovv) — Agent 명세서 v0.1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/requirements.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside>
+        <div class="aside-brand">
+          <div class="aside-logo">로브</div>
+          <div class="aside-ver">Agent Spec · v0.1</div>
+          <div class="aside-status"><div class="status-dot"></div><span>기획 단계</span></div>
+        </div>
+        <nav class="toc">
+<div class="toc-section"><a class="toc-link active" href="#cover">표지 / 문서 정보</a></div>
+<div class="toc-section">
+<div class="toc-section-hd">1. 문서 개요</div>
+<a class="toc-link" href="#s1">1. 문서 개요</a>
+<a class="toc-link" href="#s1-1">1.1 목적</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">2. Agent 목표</div>
+<a class="toc-link" href="#s2">2. Agent 목표</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">3. Agent 입력</div>
+<a class="toc-link" href="#s3">3. Agent 입력</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">4. Agent 출력</div>
+<a class="toc-link" href="#s4">4. Agent 출력</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">5. 파이프라인</div>
+<a class="toc-link" href="#s5">5. 파이프라인</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">6. 단계별 명세</div>
+<a class="toc-link" href="#s6">6. 단계별 명세</a>
+<a class="toc-link" href="#s6-1">6.1 Condition Parser</a>
+<a class="toc-link" href="#s6-2">6.2 Retriever</a>
+<a class="toc-link" href="#s6-3">6.3 Ranker</a>
+<a class="toc-link" href="#s6-4">6.4 Itinerary Planner</a>
+<a class="toc-link" href="#s6-5">6.5 Explanation Writer</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">7. 도구 및 데이터 사용</div>
+<a class="toc-link" href="#s7">7. 도구 및 데이터 사용</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">8. 금지 사항</div>
+<a class="toc-link" href="#s8">8. 금지 사항</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">9. 품질 검증 기준</div>
+<a class="toc-link" href="#s9">9. 품질 검증 기준</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">10. 변경 이력</div>
+<a class="toc-link" href="#s10">10. 변경 이력</a>
+</div>
+        </nav>
+      </aside>
+      <main id="cover">
+<h1 id="cover-title" class="s-h1">로브 (Lovv) Agent 명세서</h1>
+<blockquote>
+<p class="doc-p">문서 버전: v0.1</p>
+<p class="doc-p">문서 상태: 기획 단계 (Planning)</p>
+<p class="doc-p">기준 문서: <code>docs/01_requirements/01_requirements.md</code> v1.5</p>
+</blockquote>
+<h1 id="s1" class="s-h1">1. 문서 개요</h1>
+<h2 id="s1-1" class="s-h2">1.1 목적</h2>
+<p class="doc-p">본 문서는 로브 추천 Agent의 역할, 단계별 입력·출력, 도구 사용, 폴백, 검증 기준을 정의한다. Agent는 단일 LLM 호출이 아니라 조건 분류, 검색, 선정, 일정 구성, 설명 생성으로 나뉜 멀티스텝 파이프라인으로 동작한다.</p>
+<h1 id="s2" class="s-h1">2. Agent 목표</h1>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>목표</th><th>설명</th></tr></thead><tbody>
+<tr><td>조건 구조화</td><td>자연어와 지도 진입 조건을 추천 조건 객체로 변환</td></tr>
+<tr><td>근거 기반 추천</td><td>RAG 검색 결과와 정적 데이터를 근거로 소도시 1곳 선정</td></tr>
+<tr><td>개인화 반영</td><td>온보딩 선호와 좋아요/싫어요 피드백 반영</td></tr>
+<tr><td>일정 구성</td><td>일정 유형에 맞는 일별 세부 일정 생성</td></tr>
+<tr><td>설명 가능성</td><td>추천 이유와 일정 흐름 이유를 자연어로 제공</td></tr>
+<tr><td>안전한 폴백</td><td>데이터 부족, API 실패, 조건 충돌 시 대체 안내</td></tr>
+</tbody></table></div>
+<h1 id="s3" class="s-h1">3. Agent 입력</h1>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>입력</th><th>출처</th><th>설명</th></tr></thead><tbody>
+<tr><td>naturalLanguageQuery</td><td>챗봇</td><td>사용자 자연어 요청</td></tr>
+<tr><td>entryType</td><td>UI</td><td>chatbot 또는 map_marker</td></tr>
+<tr><td>country</td><td>UI/챗봇</td><td>KR 또는 JP</td></tr>
+<tr><td>travelMonth</td><td>UI/챗봇</td><td>1~12월</td></tr>
+<tr><td>destinationId</td><td>지도</td><td>마커 클릭 시 고정 목적지</td></tr>
+<tr><td>tripType</td><td>UI/챗봇</td><td>daytrip~5d4n</td></tr>
+<tr><td>includeFestivals</td><td>UI/챗봇</td><td>축제·행사 포함 여부</td></tr>
+<tr><td>onboardingProfile</td><td>저장 데이터</td><td>기본 선호 테마</td></tr>
+<tr><td>feedbackHistory</td><td>저장 데이터</td><td>좋아요/싫어요 이력</td></tr>
+</tbody></table></div>
+<h1 id="s4" class="s-h1">4. Agent 출력</h1>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>출력</th><th>설명</th></tr></thead><tbody>
+<tr><td>selectedDestination</td><td>선정된 소도시 1곳</td></tr>
+<tr><td>itinerary</td><td>일정 유형에 맞춘 일별 세부 일정</td></tr>
+<tr><td>recommendationReasons</td><td>사용자 조건, 계절, 혼잡도, 기상 경향 기반 추천 이유</td></tr>
+<tr><td>itineraryFlowReason</td><td>일정 순서와 동선 흐름 이유</td></tr>
+<tr><td>alternativeItinerary</td><td>기상 악화 시 실내 중심 대체 일정</td></tr>
+<tr><td>externalLinks</td><td>지도, 숙소 검색, 현지 탐색 링크</td></tr>
+<tr><td>confidence</td><td>추천 신뢰도와 데이터 결측 안내</td></tr>
+</tbody></table></div>
+<h1 id="s5" class="s-h1">5. 파이프라인</h1>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>단계</th><th>Agent 역할</th><th>입력</th><th>출력</th></tr></thead><tbody>
+<tr><td>1</td><td>Condition Parser</td><td>자연어, UI 조건</td><td>구조화된 여행 조건</td></tr>
+<tr><td>2</td><td>Entry Classifier</td><td>구조화 조건</td><td>map_marker, weather_first, theme_first 등</td></tr>
+<tr><td>3</td><td>Retriever</td><td>국가, 월, 테마</td><td>후보 소도시 목록</td></tr>
+<tr><td>4</td><td>Ranker</td><td>후보, 혼잡도, 기상 경향, 피드백</td><td>상위 1곳</td></tr>
+<tr><td>5</td><td>Itinerary Planner</td><td>선정 소도시, 일정 유형, 축제 포함 여부</td><td>일별 일정</td></tr>
+<tr><td>6</td><td>Explanation Writer</td><td>조건, 점수, 일정</td><td>추천 이유와 일정 흐름 이유</td></tr>
+<tr><td>7</td><td>Output Validator</td><td>최종 결과</td><td>누락·환각·정책 위반 검증</td></tr>
+</tbody></table></div>
+<h1 id="s6" class="s-h1">6. 단계별 명세</h1>
+<h2 id="s6-1" class="s-h2">6.1 Condition Parser</h2>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
+<tr><td>책임</td><td>자연어에서 국가, 월, 테마, 동행, 일정 유형을 추출</td></tr>
+<tr><td>필수 출력</td><td><code>country</code>, <code>travelMonth</code>, <code>tripType</code></td></tr>
+<tr><td>폴백</td><td>필수 값 누락 시 추가 질문 생성</td></tr>
+</tbody></table></div>
+<h2 id="s6-2" class="s-h2">6.2 Retriever</h2>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
+<tr><td>검색 대상</td><td>목적지 기본 정보, 테마 태그, 계절 적합도, 월별 기상 경향, 축제 정보</td></tr>
+<tr><td>제약</td><td>한국 요청에는 한국 데이터만, 일본 요청에는 일본 데이터만 사용</td></tr>
+<tr><td>출력</td><td>후보 소도시 N개와 근거 데이터</td></tr>
+</tbody></table></div>
+<h2 id="s6-3" class="s-h2">6.3 Ranker</h2>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>점수 요소</th><th>방향</th></tr></thead><tbody>
+<tr><td>사용자 조건 매칭</td><td>높을수록 가점</td></tr>
+<tr><td>계절 적합도</td><td>높을수록 가점</td></tr>
+<tr><td>혼잡도</td><td>낮을수록 가점</td></tr>
+<tr><td>월별 기상 악화 경향</td><td>높을수록 감점</td></tr>
+<tr><td>좋아요 테마 태그</td><td>가점</td></tr>
+<tr><td>싫어요 소도시</td><td>감점</td></tr>
+</tbody></table></div>
+<h2 id="s6-4" class="s-h2">6.4 Itinerary Planner</h2>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>일정 유형</th><th>구성 기준</th></tr></thead><tbody>
+<tr><td>당일치기</td><td>핵심 명소 2~3개, 이동 부담 최소화</td></tr>
+<tr><td>1박2일</td><td>대표 명소, 식사, 휴식, 숙소 검색 링크</td></tr>
+<tr><td>2박3일 이상</td><td>일자별 테마 분리, 과도한 이동 방지</td></tr>
+</tbody></table></div>
+<h2 id="s6-5" class="s-h2">6.5 Explanation Writer</h2>
+<p class="doc-p">추천 이유는 아래 항목 중 2개 이상을 포함한다.</p>
+<ul class="bullet-list">
+<li>사용자 조건과의 매칭</li>
+<li>계절 적합도</li>
+<li>혼잡 회피 근거</li>
+<li>월별 기상 경향</li>
+<li>일정 흐름과 이동 효율</li>
+</ul>
+<h1 id="s7" class="s-h1">7. 도구 및 데이터 사용</h1>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>도구/데이터</th><th>사용 목적</th></tr></thead><tbody>
+<tr><td>Destination Search</td><td>후보 검색</td></tr>
+<tr><td>Weather Monthly Trends</td><td>추천 스코어링과 대체 일정 분기</td></tr>
+<tr><td>Festival Search</td><td>축제 포함 일정 구성</td></tr>
+<tr><td>Map Link Builder</td><td>지도 링크 생성</td></tr>
+<tr><td>Stay Link Builder</td><td>숙소 검색 링크 생성</td></tr>
+<tr><td>WeatherAPI Proxy</td><td>현재 날씨 표시용 데이터 조회</td></tr>
+</tbody></table></div>
+<h1 id="s8" class="s-h1">8. 금지 사항</h1>
+<ul class="bullet-list">
+<li>대화 로그 전문을 장기 저장하지 않는다.</li>
+<li>WeatherAPI 실시간 예보를 추천 후보 스코어링 기준으로 사용하지 않는다.</li>
+<li>출처 없는 장소 정보를 확정 사실처럼 제시하지 않는다.</li>
+<li>한국 요청에 일본 목적지를 섞거나, 일본 요청에 한국 목적지를 섞지 않는다.</li>
+<li>숙소를 직접 추천하지 않고 검색 링크만 제공한다.</li>
+</ul>
+<h1 id="s9" class="s-h1">9. 품질 검증 기준</h1>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>검증 항목</th><th>기준</th></tr></thead><tbody>
+<tr><td>조건 충족</td><td>국가, 월, 일정 유형이 결과에 반영됨</td></tr>
+<tr><td>근거성</td><td>추천 이유가 데이터 근거와 연결됨</td></tr>
+<tr><td>단일 목적지</td><td>최종 추천은 소도시 1곳 중심</td></tr>
+<tr><td>설명 가능성</td><td>추천 이유와 일정 흐름 이유가 모두 존재</td></tr>
+<tr><td>안전성</td><td>결측 데이터와 API 실패를 안내</td></tr>
+</tbody></table></div>
+<h1 id="s10" class="s-h1">10. 변경 이력</h1>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+<tr><td>v0.1</td><td>2026-05-29</td><td>로브 기획팀</td><td>Agent 명세서 초안 작성</td></tr>
+</tbody></table></div>
+      </main>
+    </div>
+    <script src="../assets/js/requirements.js" defer></script>
+  </body>
+</html>
