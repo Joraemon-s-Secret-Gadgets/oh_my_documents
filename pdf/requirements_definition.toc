@@ -1,0 +1,49 @@
+\contentsline {section}{1. 문서 개요}{3}{Doc-Start}%
+\contentsline {subsection}{1.1 목적}{3}{section*.1}%
+\contentsline {subsection}{1.2 범위}{3}{section*.1}%
+\contentsline {subsection}{1.3 용어 정의}{4}{section*.1}%
+\contentsline {section}{2. 이해관계자}{5}{table.1}%
+\contentsline {subsection}{2.1 역할 모델}{5}{section*.2}%
+\contentsline {subsection}{2.2 권한 매트릭스}{6}{table.2}%
+\contentsline {subsection}{2.3 데이터 접근 범위}{6}{table.3}%
+\contentsline {subsection}{2.4 권한 원칙}{7}{table.4}%
+\contentsline {subsection}{2.5 후속 문서 반영}{7}{table.4}%
+\contentsline {section}{3. 서비스 개요}{8}{table.5}%
+\contentsline {subsection}{3.1 서비스 소개}{8}{section*.3}%
+\contentsline {subsection}{3.2 핵심 가치 제안}{8}{section*.3}%
+\contentsline {subsection}{3.3 타겟 사용자}{9}{table.6}%
+\contentsline {subsection}{3.4 서비스 흐름 요약}{9}{table.7}%
+\contentsline {section}{4. 기능 요구사항}{10}{table.8}%
+\contentsline {subsection}{4.1 공통 사용자 인터페이스}{10}{section*.4}%
+\contentsline {subsection}{4.2 추천·탐색 기능}{10}{table.9}%
+\contentsline {subsection}{4.3 지도·위치·경로 기능}{12}{table.10}%
+\contentsline {subsection}{4.4 RAG·챗봇·에이전트 기능}{12}{table.11}%
+\contentsline {subsection}{4.5 외부 데이터/API 연동}{13}{table.12}%
+\contentsline {subsection}{4.6 서비스별 세부 기능}{14}{table.13}%
+\contentsline {subsection}{4.7 운영·관리·검증 기능}{17}{table.15}%
+\contentsline {subsection}{4.8 추천 파이프라인 명세}{18}{table.16}%
+\contentsline {section}{5. API 연동 요구사항}{19}{table.17}%
+\contentsline {subsection}{5.1 Google Maps Platform}{19}{section*.5}%
+\contentsline {subsection}{5.2 Kakao Maps}{20}{table.18}%
+\contentsline {subsection}{5.3 Yahoo Japan}{20}{table.19}%
+\contentsline {subsection}{5.4 WeatherAPI (날씨)}{21}{table.20}%
+\contentsline {subsection}{5.5 API 연동 현황 요약}{21}{table.21}%
+\contentsline {section}{6. 비기능 요구사항}{22}{table.22}%
+\contentsline {subsection}{6.1 성능}{22}{section*.6}%
+\contentsline {subsection}{6.2 보안}{22}{table.23}%
+\contentsline {subsection}{6.3 호환성 및 접근성}{22}{table.24}%
+\contentsline {section}{7. 데이터 요구사항}{24}{table.25}%
+\contentsline {subsection}{7.1 필요 데이터 항목}{24}{section*.7}%
+\contentsline {subsection}{7.2 데이터 품질 기준}{25}{table.26}%
+\contentsline {section}{8. 제약사항 및 가정}{26}{table.27}%
+\contentsline {subsection}{8.1 기술적 제약사항}{26}{section*.8}%
+\contentsline {subsection}{8.2 가정사항}{26}{section*.8}%
+\clearpage 
+\contentsline {section}{9. 예산안·인력 분배·개발 기한}{27}{section*.8}%
+\contentsline {subsection}{9.1 예산 산정 기준}{27}{section*.9}%
+\contentsline {subsection}{9.2 예산안}{27}{table.28}%
+\contentsline {subsection}{9.3 인력 역할 정의}{28}{table.29}%
+\contentsline {subsection}{9.4 단계별 인력 분배}{29}{table.30}%
+\contentsline {subsection}{9.5 개발 기한 및 마일스톤}{29}{table.31}%
+\contentsline {subsection}{9.6 예산·인력·일정 관리 원칙}{30}{table.32}%
+\contentsline {section}{10. 변경 이력}{31}{table.32}%

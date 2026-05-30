@@ -24,3 +24,7 @@
 ## Output Rule
 
 기획서를 수정한 뒤에는 `pages/00_project_plan.html` 같은 생성물이 있는지 확인하고, 존재한다면 같은 변경을 반영한다. 현재 생성물이 없으면 `index.html` 링크 구조만 깨지지 않는지 확인한다.
+
+## PDF Rule Reference
+
+프로젝트 기획서 PDF 생성과 스타일 규칙은 `../../pdf/AGENT.md`에서 관리한다.

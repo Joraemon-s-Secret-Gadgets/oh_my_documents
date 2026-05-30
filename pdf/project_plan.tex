@@ -1,0 +1,623 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=22mm]{geometry}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\usepackage{kotex}
+\usepackage{graphicx}
+\usepackage[table]{xcolor}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{setspace}
+\setmainfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setsansfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setmonofont{Consolas}
+\newCJKfontfamily\jpfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setCJKmainfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setCJKsansfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setCJKmonofont[Path=C:/Windows/Fonts/]{malgun.ttf}
+\XeTeXlinebreaklocale "ko"
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\binoppenalty=10000
+\relpenalty=10000
+\emergencystretch=2em
+\sloppy
+\newcommand{\DocNeedspace}[1]{\par\ifdim\dimexpr\pagegoal-\pagetotal\relax<#1\newpage\fi}
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue}
+\definecolor{LovvGreen}{HTML}{1B3B32}
+\definecolor{LovvGreenDark}{HTML}{10251F}
+\definecolor{LovvGold}{HTML}{D4AF37}
+\definecolor{LovvPaper}{HTML}{F7F3EA}
+\renewcommand{\arraystretch}{1.35}
+\setlength{\tabcolsep}{2pt}
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\setlist[itemize]{leftmargin=*, itemsep=2pt, topsep=2pt}
+\setstretch{1.08}
+\setlength{\headheight}{30pt}
+\setcounter{tocdepth}{2}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\hbox{\makebox[42pt][c]{\includegraphics[width=38pt,height=13pt,keepaspectratio]{../assets/images/SK-Networks-logo.png}}\hspace{0.7em}\makebox[42pt][c]{\includegraphics[width=44pt,height=15pt,keepaspectratio]{../assets/images/en-core-logo.png}}\hspace{0.7em}\makebox[42pt][c]{\includegraphics[width=38pt,height=13pt,keepaspectratio]{../assets/images/playdata-logo.png}}}}
+\rhead{\scriptsize v0.1 | 검토 중 (Review) | 로브 서비스 PoC 및 Production 기획}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{LovvGreen}\leaders\hrule height \headrulewidth\hfill}}
+\begin{document}
+\begin{titlepage}
+\thispagestyle{empty}
+
+\noindent \hbox to\textwidth{\makebox[0.28\textwidth][c]{\includegraphics[width=0.22\textwidth,height=0.82cm,keepaspectratio]{../assets/images/SK-Networks-logo.png}}\hfil \makebox[0.28\textwidth][c]{\includegraphics[width=0.26\textwidth,height=0.98cm,keepaspectratio]{../assets/images/en-core-logo.png}}\hfil \makebox[0.28\textwidth][c]{\includegraphics[width=0.22\textwidth,height=0.82cm,keepaspectratio]{../assets/images/playdata-logo.png}}}
+\vspace{1em}
+\par\noindent\color{LovvGold}\rule{\textwidth}{1.2pt}\color{black}
+
+\centering
+\vspace*{0.16\textheight}
+{\Huge\bfseries 프로젝트 기획서\par}
+
+\vspace{1.5em}
+{\large 로브 서비스\par}
+
+\vfill
+{\Large\bfseries 조라에몽의 만능 도구들\par}\vspace{0.8em}
+{\Large 이창우, 전승권, 전종혁, 조동휘, 최수아\\[0.8em]{\large 멘토: 최민수}\par}
+\vspace{2em}
+{\large 2026-05-30\par}
+\end{titlepage}
+\begingroup
+\fontsize{11.7pt}{12.5pt}\selectfont
+\setlength{\parskip}{0pt}
+\tableofcontents
+\endgroup
+\newpage
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{1. 프로젝트 개요}
+\addcontentsline{toc}{section}{1. 프로젝트 개요}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{1.1 프로젝트명}
+\addcontentsline{toc}{subsection}{1.1 프로젝트명}
+
+
+\DocNeedspace{3\baselineskip}
+로브 (Lovv)
+
+
+\DocNeedspace{3\baselineskip}
+Lovv는 Local(소도시), Vibe(분위기·감성), Voyage(여행)의 의미를 결합한 소도시 여행 추천 서비스다.
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{1.2 한 줄 정의}
+\addcontentsline{toc}{subsection}{1.2 한 줄 정의}
+
+
+\DocNeedspace{3\baselineskip}
+로브는 한일 여행자에게 혼잡한 유명 관광지 대신 덜 알려진 소도시와 지역 경험을 추천하는 대화형 여행 추천 서비스다.
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{1.3 기획 배경}
+\addcontentsline{toc}{subsection}{1.3 기획 배경}
+
+
+\DocNeedspace{3\baselineskip}
+국내외 여행 수요는 회복되고 있지만, 인기 관광지로의 집중은 여행 만족도 저하와 지역 수용력 문제를 동시에 만든다. 여행자는 덜 붐비는 목적지를 원하지만, 방문객 수가 낮은 관광지와 그 주변 소도시 정보는 흩어져 있고 이동성, 계절성, 축제, 날씨, 주변 관광지 정보를 한 번에 비교하기 어렵다.
+
+
+\DocNeedspace{3\baselineskip}
+로브는 오버투어리즘 회피와 소도시 발견이라는 문제를 여행자 관점의 추천 경험으로 해결한다. 사용자가 국가와 여행 시기를 먼저 입력하면, 서비스는 그 조건을 기준으로 사용자의 자연어 취향과 날씨 조건을 해석하고 추천 근거가 있는 소도시 여정과 주변 정보를 함께 제공한다.
+
+
+\DocNeedspace{3\baselineskip}
+또한 로브는 유명 관광지를 무조건 배제하기보다, 같은 장소라도 비수기에만 경험할 수 있는 조용한 분위기와 계절적 매력을 함께 알려주고자 한다. 성수기에는 혼잡으로 인해 놓치기 쉬운 풍경, 지역 축제 전후의 여유로운 동선, 낮은 숙박·이동 부담 같은 요소를 추천 근거로 활용해 여행자가 익숙한 목적지도 새로운 방식으로 바라볼 수 있게 한다.
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{2. 문제 정의}
+\addcontentsline{toc}{section}{2. 문제 정의}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{2.1 사용자 문제}
+\addcontentsline{toc}{subsection}{2.1 사용자 문제}
+
+
+\DocNeedspace{5\baselineskip}
+\subsubsection*{유명 관광지 편중}
+여행자는 검색 결과, SNS 후기, 패키지 상품에서 반복적으로 노출되는 대도시와 유명 관광지 위주로 정보를 찾게 된다. 이 과정에서 실제 취향이나 여행 시기에 더 잘 맞는 소도시 후보는 비교 대상에 오르기 어렵고, 성수기 혼잡이나 높은 비용을 감수한 채 익숙한 목적지를 선택하게 된다.
+
+\DocNeedspace{5\baselineskip}
+\subsubsection*{소도시 정보 부족}
+방문객 수가 낮은 관광지와 주변 소도시는 공식 정보, 블로그 후기, 지도 정보, 축제 일정, 교통편이 여러 채널에 흩어져 있다. 여행자는 목적지의 계절성, 이동 난이도, 주변 관광 자원, 비수기 매력을 한 번에 파악하기 어려워 계획 수립에 많은 시간을 쓰게 된다.
+
+\DocNeedspace{5\baselineskip}
+\subsubsection*{여행 조건 비교 어려움}
+날씨, 교통, 혼잡도, 동행 유형, 체험 요소, 여행 기간을 동시에 고려해야 하지만 일반 여행 검색은 조건별 정보를 분리해서 제공하는 경우가 많다. 특히 짧은 일정에서는 비가 올 때의 대체 코스, 이동 시간이 긴 목적지의 부담, 축제 포함 여부 같은 의사결정 기준을 사용자가 직접 조합해야 한다.
+
+\DocNeedspace{5\baselineskip}
+\subsubsection*{추천 신뢰도 부족}
+일반 생성형 답변은 그럴듯한 일정은 제시할 수 있지만, 어떤 데이터와 출처를 근거로 추천했는지 확인하기 어려운 경우가 있다. 축제 개최 여부, 날씨 정보, 장소 운영 상태처럼 변동성이 큰 정보가 검증되지 않으면 사용자는 추천 결과를 실제 여행 계획에 바로 적용하기 어렵다.
+
+
+\newpage
+
+\DocNeedspace{8\baselineskip}
+\subsection*{2.2 시장·운영 문제}
+\addcontentsline{toc}{subsection}{2.2 시장·운영 문제}
+
+
+\DocNeedspace{5\baselineskip}
+\subsubsection*{지역 관광 수요 불균형}
+관광 수요가 일부 대도시와 대표 관광지에 집중되면 숙박·교통·상권 혼잡이 심해지고, 여행 만족도와 지역 수용력이 함께 낮아질 수 있다. 반면 주변 소도시나 비수기 목적지는 충분한 매력을 갖고 있어도 노출 기회가 부족해 방문 수요를 만들기 어렵다. 로브는 인기 지역의 대체 목적지와 비수기 방문 가치를 함께 제안해 관광 수요를 더 넓은 지역과 시기로 분산시키는 역할을 한다.
+
+\DocNeedspace{5\baselineskip}
+\subsubsection*{데이터 분산}
+여행 추천에 필요한 관광지 정보, 축제 일정, 교통 접근성, 날씨, 지도, 숙박·맛집 탐색 링크는 서로 다른 기관과 플랫폼에 흩어져 있다. 이 데이터들은 형식과 갱신 주기가 달라 한 번에 비교하기 어렵고, 사용자가 직접 취합하면 정보 누락이나 오래된 정보를 사용할 가능성이 높다. 서비스는 목적지 단위로 필요한 데이터를 묶고 출처와 갱신 기준을 관리해 추천 결과의 일관성과 신뢰도를 높여야 한다.
+
+\DocNeedspace{5\baselineskip}
+\subsubsection*{운영 검증 필요}
+지자체, 관광 운영자, 데이터 제공 기관이 제안하는 지역 정보는 실제 서비스에 반영되기 전에 정확성, 최신성, 공개 적합성을 검토해야 한다. 검증 절차가 없으면 폐업한 장소, 종료된 축제, 과장된 홍보 정보가 추천 결과에 포함될 수 있고 서비스 신뢰도가 낮아진다. 따라서 데이터 제안, 관리자 검토, 승인·반려 이력, 갱신 상태를 관리하는 운영 흐름이 필요하다.
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{3. 프로젝트 목표}
+\addcontentsline{toc}{section}{3. 프로젝트 목표}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{3.1 핵심 목표}
+\addcontentsline{toc}{subsection}{3.1 핵심 목표}
+
+
+\begin{itemize}
+\item 방문객 수가 많은 혼잡 관광지 대신 대체 가능한 소도시 여행지를 추천한다.
+\item 한국과 일본 소도시를 나라별 독립 트랙으로 제공한다.
+\item 여행 시기, 축제, 날씨, 이동 경로, 주변 관광 정보를 결합한 여정을 제안한다.
+\item RAG 기반 검색과 멀티스텝 에이전트로 추천 근거와 안정성을 확보한다.
+\item PoC에서는 P1 기능 구현과 P2\textasciitilde{}P3 설계를 우선해 검증 가능한 서비스 흐름을 만든다.
+\end{itemize}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{3.2 성공 기준}
+\addcontentsline{toc}{subsection}{3.2 성공 기준}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{center}
+\renewcommand{\arraystretch}{1.55}
+\begin{tabular}{@{}>{\RaggedRight\arraybackslash}m{0.250\linewidth}>{\RaggedRight\arraybackslash}m{0.730\linewidth}@{}}
+\toprule
+\rowcolor{LovvGreen!12}\multicolumn{1}{c}{\textbf{구분}} & \multicolumn{1}{c}{\textbf{성공 기준}} \\
+\midrule
+\textcolor{LovvGreen}{\textbf{추천 경험}} & 사용자가 국가와 여행 시기를 입력한 뒤 자연어 취향 또는 지도 마커를 선택하면, 조건에 맞는 소도시 1곳과 일정이 생성된다. \\[0.35em]
+\textcolor{LovvGreen}{\textbf{근거 제공}} & 추천 결과에는 추천 이유, 지도 링크, 날씨 정보, 외부 탐색 링크 중 핵심 정보가 함께 제공된다. \\[0.35em]
+\textcolor{LovvGreen}{\textbf{범위 통제}} & PoC에서는 P1 기능을 구현하고, P2\textasciitilde{}P3는 설계 중심으로 정리하며, P5는 제외 범위로 관리한다. \\[0.35em]
+\textcolor{LovvGreen}{\textbf{확장성}} & 신규 지역, 축제, 촬영지, 체험 정보, 외부 데이터 소스를 추가할 수 있는 구조를 유지한다. \\[0.35em]
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{4. 서비스 개념}
+\addcontentsline{toc}{section}{4. 서비스 개념}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{4.1 핵심 서비스}
+\addcontentsline{toc}{subsection}{4.1 핵심 서비스}
+
+
+\DocNeedspace{3\baselineskip}
+로브는 국가와 여행 시기를 먼저 입력받고, 이후 사용자의 자연어 취향이나 지도 마커 선택을 반영해 소도시 후보를 찾는다. 여기서 소도시는 행정구역의 인구수만으로 판단하지 않고, 관광지 방문객 수가 상대적으로 낮아 혼잡 회피 대안이 될 수 있는 목적지와 주변 지역을 기준으로 본다.
+
+
+\DocNeedspace{3\baselineskip}
+멀티스텝 에이전트는 입력된 국가·여행 시기를 고정 조건으로 사용하고, 사용자의 취향을 테마 또는 추천 진입점으로 해석한다. 이후 RAG로 검색한 소도시 데이터에 근거하여 적합한 소도시 1곳을 선정하고 일정 유형에 맞는 일별 세부 일정과 추천 이유를 함께 제공한다.
+
+
+\DocNeedspace{3\baselineskip}
+주요 추천 축은 다음과 같다.
+
+
+\begin{itemize}
+\item 혼잡 회피 대체 여행지 추천
+\item 한일 축제 기반 여정 추천
+\item 월별 기상 경향 기반 추천
+\item 미디어 촬영지·성지순례 추천
+\item 철도 경로 기반 주변 관광지 안내
+\item 지역 문화 체험 추천
+\item 스키 액티비티 여행 추천
+\end{itemize}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{4.2 사용자 흐름}
+\addcontentsline{toc}{subsection}{4.2 사용자 흐름}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\centering\arraybackslash}m{0.096\linewidth}>{\RaggedRight\arraybackslash}m{0.230\linewidth}>{\RaggedRight\arraybackslash}m{0.384\linewidth}>{\RaggedRight\arraybackslash}m{0.230\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.096\linewidth}}{\textbf{단계}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.230\linewidth}}{\textbf{사용자 입력}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.384\linewidth}}{\textbf{시스템 처리}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.230\linewidth}}{\textbf{결과}} \\
+\midrule
+\endhead
+1 & 국가, 여행 시기 입력 & 추천 대상 국가와 시간 조건 고정 & 기본 추천 범위 설정 \\
+2 & 자연어 취향 또는\newline 지도 마커 선택 & 취향을 테마 또는 추천 진입점으로 해석 & 추천 기준 생성 \\
+3 & 후보 비교 & 방문객 수, 계절, 축제, 월별 기상 경향, 개인화 피드백 기준 정렬 & 소도시 1곳 선정 및 일정 구성 \\
+4 & 상세 확인 & 지도, 날씨, 외부 링크, 추천 이유 제공 & 여행 계획 보조 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{5. 주요 사용자 및 이해관계자}
+\addcontentsline{toc}{section}{5. 주요 사용자 및 이해관계자}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.225\linewidth}>{\RaggedRight\arraybackslash}m{0.196\linewidth}>{\RaggedRight\arraybackslash}m{0.539\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.225\linewidth}}{\textbf{구분}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.196\linewidth}}{\textbf{역할}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.539\linewidth}}{\textbf{주요 니즈}} \\
+\midrule
+\endhead
+자유여행자 & 일반 여행 사용자 & 혼잡하지 않고 취향에 맞는 소도시 여행지 탐색 \\
+지자체·관광 운영자 & 관광 운영자 & 지역 관광 자원 노출, 수요 분산, 데이터 제안 \\
+서비스 관리자 & 내부 운영자 & 추천 정책, 데이터 승인, 공지, 운영 상태 관리 \\
+공공 데이터 제공 기관 & 데이터 제공자 & 관광지·축제·날씨·교통 데이터 제공 및 갱신 \\
+외부 API/시스템 & 시스템 연동 주체 & 지도, 장소, 날씨, 외부 탐색 링크 제공 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{3\baselineskip}
+로브는 여행자에게 추천 경험을 제공하는 서비스이지만, 추천 품질은 지자체·관광 운영자, 공공 데이터 제공 기관, 외부 API/시스템의 데이터 신뢰도에 영향을 받는다. 따라서 PoC 단계에서는 여행자 경험을 우선 검증하되, 향후 운영 단계에서는 데이터 제안, 검증, 갱신 흐름까지 함께 고려해야 한다.
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{6. 프로젝트 범위}
+\addcontentsline{toc}{section}{6. 프로젝트 범위}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{6.1 PoC 범위}
+\addcontentsline{toc}{subsection}{6.1 PoC 범위}
+
+
+\DocNeedspace{3\baselineskip}
+PoC는 P1 구현을 핵심 범위로 한다. P2와 P3는 설계 산출물을 우선 만들고, 일정 여유가 있을 경우 일부 구현한다.
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\centering\arraybackslash}m{0.113\linewidth}>{\RaggedRight\arraybackslash}m{0.469\linewidth}>{\centering\arraybackslash}m{0.094\linewidth}>{\centering\arraybackslash}m{0.131\linewidth}>{\centering\arraybackslash}m{0.113\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.113\linewidth}}{\textbf{우선순위}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.469\linewidth}}{\textbf{기능 범위}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.094\linewidth}}{\textbf{PoC}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.131\linewidth}}{\textbf{{\footnotesize Production}}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.113\linewidth}}{\textbf{상태}} \\
+\midrule
+\endhead
+P1 & 혼잡 회피 대체 여행지 추천, 한일 축제 기반 여정 추천, 일주일 이내 여행의 날씨 기반 추천 & 구현 & 고도화 & 핵심 \\
+P2 & 미디어 촬영지·성지순례 추천 & 설계 & 구현 & 선택 구현 \\
+P3 & 철도 경로 기반 주변 관광지 안내, 지역 문화 체험 추천 & 설계 & 구현 & 설계 \\
+P4 & 스키 액티비티 여행 추천 & 정의 & 구현 & {\footnotesize Production} \\
+P5 & 별 관측 조건 기반 여행지 추천, 치유·웰니스 여정 추천, 예산 역산 추천 & 제외 & 검토 & 제외 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{6.2 제외 범위}
+\addcontentsline{toc}{subsection}{6.2 제외 범위}
+
+
+\DocNeedspace{3\baselineskip}
+다음 기능은 PoC 상세 요구기능에서 제외하고, 우선순위 및 단계별 추진 범위에만 기록한다.
+
+
+\begin{itemize}
+\item 별 관측 조건 기반 여행지 추천
+\item 치유·웰니스 여정 추천
+\item 예산 역산 추천
+\end{itemize}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{7. 기능 구성}
+\addcontentsline{toc}{section}{7. 기능 구성}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{7.1 사용자 기능}
+\addcontentsline{toc}{subsection}{7.1 사용자 기능}
+
+
+\begin{itemize}
+\item 자연어 기반 여행 조건 입력
+\item 국가와 여행 시기를 먼저 고정한 뒤 취향, 날씨 조건을 반영하는 추천
+\item 추천 여정 카드 확인
+\item 지도, 날씨, 외부 링크 확인
+\item 추천 결과 비교 및 후속 질의
+\end{itemize}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{7.2 추천 기능}
+\addcontentsline{toc}{subsection}{7.2 추천 기능}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\centering\arraybackslash}m{0.260\linewidth}>{\RaggedRight\arraybackslash}m{0.720\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.260\linewidth}}{\textbf{기능}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.720\linewidth}}{\textbf{설명}} \\
+\midrule
+\endhead
+혼잡 회피 추천 & 혼잡도가 높은 유명 관광지 대신 대체 소도시와 방문 시간대를 제안 \\
+축제 기반 추천 & 한국·일본의 덜 알려진 축제와 주변 관광 자원을 결합 \\
+날씨 기반 추천 & 일주일 이내 여행 조건에서 예보가 좋은 소도시를 제안 \\
+미디어 성지순례 & K-Drama 촬영지와 애니메이션 성지를 하나의 미디어 테마로 추천 \\
+철도 경로 안내 & 철도 경로, 주요 역, 환승, 주변 관광지를 함께 안내 \\
+지역 문화 체험 & 공예, 차, 지역 요리, 전통문화, 농어촌 활동 등 지역 문화를 체험할 수 있는 목적지 추천 \\
+스키 액티비티 & 스키장 접근성, 적설·날씨 조건, 강습·장비 정보를 기반으로 겨울 액티비티 추천 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{7.3 운영·관리 기능}
+\addcontentsline{toc}{subsection}{7.3 운영·관리 기능}
+
+
+\begin{itemize}
+\item 역할 기반 인증 및 인가
+\item 관광 운영자와 데이터 제공 기관의 데이터 제안
+\item 서비스 관리자의 데이터 검토, 승인, 반려, 수정 요청
+\item 데이터 제안·검토 이력 관리
+\item 추천 정책, 공지사항, 데이터 갱신 상태 관리
+\end{itemize}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{8. 데이터 및 외부 연동}
+\addcontentsline{toc}{section}{8. 데이터 및 외부 연동}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{8.1 필요 데이터}
+\addcontentsline{toc}{subsection}{8.1 필요 데이터}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\centering\arraybackslash}m{0.300\linewidth}>{\RaggedRight\arraybackslash}m{0.680\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.300\linewidth}}{\textbf{데이터}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.680\linewidth}}{\textbf{활용}} \\
+\midrule
+\endhead
+소도시 기본 정보 & 목적지 설명, 지역, 태그, 추천 이유 구성 \\
+축제·행사 정보 & 시기별 추천과 주변 여정 구성 \\
+혼잡도 정보 & 대체 여행지 추천과 분산 추천 근거 \\
+날씨 정보 & 날씨 기반 추천과 우천 대안 추천 \\
+지도·장소 정보 & 위치 표시, 주변 명소, 외부 탐색 링크 \\
+미디어 촬영지 정보 & 작품명, 장소, 공식성, 신뢰도, 근거 URL \\
+철도·교통 정보 & 주요 역, 환승, 소요 시간, 패스 활용 가능 여부 \\
+지역 문화 체험 정보 & 체험 유형, 예약 필요 여부, 난이도, 우천 적합성 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{8.2 외부 연동}
+\addcontentsline{toc}{subsection}{8.2 외부 연동}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\centering\arraybackslash}m{0.340\linewidth}>{\RaggedRight\arraybackslash}m{0.640\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.340\linewidth}}{\textbf{플랫폼}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.640\linewidth}}{\textbf{역할}} \\
+\midrule
+\endhead
+Google Maps Platform & 지도, 장소 상세, 주변 명소, 사진 \\
+Kakao Maps & 국내 장소 검색, 지도, 맛집·카페·숙박 탐색 \\
+Yahoo Japan / 일본 현지 플랫폼 & 일본 숙박·맛집·여행 탐색 딥링크 \\
+WeatherAPI & 목적지 상세 화면의 현재 날씨 표시 \\
+공공 관광 데이터 & 관광지, 축제, 교통, 지역 공식 정보 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{9. 기술 방향}
+\addcontentsline{toc}{section}{9. 기술 방향}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{9.1 추천 구조}
+\addcontentsline{toc}{subsection}{9.1 추천 구조}
+
+
+\DocNeedspace{3\baselineskip}
+추천 파이프라인은 다음 단계로 구성한다.
+
+
+\begin{itemize}
+\item 사용자 입력 수집
+\item 국가·테마·시기·진입점 조건 분류
+\item RAG 기반 후보 검색
+\item 후보 필터링 및 선정
+\item 일정 구성
+\item 추천 이유와 외부 정보 보강
+\item 후속 질의응답
+\end{itemize}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{9.2 시스템 원칙}
+\addcontentsline{toc}{subsection}{9.2 시스템 원칙}
+
+
+\begin{itemize}
+\item 추천 결과는 근거 데이터와 함께 제공한다.
+\item API Key는 개발·운영 담당자가 서버 환경 변수 또는 백엔드 프록시에서 관리한다.
+\item 클라이언트에서 직접 호출하기 어려운 API는 딥링크 또는 백엔드 프록시로 대체한다.
+\item 데이터 출처, 최신성, 검증 상태를 표시한다.
+\item PoC에서는 빠른 검증을 위해 핵심 흐름을 우선 구현한다.
+\end{itemize}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{10. 추진 일정}
+\addcontentsline{toc}{section}{10. 추진 일정}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\centering\arraybackslash}m{0.196\linewidth}>{\centering\arraybackslash}m{0.274\linewidth}>{\RaggedRight\arraybackslash}m{0.490\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.196\linewidth}}{\textbf{단계}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.274\linewidth}}{\textbf{기간}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.490\linewidth}}{\textbf{주요 산출물}} \\
+\midrule
+\endhead
+기획 정리 & 2026-05-27 \textasciitilde{} 2026-05-31 & 프로젝트 기획서, 요구사항 정의서 \\
+PoC 설계 & 2026-06-01 \textasciitilde{} 2026-06-05 & 화면 흐름, 데이터 구조, 추천 파이프라인 설계 \\
+PoC 구현 & 2026-06-06 \textasciitilde{} 2026-06-15 & P1 기능 구현, 기본 추천 UI, 지도·날씨 연동 \\
+중간 점검 & 2026-06-16 & PoC 결과 검토, Production 범위 재조정 \\
+Production 준비 & 2026-06-17 이후 & P2\textasciitilde{}P4 구현 계획, 운영·관리 기능 상세화 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{11. 기대 효과}
+\addcontentsline{toc}{section}{11. 기대 효과}
+
+
+\DocNeedspace{3\baselineskip}
+로브를 통해 여행자는 유명 관광지 중심의 반복적인 여행 탐색에서 벗어나, 덜 붐비면서도 자신의 취향과 여행 시기에 맞는 소도시를 더 쉽게 발견할 수 있다. 단순히 장소 목록을 보여주는 것이 아니라 추천 이유, 날씨, 지도, 외부 링크를 함께 제공하므로 실제 여행 계획으로 이어지는 의사결정 부담도 줄어든다.
+
+
+\DocNeedspace{3\baselineskip}
+지역 관광 운영자는 상대적으로 노출이 부족했던 소도시 관광 자원과 축제, 지역 문화 체험을 여행자에게 소개할 수 있다. 이를 통해 특정 대도시나 유명 관광지에 집중된 수요를 주변 지역으로 분산시키고, 지역 관광 자원의 활용도를 높이는 기회를 확보할 수 있다.
+
+
+\DocNeedspace{3\baselineskip}
+서비스 운영자는 RAG 기반 추천 근거, 사용자 피드백, 데이터 검증 상태를 바탕으로 추천 정책을 점진적으로 개선할 수 있다. PoC 단계에서는 핵심 추천 흐름의 가능성을 검증하고, Production 단계에서는 데이터 승인, 운영 지표, 권한 관리까지 확장해 지속 가능한 운영 체계를 마련할 수 있다.
+
+
+\DocNeedspace{3\baselineskip}
+데이터 제공 기관은 관광지, 축제, 날씨, 교통 등 공공·외부 데이터가 실제 사용자 추천 경험 안에서 활용되는 경로를 확보한다. 또한 출처, 갱신 시점, 검증 상태를 함께 관리함으로써 제공 데이터의 신뢰성과 활용 성과를 추적할 수 있다.
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{12. 리스크 및 대응}
+\addcontentsline{toc}{section}{12. 리스크 및 대응}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\centering\arraybackslash}m{0.235\linewidth}>{\RaggedRight\arraybackslash}m{0.333\linewidth}>{\RaggedRight\arraybackslash}m{0.392\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.235\linewidth}}{\textbf{리스크}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.333\linewidth}}{\textbf{영향}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.392\linewidth}}{\textbf{대응}} \\
+\midrule
+\endhead
+외부 API 제약 & 지도·날씨·장소 데이터 제공 제한 & 딥링크, 캐시, 백엔드 프록시 검토 \\
+데이터 최신성 부족 & 축제·날씨·운영 정보 오류 가능 & 갱신 시각, 출처, 검증 상태 표시 \\
+추천 신뢰도 부족 & 사용자 신뢰 저하 & RAG 근거와 추천 이유 제공 \\
+범위 과다 & PoC 일정 지연 & P1 구현, P2\textasciitilde{}P3 설계, P4 Production, P5 제외 기준 유지 \\
+권한 관리 복잡도 & 운영 기능 구현 지연 & PoC에서는 공개 추천 중심, Production에서 권한 기능 확장 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{13. 후속 문서}
+\addcontentsline{toc}{section}{13. 후속 문서}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\centering\arraybackslash}m{0.300\linewidth}>{\RaggedRight\arraybackslash}m{0.680\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.300\linewidth}}{\textbf{문서}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.680\linewidth}}{\textbf{목적}} \\
+\midrule
+\endhead
+요구사항 정의서 & 기능·비기능 요구사항과 우선순위 상세 정의 \\
+사용자 시나리오 & 역할별 사용 흐름과 기대 결과 정의 \\
+화면 흐름 / 정보 구조 & 화면 구성, 메뉴, 페이지 이동 정의 \\
+시스템 아키텍처 & 프론트엔드, 백엔드, 데이터, 외부 API 구조 정의 \\
+데이터베이스 설계 & 데이터 모델, 권한, 검증 이력 구조 정의 \\
+API 명세서 & 엔드포인트, 요청·응답, 인증·인가 정의 \\
+테스트 계획서 & 기능, 권한, API 장애, 추천 품질 검증 기준 정의 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{14. 변경 이력}
+\addcontentsline{toc}{section}{14. 변경 이력}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\centering\arraybackslash}m{0.106\linewidth}>{\centering\arraybackslash}m{0.173\linewidth}>{\centering\arraybackslash}m{0.153\linewidth}>{\RaggedRight\arraybackslash}m{0.508\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.106\linewidth}}{\textbf{버전}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.173\linewidth}}{\textbf{날짜}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.153\linewidth}}{\textbf{작성자}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.508\linewidth}}{\textbf{변경 내용}} \\
+\midrule
+\endhead
+v0.1 & 2026-05-28 & 조동휘 & 프로젝트 기획서 초안 작성 \\
+v0.2 & 2026-05-28 & 조동휘 & 국가와 여행 시기 선입력, 자연어 취향 반영, 관광지 방문객 수 기준의 소도시 판단, 00 프로젝트 기획서 HTML 산출물 생성 계획 반영 \\
+v0.3 & 2026-05-29 & 최수아 & 소도시 1곳 집중 일정, 지도 마커 진입, 월별 기상 경향 기반 추천, WeatherAPI 표시 전용 역할 반영 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+\end{document}
