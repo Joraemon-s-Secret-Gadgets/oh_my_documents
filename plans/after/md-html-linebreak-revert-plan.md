@@ -1,6 +1,6 @@
 ---
 작성자: Codex
-상태: 진행전
+상태: 진행후
 ---
 
 # MD/HTML 개행 원복 및 내용 반영 유지 계획
@@ -39,11 +39,11 @@
 
 ## 작업 체크리스트
 
-- [ ] Markdown에서 단순 개행 변경을 원복한다.
-- [ ] HTML에서 단순 개행 변경을 원복한다.
-- [ ] Markdown과 HTML의 내용 반영 항목은 그대로 유지한다.
-- [ ] `git diff -- docs/01_requirements/01_requirements.md pages/01_requirements.html`로 남은 변경이 유지 대상뿐인지 확인한다.
-- [ ] 이번 작업에서는 TeX/PDF를 재생성하지 않는다.
+- [x] Markdown에서 단순 개행 변경을 원복한다.
+- [x] HTML에서 단순 개행 변경을 원복한다.
+- [x] Markdown과 HTML의 내용 반영 항목은 그대로 유지한다.
+- [x] `git diff -- docs/01_requirements/01_requirements.md pages/01_requirements.html`로 남은 변경이 유지 대상뿐인지 확인한다.
+- [x] 이번 작업에서는 TeX/PDF를 재생성하지 않는다.
 
 ## 주의 사항
 
