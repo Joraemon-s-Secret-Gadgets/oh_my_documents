@@ -1,3 +1,8 @@
+---
+작성자: Codex
+상태: 진행후
+---
+
 # Implementation Plan: 불필요 HTML 정리 및 CSS/JS 분리
 
 ## Overview

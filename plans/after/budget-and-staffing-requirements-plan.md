@@ -1,3 +1,8 @@
+---
+작성자: Codex
+상태: 진행후
+---
+
 # Implementation Plan: 예산안, 인력 분배 및 개발 기한 요구사항 정의
 
 ## Overview

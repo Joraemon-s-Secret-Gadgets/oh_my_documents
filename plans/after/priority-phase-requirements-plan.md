@@ -1,3 +1,8 @@
+---
+작성자: Codex
+상태: 진행후
+---
+
 # Implementation Plan: 우선순위별 PoC·Production 범위 반영
 
 ## Overview

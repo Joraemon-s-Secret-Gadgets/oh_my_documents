@@ -1,3 +1,8 @@
+---
+작성자: Codex
+상태: 진행후
+---
+
 # Implementation Plan: 이해관계자 기준 역할 및 권한 정의
 
 ## Overview

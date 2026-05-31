@@ -1,3 +1,8 @@
+---
+작성자: Codex
+상태: 진행후
+---
+
 # Implementation Plan: ColorHunt Green & Gold 문서 포맷 통일
 
 ## Overview

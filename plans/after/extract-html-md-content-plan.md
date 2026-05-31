@@ -1,3 +1,8 @@
+---
+작성자: Codex
+상태: 진행후
+---
+
 # Implementation Plan: HTML 형식 Markdown 원본 추출
 
 ## Overview

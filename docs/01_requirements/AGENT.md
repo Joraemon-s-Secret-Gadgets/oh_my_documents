@@ -1,6 +1,6 @@
 # Agent Instructions for requirements
 
-이 폴더는 로브 요구사항 정의서와 요구사항 보조 자료를 관리한다.
+이 폴더는 로브 요구사항 명세서와 요구사항 보조 자료를 관리한다.
 
 ## Primary Document
 
@@ -8,7 +8,7 @@
 
 ## Supporting Documents
 
-`02_overturizim.md`부터 `14_priority_plan.md`까지의 보조 문서는 요구사항 정의서에 반영할 후보·근거 자료다. 보조 문서의 내용이 확정되면 `01_requirements.md`에 요구사항 형식으로 통합한다.
+`02_overturizim.md`부터 `14_priority_plan.md`까지의 보조 문서는 요구사항 명세서에 반영할 후보·근거 자료다. 보조 문서의 내용이 확정되면 `01_requirements.md`에 요구사항 형식으로 통합한다.
 
 ## Editing Rules
 

@@ -5,7 +5,7 @@
 ## Source of Truth
 
 - `docs/01_requirements/01_requirements.md`는 기능·비기능 요구사항의 기준 문서다.
-- `docs/02_service_flow/02_service_flow.md`부터 `docs/06_agent_spec/06_agent_spec.md`까지는 요구사항 정의서를 상세화한 설계 문서다.
+- `docs/02_service_flow/02_service_flow.md`부터 `docs/06_agent_spec/06_agent_spec.md`까지는 요구사항 명세서를 상세화한 설계 문서다.
 - `docs/00_project_plan/00_project_plan.md`는 상위 기획 문서이며, 상세 문서들의 최신 내용을 반영해 갱신한다.
 
 ## Project Plan Synchronization
