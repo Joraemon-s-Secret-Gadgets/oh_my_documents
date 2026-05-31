@@ -1,3 +1,8 @@
+---
+작성자: Codex
+상태: 진행후
+---
+
 # Implementation Plan: 필수 Auth·Review 요구사항 보강
 
 ## Overview

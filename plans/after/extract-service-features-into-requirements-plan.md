@@ -1,3 +1,8 @@
+---
+작성자: Codex
+상태: 진행후
+---
+
 # Implementation Plan: Markdown 서비스 기능을 기능 요구사항에 통합
 
 ## Overview

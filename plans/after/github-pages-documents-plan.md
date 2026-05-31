@@ -1,3 +1,8 @@
+---
+작성자: Codex
+상태: 진행후
+---
+
 # Implementation Plan: GitHub Pages 개발문서 공유
 
 ## Overview

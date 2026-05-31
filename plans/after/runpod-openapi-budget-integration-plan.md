@@ -1,3 +1,8 @@
+---
+작성자: Codex
+상태: 진행후
+---
+
 # Implementation Plan: 인프라·AI 달러 예산 분리 반영
 
 ## Overview

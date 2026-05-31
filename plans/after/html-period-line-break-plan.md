@@ -1,3 +1,8 @@
+---
+작성자: Codex
+상태: 진행후
+---
+
 # Implementation Plan: HTML 마침표 기준 줄넘김 정리
 
 ## Overview

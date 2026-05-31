@@ -1,3 +1,8 @@
+---
+작성자: Codex
+상태: 진행후
+---
+
 # Implementation Plan: 07·08 요구사항 정의서 통합
 
 ## Overview
