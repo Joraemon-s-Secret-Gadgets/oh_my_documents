@@ -16,7 +16,7 @@
 
 ```text
 docs/00_project_plan/      상위 프로젝트 기획서. 다른 문서의 내용을 반영한다.
-docs/01_requirements/      요구사항 정의서와 요구사항 보조 자료
+docs/01_requirements/      요구사항 명세서와 요구사항 보조 자료
 docs/02_service_flow/      서비스 흐름 명세서
 docs/03_technical_spec/    기술 명세서
 docs/04_api_spec/          API 명세서
@@ -34,7 +34,7 @@ README.md                  저장소 소개와 운영 방식 요약
 개발 문서는 아래 순서를 기본으로 한다.
 
 1. 프로젝트 기획서
-2. 요구사항 정의서
+2. 요구사항 명세서
 3. 서비스 흐름 명세서
 4. 기술 명세서
 5. API 명세서
