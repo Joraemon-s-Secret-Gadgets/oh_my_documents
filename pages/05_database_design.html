@@ -27,40 +27,6 @@
 <a class="toc-link" href="#s1-1">1.1 목적</a>
 <a class="toc-link" href="#s1-2">1.2 데이터베이스 방향</a>
 </div>
-<div class="toc-section">
-<div class="toc-section-hd">2. 논리 데이터 모델</div>
-<a class="toc-link" href="#s2">2. 논리 데이터 모델</a>
-</div>
-<div class="toc-section">
-<div class="toc-section-hd">3. 핵심 테이블 설계</div>
-<a class="toc-link" href="#s3">3. 핵심 테이블 설계</a>
-<a class="toc-link" href="#s3-1">3.1 users</a>
-<a class="toc-link" href="#s3-2">3.2 destinations</a>
-<a class="toc-link" href="#s3-3">3.3 weather_monthly_trends</a>
-<a class="toc-link" href="#s3-4">3.4 recommendations</a>
-<a class="toc-link" href="#s3-5">3.5 recommendation_feedback</a>
-<a class="toc-link" href="#s3-6">3.6 data_submissions</a>
-</div>
-<div class="toc-section">
-<div class="toc-section-hd">4. 관계 정의</div>
-<a class="toc-link" href="#s4">4. 관계 정의</a>
-</div>
-<div class="toc-section">
-<div class="toc-section-hd">5. 인덱스 후보</div>
-<a class="toc-link" href="#s5">5. 인덱스 후보</a>
-</div>
-<div class="toc-section">
-<div class="toc-section-hd">6. 데이터 보존 정책</div>
-<a class="toc-link" href="#s6">6. 데이터 보존 정책</a>
-</div>
-<div class="toc-section">
-<div class="toc-section-hd">7. 트랜잭션 경계</div>
-<a class="toc-link" href="#s7">7. 트랜잭션 경계</a>
-</div>
-<div class="toc-section">
-<div class="toc-section-hd">8. 변경 이력</div>
-<a class="toc-link" href="#s8">8. 변경 이력</a>
-</div>
         </nav>
       </aside>
       <main id="cover">
@@ -75,156 +41,13 @@
 <p class="doc-p">본 문서는 로브 서비스의 핵심 데이터 모델, 테이블 후보, 관계, 인덱스, 보존 정책을 정의한다. PoC에서는 일부 데이터를 정적 파일과 로컬 스토리지로 대체할 수 있으나, Production 전환 시 본 문서를 기준으로 데이터베이스를 설계한다.</p>
 <h2 id="s1-2" class="s-h2">1.2 데이터베이스 방향</h2>
 <div class="table-wrap"><table class="info-tbl">
-<thead><tr><th>항목</th><th>결정</th></tr></thead><tbody>
-<tr><td>기본 모델</td><td>관계형 데이터베이스 우선</td></tr>
-<tr><td>권장 DB</td><td>PostgreSQL</td></tr>
-<tr><td>이유</td><td>목적지, 축제, 사용자, 저장 일정, 검토 이력 간 관계가 명확하고 ACID 트랜잭션이 필요함</td></tr>
-<tr><td>보조 저장소</td><td>벡터 검색 또는 문서 검색 저장소는 RAG 단계에서 별도 검토</td></tr>
-</tbody></table></div>
-<h1 id="s2" class="s-h1">2. 논리 데이터 모델</h1>
-<div class="table-wrap"><table class="info-tbl">
-<thead><tr><th>엔티티</th><th>설명</th></tr></thead><tbody>
-<tr><td>users</td><td>로그인 사용자</td></tr>
-<tr><td>roles</td><td>역할 정의</td></tr>
-<tr><td>user_roles</td><td>사용자-역할 매핑</td></tr>
-<tr><td>user_preferences</td><td>온보딩 선호 프로필</td></tr>
-<tr><td>destinations</td><td>소도시 목적지</td></tr>
-<tr><td>destination_themes</td><td>목적지-테마 매핑</td></tr>
-<tr><td>themes</td><td>기본·확장 테마</td></tr>
-<tr><td>weather_monthly_trends</td><td>월별 기상 경향</td></tr>
-<tr><td>festivals</td><td>축제·행사</td></tr>
-<tr><td>recommendations</td><td>추천 실행 결과</td></tr>
-<tr><td>itinerary_days</td><td>추천 일정의 일자</td></tr>
-<tr><td>itinerary_items</td><td>일자별 방문 항목</td></tr>
-<tr><td>saved_itineraries</td><td>사용자 저장 일정</td></tr>
-<tr><td>recommendation_feedback</td><td>좋아요/싫어요 피드백</td></tr>
-<tr><td>data_submissions</td><td>관광 운영자·데이터 제공 기관의 데이터 제안</td></tr>
-<tr><td>review_histories</td><td>제안 검토·승인·반려 이력</td></tr>
-</tbody></table></div>
-<h1 id="s3" class="s-h1">3. 핵심 테이블 설계</h1>
-<h2 id="s3-1" class="s-h2">3.1 users</h2>
-<div class="table-wrap"><table class="info-tbl">
-<thead><tr><th>컬럼</th><th>타입</th><th>제약</th><th>설명</th></tr></thead><tbody>
-<tr><td>id</td><td>uuid</td><td>PK</td><td>사용자 ID</td></tr>
-<tr><td>email</td><td>varchar</td><td>unique, nullable</td><td>이메일 로그인 사용자</td></tr>
-<tr><td>display_name</td><td>varchar</td><td>not null</td><td>표시 이름</td></tr>
-<tr><td>status</td><td>varchar</td><td>not null</td><td>active, blocked, deleted</td></tr>
-<tr><td>created_at</td><td>timestamptz</td><td>not null</td><td>생성 시각</td></tr>
-<tr><td>updated_at</td><td>timestamptz</td><td>not null</td><td>수정 시각</td></tr>
-</tbody></table></div>
-<h2 id="s3-2" class="s-h2">3.2 destinations</h2>
-<div class="table-wrap"><table class="info-tbl">
-<thead><tr><th>컬럼</th><th>타입</th><th>제약</th><th>설명</th></tr></thead><tbody>
-<tr><td>id</td><td>uuid</td><td>PK</td><td>목적지 ID</td></tr>
-<tr><td>country</td><td>varchar</td><td>not null</td><td>KR, JP</td></tr>
-<tr><td>name_ko</td><td>varchar</td><td>not null</td><td>한국어 이름</td></tr>
-<tr><td>name_local</td><td>varchar</td><td>nullable</td><td>현지어 이름</td></tr>
-<tr><td>region</td><td>varchar</td><td>not null</td><td>도/현/지역</td></tr>
-<tr><td>latitude</td><td>decimal</td><td>not null</td><td>위도</td></tr>
-<tr><td>longitude</td><td>decimal</td><td>not null</td><td>경도</td></tr>
-<tr><td>description</td><td>text</td><td>not null</td><td>대표 설명</td></tr>
-<tr><td>crowding_score</td><td>numeric</td><td>nullable</td><td>혼잡도 점수</td></tr>
-<tr><td>verification_status</td><td>varchar</td><td>not null</td><td>draft, verified, deprecated</td></tr>
-<tr><td>source_url</td><td>text</td><td>nullable</td><td>출처</td></tr>
-<tr><td>created_at</td><td>timestamptz</td><td>not null</td><td>생성 시각</td></tr>
-<tr><td>updated_at</td><td>timestamptz</td><td>not null</td><td>수정 시각</td></tr>
-</tbody></table></div>
-<h2 id="s3-3" class="s-h2">3.3 weather_monthly_trends</h2>
-<div class="table-wrap"><table class="info-tbl">
-<thead><tr><th>컬럼</th><th>타입</th><th>제약</th><th>설명</th></tr></thead><tbody>
-<tr><td>id</td><td>uuid</td><td>PK</td><td>기상 경향 ID</td></tr>
-<tr><td>destination_id</td><td>uuid</td><td>FK</td><td>목적지</td></tr>
-<tr><td>month</td><td>int</td><td>1~12</td><td>여행 월</td></tr>
-<tr><td>sunny_score</td><td>numeric</td><td>not null</td><td>맑음 적합도</td></tr>
-<tr><td>rain_risk</td><td>numeric</td><td>not null</td><td>우천 경향</td></tr>
-<tr><td>snow_risk</td><td>numeric</td><td>not null</td><td>폭설 경향</td></tr>
-<tr><td>typhoon_risk</td><td>numeric</td><td>not null</td><td>태풍 경향</td></tr>
-<tr><td>notes</td><td>text</td><td>nullable</td><td>설명</td></tr>
-<tr><td>source_url</td><td>text</td><td>nullable</td><td>출처</td></tr>
-<tr><td>updated_at</td><td>timestamptz</td><td>not null</td><td>갱신 시각</td></tr>
-</tbody></table></div>
-<h2 id="s3-4" class="s-h2">3.4 recommendations</h2>
-<div class="table-wrap"><table class="info-tbl">
-<thead><tr><th>컬럼</th><th>타입</th><th>제약</th><th>설명</th></tr></thead><tbody>
-<tr><td>id</td><td>uuid</td><td>PK</td><td>추천 ID</td></tr>
-<tr><td>user_id</td><td>uuid</td><td>FK, nullable</td><td>비로그인 추천은 null</td></tr>
-<tr><td>entry_type</td><td>varchar</td><td>not null</td><td>map_marker, chatbot</td></tr>
-<tr><td>country</td><td>varchar</td><td>not null</td><td>KR, JP</td></tr>
-<tr><td>travel_month</td><td>int</td><td>not null</td><td>여행 월</td></tr>
-<tr><td>destination_id</td><td>uuid</td><td>FK</td><td>선정 소도시</td></tr>
-<tr><td>trip_type</td><td>varchar</td><td>not null</td><td>daytrip, 2d1n, 3d2n, 4d3n, 5d4n</td></tr>
-<tr><td>include_festivals</td><td>boolean</td><td>not null</td><td>축제 포함 여부</td></tr>
-<tr><td>explanation</td><td>text</td><td>not null</td><td>추천 이유</td></tr>
-<tr><td>created_at</td><td>timestamptz</td><td>not null</td><td>생성 시각</td></tr>
-</tbody></table></div>
-<h2 id="s3-5" class="s-h2">3.5 recommendation_feedback</h2>
-<div class="table-wrap"><table class="info-tbl">
-<thead><tr><th>컬럼</th><th>타입</th><th>제약</th><th>설명</th></tr></thead><tbody>
-<tr><td>id</td><td>uuid</td><td>PK</td><td>피드백 ID</td></tr>
-<tr><td>user_id</td><td>uuid</td><td>FK</td><td>사용자</td></tr>
-<tr><td>recommendation_id</td><td>uuid</td><td>FK</td><td>추천 결과</td></tr>
-<tr><td>destination_id</td><td>uuid</td><td>FK</td><td>대상 소도시</td></tr>
-<tr><td>feedback_type</td><td>varchar</td><td>not null</td><td>like, dislike</td></tr>
-<tr><td>theme_tags</td><td>jsonb</td><td>nullable</td><td>피드백 시점 테마 태그</td></tr>
-<tr><td>created_at</td><td>timestamptz</td><td>not null</td><td>생성 시각</td></tr>
-</tbody></table></div>
-<h2 id="s3-6" class="s-h2">3.6 data_submissions</h2>
-<div class="table-wrap"><table class="info-tbl">
-<thead><tr><th>컬럼</th><th>타입</th><th>제약</th><th>설명</th></tr></thead><tbody>
-<tr><td>id</td><td>uuid</td><td>PK</td><td>제안 ID</td></tr>
-<tr><td>submitted_by</td><td>uuid</td><td>FK</td><td>제안자</td></tr>
-<tr><td>target_type</td><td>varchar</td><td>not null</td><td>destination, festival, weather, link</td></tr>
-<tr><td>target_id</td><td>uuid</td><td>nullable</td><td>기존 데이터 수정 시 대상</td></tr>
-<tr><td>payload</td><td>jsonb</td><td>not null</td><td>제안 내용</td></tr>
-<tr><td>status</td><td>varchar</td><td>not null</td><td>submitted, approved, rejected, change_requested</td></tr>
-<tr><td>created_at</td><td>timestamptz</td><td>not null</td><td>생성 시각</td></tr>
-<tr><td>updated_at</td><td>timestamptz</td><td>not null</td><td>수정 시각</td></tr>
-</tbody></table></div>
-<h1 id="s4" class="s-h1">4. 관계 정의</h1>
-<div class="table-wrap"><table class="info-tbl">
-<thead><tr><th>관계</th><th>설명</th></tr></thead><tbody>
-<tr><td>users 1:N user_preferences</td><td>사용자는 선호 프로필을 가질 수 있다</td></tr>
-<tr><td>destinations N:M themes</td><td>목적지는 여러 테마를 가질 수 있다</td></tr>
-<tr><td>destinations 1:N weather_monthly_trends</td><td>목적지별 12개월 기상 경향</td></tr>
-<tr><td>destinations 1:N festivals</td><td>축제·행사는 목적지 또는 지역에 연결</td></tr>
-<tr><td>recommendations 1:N itinerary_days</td><td>추천은 여러 일자를 가진다</td></tr>
-<tr><td>itinerary_days 1:N itinerary_items</td><td>일자별 방문 항목</td></tr>
-<tr><td>users 1:N saved_itineraries</td><td>사용자는 일정을 저장한다</td></tr>
-<tr><td>users 1:N recommendation_feedback</td><td>사용자는 추천 피드백을 남긴다</td></tr>
-</tbody></table></div>
-<h1 id="s5" class="s-h1">5. 인덱스 후보</h1>
-<div class="table-wrap"><table class="info-tbl">
-<thead><tr><th>테이블</th><th>인덱스</th><th>목적</th></tr></thead><tbody>
-<tr><td>destinations</td><td><code>(country, region)</code></td><td>국가·지역 필터</td></tr>
-<tr><td>destinations</td><td><code>(verification_status)</code></td><td>검증 상태 필터</td></tr>
-<tr><td>destination_themes</td><td><code>(theme_id, destination_id)</code></td><td>테마 기반 후보 검색</td></tr>
-<tr><td>weather_monthly_trends</td><td><code>(destination_id, month)</code> unique</td><td>목적지 월별 기상 조회</td></tr>
-<tr><td>festivals</td><td><code>(country, region, start_date, end_date)</code></td><td>기간·지역 축제 검색</td></tr>
-<tr><td>recommendations</td><td><code>(user_id, created_at desc)</code></td><td>사용자 추천 이력</td></tr>
-<tr><td>saved_itineraries</td><td><code>(user_id, created_at desc)</code></td><td>마이페이지 저장 일정</td></tr>
-<tr><td>recommendation_feedback</td><td><code>(user_id, destination_id)</code></td><td>개인화 가중치 계산</td></tr>
-<tr><td>data_submissions</td><td><code>(status, created_at desc)</code></td><td>관리자 검토 목록</td></tr>
-</tbody></table></div>
-<h1 id="s6" class="s-h1">6. 데이터 보존 정책</h1>
-<div class="table-wrap"><table class="info-tbl">
-<thead><tr><th>데이터</th><th>PoC</th><th>Production</th></tr></thead><tbody>
-<tr><td>대화 로그</td><td>저장하지 않음</td><td>저장하지 않음</td></tr>
-<tr><td>온보딩 선호</td><td>로컬 스토리지</td><td>사용자 계정 저장</td></tr>
-<tr><td>추천 일정</td><td>로컬 스토리지</td><td>사용자가 저장한 일정만 보관</td></tr>
-<tr><td>피드백</td><td>로컬 스토리지</td><td>사용자별 개인화 목적으로 보관</td></tr>
-<tr><td>운영 검토 이력</td><td>제외 가능</td><td>감사 목적 보관</td></tr>
-</tbody></table></div>
-<h1 id="s7" class="s-h1">7. 트랜잭션 경계</h1>
-<div class="table-wrap"><table class="info-tbl">
-<thead><tr><th>작업</th><th>트랜잭션 범위</th></tr></thead><tbody>
-<tr><td>추천 일정 저장</td><td>saved_itineraries와 관련 itinerary snapshot 저장을 단일 트랜잭션 처리</td></tr>
-<tr><td>피드백 저장</td><td>feedback 저장과 개인화 집계 갱신을 단일 트랜잭션 처리</td></tr>
-<tr><td>데이터 제안 승인</td><td>원본 데이터 반영, 제출 상태 변경, review history 기록을 단일 트랜잭션 처리</td></tr>
-</tbody></table></div>
-<h1 id="s8" class="s-h1">8. 변경 이력</h1>
-<div class="table-wrap"><table class="info-tbl">
-<thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
-<tr><td>v0.1</td><td>2026-05-29</td><td>로브 기획팀</td><td>데이터베이스 설계 명세서 초안 작성</td></tr>
+<thead><tr><th>항목</th><th>결정</th><th>비고</th></tr></thead><tbody>
+<tr><td>기본 모델</td><td>관계형 데이터베이스 우선</td><td>서비스 핵심 데이터는 정규화된 관계형 모델을 기준으로 설계한다.</td></tr>
+<tr><td>RDBMS</td><td>MySQL 8 LTS</td><td>목적지, 축제, 사용자, 저장 일정, 검토 이력 등 핵심 트랜잭션 데이터를 저장한다.</td></tr>
+<tr><td>NoSQL</td><td>AWS DynamoDB</td><td>AgentCore와 SAM(Serverless Application Model) 로그를 적재한다.</td></tr>
+<tr><td>VectorDB</td><td>PoC 단계에서는 VectorDB로 구현</td><td>이후 GraphDB로 이관할지 결정한다.</td></tr>
+<tr><td>이유</td><td>ACID 트랜잭션 필요</td><td>목적지, 축제, 사용자, 저장 일정, 검토 이력 간 관계가 명확하다.</td></tr>
+<tr><td>보조 저장소</td><td>DynamoDB 및 VectorDB</td><td>운영 로그와 RAG/검색 보조 데이터를 핵심 RDBMS와 분리해 관리한다.</td></tr>
 </tbody></table></div>
       </main>
     </div>
