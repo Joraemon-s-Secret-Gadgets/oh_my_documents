@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — 기술 명세서 v0.1</title>
+    <title>로브 (Lovv) — 기술 명세서 v0.2</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -16,8 +16,8 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">로브</div>
-          <div class="aside-ver">Technical Spec · v0.1</div>
-          <div class="aside-status"><div class="status-dot"></div><span>기획 단계</span></div>
+          <div class="aside-ver">Technical Spec · v0.2</div>
+          <div class="aside-status"><div class="status-dot"></div><span>검토 중</span></div>
         </div>
         <nav class="toc">
 <div class="toc-section"><a class="toc-link active" href="#cover">표지 / 문서 정보</a></div>
@@ -70,8 +70,8 @@
       <main id="cover">
 <h1 id="cover-title" class="s-h1">로브 (Lovv) 기술 명세서</h1>
 <blockquote>
-<p class="doc-p">문서 버전: v0.1</p>
-<p class="doc-p">문서 상태: 기획 단계 (Planning)</p>
+<p class="doc-p">문서 버전: v0.2</p>
+<p class="doc-p">문서 상태: 검토 중 (Review)</p>
 <p class="doc-p">기준 문서: <code>docs/01_requirements/01_requirements.md</code> v1.5</p>
 </blockquote>
 <h1 id="s1" class="s-h1">1. 문서 개요</h1>
@@ -83,7 +83,7 @@
 <li>프론트엔드는 사용자 입력, 지도, 결과 화면, 로컬 저장을 담당한다.</li>
 <li>백엔드는 인증, 데이터 검증, 외부 API 프록시, 추천 파이프라인 실행을 담당한다.</li>
 <li>외부 API 응답은 신뢰하지 않고 경계에서 검증한다.</li>
-<li>추천 로직은 실시간 예보가 아니라 월별 기상 경향 데이터를 스코어링에 사용한다.</li>
+<li>추천 로직은 실시간 예보가 아닌 월별 기상 경향 통계 데이터를 기반으로 Supervisor 노드가 폴백 상태를 판단한다.</li>
 </ul>
 <h1 id="s2" class="s-h1">2. 시스템 개요</h1>
 <div class="table-wrap"><table class="info-tbl">
@@ -129,7 +129,7 @@
 <tr><td>Auth Module</td><td>로그인, 역할 기반 인가, 세션/토큰 관리</td></tr>
 <tr><td>User Preference Module</td><td>온보딩 선호, 피드백, 저장 일정 관리</td></tr>
 <tr><td>Destination Module</td><td>소도시, 테마, 계절, 혼잡도 데이터 조회</td></tr>
-<tr><td>Recommendation Module</td><td>Agent 실행, 후보 선정, 일정 생성</td></tr>
+<tr><td>Recommendation Module</td><td>Agent 실행, Supervisor Router를 통한 상태 제어 및 순환 루프 제어, 후보 선정, 일정 생성</td></tr>
 <tr><td>External Proxy Module</td><td>WeatherAPI, Kakao Local 등 서버 경유 호출</td></tr>
 <tr><td>Admin Review Module</td><td>데이터 제안, 승인, 반려, 이력 관리</td></tr>
 </tbody></table></div>
@@ -146,9 +146,11 @@
 <h2 id="s6-1" class="s-h2">6.1 추천용 데이터</h2>
 <div class="table-wrap"><table class="info-tbl">
 <thead><tr><th>데이터</th><th>처리 방식</th></tr></thead><tbody>
+<tr><td>통합 목적지 DB</td><td>축제명, 장소 개요, 이미지, 위경도 좌표 등 무거운 마스터 정보를 저장하고 있는 DB로, 1차 조회 시 성능과 레이턴시 확보를 위해 사용</td></tr>
+<tr><td>실시간 API 교차 검증</td><td>당해 연도 정확한 개최 일정/기간 등 실시간 최신화가 필수적인 특정 항목에 한해, Polymorphic_Retriever_Node가 런타임에 외부 API를 실시간 호출해 데이터를 교차 검증하고 정적 필드를 오버라이드(Override)하는 하이브리드 데이터 연동</td></tr>
 <tr><td>목적지 기본 정보</td><td>정규화된 소도시 단위로 관리</td></tr>
 <tr><td>테마 태그</td><td>기본 6개 테마와 확장 테마 분리</td></tr>
-<tr><td>월별 기상 경향</td><td>추천 스코어링용 정적 데이터로 관리</td></tr>
+<tr><td>월별 기상 경향</td><td>추천용 정적 통계 데이터(장마 플래그, 태풍 경향 등)로 관리</td></tr>
 <tr><td>축제·행사</td><td>지역, 월, 개최 상태, 출처 링크 포함</td></tr>
 <tr><td>혼잡도</td><td>방문객 수 또는 대체 지표 기반 점수화</td></tr>
 </tbody></table></div>
@@ -180,6 +182,7 @@
 <h1 id="s9" class="s-h1">9. 변경 이력</h1>
 <div class="table-wrap"><table class="info-tbl">
 <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+<tr><td>v0.2</td><td>2026-05-31</td><td>로브 기획팀</td><td>통합 목적지 DB 및 실시간 API 교차 검증 하이브리드 아키텍처 반영, Recommendation Module 내 Supervisor Router의 상태 제어 역할 추가</td></tr>
 <tr><td>v0.1</td><td>2026-05-29</td><td>로브 기획팀</td><td>기술 명세서 초안 작성</td></tr>
 </tbody></table></div>
       </main>
