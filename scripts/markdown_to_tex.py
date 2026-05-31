@@ -170,6 +170,8 @@ def table_to_latex(
 def format_table_cell(cell: str, forced_line_breaks: dict[str, list[str]] | None = None) -> str:
     if forced_line_breaks and cell in forced_line_breaks:
         return r"\newline ".join(escape_latex(part) for part in forced_line_breaks[cell])
+    if re.search(r"<br\s*/?>", cell, flags=re.IGNORECASE):
+        return r"\newline ".join(escape_latex(part.strip()) for part in re.split(r"<br\s*/?>", cell, flags=re.IGNORECASE))
     if cell == "Production":
         return r"{\footnotesize Production}"
     if re.fullmatch(r"[A-Z]+(?:-[A-Z0-9]+)+-\d+", cell):
@@ -420,6 +422,12 @@ def markdown_to_latex(
             level = len(heading.group(1))
             raw_text = heading.group(2).strip()
             current_heading = raw_text
+            if (
+                section_pagebreak
+                and ((level == 2 and re.match(r"^4\.\d+\s", raw_text)) or raw_text == "우선순위 기능 요구사항")
+                and output
+            ):
+                output.append(r"\newpage")
             if section_pagebreak and level == 1 and not output and not re.match(r"^\d+\.", raw_text):
                 i += 1
                 continue
