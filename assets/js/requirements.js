@@ -31,3 +31,8 @@
       }
       window.addEventListener("scroll", updateTOC, { passive: true });
       updateTOC();
+
+      // Mermaid diagrams
+      if (window.mermaid) {
+        window.mermaid.initialize({ startOnLoad: true });
+      }
