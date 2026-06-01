@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — 요구사항 명세서 v1.6</title>
+    <title>로브 (Lovv) — 요구사항 명세서 v1.7</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -16,7 +16,7 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">로브</div>
-          <div class="aside-ver">Requirements Spec · v1.6</div>
+          <div class="aside-ver">Requirements Spec · v1.7</div>
           <div class="aside-status"><div class="status-dot"></div><span>검토 중</span></div>
         </div>
         <nav class="toc">
@@ -101,7 +101,7 @@
           <div class="cover-title">로브 (Lovv)</div>
           <div class="cover-subtitle">Local(소도시) + Vibe(분위기·감성), 또는 Voyage(항해·여행)를 뜻한다.</div>
           <div class="cover-meta">
-            <div class="meta-item"><div class="meta-key">문서 버전</div><div class="meta-val">v1.6 — 개인화 확장 요구사항 반영</div></div>
+            <div class="meta-item"><div class="meta-key">문서 버전</div><div class="meta-val">v1.7 — WBS 기준 개발 일정 정합화</div></div>
             <div class="meta-item"><div class="meta-key">작성일</div><div class="meta-val" id="todayDate"></div></div>
             <div class="meta-item"><div class="meta-key">문서 상태</div><div class="meta-val green">검토 중 (Review)</div></div>
             <div class="meta-item"><div class="meta-key">적용 범위</div><div class="meta-val">로브 서비스 전체</div></div>
@@ -694,26 +694,39 @@ App ID는 향후 사용을 위해 입력 항목만 준비한다.
 <h2 id="s9-4" class="s-h2">9.4 단계별 인력 분배</h2>
 <div class="table-wrap"><table class="info-tbl phase-staffing-tbl">
 <thead><tr><th>구분</th><th>기간</th><th>핵심 투입</th><th>보조 투입</th><th>목표</th></tr></thead><tbody>
-<tr><td class="key-cell">PoC</td><td>2026-06-01 ~ 2026-06-16</td><td>PM/기획, UI/UX, AI/RAG</td><td>프론트엔드, 데이터 담당자</td><td>요구사항, 화면 흐름, 추천 가능성, Production 범위 검증</td></tr>
-<tr><td class="key-cell">Production</td><td>2026-06-17 ~ 2026-07-20</td><td>프론트엔드, 백엔드, AI/RAG, 데이터 담당자</td><td>PM/기획, QA, 운영 담당자</td><td>MVP 구현, 통합 검증, 최종 문서와 운영 준비</td></tr>
+<tr><td class="key-cell">M1 PoC 완료</td><td>2026-05-22 ~ 2026-06-12</td><td>PM/기획, 데이터, DB, AI/RAG, 백엔드, 프론트엔드, UI/UX</td><td>QA</td><td>요구사항·WBS·기획서·데이터 수집·DB 설계·데이터 조회·AI 전처리·모델·시스템 아키텍처·화면/UX 기초 설계 완료</td></tr>
+<tr><td class="key-cell">M2 중간 발표</td><td>2026-06-13 ~ 2026-06-16</td><td>PM/기획, UI/UX, 프론트엔드, AI/RAG</td><td>백엔드, QA</td><td>화면설계서 확정·시스템 구성도·중간 발표 PT·발표 QA 완료</td></tr>
+<tr><td class="key-cell">M3 Production</td><td>2026-06-17 ~ 2026-07-16</td><td>프론트엔드, 백엔드, AI/RAG, 인프라, QA</td><td>PM/기획, 데이터, 운영 담당자</td><td>LLM 서비스·RAG 파이프라인·AWS 배포·실서비스화·통합 테스트·최종 산출물 제출 완료</td></tr>
 </tbody></table></div>
 <h2 id="s9-5" class="s-h2">9.5 개발 기한 및 마일스톤</h2>
-<div class="table-wrap"><table class="info-tbl milestone-tbl">
-<thead><tr><th>구분</th><th>단계</th><th>기간</th><th>주요 산출물</th><th>일정 의존성</th></tr></thead><tbody>
-<tr><td class="key-cell">PoC</td><td>기획 확정</td><td>2026-06-01 ~ 2026-06-07</td><td>요구사항 확정, 범위 동결, 예산·인력 기준 확정</td><td>이해관계자 합의</td></tr>
-<tr><td class="key-cell">PoC</td><td>UX/UI 설계</td><td>2026-06-08 ~ 2026-06-15</td><td>화면 흐름, 와이어프레임, 디자인 가이드</td><td>요구사항 확정</td></tr>
-<tr><td class="key-cell">PoC</td><td>중간 보고</td><td>2026-06-16</td><td>PoC 결과, 진행 현황, 예산 사용 계획, 일정 리스크, Production 범위 점검</td><td>기획·설계 초안 완료</td></tr>
-<tr><td class="key-cell">Production</td><td>데이터 준비</td><td>2026-06-17 ~ 2026-06-24</td><td>초기 목적지·축제 데이터, 출처 목록, 검증 기준</td><td>PoC 범위 승인, 데이터 제공처 접근</td></tr>
-<tr><td class="key-cell">Production</td><td>MVP 개발</td><td>2026-06-25 ~ 2026-07-10</td><td>챗봇 UI, 추천 결과, 지도·날씨 연동, RAG 초안</td><td>설계·데이터 초안</td></tr>
-<tr><td class="key-cell">Production</td><td>통합 검증</td><td>2026-07-11 ~ 2026-07-17</td><td>기능 검증, 권한 검증, API Key 장애 폴백 검증</td><td>MVP 기능 완료</td></tr>
-<tr><td class="key-cell">Production</td><td>최종 정리</td><td>2026-07-18 ~ 2026-07-20</td><td>최종 문서, 발표 가능 산출물, 운영 체크리스트</td><td>검증 완료</td></tr>
+<h3 class="s-h3">9.5.1 마일스톤 요약</h3>
+<div class="table-wrap"><table class="info-tbl milestone-summary-tbl">
+<thead><tr><th>마일스톤</th><th>마감일</th><th>범위</th><th>주요 산출물</th></tr></thead><tbody>
+<tr><td class="key-cell">M1 PoC 완료</td><td>2026-06-12</td><td>Sprint 1~3</td><td>요구사항 정의서, WBS, 프로젝트 기획서, 수집 데이터, DB 설계문서, 데이터 조회 프로그램, AI 전처리·학습 결과, 시스템 아키텍처, 화면/UX 기초 설계</td></tr>
+<tr><td class="key-cell">M2 중간 발표</td><td>2026-06-16</td><td>Sprint 4</td><td>화면설계서 확정본, 시스템 구성도, 중간 발표 PT, 중간 발표 QA</td></tr>
+<tr><td class="key-cell">M3 Production</td><td>2026-07-16</td><td>Sprint 5~9</td><td>LLM 활용 소프트웨어, AWS 배포 환경, LLM 연동 웹앱, 테스트 계획·결과 보고서, 웹 테스트 보고서, 최종 발표 PT, 시연 영상, 소스코드, 최종 제출물</td></tr>
+</tbody></table></div>
+<h3 class="s-h3">9.5.2 스프린트별 개발 기한</h3>
+<div class="table-wrap"><table class="info-tbl sprint-tbl">
+<thead><tr><th>Sprint</th><th>기간</th><th>마일스톤</th><th>주요 목표</th></tr></thead><tbody>
+<tr><td class="key-cell">Sprint 1</td><td>2026-05-22 ~ 2026-05-31</td><td>M1</td><td>요구사항 정의서, WBS, 협업 환경, 프로젝트 기획·명세 초안</td></tr>
+<tr><td class="key-cell">Sprint 2</td><td>2026-06-01 ~ 2026-06-07</td><td>M1</td><td>기획서, 데이터 수집, DB 설계, 데이터 조회 프로그램, Agent·Backend 기반 작업</td></tr>
+<tr><td class="key-cell">Sprint 3</td><td>2026-06-08 ~ 2026-06-12</td><td>M1</td><td>AI 전처리·학습·모델, RAG 검증, 시스템 아키텍처, 화면/UX 기초 설계, PoC 완료</td></tr>
+<tr><td class="key-cell">Sprint 4</td><td>2026-06-13 ~ 2026-06-16</td><td>M2</td><td>화면설계서 확정본, 시스템 구성도, 중간 발표 PT, 발표 QA</td></tr>
+<tr><td class="key-cell">Sprint 5</td><td>2026-06-17 ~ 2026-06-21</td><td>M3</td><td>LLM 선정, RAG 파이프라인, 프롬프트 최적화, 핵심 웹앱 기능 구현</td></tr>
+<tr><td class="key-cell">Sprint 6</td><td>2026-06-22 ~ 2026-06-28</td><td>M3</td><td>AWS 배포 환경, LLM 연동 웹앱 실서비스화, 운영·관리 기능 구현, 단위 테스트</td></tr>
+<tr><td class="key-cell">Sprint 7</td><td>2026-06-29 ~ 2026-07-05</td><td>M3</td><td>테스트 계획서, 통합 테스트, 모델링 테스트 보고서</td></tr>
+<tr><td class="key-cell">Sprint 8</td><td>2026-07-06 ~ 2026-07-12</td><td>M3</td><td>웹 테스트 보고서, 최종 발표 PT, 시연 영상, 소스코드 정리, 운영 가이드</td></tr>
+<tr><td class="key-cell">Sprint 9</td><td>2026-07-13 ~ 2026-07-16</td><td>M3</td><td>최종 발표·시연, 데모 QA, 피드백 반영, 산출물 최종 제출</td></tr>
 </tbody></table></div>
 <h2 id="s9-6" class="s-h2">9.6 예산·인력·일정 관리 원칙</h2>
 <ul class="bullet-list">
 <li>AWS 인프라 예산은 300,000원으로 관리하고, Runpod과 OpenAPI는 각각 $300 한도로 분리 관리한다.</li>
-<li>PoC 기간에는 구현 완성보다 추천 가능성, 화면 흐름, Production 범위 검증을 우선한다.</li>
-<li>Production 진행 여부와 범위는 2026-06-16 중간 보고에서 점검한다.</li>
-<li>외부 API Key 승인, 데이터 확보, RAG 품질 검증이 지연되면 MVP 범위를 조정하거나 후순위 기능을 분리한다.</li>
+<li>M1 PoC는 기획·데이터·DB·AI 모델·시스템 아키텍처와 화면/UX 기초 설계 산출물 완료를 목표로 한다.</li>
+<li>M2 중간 발표는 PoC의 마지막 항목이 아니라 별도 마일스톤으로 관리한다.</li>
+<li>2026-06-16 중간 발표에서 Sprint 5~9 Production 범위와 리스크를 확정한다.</li>
+<li>M3 Production은 2026-07-16 최종 발표·피드백 반영·산출물 최종 제출까지 완료하는 일정으로 관리한다.</li>
+<li>외부 API Key 승인, 데이터 확보, RAG 품질 검증, 배포 리스크가 지연되면 해당 Sprint 안에서 우선순위 기능을 조정한다.</li>
 <li>예산 사용량은 AWS 인프라, Runpod AI 실행, OpenAPI LLM/API, 외부 API 호출량을 중심으로 주기적으로 확인한다.</li>
 </ul>
 </div>
@@ -722,6 +735,7 @@ App ID는 향후 사용을 위해 입력 항목만 준비한다.
 <h1 class="s-h1">10. 변경 이력</h1>
 <div class="table-wrap"><table class="info-tbl log-tbl">
 <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+<tr><td class="key-cell">v1.7</td><td>2026-06-01</td><td>로브 기획팀</td><td>GitHub Projects Lovv WBS 기준으로 개발 기한, M1/M2/M3 마일스톤, Sprint 1~9 일정, Production 종료일을 정합화</td></tr>
 <tr><td class="key-cell">v1.6</td><td>2026-06-01</td><td>로브 기획팀</td><td>개인화 확장 요구사항 반영: 북마크, 방문 기록, 방문 소도시 별점, cold start, 소도시 랭킹, PoC ML 랭킹, Production 개인화 데이터 누적, 개인화 랭킹 1차 운영, 위치 반경 추천, 여행 중 즉흥 일정 조정 추가</td></tr>
 <tr><td class="key-cell">v1.5</td><td>2026-05-29</td><td>로브 기획팀</td><td>개인화 온보딩, 지도 마커 진입, 소도시 1곳 집중 일정, 월별 기상 경향 기반 추천, 숙소 검색 링크 정책, 추천 파이프라인 명세 반영</td></tr>
 <tr><td class="key-cell">v1.4.2</td><td>2026-05-27</td><td>로브 기획팀</td><td>인프라 300,000원 예산을 복원하고 Runpod AI 실행 $300, OpenAPI LLM/API $300으로 달러 예산 분리</td></tr>

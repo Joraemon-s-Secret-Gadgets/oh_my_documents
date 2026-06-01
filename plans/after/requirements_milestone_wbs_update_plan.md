@@ -1,6 +1,6 @@
 ---
 작성자: Codex
-상태: 진행전
+상태: 진행후
 ---
 
 # 요구사항 정의서 WBS 기준 일정 수정 플랜
@@ -105,16 +105,16 @@ GitHub Project #3 `Lovv WBS`의 현재 기준은 다음과 같이 반영한다.
 
 ## 6. 작업 체크리스트
 
-- [ ] GitHub Project #3 `Lovv WBS`에서 M1/M2/M3 마감일과 Sprint 1~9 기간을 재확인한다.
-- [ ] `docs/01_requirements/01_requirements.md`의 `9.4 단계별 인력 분배`를 M1/M2/M3 기준 표로 교체한다.
-- [ ] `docs/01_requirements/01_requirements.md`의 `9.5 개발 기한 및 마일스톤`을 마일스톤 요약 표와 스프린트별 개발 기한 표로 교체한다.
-- [ ] `docs/01_requirements/01_requirements.md`의 `9.6 예산·인력·일정 관리 원칙`에서 M2 중간 발표와 M3 Production 마감 기준을 보정한다.
-- [ ] 화면설계 및 프론트엔드 개발이 요구사항 정의서에 과도한 이슈·화면 단위로 들어가지 않고, 마일스톤별 산출물 수준으로 요약되는지 확인한다.
-- [ ] `docs/01_requirements/01_requirements.md`의 `10. 변경 이력`에 v1.7 행을 추가한다.
-- [ ] `rg -n "2026-07-20|2026-07-17|PoC \\| 2026-06-01 ~ 2026-06-16|Production \\| 2026-06-17 ~ 2026-07-20" docs/01_requirements/01_requirements.md`로 이전 일정 잔존 여부를 확인한다.
-- [ ] `rg -n "M1|M2|M3|Sprint 1|Sprint 9|2026-07-16" docs/01_requirements/01_requirements.md`로 새 일정 반영 여부를 확인한다.
-- [ ] Markdown 원본 수정 후 HTML 생성 절차가 필요한지 확인하고, 필요하면 `pages/01_requirements.html`을 재생성한다.
-- [ ] 최종 diff에서 요구사항 일정 섹션 외 불필요한 변경이 없는지 확인한다.
+- [x] GitHub Project #3 `Lovv WBS`에서 M1/M2/M3 마감일과 Sprint 1~9 기간을 재확인한다. (`gh project item-list` 조회는 `read:project` 권한 부족으로 실패했으며, 본 계획서에 기록된 WBS 기준값을 적용했다.)
+- [x] `docs/01_requirements/01_requirements.md`의 `9.4 단계별 인력 분배`를 M1/M2/M3 기준 표로 교체한다.
+- [x] `docs/01_requirements/01_requirements.md`의 `9.5 개발 기한 및 마일스톤`을 마일스톤 요약 표와 스프린트별 개발 기한 표로 교체한다.
+- [x] `docs/01_requirements/01_requirements.md`의 `9.6 예산·인력·일정 관리 원칙`에서 M2 중간 발표와 M3 Production 마감 기준을 보정한다.
+- [x] 화면설계 및 프론트엔드 개발이 요구사항 정의서에 과도한 이슈·화면 단위로 들어가지 않고, 마일스톤별 산출물 수준으로 요약되는지 확인한다.
+- [x] `docs/01_requirements/01_requirements.md`의 `10. 변경 이력`에 v1.7 행을 추가한다.
+- [x] `rg -n "2026-07-20|2026-07-17|PoC \\| 2026-06-01 ~ 2026-06-16|Production \\| 2026-06-17 ~ 2026-07-20" docs/01_requirements/01_requirements.md`로 이전 일정 잔존 여부를 확인한다.
+- [x] `rg -n "M1|M2|M3|Sprint 1|Sprint 9|2026-07-16" docs/01_requirements/01_requirements.md`로 새 일정 반영 여부를 확인한다.
+- [x] Markdown 원본 수정 후 HTML 생성 절차가 필요한지 확인하고, 필요하면 `pages/01_requirements.html`을 재생성한다.
+- [x] 최종 diff에서 요구사항 일정 섹션 외 불필요한 변경이 없는지 확인한다.
 
 ## 7. 검증 방법
 

@@ -491,7 +491,8 @@
       .table-wrap .api-status-tbl,
       .table-wrap .budget-tbl,
       .table-wrap .phase-staffing-tbl,
-      .table-wrap .milestone-tbl {
+      .table-wrap .milestone-summary-tbl,
+      .table-wrap .sprint-tbl {
         table-layout: fixed;
       }
       .table-wrap .role-list-tbl {
@@ -603,13 +604,16 @@
         width: 160px;
       }
       .table-wrap .phase-staffing-tbl,
-      .table-wrap .milestone-tbl {
+      .table-wrap .milestone-summary-tbl,
+      .table-wrap .sprint-tbl {
         min-width: 1120px;
       }
       .phase-staffing-tbl th:first-child,
       .phase-staffing-tbl td:first-child,
-      .milestone-tbl th:first-child,
-      .milestone-tbl td:first-child {
+      .milestone-summary-tbl th:first-child,
+      .milestone-summary-tbl td:first-child,
+      .sprint-tbl th:first-child,
+      .sprint-tbl td:first-child {
         width: 110px;
       }
       .phase-staffing-tbl th:nth-child(2),
@@ -624,15 +628,21 @@
       .phase-staffing-tbl td:nth-child(4) {
         width: 200px;
       }
-      .milestone-tbl th:nth-child(2),
-      .milestone-tbl td:nth-child(2) {
+      .milestone-summary-tbl th:nth-child(2),
+      .milestone-summary-tbl td:nth-child(2) {
         width: 140px;
       }
-      .milestone-tbl th:nth-child(3),
-      .milestone-tbl td:nth-child(3),
-      .milestone-tbl th:last-child,
-      .milestone-tbl td:last-child {
+      .milestone-summary-tbl th:nth-child(3),
+      .milestone-summary-tbl td:nth-child(3) {
+        width: 150px;
+      }
+      .sprint-tbl th:nth-child(2),
+      .sprint-tbl td:nth-child(2) {
         width: 190px;
+      }
+      .sprint-tbl th:nth-child(3),
+      .sprint-tbl td:nth-child(3) {
+        width: 96px;
       }
       .info-tbl th {
         background: var(--navy);
