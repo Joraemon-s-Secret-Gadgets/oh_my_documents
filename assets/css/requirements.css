@@ -479,6 +479,161 @@
         min-width: 720px;
         margin: 0;
       }
+      .table-wrap .info-tbl:has(th:nth-child(4)) {
+        min-width: 960px;
+      }
+      .table-wrap .info-tbl:has(th:nth-child(5)) {
+        min-width: 1080px;
+      }
+      .table-wrap .role-list-tbl,
+      .table-wrap .priority-scope-tbl,
+      .table-wrap .pipeline-tbl,
+      .table-wrap .api-status-tbl,
+      .table-wrap .budget-tbl,
+      .table-wrap .phase-staffing-tbl,
+      .table-wrap .milestone-tbl {
+        table-layout: fixed;
+      }
+      .table-wrap .role-list-tbl {
+        min-width: 1040px;
+      }
+      .role-list-tbl th:first-child,
+      .role-list-tbl td:first-child {
+        width: 130px;
+      }
+      .role-list-tbl th:nth-child(2),
+      .role-list-tbl td:nth-child(2) {
+        width: 130px;
+      }
+      .role-list-tbl th:nth-child(3),
+      .role-list-tbl td:nth-child(3) {
+        width: 300px;
+      }
+      .role-list-tbl th:nth-child(4),
+      .role-list-tbl td:nth-child(4) {
+        width: 120px;
+      }
+      .table-wrap .journey-flow-tbl {
+        min-width: 760px;
+      }
+      .journey-flow-tbl th:first-child,
+      .journey-flow-tbl td:first-child {
+        width: 90px;
+      }
+      .journey-flow-tbl th:nth-child(2),
+      .journey-flow-tbl td:nth-child(2) {
+        width: 190px;
+      }
+      .table-wrap .priority-scope-tbl {
+        min-width: 1080px;
+      }
+      .priority-scope-tbl th:first-child,
+      .priority-scope-tbl td:first-child {
+        width: 110px;
+      }
+      .priority-scope-tbl th:nth-child(3),
+      .priority-scope-tbl td:nth-child(3) {
+        width: 92px;
+      }
+      .priority-scope-tbl th:nth-child(4),
+      .priority-scope-tbl td:nth-child(4) {
+        width: 120px;
+      }
+      .priority-scope-tbl th:nth-child(5),
+      .priority-scope-tbl td:nth-child(5) {
+        width: 110px;
+      }
+      .table-wrap .pipeline-tbl {
+        min-width: 1040px;
+      }
+      .pipeline-tbl th:first-child,
+      .pipeline-tbl td:first-child {
+        width: 150px;
+      }
+      .pipeline-tbl th:last-child,
+      .pipeline-tbl td:last-child {
+        width: 170px;
+      }
+      .table-wrap .api-status-tbl {
+        min-width: 900px;
+      }
+      .api-status-tbl th:first-child,
+      .api-status-tbl td:first-child {
+        width: 150px;
+      }
+      .api-status-tbl th:nth-child(3),
+      .api-status-tbl td:nth-child(3),
+      .api-status-tbl th:nth-child(4),
+      .api-status-tbl td:nth-child(4) {
+        width: 110px;
+      }
+      .api-status-tbl th:last-child,
+      .api-status-tbl td:last-child {
+        width: 170px;
+      }
+      .table-wrap .cost-standard-tbl,
+      .table-wrap .team-role-tbl {
+        min-width: 760px;
+      }
+      .cost-standard-tbl th:first-child,
+      .cost-standard-tbl td:first-child,
+      .team-role-tbl th:first-child,
+      .team-role-tbl td:first-child {
+        width: 170px;
+      }
+      .cost-standard-tbl th:last-child,
+      .cost-standard-tbl td:last-child,
+      .team-role-tbl th:last-child,
+      .team-role-tbl td:last-child {
+        width: 150px;
+      }
+      .table-wrap .budget-tbl {
+        min-width: 1140px;
+      }
+      .budget-tbl th:first-child,
+      .budget-tbl td:first-child {
+        width: 150px;
+      }
+      .budget-tbl th:nth-child(2),
+      .budget-tbl td:nth-child(2) {
+        width: 120px;
+      }
+      .budget-tbl th:last-child,
+      .budget-tbl td:last-child {
+        width: 160px;
+      }
+      .table-wrap .phase-staffing-tbl,
+      .table-wrap .milestone-tbl {
+        min-width: 1120px;
+      }
+      .phase-staffing-tbl th:first-child,
+      .phase-staffing-tbl td:first-child,
+      .milestone-tbl th:first-child,
+      .milestone-tbl td:first-child {
+        width: 110px;
+      }
+      .phase-staffing-tbl th:nth-child(2),
+      .phase-staffing-tbl td:nth-child(2) {
+        width: 180px;
+      }
+      .phase-staffing-tbl th:nth-child(3),
+      .phase-staffing-tbl td:nth-child(3) {
+        width: 220px;
+      }
+      .phase-staffing-tbl th:nth-child(4),
+      .phase-staffing-tbl td:nth-child(4) {
+        width: 200px;
+      }
+      .milestone-tbl th:nth-child(2),
+      .milestone-tbl td:nth-child(2) {
+        width: 140px;
+      }
+      .milestone-tbl th:nth-child(3),
+      .milestone-tbl td:nth-child(3),
+      .milestone-tbl th:last-child,
+      .milestone-tbl td:last-child {
+        width: 190px;
+      }
       .info-tbl th {
         background: var(--navy);
         color: #fff;
@@ -492,6 +647,8 @@
         border-bottom: 1px solid var(--rule);
         vertical-align: top;
         line-height: 1.65;
+        word-break: keep-all;
+        overflow-wrap: anywhere;
       }
       .info-tbl tr:last-child td {
         border-bottom: none;
@@ -504,7 +661,8 @@
         font-weight: 600;
         color: var(--navy);
         white-space: nowrap;
-        width: 22%;
+        width: 18%;
+        min-width: 120px;
       }
       .info-tbl .key-cell.green-key {
         background: var(--green-lt);
@@ -552,6 +710,11 @@
         border-collapse: collapse;
         font-size: 0.81rem;
         margin: 10px 0 22px;
+        table-layout: fixed;
+      }
+      .table-wrap .req-tbl {
+        min-width: 860px;
+        margin: 0;
       }
       .req-tbl thead th {
         background: var(--navy);
@@ -564,38 +727,59 @@
         top: 0;
       }
       .req-tbl thead th:first-child {
-        width: 100px;
+        width: 118px;
       }
       .req-tbl thead th:nth-child(3) {
-        width: 88px;
+        width: 96px;
         text-align: center;
       }
       .req-tbl thead th:last-child {
-        width: 150px;
+        width: 160px;
+      }
+      .table-wrap .feature-req-tbl {
+        min-width: 1040px;
+      }
+      .feature-req-tbl thead th:first-child {
+        width: 128px;
       }
       .feature-req-tbl thead th:nth-child(2) {
-        width: 130px;
+        width: 150px;
       }
       .feature-req-tbl thead th:nth-child(3) {
         width: auto;
         text-align: left;
+      }
+      .feature-req-tbl thead th:last-child {
+        width: 160px;
+      }
+      .table-wrap .nfr-tbl {
+        min-width: 820px;
+      }
+      .nfr-tbl thead th:first-child {
+        width: 124px;
       }
       .nfr-tbl thead th:nth-child(2) {
         width: auto;
         text-align: left;
       }
       .nfr-tbl thead th:nth-child(3) {
-        width: 150px;
+        width: 170px;
         text-align: left;
       }
       .role-permission-tbl {
         font-size: 0.76rem;
       }
-      .role-permission-tbl thead th:first-child,
+      .table-wrap .role-permission-tbl {
+        min-width: 1120px;
+      }
+      .role-permission-tbl thead th:first-child {
+        width: 160px;
+        text-align: left;
+      }
       .role-permission-tbl thead th:nth-child(2),
       .role-permission-tbl thead th:nth-child(3),
       .role-permission-tbl thead th:last-child {
-        width: auto;
+        width: 150px;
         text-align: left;
       }
       .role-permission-tbl td {
@@ -607,6 +791,8 @@
         border-bottom: 1px solid var(--rule);
         vertical-align: top;
         line-height: 1.65;
+        word-break: keep-all;
+        overflow-wrap: anywhere;
       }
       .req-tbl tbody tr:nth-child(even) td {
         background: var(--navy-xlt);
@@ -1036,6 +1222,26 @@
         font-size: 0.82rem;
         margin: 12px 0;
         table-layout: fixed;
+      }
+      .table-wrap .log-tbl {
+        min-width: 860px;
+      }
+      .log-tbl th:first-child,
+      .log-tbl td:first-child,
+      .log-tbl .key-cell {
+        width: 72px;
+        min-width: 72px;
+        white-space: nowrap;
+      }
+      .log-tbl th:nth-child(2),
+      .log-tbl td:nth-child(2) {
+        width: 116px;
+        white-space: nowrap;
+      }
+      .log-tbl th:nth-child(3),
+      .log-tbl td:nth-child(3) {
+        width: 112px;
+        white-space: nowrap;
       }
       .log-tbl th {
         background: var(--navy);
