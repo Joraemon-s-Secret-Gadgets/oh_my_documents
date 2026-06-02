@@ -9,9 +9,10 @@
 ## Dependencies
 
 - 요구사항 기준: `../01_requirements/01_requirements.md`
-- API 계약: `../04_api_spec/04_api_spec.md`
-- 데이터 모델: `../05_database_design/05_database_design.md`
-- Agent 구조: `../06_agent_spec/06_agent_spec.md`
+- 데이터 수집 계획: `../04_data_collect_plan/04_data_collect_plan.md`
+- API 계약: `../05_api_spec/05_api_spec.md`
+- 데이터 모델: `../06_database_design/06_database_design.md`
+- Agent 구조: `../07_agent_spec/07_agent_spec.md`
 
 ## Editing Rules
 

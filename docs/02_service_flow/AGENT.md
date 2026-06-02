@@ -9,8 +9,8 @@
 ## Dependencies
 
 - 요구사항 기준: `../01_requirements/01_requirements.md`
-- API 계약 확인: `../04_api_spec/04_api_spec.md`
-- Agent 처리 흐름 확인: `../06_agent_spec/06_agent_spec.md`
+- API 계약 확인: `../05_api_spec/05_api_spec.md`
+- Agent 처리 흐름 확인: `../07_agent_spec/07_agent_spec.md`
 
 ## Editing Rules
 

@@ -9,9 +9,10 @@
 - `../01_requirements/01_requirements.md`
 - `../02_service_flow/02_service_flow.md`
 - `../03_technical_spec/03_technical_spec.md`
-- `../04_api_spec/04_api_spec.md`
-- `../05_database_design/05_database_design.md`
-- `../06_agent_spec/06_agent_spec.md`
+- `../04_data_collect_plan/04_data_collect_plan.md`
+- `../05_api_spec/05_api_spec.md`
+- `../06_database_design/06_database_design.md`
+- `../07_agent_spec/07_agent_spec.md`
 
 ## Update Policy
 

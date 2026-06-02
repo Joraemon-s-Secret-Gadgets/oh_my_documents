@@ -4,14 +4,15 @@
 
 ## Primary Document
 
-대표 문서는 `04_api_spec.md`다. 프론트엔드, 백엔드, 추천 Agent, 운영 화면이 사용하는 API 계약을 정의한다.
+대표 문서는 `05_api_spec.md`다. 프론트엔드, 백엔드, 추천 Agent, 운영 화면이 사용하는 API 계약을 정의한다.
 
 ## Dependencies
 
 - 요구사항 기준: `../01_requirements/01_requirements.md`
 - 서비스 흐름: `../02_service_flow/02_service_flow.md`
-- 데이터 모델: `../05_database_design/05_database_design.md`
-- Agent 입출력: `../06_agent_spec/06_agent_spec.md`
+- 데이터 수집 계획: `../04_data_collect_plan/04_data_collect_plan.md`
+- 데이터 모델: `../06_database_design/06_database_design.md`
+- Agent 입출력: `../07_agent_spec/07_agent_spec.md`
 
 ## Editing Rules
 

@@ -4,15 +4,16 @@
 
 ## Primary Document
 
-대표 문서는 `06_agent_spec.md`다. 조건 분류, RAG 검색, 후보 선정, 일정 구성, 설명 생성, 폴백, 검증 기준을 정의한다.
+대표 문서는 `07_agent_spec.md`다. 조건 분류, RAG 검색, 후보 선정, 일정 구성, 설명 생성, 폴백, 검증 기준을 정의한다.
 
 ## Dependencies
 
 - 요구사항 기준: `../01_requirements/01_requirements.md`
 - 서비스 흐름: `../02_service_flow/02_service_flow.md`
 - 기술 경계: `../03_technical_spec/03_technical_spec.md`
-- API 계약: `../04_api_spec/04_api_spec.md`
-- 데이터 모델: `../05_database_design/05_database_design.md`
+- 데이터 수집 계획: `../04_data_collect_plan/04_data_collect_plan.md`
+- API 계약: `../05_api_spec/05_api_spec.md`
+- 데이터 모델: `../06_database_design/06_database_design.md`
 
 ## Editing Rules
 
