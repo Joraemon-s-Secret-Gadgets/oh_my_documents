@@ -1,26 +1,32 @@
       /* ── TOKENS ── */
       :root {
-        --brand-green: #1B3B32;
-        --brand-green-900: #10251F;
-        --brand-green-800: #173329;
-        --brand-green-100: #E6EEE9;
-        --brand-gold: #D4AF37;
-        --brand-gold-700: #A9821E;
-        --brand-gold-100: #F6EBC4;
-        --navy: #1B3B32;
-        --navy2: #10251F;
-        --navy-lt: #E6EEE9;
-        --navy-xlt: #F7F3EA;
-        --green: #1B3B32;
-        --green-lt: #E6EEE9;
-        --terra: #A9821E;
-        --terra-lt: #F6EBC4;
-        --ink: #111827;
-        --ink2: #374151;
-        --ink3: #6b7280;
+        --main-orange: #F26518;
+        --dark-charcoal: #222222;
+        --soft-beige: #FFF3E7;
+        --card-peach: #FCE7DB;
+        --muted-brown: #D44A14;
+        --sub-text-gray: #666666;
+        --brand-green: var(--main-orange);
+        --brand-green-900: var(--dark-charcoal);
+        --brand-green-800: var(--muted-brown);
+        --brand-green-100: var(--card-peach);
+        --brand-gold: var(--main-orange);
+        --brand-gold-700: var(--muted-brown);
+        --brand-gold-100: var(--card-peach);
+        --navy: var(--dark-charcoal);
+        --navy2: var(--dark-charcoal);
+        --navy-lt: var(--card-peach);
+        --navy-xlt: var(--soft-beige);
+        --green: var(--main-orange);
+        --green-lt: var(--card-peach);
+        --terra: var(--muted-brown);
+        --terra-lt: var(--card-peach);
+        --ink: var(--dark-charcoal);
+        --ink2: var(--dark-charcoal);
+        --ink3: var(--sub-text-gray);
         --ink4: #9ca3af;
-        --rule: #e5e7eb;
-        --paper: #fafafa;
+        --rule: var(--card-peach);
+        --paper: var(--soft-beige);
         --white: #ffffff;
         --p0-bg: #fef2f2;
         --p0-txt: #991b1b;
@@ -92,7 +98,7 @@
         font-family: "Noto Serif KR", serif;
         font-size: 1.05rem;
         font-weight: 700;
-        color: #fff;
+        color: var(--main-orange);
         margin-bottom: 3px;
       }
       .aside-ver {
@@ -112,7 +118,7 @@
         width: 6px;
         height: 6px;
         border-radius: 50%;
-        background: #4ade80;
+        background: var(--main-orange);
       }
       .aside-status span {
         font-size: 0.67rem;
@@ -147,8 +153,8 @@
       }
       .toc-section-link.active {
         color: #fff;
-        border-left-color: #D4AF37;
-        background: rgba(212, 175, 55, 0.14);
+        border-left-color: var(--main-orange);
+        background: rgba(242, 101, 24, 0.18);
       }
       .toc-link {
         display: block;
@@ -164,8 +170,8 @@
       }
       .toc-link.active {
         color: #fff;
-        border-left-color: #D4AF37;
-        background: rgba(212, 175, 55, 0.14);
+        border-left-color: var(--main-orange);
+        background: rgba(242, 101, 24, 0.18);
       }
       .aside-footer {
         padding: 16px 20px;
@@ -249,7 +255,7 @@
         font-weight: 600;
         letter-spacing: 0.18em;
         text-transform: uppercase;
-        color: var(--navy);
+        color: var(--muted-brown);
         margin-bottom: 10px;
       }
       .cover-title {
@@ -310,7 +316,7 @@
       }
       .detail-docs h2 {
         margin: 0 0 8px;
-        color: var(--navy);
+        color: var(--dark-charcoal);
         font-family: "Noto Serif KR", serif;
         font-size: 1.2rem;
       }
@@ -385,12 +391,12 @@
         color: var(--ink);
         margin: 28px 0 12px;
         padding-left: 10px;
-        border-left: 3px solid var(--navy);
+        border-left: 3px solid var(--main-orange);
       }
       h3.s-h3 {
         font-size: 0.9rem;
         font-weight: 600;
-        color: var(--green);
+        color: var(--muted-brown);
         margin: 20px 0 10px;
       }
       p.doc-p {
@@ -421,7 +427,7 @@
         padding: 3px 8px;
         border-radius: 999px;
         background: var(--brand-gold-100);
-        color: var(--brand-gold-700);
+        color: var(--muted-brown);
         font-size: 0.68rem;
         font-weight: 700;
         letter-spacing: 0.04em;
@@ -704,8 +710,8 @@
         overflow-x: auto;
         border: 1px solid var(--rule);
         border-radius: 8px;
-        background: #10251F;
-        color: #F7F3EA;
+        background: var(--dark-charcoal);
+        color: var(--soft-beige);
         font-family: "IBM Plex Mono", monospace;
         font-size: 0.78rem;
         line-height: 1.7;
@@ -808,7 +814,7 @@
         background: var(--navy-xlt);
       }
       .req-tbl tbody tr:hover td {
-        background: #eef4ff;
+        background: var(--card-peach);
       }
       .req-id {
         font-family: "IBM Plex Mono", monospace;
@@ -1042,7 +1048,7 @@
         background: var(--navy-xlt);
       }
       .cmp-tbl tr:hover td {
-        background: #eef4ff;
+        background: var(--card-peach);
       }
       .sym-ok {
         color: #16a34a;
@@ -1308,7 +1314,7 @@
           border-top: none;
         }
         .req-tbl thead th {
-          background: #1B3B32 !important;
+          background: #F26518 !important;
           -webkit-print-color-adjust: exact;
           print-color-adjust: exact;
         }

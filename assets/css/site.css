@@ -1,19 +1,25 @@
 :root {
   color-scheme: light;
-  --brand-green: #1B3B32;
-  --brand-green-900: #10251F;
-  --brand-green-800: #173329;
-  --brand-green-100: #E6EEE9;
-  --brand-gold: #D4AF37;
-  --brand-gold-700: #A9821E;
-  --brand-gold-100: #F6EBC4;
-  --bg: #F7F3EA;
-  --surface: #ffffff;
-  --text: #17211D;
-  --muted: #66736D;
-  --line: #D9D0BF;
-  --accent: var(--brand-gold);
-  --accent-dark: var(--brand-green);
+  --main-orange: #F26518;
+  --dark-charcoal: #222222;
+  --soft-beige: #FFF3E7;
+  --card-peach: #FCE7DB;
+  --muted-brown: #D44A14;
+  --sub-text-gray: #666666;
+  --brand-green: var(--main-orange);
+  --brand-green-900: var(--dark-charcoal);
+  --brand-green-800: var(--muted-brown);
+  --brand-green-100: var(--card-peach);
+  --brand-gold: var(--main-orange);
+  --brand-gold-700: var(--muted-brown);
+  --brand-gold-100: var(--card-peach);
+  --bg: var(--soft-beige);
+  --surface: var(--card-peach);
+  --text: var(--dark-charcoal);
+  --muted: var(--sub-text-gray);
+  --line: var(--card-peach);
+  --accent: var(--main-orange);
+  --accent-dark: var(--muted-brown);
 }
 
 * {
@@ -52,14 +58,14 @@ a {
 
 .site-title {
   margin: 0;
-  color: var(--brand-green);
+  color: var(--main-orange);
   font-size: clamp(32px, 5vw, 56px);
   line-height: 1.1;
 }
 
 .section-title {
   margin: 32px 0 16px;
-  color: var(--brand-green);
+  color: var(--muted-brown);
   font-size: 20px;
 }
 
@@ -88,7 +94,7 @@ a {
 .doc-card.primary {
   min-height: 0;
   border-color: var(--accent);
-  box-shadow: inset 4px 0 0 var(--brand-green);
+  box-shadow: inset 4px 0 0 var(--accent);
 }
 
 .doc-card:hover {
@@ -97,6 +103,7 @@ a {
 
 .doc-card h3 {
   margin: 0;
+  color: var(--dark-charcoal);
   font-size: 18px;
   line-height: 1.35;
 }
@@ -130,6 +137,7 @@ a {
 }
 
 .child-docs strong {
+  color: var(--dark-charcoal);
   font-size: 15px;
 }
 
@@ -143,7 +151,7 @@ a {
   padding: 3px 8px;
   border-radius: 999px;
   background: var(--brand-gold-100);
-  color: var(--brand-green);
+  color: var(--muted-brown);
   font-size: 12px;
   font-weight: 700;
 }
