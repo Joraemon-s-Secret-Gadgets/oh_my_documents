@@ -40,7 +40,7 @@
 <h2 id="s1-1" class="s-h2">1.1 목적</h2>
 <p class="doc-p">본 문서는 로브 서비스의 핵심 데이터 모델, 테이블 후보, 관계, 인덱스, 보존 정책을 정의한다. PoC에서는 일부 데이터를 정적 파일과 로컬 스토리지로 대체할 수 있으나, Production 전환 시 본 문서를 기준으로 데이터베이스를 설계한다.</p>
 <h2 id="s1-2" class="s-h2">1.2 데이터베이스 방향</h2>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap wide"><table class="info-tbl decision-tbl">
 <thead><tr><th>항목</th><th>결정</th><th>비고</th></tr></thead><tbody>
 <tr><td>기본 모델</td><td>관계형 데이터베이스 우선</td><td>서비스 핵심 데이터는 정규화된 관계형 모델을 기준으로 설계한다.</td></tr>
 <tr><td>RDBMS</td><td>MySQL 8 LTS</td><td>목적지, 축제, 사용자, 저장 일정, 검토 이력 등 핵심 트랜잭션 데이터를 저장한다.</td></tr>

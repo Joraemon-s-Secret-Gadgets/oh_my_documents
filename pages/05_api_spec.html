@@ -90,7 +90,7 @@
 <tr><td>ID 형식</td><td>UUID 권장</td></tr>
 </tbody></table></div>
 <h1 id="s2" class="s-h1">2. 공통 오류 응답</h1>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap wide"><table class="info-tbl">
 <thead><tr><th>HTTP Status</th><th>Code</th><th>의미</th></tr></thead><tbody>
 <tr><td>400</td><td>BAD_REQUEST</td><td>요청 형식 오류</td></tr>
 <tr><td>401</td><td>UNAUTHENTICATED</td><td>인증 필요</td></tr>
@@ -110,7 +110,7 @@
   }
 }</code></pre>
 <h1 id="s3" class="s-h1">3. 인증 API</h1>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap wide"><table class="info-tbl api-contract-tbl">
 <thead><tr><th>Method</th><th>Path</th><th>Auth</th><th>설명</th></tr></thead><tbody>
 <tr><td>POST</td><td><code>/auth/login</code></td><td>Public</td><td>이메일/소셜 로그인</td></tr>
 <tr><td>POST</td><td><code>/auth/logout</code></td><td>User</td><td>로그아웃</td></tr>
@@ -124,7 +124,7 @@
   &quot;roles&quot;: [&quot;R-USER&quot;]
 }</code></pre>
 <h1 id="s4" class="s-h1">4. 온보딩·선호 API</h1>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap wide"><table class="info-tbl api-contract-tbl">
 <thead><tr><th>Method</th><th>Path</th><th>Auth</th><th>설명</th></tr></thead><tbody>
 <tr><td>GET</td><td><code>/me/preferences</code></td><td>User</td><td>선호 프로필 조회</td></tr>
 <tr><td>PUT</td><td><code>/me/preferences</code></td><td>User</td><td>온보딩 응답 저장 또는 재설정</td></tr>
@@ -144,7 +144,7 @@
   &quot;updatedAt&quot;: &quot;2026-05-29T09:00:00Z&quot;
 }</code></pre>
 <h1 id="s5" class="s-h1">5. 지도·목적지 API</h1>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap wide"><table class="info-tbl api-contract-tbl">
 <thead><tr><th>Method</th><th>Path</th><th>Auth</th><th>설명</th></tr></thead><tbody>
 <tr><td>GET</td><td><code>/destinations</code></td><td>Public</td><td>소도시 목록 조회</td></tr>
 <tr><td>GET</td><td><code>/destinations/{destinationId}</code></td><td>Public</td><td>소도시 상세 조회</td></tr>
@@ -152,7 +152,7 @@
 </tbody></table></div>
 <h2 id="s5-1" class="s-h2">5.1 <code>GET /destinations/map-markers</code></h2>
 <p class="doc-p"><strong>Query</strong></p>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap wide"><table class="info-tbl">
 <thead><tr><th>이름</th><th>타입</th><th>필수</th><th>설명</th></tr></thead><tbody>
 <tr><td>country</td><td>string</td><td>No</td><td><code>KR</code>, <code>JP</code></td></tr>
 <tr><td>month</td><td>number</td><td>No</td><td>1~12</td></tr>
@@ -173,7 +173,7 @@
   ]
 }</code></pre>
 <h1 id="s6" class="s-h1">6. 추천 API</h1>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap wide"><table class="info-tbl api-contract-tbl">
 <thead><tr><th>Method</th><th>Path</th><th>Auth</th><th>설명</th></tr></thead><tbody>
 <tr><td>POST</td><td><code>/recommendations</code></td><td>Optional</td><td>추천 생성</td></tr>
 <tr><td>GET</td><td><code>/recommendations/{recommendationId}</code></td><td>Optional</td><td>추천 결과 조회</td></tr>
@@ -224,7 +224,7 @@
   }
 }</code></pre>
 <h1 id="s7" class="s-h1">7. 저장·피드백 API</h1>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap wide"><table class="info-tbl api-contract-tbl">
 <thead><tr><th>Method</th><th>Path</th><th>Auth</th><th>설명</th></tr></thead><tbody>
 <tr><td>GET</td><td><code>/me/itineraries</code></td><td>User</td><td>저장 일정 목록</td></tr>
 <tr><td>POST</td><td><code>/me/itineraries</code></td><td>User</td><td>추천 일정 저장</td></tr>
@@ -245,7 +245,7 @@
   &quot;createdAt&quot;: &quot;2026-05-29T09:00:00Z&quot;
 }</code></pre>
 <h1 id="s8" class="s-h1">8. 외부 정보 API</h1>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap wide"><table class="info-tbl api-contract-tbl">
 <thead><tr><th>Method</th><th>Path</th><th>Auth</th><th>설명</th></tr></thead><tbody>
 <tr><td>GET</td><td><code>/external/weather/current</code></td><td>Public</td><td>목적지 현재 날씨 표시</td></tr>
 <tr><td>GET</td><td><code>/external/stay-links</code></td><td>Public</td><td>숙소 검색 링크 생성</td></tr>
@@ -253,7 +253,7 @@
 </tbody></table></div>
 <p class="doc-p">WeatherAPI 응답은 추천 스코어링에 사용하지 않고 목적지 상세 표시용으로만 사용한다.</p>
 <h1 id="s9" class="s-h1">9. 운영·검토 API</h1>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap wide"><table class="info-tbl api-contract-tbl">
 <thead><tr><th>Method</th><th>Path</th><th>Auth</th><th>설명</th></tr></thead><tbody>
 <tr><td>GET</td><td><code>/admin/data-submissions</code></td><td>Admin/Operator</td><td>데이터 제안 목록</td></tr>
 <tr><td>POST</td><td><code>/admin/data-submissions</code></td><td>Operator/DataProvider</td><td>데이터 제안 등록</td></tr>
@@ -261,7 +261,7 @@
 <tr><td>GET</td><td><code>/admin/audit-logs</code></td><td>Admin</td><td>검토·승인 이력 조회</td></tr>
 </tbody></table></div>
 <h1 id="s10" class="s-h1">10. 변경 이력</h1>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap wide"><table class="info-tbl change-log-tbl">
 <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
 <tr><td>v0.1</td><td>2026-05-29</td><td>로브 기획팀</td><td>API 명세서 초안 작성</td></tr>
 </tbody></table></div>

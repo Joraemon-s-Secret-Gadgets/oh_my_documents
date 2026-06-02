@@ -482,8 +482,23 @@
         background: var(--white);
       }
       .table-wrap .info-tbl {
-        min-width: 720px;
+        min-width: 100%;
         margin: 0;
+      }
+      @media (min-width: 1024px) {
+        .table-wrap.wide {
+          width: min(1180px, calc(100vw - var(--sidebar-w) - 72px));
+          max-width: none;
+        }
+        .table-wrap.extra-wide {
+          width: min(1320px, calc(100vw - var(--sidebar-w) - 48px));
+        }
+        .table-wrap.wide .info-tbl {
+          min-width: 900px;
+        }
+        .table-wrap.extra-wide .info-tbl {
+          min-width: 1120px;
+        }
       }
       .table-wrap .info-tbl:has(th:nth-child(4)) {
         min-width: 960px;
@@ -695,6 +710,62 @@
       .info-tbl .key-cell.blue-key {
         background: #eff6ff;
         color: #1d4ed8;
+      }
+      .decision-tbl th:first-child,
+      .decision-tbl td:first-child {
+        width: 180px;
+        white-space: nowrap;
+      }
+      .api-contract-tbl th:first-child,
+      .api-contract-tbl td:first-child {
+        width: 96px;
+        white-space: nowrap;
+      }
+      .api-contract-tbl th:nth-child(2),
+      .api-contract-tbl td:nth-child(2) {
+        width: 260px;
+      }
+      .api-contract-tbl th:nth-child(3),
+      .api-contract-tbl td:nth-child(3) {
+        width: 110px;
+        white-space: nowrap;
+      }
+      .agent-pipeline-tbl {
+        table-layout: fixed;
+      }
+      .agent-pipeline-tbl th:first-child,
+      .agent-pipeline-tbl td:first-child {
+        width: 68px;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .agent-pipeline-tbl th:nth-child(2),
+      .agent-pipeline-tbl td:nth-child(2) {
+        width: 190px;
+      }
+      .agent-pipeline-tbl th:nth-child(4),
+      .agent-pipeline-tbl td:nth-child(4),
+      .agent-pipeline-tbl th:nth-child(5),
+      .agent-pipeline-tbl td:nth-child(5) {
+        width: 210px;
+      }
+      .change-log-tbl {
+        table-layout: fixed;
+      }
+      .change-log-tbl th:first-child,
+      .change-log-tbl td:first-child {
+        width: 82px;
+        white-space: nowrap;
+      }
+      .change-log-tbl th:nth-child(2),
+      .change-log-tbl td:nth-child(2) {
+        width: 116px;
+        white-space: nowrap;
+      }
+      .change-log-tbl th:nth-child(3),
+      .change-log-tbl td:nth-child(3) {
+        width: 120px;
+        white-space: nowrap;
       }
       .info-tbl code {
         font-family: "IBM Plex Mono", monospace;
@@ -1334,6 +1405,16 @@
         }
         .card-grid {
           grid-template-columns: 1fr;
+        }
+        .table-wrap.wide,
+        .table-wrap.extra-wide {
+          width: 100%;
+          max-width: 100%;
+          overflow-x: auto;
+        }
+        .table-wrap.wide .info-tbl,
+        .table-wrap.extra-wide .info-tbl {
+          min-width: 760px;
         }
         .doc-nav-pager {
           grid-template-columns: 1fr;

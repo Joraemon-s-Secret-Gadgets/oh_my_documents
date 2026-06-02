@@ -144,19 +144,52 @@ def split_table_row(line: str) -> list[str]:
     return [cell.strip() for cell in stripped.split("|")]
 
 
+def slug_class(value: str) -> str:
+    value = re.sub(r"`([^`]+)`", r"\1", value)
+    value = re.sub(r"[^0-9A-Za-z가-힣]+", "-", value).strip("-").lower()
+    return value
+
+
+def table_classes(header: list[str], body: list[list[str]]) -> tuple[str, str]:
+    normalized = {slug_class(cell) for cell in header}
+    max_cell_length = max((len(re.sub(r"<br\s*/?>", " ", cell)) for row in body for cell in row), default=0)
+    column_count = len(header)
+    wrap_classes = ["table-wrap"]
+    table_classes = ["info-tbl"]
+
+    if column_count >= 3 or max_cell_length >= 90:
+        wrap_classes.append("wide")
+    if column_count >= 5 or max_cell_length >= 180:
+        wrap_classes.append("extra-wide")
+    if {"method", "path", "auth", "설명"}.issubset(normalized):
+        wrap_classes.append("wide")
+        table_classes.append("api-contract-tbl")
+    if {"버전", "날짜", "작성자", "변경-내용"}.issubset(normalized):
+        wrap_classes.append("wide")
+        table_classes.append("change-log-tbl")
+    if {"단계", "노드-모듈명", "중앙-통제-및-역할", "입력", "출력"}.issubset(normalized):
+        wrap_classes.extend(["wide", "extra-wide"])
+        table_classes.append("agent-pipeline-tbl")
+    if {"항목", "내용"}.issubset(normalized) or {"항목", "결정"}.issubset(normalized):
+        table_classes.append("decision-tbl")
+
+    return " ".join(dict.fromkeys(wrap_classes)), " ".join(dict.fromkeys(table_classes))
+
+
 def render_table(lines: list[str]) -> str:
     rows = [split_table_row(line) for line in lines if line.strip()]
     if len(rows) < 2:
         return ""
     header = rows[0]
     body = rows[2:]
+    wrap_class, table_class = table_classes(header, body)
     thead = "<thead><tr>" + "".join(f"<th>{inline(cell)}</th>" for cell in header) + "</tr></thead>"
     tbody_rows = []
     for row in body:
         cells = row + [""] * (len(header) - len(row))
         tbody_rows.append("<tr>" + "".join(f"<td>{inline(cell)}</td>" for cell in cells[: len(header)]) + "</tr>")
     tbody = "<tbody>\n" + "\n".join(tbody_rows) + "\n</tbody>"
-    return f'<div class="table-wrap"><table class="info-tbl">\n{thead}{tbody}</table></div>'
+    return f'<div class="{wrap_class}"><table class="{table_class}">\n{thead}{tbody}</table></div>'
 
 
 def collect_headings(lines: list[str]) -> list[tuple[int, str, str]]:

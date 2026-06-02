@@ -101,7 +101,7 @@
 </tbody></table></div>
 <h1 id="s3" class="s-h1">3. Agent 입력</h1>
 <p class="doc-p">에이전트 런타임 시작 시 세션의 연속적인 문맥 관리 및 유저 취향 추적 검증을 위해 아래 항목들을 필수 상태 변수로 바인딩합니다.</p>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap wide"><table class="info-tbl">
 <thead><tr><th>입력</th><th>출처</th><th>설명</th><th>필수 여부</th></tr></thead><tbody>
 <tr><td>session_id</td><td>시스템</td><td>세션 구분을 위한 고유 식별자</td><td><strong>필수 (State 바인딩)</strong></td></tr>
 <tr><td>onboardingProfile</td><td>저장 데이터</td><td>유저 선호 테마 프로필</td><td><strong>필수 (State 바인딩)</strong></td></tr>
@@ -201,7 +201,7 @@
     SERVING --&gt; RESPONSE[&quot;검증 완료 추천 응답&quot;]
     RESPONSE --&gt; USER</div>
 <h2 id="s5-2" class="s-h2">5.2 파이프라인 단계 및 모듈 구성</h2>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap wide extra-wide"><table class="info-tbl agent-pipeline-tbl">
 <thead><tr><th>단계</th><th>노드/모듈명</th><th>중앙 통제 및 역할</th><th>입력</th><th>출력</th></tr></thead><tbody>
 <tr><td>1</td><td><code>Intent_Agent</code></td><td>[시작 노드] 멀티턴 대화 정리, 불필요한 컨텍스트 제거, handoff payload 생성</td><td>사용자 메시지, UI 조건, 온보딩, 피드백 이력</td><td>Supervisor 전달용 최소 컨텍스트</td></tr>
 <tr><td>2</td><td><code>Condition_Parser_Agent</code></td><td>[입력 해석] 자연어 및 UI 조건 파싱, 필수 조건 검증</td><td>handoff payload, UI 조건</td><td>구조화된 여행 조건 객체</td></tr>
@@ -216,7 +216,7 @@
 </tbody></table></div>
 <h1 id="s6" class="s-h1">6. 단계별 명세</h1>
 <h2 id="s6-1" class="s-h2">6.1 Intent_Agent</h2>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap"><table class="info-tbl decision-tbl">
 <thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
 <tr><td>책임</td><td>멀티턴 대화에서 현재 추천 의도와 선호를 정리하고, Supervisor에 전달할 최소 컨텍스트를 생성</td></tr>
 <tr><td>필수 상태 바인딩</td><td><code>session_id</code>, <code>onboardingProfile</code>, <code>feedbackHistory</code></td></tr>
@@ -225,7 +225,7 @@
 <tr><td>폴백</td><td>의도 또는 필수 조건이 불명확하면 추가 질문 생성 흐름으로 전이</td></tr>
 </tbody></table></div>
 <h2 id="s6-2" class="s-h2">6.2 Condition_Parser_Agent</h2>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap wide"><table class="info-tbl decision-tbl">
 <thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
 <tr><td>책임</td><td>자연어 및 UI 입력에서 국가, 월, 테마, 동행, 일정 유형을 추출하고, 다중 진입점 분기 파라미터를 구조화 (기존 Entry Classifier의 역할 흡수 통합)</td></tr>
 <tr><td>필수 상태 바인딩</td><td><code>session_id</code>, <code>onboardingProfile</code>, <code>feedbackHistory</code></td></tr>
@@ -234,14 +234,20 @@
 <tr><td>구현 위치</td><td>초기 구현에서는 <code>Intent_Agent</code> 내부 기능으로 포함 가능</td></tr>
 </tbody></table></div>
 <h2 id="s6-3" class="s-h2">6.3 Supervisor_Router</h2>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap wide"><table class="info-tbl decision-tbl">
 <thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
 <tr><td>책임</td><td>중앙 통제 센터로서 <code>fulfilled_matrix</code> 상태판을 실시간 스캔 및 스케줄링하여 검색·후보 선정 구간을 제어하고, 목적지 선정 이후 <code>Itinerary Planner</code>, <code>Explanation Writer</code>, <code>Output Validator</code>를 순차 호출함</td></tr>
 <tr><td>제어판 수렴 기호</td><td><code>X</code> (Pending/탐색 필요), <code>O</code> (Success/인출 성공), <code>△</code> (Fallback/기상 또는 시즌 폴백), <code>N/A</code> (Excluded/정책적 배제)</td></tr>
-<tr><td>충돌 해결 및 제어권 이동</td><td><strong>1회차 순환 (전국구 앵커 모드 제어):</strong> <code>Condition_Parser</code> 완료 후 <code>Supervisor</code>가 매트릭스를 <code>X</code>로 초기화. <code>Polymorphic_Retriever_Agent</code>는 전국구 RAG/정적 DB 조회로 대표 명소(Anchor) 후보를 찾고 <code>target_region</code>을 고정(<code>Lock-on</code>)한 뒤 복귀.&lt;br&gt;<strong>지도 마커 진입:</strong> <code>destinationId</code>가 있으면 전국구 앵커 탐색을 생략하고 <code>target_region</code>을 고정한 뒤 지역 제한 검색으로 진입.&lt;br&gt;<strong>2회차 이후 순환 (지역 제한 확장 모드 제어):</strong> <code>Supervisor</code>가 남은 미충족 플래그(<code>X</code>)를 스캔하여 다음 타겟을 지정하고, 고정된 소도시 내부 범위의 상세 관광지/체험/서브 스팟을 추출하도록 호출</td></tr>
+<tr><td>충돌 해결 및 제어권 이동</td><td>전국구 앵커 모드, 지도 마커 진입, 지역 제한 확장 모드를 순서대로 제어</td></tr>
 </tbody></table></div>
+<p class="doc-p">Supervisor_Router의 제어권 이동은 아래 기준을 따른다.</p>
+<ul class="bullet-list">
+<li><strong>1회차 순환 (전국구 앵커 모드 제어)</strong>: <code>Condition_Parser</code> 완료 후 <code>Supervisor</code>가 매트릭스를 <code>X</code>로 초기화한다. <code>Polymorphic_Retriever_Agent</code>는 전국구 RAG/정적 DB 조회로 대표 명소(Anchor) 후보를 찾고 <code>target_region</code>을 고정(<code>Lock-on</code>)한 뒤 복귀한다.</li>
+<li><strong>지도 마커 진입</strong>: <code>destinationId</code>가 있으면 전국구 앵커 탐색을 생략하고 <code>target_region</code>을 고정한 뒤 지역 제한 검색으로 진입한다.</li>
+<li><strong>2회차 이후 순환 (지역 제한 확장 모드 제어)</strong>: <code>Supervisor</code>가 남은 미충족 플래그(<code>X</code>)를 스캔하여 다음 타겟을 지정하고, 고정된 소도시 내부 범위의 상세 관광지/체험/서브 스팟을 추출하도록 호출한다.</li>
+</ul>
 <h2 id="s6-4" class="s-h2">6.4 Polymorphic_Retriever_Agent</h2>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap wide"><table class="info-tbl decision-tbl">
 <thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
 <tr><td>책임</td><td>단일 물리 노드 내에서 State 조건에 따라 호출 모드를 변경하여 RAG/정적 DB 기반 소도시, 관광지, 축제 후보, 기상 경향 데이터를 인출</td></tr>
 <tr><td>모드 1: 전국구 앵커 모드</td><td><code>state[&quot;target_region&quot;]</code>이 <code>None</code>일 때 동작. 전국구 RAG/정적 DB 조회로 사용자 실시간 인텐트에 부합하는 최적의 대표 명소(Anchor) 및 소도시 1곳을 매칭하여 <code>target_region</code>을 고정(Lock-on)함</td></tr>
@@ -250,7 +256,7 @@
 <tr><td>제약 조건</td><td>한국 요청에는 한국 데이터만, 일본 요청에는 일본 데이터만 검색되도록 강제 분리</td></tr>
 </tbody></table></div>
 <h2 id="s6-5" class="s-h2">6.5 Festival_Verifier_Agent</h2>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap wide"><table class="info-tbl decision-tbl">
 <thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
 <tr><td>책임</td><td>축제 후보에 대해 해당 연도 정확한 개최 기간을 공식 웹 출처 기준으로 검증</td></tr>
 <tr><td>입력</td><td>축제 후보, <code>target_region</code>, <code>travelYear</code>, <code>travelMonth</code>, 공식 출처 후보, 검색 키워드</td></tr>
@@ -298,7 +304,7 @@
 </tbody></table></div>
 <h1 id="s7" class="s-h1">7. 도구 및 데이터 사용</h1>
 <h2 id="s7-1" class="s-h2">7.1 에이전트 사용 도구 명세</h2>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap wide"><table class="info-tbl">
 <thead><tr><th>도구명</th><th>책임 역할 및 사용 목적</th><th>입력 매개변수 명세</th><th>비고</th></tr></thead><tbody>
 <tr><td><code>Destination Search</code></td><td>통합 목적지 DB에서 테마별 마스터 데이터를 인출하는 책임</td><td><code>theme</code> (필수 문자열 - 카테고리 기호), <code>target_region</code> (선택적 문자열/Nullable). 1회차 전국구 앵커 모드 시 <code>None</code>으로 전국 단위 조회, 2회차 이후엔 고정된 지역 코드로 소도시 내부 검색 제한</td><td>구조 교정</td></tr>
 <tr><td><code>Festival Catalog Search</code></td><td>Knowledge Catalog에서 축제명, 지역, 대략적인 개최 시기, 공식 출처 후보, 검색 키워드를 조회하는 책임</td><td><code>target_region</code> (필수 문자열), <code>travelMonth</code> (필수 정수), <code>theme</code> (선택)</td><td><code>Festival_Verifier_Agent</code>가 호출</td></tr>
@@ -318,7 +324,7 @@
 <li><code>N/A</code> : Excluded / 정책 또는 조건 미선택에 따른 배제 (예: 축제 비포함 선택 시)</li>
 </ul>
 <h2 id="s7-3" class="s-h2">7.3 Agent / Tool 분리 원칙</h2>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap wide"><table class="info-tbl">
 <thead><tr><th>대상</th><th>결정</th><th>이유</th></tr></thead><tbody>
 <tr><td><code>Festival_Verifier_Agent</code></td><td>Agent로 운영</td><td>웹 검색 결과 해석, 공식 출처 판별, 날짜 충돌 해결, 신뢰도 산정이 필요</td></tr>
 <tr><td><code>Destination Search</code></td><td>Tool 유지</td><td>목적지 DB 조회는 단순 검색 책임</td></tr>
@@ -360,7 +366,7 @@
 <tr><td>안전성</td><td>결측 데이터와 API 실패를 안내</td></tr>
 </tbody></table></div>
 <h1 id="s10" class="s-h1">10. 변경 이력</h1>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap wide"><table class="info-tbl change-log-tbl">
 <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
 <tr><td>v0.3</td><td>2026-06-01</td><td>로브 기획팀</td><td>Intent Agent 도입, Festival Verifier Agent 승격, Agent 구성도 및 전국구 RAG 조회 흐름 반영</td></tr>
 <tr><td>v0.2</td><td>2026-05-31</td><td>로브 기획팀</td><td>LangGraph 기반 순환형 아키텍처 개편 및 Supervisor Router 도입, Polymorphic Retriever 노드 모드 분리, 하이브리드 데이터 조회 및 실시간 API 검증 반영</td></tr>

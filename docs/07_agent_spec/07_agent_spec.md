@@ -176,7 +176,13 @@ graph TD
 | --- | --- |
 | 책임 | 중앙 통제 센터로서 `fulfilled_matrix` 상태판을 실시간 스캔 및 스케줄링하여 검색·후보 선정 구간을 제어하고, 목적지 선정 이후 `Itinerary Planner`, `Explanation Writer`, `Output Validator`를 순차 호출함 |
 | 제어판 수렴 기호 | `X` (Pending/탐색 필요), `O` (Success/인출 성공), `△` (Fallback/기상 또는 시즌 폴백), `N/A` (Excluded/정책적 배제) |
-| 충돌 해결 및 제어권 이동 | **1회차 순환 (전국구 앵커 모드 제어):** `Condition_Parser` 완료 후 `Supervisor`가 매트릭스를 `X`로 초기화. `Polymorphic_Retriever_Agent`는 전국구 RAG/정적 DB 조회로 대표 명소(Anchor) 후보를 찾고 `target_region`을 고정(`Lock-on`)한 뒤 복귀.<br>**지도 마커 진입:** `destinationId`가 있으면 전국구 앵커 탐색을 생략하고 `target_region`을 고정한 뒤 지역 제한 검색으로 진입.<br>**2회차 이후 순환 (지역 제한 확장 모드 제어):** `Supervisor`가 남은 미충족 플래그(`X`)를 스캔하여 다음 타겟을 지정하고, 고정된 소도시 내부 범위의 상세 관광지/체험/서브 스팟을 추출하도록 호출 |
+| 충돌 해결 및 제어권 이동 | 전국구 앵커 모드, 지도 마커 진입, 지역 제한 확장 모드를 순서대로 제어 |
+
+Supervisor_Router의 제어권 이동은 아래 기준을 따른다.
+
+- **1회차 순환 (전국구 앵커 모드 제어)**: `Condition_Parser` 완료 후 `Supervisor`가 매트릭스를 `X`로 초기화한다. `Polymorphic_Retriever_Agent`는 전국구 RAG/정적 DB 조회로 대표 명소(Anchor) 후보를 찾고 `target_region`을 고정(`Lock-on`)한 뒤 복귀한다.
+- **지도 마커 진입**: `destinationId`가 있으면 전국구 앵커 탐색을 생략하고 `target_region`을 고정한 뒤 지역 제한 검색으로 진입한다.
+- **2회차 이후 순환 (지역 제한 확장 모드 제어)**: `Supervisor`가 남은 미충족 플래그(`X`)를 스캔하여 다음 타겟을 지정하고, 고정된 소도시 내부 범위의 상세 관광지/체험/서브 스팟을 추출하도록 호출한다.
 
 ## 6.4 Polymorphic_Retriever_Agent
 
