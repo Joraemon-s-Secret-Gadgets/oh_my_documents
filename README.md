@@ -11,9 +11,10 @@ docs/00_project_plan/      상위 프로젝트 기획서
 docs/01_requirements/      요구사항 명세서와 보조 자료
 docs/02_service_flow/      서비스 흐름 명세서
 docs/03_technical_spec/    기술 명세서
-docs/04_api_spec/          API 명세서
-docs/05_database_design/   데이터베이스 설계 명세서
-docs/06_agent_spec/        Agent 명세서
+docs/04_data_collect_plan/ 데이터 수집 계획서
+docs/05_api_spec/          API 명세서
+docs/06_database_design/   데이터베이스 설계 명세서
+docs/07_agent_spec/        Agent 명세서
 index.html                 GitHub Pages 첫 화면
 pages/*.html               원본 Markdown을 바탕으로 생성된 공유용 HTML 문서
 assets/                    공통 CSS, JS, 이미지 등 정적 리소스
@@ -40,25 +41,28 @@ plans/                     문서 사이트 구축 및 운영 계획
 4. **기술 명세서**
    프론트엔드, 백엔드, 데이터베이스, 외부 서비스, 인증 구조 등 전체 기술 구성을 설명합니다.
 
-5. **API 명세서**
+5. **데이터 수집 계획서**
+   수집할 데이터 소스, 주기, 포맷, 그리고 보존 정책을 정의합니다.
+
+6. **API 명세서**
    엔드포인트, 요청, 응답, 에러 코드, 인증 방식을 정의합니다.
 
-6. **데이터베이스 설계 명세서**
+7. **데이터베이스 설계 명세서**
    ERD, 테이블 또는 컬렉션, 필드, 관계, 인덱스, 제약 조건을 정의합니다.
 
-7. **Agent 명세서**
+8. **Agent 명세서**
    조건 분류, RAG 검색, 후보 선정, 일정 구성, 설명 생성 파이프라인을 정의합니다.
 
-7. **UI/UX 가이드**
+9. **UI/UX 가이드**
    화면 레이아웃, 컴포넌트 규칙, 입력/오류/빈 상태, 반응형 기준을 정리합니다.
 
-8. **테스트 계획서**
-   단위 테스트, 통합 테스트, E2E 테스트, 수동 검증 체크리스트를 정리합니다.
+10. **테스트 계획서**
+    단위 테스트, 통합 테스트, E2E 테스트, 수동 검증 체크리스트를 정리합니다.
 
-9. **배포 가이드**
-   로컬 실행, 빌드, 환경 변수, 배포 절차, GitHub Pages 설정 방법을 정리합니다.
+11. **배포 가이드**
+    로컬 실행, 빌드, 환경 변수, 배포 절차, GitHub Pages 설정 방법을 정리합니다.
 
-10. **운영 가이드**
+12. **운영 가이드**
     로그, 장애 대응, 백업, 모니터링, 정기 점검 기준을 정리합니다.
 
 ### Agent 문서 수정 규칙
@@ -66,7 +70,7 @@ plans/                     문서 사이트 구축 및 운영 계획
 이 저장소에는 루트 `AGENT.md`와 각 `docs/` 하위 폴더별 `AGENT.md`가 있습니다. Claude나 Codex 같은 Agent는 가장 가까운 `AGENT.md`의 규칙을 우선합니다.
 
 - `docs/00_project_plan/00_project_plan.md`는 상세 문서의 내용을 반영하는 상위 기획 문서입니다.
-- 프로젝트 기획서를 수정할 때 `docs/01_requirements`부터 `docs/06_agent_spec`까지의 대표 문서는 읽기 전용 참조로만 확인합니다.
+- 프로젝트 기획서를 수정할 때 `docs/01_requirements`부터 `docs/07_agent_spec`까지의 대표 문서는 읽기 전용 참조로만 확인합니다.
 - 프로젝트 기획서 동기화 작업만으로 상세 문서를 함께 수정하지 않습니다.
 - 상세 문서는 사용자가 해당 문서 수정을 요청했거나, 그 문서 자체의 내용을 업데이트하는 작업일 때만 Agent가 수정합니다.
 - `01_requirements`를 수정하는 경우 `docs/01_requirements/01_requirements.md`를 먼저 업데이트하고, 필요한 보조 Markdown을 만든 뒤, 마지막에 `pages/01_requirements.html`을 최신화합니다.
@@ -97,15 +101,18 @@ docs/
 ├── 03_technical_spec/
 │   ├── AGENT.md
 │   └── 03_technical_spec.md
-├── 04_api_spec/
+├── 04_data_collect_plan/
 │   ├── AGENT.md
-│   └── 04_api_spec.md
-├── 05_database_design/
+│   └── 04_data_collect_plan.md
+├── 05_api_spec/
 │   ├── AGENT.md
-│   └── 05_database_design.md
-└── 06_agent_spec/
+│   └── 05_api_spec.md
+├── 06_database_design/
+│   ├── AGENT.md
+│   └── 06_database_design.md
+└── 07_agent_spec/
     ├── AGENT.md
-    └── 06_agent_spec.md
+    └── 07_agent_spec.md
 ```
 
 문서 내용이 많아지면 같은 폴더 안에 보조 Markdown을 추가할 수 있습니다. 단, 각 폴더의 대표 문서는 위 경로를 유지합니다.
