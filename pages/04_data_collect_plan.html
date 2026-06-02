@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — 데이터 수집 계획서 v0.2</title>
+    <title>로브 (Lovv) — 데이터 수집 계획서 v0.3</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -16,7 +16,7 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">로브</div>
-          <div class="aside-ver">Data Collection · v0.2</div>
+          <div class="aside-ver">Data Collection · v0.3</div>
           <div class="aside-status"><div class="status-dot"></div><span>검토 중</span></div>
         </div>
         <nav class="toc">
@@ -31,21 +31,20 @@
 <div class="toc-section-hd">2. 데이터 수집 계획 명세</div>
 <a class="toc-link" href="#s2">2. 데이터 수집 계획 명세</a>
 <a class="toc-link" href="#s2-1">2.1 프로젝트 주제</a>
-<a class="toc-link" href="#s2-2">2.2 수집 데이터 정보 및 분량</a>
-<a class="toc-link" href="#s2-2-1">2.2.1 지역 정보</a>
-<a class="toc-link" href="#s2-2-2">2.2.2 관광지 정보</a>
-<a class="toc-link" href="#s2-2-3">2.2.3 축제/행사 정보</a>
-<a class="toc-link" href="#s2-3">2.3 데이터 수집 계기</a>
-<a class="toc-link" href="#s2-3-1">2.3.1 데이터 수집 배경</a>
-<a class="toc-link" href="#s2-3-2">2.3.2 지리 정보 수집 목적</a>
-<a class="toc-link" href="#s2-3-3">2.3.3 기후 정보 수집 목적</a>
-<a class="toc-link" href="#s2-4">2.4 데이터 출처</a>
-<a class="toc-link" href="#s2-4-1">2.4.1 대한민국 데이터 출처</a>
-<a class="toc-link" href="#s2-4-2">2.4.2 일본 데이터 출처</a>
+<a class="toc-link" href="#s2-2">2.2 데이터 모델</a>
+<a class="toc-link" href="#s2-3">2.3 City 수집 항목</a>
+<a class="toc-link" href="#s2-4">2.4 Attraction 수집 항목</a>
+<a class="toc-link" href="#s2-5">2.5 Festival 수집 항목</a>
+<a class="toc-link" href="#s2-6">2.6 데이터 출처</a>
+<a class="toc-link" href="#s2-6-1">2.6.1 대한민국 데이터 출처</a>
+<a class="toc-link" href="#s2-6-2">2.6.2 일본 데이터 출처</a>
 </div>
 <div class="toc-section">
-<div class="toc-section-hd">3. 데이터 전처리 방식 및 인프라 구성</div>
-<a class="toc-link" href="#s3">3. 데이터 전처리 방식 및 인프라 구성</a>
+<div class="toc-section-hd">3. 데이터 취득 파이프라인</div>
+<a class="toc-link" href="#s3">3. 데이터 취득 파이프라인</a>
+<a class="toc-link" href="#s3-1">3.1 처리 흐름</a>
+<a class="toc-link" href="#s3-2">3.2 취득 상태 관리</a>
+<a class="toc-link" href="#s3-3">3.3 원본 및 정규화 저장</a>
 </div>
 <div class="toc-section">
 <div class="toc-section-hd">4. 데이터 품질 정합성 관리 방법</div>
@@ -60,109 +59,188 @@
 <a class="toc-link" href="#s6">6. 수집 정책 및 제외 범위</a>
 </div>
 <div class="toc-section">
-<div class="toc-section-hd">9. 변경 이력</div>
-<a class="toc-link" href="#s9">9. 변경 이력</a>
+<div class="toc-section-hd">7. 본 문서 반영 이력</div>
+<a class="toc-link" href="#s7">7. 본 문서 반영 이력</a>
 </div>
         </nav>
       </aside>
       <main id="cover">
         <h1 id="cover-title" class="s-h1">로브 (Lovv) 데이터 수집 계획서</h1>
 <blockquote>
-<p class="doc-p">문서 버전: v0.2</p>
+<p class="doc-p">문서 버전: v0.3</p>
 <p class="doc-p">문서 상태: 검토 중 (Review)</p>
 <p class="doc-p">기준 문서: <code>docs/01_requirements/01_requirements.md</code> v1.7</p>
+<p class="doc-p">상세 초안: <code>docs/04_data_collect_plan/korea_data_acquisition_plan.md</code>, <code>docs/04_data_collect_plan/japan_data_acquisition_plan.md</code></p>
 </blockquote>
 <h1 id="s1" class="s-h1">1. 문서 개요</h1>
 <h2 id="s1-1" class="s-h2">1.1 목적</h2>
-<p class="doc-p">본 문서는 지역 여행 추천 서비스인 로브(Lovv)의 추천 품질과 신뢰성을 확보하기 위해 필요한 대한민국 및 일본의 데이터 수집 범위, 수집 계기 및 목적, 데이터 출처, 그리고 전처리 및 정합성 유의사항을 정리하는 데 목적이 있다.</p>
+<p class="doc-p">본 문서는 지역 여행 추천 서비스인 로브(Lovv)의 추천 품질과 신뢰성을 확보하기 위해 필요한 대한민국 및 일본의 도시·관광지·축제 데이터를 한 번에 취득하기 위한 범위, 데이터 소스, 검증 방식, 저장 구조를 정의한다.</p>
+<p class="doc-p">세부 국가별 취득 기준은 다음 문서에 분리하여 관리한다.</p>
+<div class="table-wrap wide"><table class="info-tbl">
+<thead><tr><th>국가</th><th>상세 문서</th><th>역할</th></tr></thead><tbody>
+<tr><td>대한민국</td><td><code>korea_data_acquisition_plan.md</code></td><td>한국 City·Attraction·Festival 취득 필드, TourAPI 중심 출처, 검수 기준 정의</td></tr>
+<tr><td>일본</td><td><code>japan_data_acquisition_plan.md</code></td><td>일본 City·Attraction·Festival 취득 필드, Wikipedia·JNTO·JTA 중심 출처, 검수 기준 정의</td></tr>
+</tbody></table></div>
 <h2 id="s1-2" class="s-h2">1.2 수집 원칙</h2>
 <ul class="bullet-list">
-<li><strong>신뢰성</strong>: 관광지 및 축제 정보의 경우 검증된 공식 출처(양국 공공데이터 및 OpenAPI)를 통해 데이터를 수집한다.</li>
-<li><strong>최신성</strong>: 지역 관광 정보 및 링크의 유효성을 지속해서 검증하여 데이터 품질을 유지한다.</li>
-<li><strong>일관성</strong>: 서로 다른 출처의 데이터를 통합할 때 명칭 및 행정구역 매핑 기준을 통일한다.</li>
+<li><strong>전체 취득</strong>: City, Attraction, Festival의 정의된 필드는 최초 수집 대상에 모두 포함한다.</li>
+<li><strong>공식 출처 우선</strong>: 관광지 및 축제 정보는 양국 공식 관광 데이터, 공공데이터, 지자체 공식 사이트, 공식 관광 포털을 우선한다.</li>
+<li><strong>최신성 관리</strong>: 운영시간, 운영기간, 입장료, 축제 기간처럼 변경 가능성이 높은 데이터는 확인일과 출처를 함께 저장한다.</li>
+<li><strong>일관성 유지</strong>: 서로 다른 출처의 데이터를 통합할 때 명칭, 행정구역 코드, 좌표, 날짜 포맷의 매핑 기준을 통일한다.</li>
+<li><strong>출처 추적</strong>: 모든 자동 수집 데이터는 <code>source_name</code>, <code>source_url</code>, <code>collected_at</code>, <code>data_confidence</code>를 기록한다.</li>
 </ul>
 <h1 id="s2" class="s-h1">2. 데이터 수집 계획 명세</h1>
 <h2 id="s2-1" class="s-h2">2.1 프로젝트 주제</h2>
-<p class="doc-p">로브(Lovv)는 대도시 편중 현상(오버투어리즘)을 완화하고 여행자에게 덜 알려진 대한민국(시/군/구 단위) 및 일본(시/정/촌/구 단위)의 매력적인 지역와 그에 최적화된 여행 일정 및 문화 콘텐츠를 추천하는 서비스이다. 본 계획서는 이에 필요한 양국의 지역 기반 데이터 구축 방안을 다룬다.</p>
-<h2 id="s2-2" class="s-h2">2.2 수집 데이터 정보 및 분량</h2>
-<p class="doc-p">로브 데이터베이스(DB) 구축을 위해 양국의 행정구역 기준 지역 레벨(한국: 시/군/구, 일본: 시/정/촌/구)까지 타깃을 좁혀 아래의 3가지 핵심 데이터 테이블을 구축한다.</p>
-<h2 id="s2-2-1" class="s-h2">2.2.1 지역 정보</h2>
-<ul class="bullet-list">
-<li><strong>행정구역 범위</strong>: 대한민국 기준 기초지방자치단체(시/군/구 단위) 및 일본 기준 기초지방자치단체(시/정/촌/구 단위)</li>
-<li><strong>수집 대상 지역 수 (중간 발표 이전 단계 기준)</strong>: 대한민국 내 40개 지역, 일본 내 316개 지역 지정 수집</li>
-<li><strong>수집 항목</strong>:</li>
-<li><strong>지역명</strong>: 해당 지역의 정식 명칭 및 한글/원어(일어) 표기 병기</li>
-<li><strong>지리 정보</strong>: 위경도 좌표 정보 및 맞닿아 있는 인접 지역(이웃 시/군/구 및 시/정/촌/구) 리스트</li>
-<li><strong>지역 종합 설명</strong>: 역사, 문화, 특징을 포괄하는 위키피디아 기반의 종합 텍스트</li>
-<li><strong>지역 관광 링크</strong>: 해당 지자체가 운영하는 공식 문화관광 포털 웹사이트 링크</li>
-<li><strong>지역 기후</strong>: 월별 평균 기온, 평균 강수량, 주요 계절적 기후 특징 데이터</li>
-</ul>
-<h2 id="s2-2-2" class="s-h2">2.2.2 관광지 정보</h2>
-<ul class="bullet-list">
-<li><strong>수집 범위</strong>: 각 지역에 위치한 주요 관광 명소, 자연 경관, 미식/노포 및 문화 공간</li>
-<li><strong>수집 항목</strong>: 관광지명, 상세 개요 등(수정 예정)</li>
-</ul>
-<h2 id="s2-2-3" class="s-h2">2.2.3 축제/행사 정보</h2>
-<ul class="bullet-list">
-<li><strong>수집 범위</strong>: 해당 지역에서 개최되는 지역 전통 축제, 계절 행사 및 문화제</li>
-<li><strong>수집 항목</strong>: 축제/행사명, 개최 시기(월 단위), 행사 성격 및 개요 설명, 개최 장소 등(수정 예정)</li>
-</ul>
-<h2 id="s2-3" class="s-h2">2.3 데이터 수집 계기</h2>
-<h2 id="s2-3-1" class="s-h2">2.3.1 데이터 수집 배경</h2>
-<p class="doc-p">개인화 맟춤 여행 추천이라는 서비스의 목적을 달생하기 위해, 지역 여행지 및 축제 정보를 미리 수집하여 적재할 예정이다.</p>
-<h2 id="s2-3-2" class="s-h2">2.3.2 지리 정보 수집 목적</h2>
-<p class="doc-p">각 지역의 지리적 위치 및 인접 지역 관계를 추출하기 위해 지리 정보를 수집한다.</p>
-<ul class="bullet-list">
-<li><strong>여행 동선 최적화</strong>: 한 지역을 방문한 여행자가 인접한 다른 지역나 현(県) 경계를 넘어 편리하게 이동할 수 있도록 인접성을 고려한 연계 여정을 설계하는 데 활용한다.</li>
-</ul>
-<h2 id="s2-3-3" class="s-h2">2.3.3 기후 정보 수집 목적</h2>
-<p class="doc-p">월별 기상 경향(장마 시기, 폭염 등)을 추출하기 위해 기후 정보를 수집한다.</p>
-<ul class="bullet-list">
-<li><strong>최적 시기 추천</strong>: 사용자가 입력한 여행 시기에 기상 조건이 가장 쾌적하고 여행하기 좋은 지역(예: 여름철 시원한 지역, 겨울철 적설량이 풍부한 홋카이도 등)를 과학적인 데이터 근거에 기반하여 추천한다.</li>
-<li><strong>기상 악화 대안 제안 (폴백 시스템)</strong>: 특정 지역 추천 지역에 갑작스러운 비나 폭설 등 기상 이변 경향이 감지될 경우, 해당 기후적 특성에 맞추어 실내 활동 중심의 대체 일정으로 유연하게 전환하는 폴백 아키텍처의 의사결정 근거로 활용한다.</li>
-</ul>
-<h2 id="s2-4" class="s-h2">2.4 데이터 출처</h2>
-<h2 id="s2-4-1" class="s-h2">2.4.1 대한민국 데이터 출처</h2>
-<ul class="bullet-list">
-<li><strong>지역 기본 정보, 지리 정보, 기후 정보</strong>: 위키피디아 한국어판 데이터</li>
-<li><strong>지역 관광 링크 정보</strong>: 공공데이터포털에서 제공하는 <a href="https://www.data.go.kr/data/15150837/fileData.do">한국관광공사_대한민국구석구석_지역관_지자체문화관광홈페이지 정보</a></li>
-</ul>
-<h2 id="s2-4-2" class="s-h2">2.4.2 일본 데이터 출처</h2>
-<ul class="bullet-list">
-<li>추가 예정</li>
-</ul>
-<h1 id="s3" class="s-h1">3. 데이터 전처리 방식 및 인프라 구성</h1>
-<p class="doc-p">본 문서의 범위는 수집 계획 단계로 제한되므로 구체적인 데이터 변환(Transform) 흐름 명세는 생략하며, 전처리 및 원본 저장을 위한 인프라 적재 방식만을 다음과 같이 규정한다.</p>
-<ul class="bullet-list">
-<li><strong>S3 버킷 적재</strong>: 웹 크롤링 및 오픈 API를 통해 수집된 초기 무정형/정형 로우 데이터(Raw Data)를 AWS S3 버킷에 저장한다.</li>
-<li><strong>Lambda 기반 전처리 수행</strong>: S3 버킷에 데이터가 적재되면 AWS Lambda 함수가 트리거되어 텍스트 내 HTML 마크업 제거, 불필요한 메타데이터 필터링, 명칭 표준화 등 가벼운 정제 처리와 추가적인 데이터 가공 프로세스를 자동 수행하도록 인프라를 구성한다.</li>
-</ul>
+<p class="doc-p">로브(Lovv)는 대도시 편중 현상(오버투어리즘)을 완화하고 여행자에게 덜 알려진 대한민국(시/군/구 단위) 및 일본(시/정/촌/구 단위)의 매력적인 지역과 그에 최적화된 여행 일정 및 문화 콘텐츠를 추천하는 서비스이다.</p>
+<p class="doc-p">본 계획서는 한국과 일본의 지역 기반 추천을 위해 도시, 관광지, 축제 데이터를 공통 구조로 취득하고 국가별 출처 차이를 매핑하는 방안을 다룬다.</p>
+<h2 id="s2-2" class="s-h2">2.2 데이터 모델</h2>
+<p class="doc-p">추천 DB는 다음 관계를 기준으로 구축한다.</p>
+<pre><code>City
+ ├── Attraction
+ └── Festival</code></pre>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>관계</th><th>설명</th></tr></thead><tbody>
+<tr><td><code>City 1:N Attraction</code></td><td>하나의 도시는 여러 관광지를 가진다.</td></tr>
+<tr><td><code>City 1:N Festival</code></td><td>하나의 도시는 여러 축제·행사를 가진다.</td></tr>
+</tbody></table></div>
+<h2 id="s2-3" class="s-h2">2.3 City 수집 항목</h2>
+<p class="doc-p">City는 추천의 기준 지역이다. 한국은 시·군·구, 일본은 시·정·촌·구 단위의 소도시를 기본 단위로 관리한다.</p>
+<div class="table-wrap wide"><table class="info-tbl">
+<thead><tr><th>필드</th><th>한국 주요 출처</th><th>일본 주요 출처</th><th>수집 상태</th></tr></thead><tbody>
+<tr><td><code>city_id</code></td><td>내부 생성</td><td>내부 생성</td><td>전부 수집</td></tr>
+<tr><td><code>city_name_ko</code></td><td>행정구역 데이터, Wikipedia</td><td>Wikipedia, 수동 정규화</td><td>전부 수집</td></tr>
+<tr><td><code>city_name_local</code></td><td>한국어 명칭</td><td>일본어 원문 명칭</td><td>전부 수집</td></tr>
+<tr><td><code>province_or_prefecture</code></td><td>행정구역 데이터</td><td>e-Stat, Statistical LOD, Wikipedia</td><td>전부 수집</td></tr>
+<tr><td><code>location</code></td><td>Wikipedia, TourAPI, 행정구역 데이터</td><td>Wikipedia, Wikidata</td><td>전부 수집</td></tr>
+<tr><td><code>latitude</code></td><td>TourAPI, Wikidata</td><td>Wikipedia, Wikidata</td><td>전부 수집</td></tr>
+<tr><td><code>longitude</code></td><td>TourAPI, Wikidata</td><td>Wikipedia, Wikidata</td><td>전부 수집</td></tr>
+<tr><td><code>description</code></td><td>Wikipedia, 대한민국구석구석 기반 요약</td><td>Wikipedia 기반 요약</td><td>전부 수집</td></tr>
+<tr><td><code>climate</code></td><td>기상청 API허브, 기후통계</td><td>Wikipedia, JMA</td><td>전부 수집</td></tr>
+<tr><td><code>site_url</code></td><td>지자체 문화관광 홈페이지, 대한민국구석구석</td><td>Wikipedia 외부 링크, 공식 관광 사이트</td><td>전부 수집</td></tr>
+</tbody></table></div>
+<h2 id="s2-4" class="s-h2">2.4 Attraction 수집 항목</h2>
+<p class="doc-p">Attraction은 일정 카드와 추천 결과 상세 화면의 핵심 소재로 사용한다.</p>
+<div class="table-wrap wide"><table class="info-tbl">
+<thead><tr><th>필드</th><th>한국 주요 출처</th><th>일본 주요 출처</th><th>수집 상태</th></tr></thead><tbody>
+<tr><td><code>attraction_id</code></td><td>내부 생성</td><td>내부 생성</td><td>전부 수집</td></tr>
+<tr><td><code>city_id</code></td><td>City 매핑</td><td>City 매핑</td><td>전부 수집</td></tr>
+<tr><td><code>source_content_id</code></td><td>한국관광공사 TourAPI <code>contentid</code></td><td>JNTO/JTA 원본 ID 또는 URL</td><td>전부 수집</td></tr>
+<tr><td><code>name</code></td><td>TourAPI, 대한민국구석구석</td><td>JNTO, JTA</td><td>전부 수집</td></tr>
+<tr><td><code>address</code></td><td>TourAPI, 공식 사이트</td><td>JNTO, JTA, 공식 사이트</td><td>전부 수집</td></tr>
+<tr><td><code>description</code></td><td>TourAPI 공통정보·소개정보 기반 요약</td><td>JNTO/JTA 기반 요약</td><td>전부 수집</td></tr>
+<tr><td><code>site_url</code></td><td>TourAPI, 공식 사이트</td><td>JNTO, JTA, 공식 사이트</td><td>전부 수집</td></tr>
+<tr><td><code>opening_hours</code></td><td>TourAPI 소개정보, 공식 사이트, 검수</td><td>공식 사이트, 검수</td><td>전부 수집</td></tr>
+<tr><td><code>opening_period</code></td><td>TourAPI 소개정보, 공식 사이트, 검수</td><td>공식 사이트, 검수</td><td>전부 수집</td></tr>
+<tr><td><code>latitude</code></td><td>TourAPI 위치정보</td><td>JNTO, Wikidata, 지도 보조</td><td>전부 수집</td></tr>
+<tr><td><code>longitude</code></td><td>TourAPI 위치정보</td><td>JNTO, Wikidata, 지도 보조</td><td>전부 수집</td></tr>
+<tr><td><code>admission_fee</code></td><td>TourAPI 소개정보, 공식 사이트, 검수</td><td>공식 사이트, 검수</td><td>전부 수집</td></tr>
+<tr><td><code>photo_url</code></td><td>TourAPI 이미지정보, 공식 사이트, 검수</td><td>JNTO, 공식 사이트, 검수</td><td>전부 수집</td></tr>
+</tbody></table></div>
+<h2 id="s2-5" class="s-h2">2.5 Festival 수집 항목</h2>
+<p class="doc-p">Festival은 월별 추천과 계절성 추천의 주요 근거로 사용한다.</p>
+<div class="table-wrap wide"><table class="info-tbl">
+<thead><tr><th>필드</th><th>한국 주요 출처</th><th>일본 주요 출처</th><th>수집 상태</th></tr></thead><tbody>
+<tr><td><code>festival_id</code></td><td>내부 생성</td><td>내부 생성</td><td>전부 수집</td></tr>
+<tr><td><code>city_id</code></td><td>City 매핑</td><td>City 매핑</td><td>전부 수집</td></tr>
+<tr><td><code>source_content_id</code></td><td>TourAPI 행사 콘텐츠 ID</td><td>JNTO/JTA 원본 ID 또는 URL</td><td>전부 수집</td></tr>
+<tr><td><code>name</code></td><td>TourAPI 행사정보, 대한민국구석구석</td><td>JNTO, JTA</td><td>전부 수집</td></tr>
+<tr><td><code>address</code></td><td>TourAPI, 공식 사이트</td><td>JNTO, JTA, 공식 사이트</td><td>전부 수집</td></tr>
+<tr><td><code>period</code></td><td>TourAPI 행사 시작일·종료일, 공식 사이트</td><td>JNTO, JTA, 공식 사이트</td><td>전부 수집</td></tr>
+<tr><td><code>description</code></td><td>TourAPI 공통정보·소개정보 기반 요약</td><td>JNTO/JTA 기반 요약</td><td>전부 수집</td></tr>
+<tr><td><code>site_url</code></td><td>TourAPI, 공식 사이트</td><td>JNTO, JTA, 공식 사이트</td><td>전부 수집</td></tr>
+<tr><td><code>photo_url</code></td><td>TourAPI 이미지정보, 공식 사이트, 검수</td><td>JNTO, 공식 사이트, 검수</td><td>전부 수집</td></tr>
+</tbody></table></div>
+<h2 id="s2-6" class="s-h2">2.6 데이터 출처</h2>
+<h2 id="s2-6-1" class="s-h2">2.6.1 대한민국 데이터 출처</h2>
+<div class="table-wrap wide"><table class="info-tbl">
+<thead><tr><th>출처</th><th>취득 데이터</th><th>적용 방식</th></tr></thead><tbody>
+<tr><td>한국관광공사 TourAPI</td><td>관광지, 축제, 이미지, 위치, 소개정보, 행사정보</td><td>Attraction·Festival 자동 수집의 1차 소스</td></tr>
+<tr><td>대한민국구석구석</td><td>관광지·축제 상세 링크, 공식 설명, 지역 관광 정보</td><td>TourAPI 보강 및 공식 링크 확인</td></tr>
+<tr><td>지자체 문화관광 홈페이지</td><td>운영시간, 입장료, 최신 축제 일정, 공식 공지</td><td>누락·최신성 확인</td></tr>
+<tr><td>Wikipedia / Wikidata</td><td>도시 설명, 좌표, 외부 링크</td><td>City 보조 소스</td></tr>
+<tr><td>기상청 API허브 / 기후통계</td><td>월별 기후, 평균 기온, 강수량, 계절 메모</td><td>City <code>climate</code>와 월별 추천 근거</td></tr>
+<tr><td>한국관광 데이터랩</td><td>방문자 수, 관광 동향, 지역별 통계</td><td>City 보조 지표</td></tr>
+<tr><td>행정구역 데이터</td><td>시·군·구 코드와 행정구역 정규화</td><td>City ID와 지역 매핑</td></tr>
+</tbody></table></div>
+<h2 id="s2-6-2" class="s-h2">2.6.2 일본 데이터 출처</h2>
+<div class="table-wrap wide"><table class="info-tbl">
+<thead><tr><th>출처</th><th>취득 데이터</th><th>적용 방식</th></tr></thead><tbody>
+<tr><td>Wikipedia / Wikidata</td><td>도시명, 위치, 설명, 기후, 공식 링크, 좌표</td><td>City 자동 수집의 1차 소스</td></tr>
+<tr><td>JNTO 관광 데이터</td><td>관광지, 축제, 설명, 주소, 링크</td><td>Attraction·Festival 자동 수집의 1차 소스</td></tr>
+<tr><td>JTA 관광 DB</td><td>관광지 상세 설명, 문화 정보, 지역 특산품, 축제 설명</td><td>JNTO 데이터 설명 보강</td></tr>
+<tr><td>e-Stat / Statistical LOD</td><td>행정구역 코드, 지역 통계, 시정촌 메타데이터</td><td>City 정규화와 통계 보강</td></tr>
+<tr><td>국토교통성 국토수치정보</td><td>좌표, 행정구역, 철도역·교통 데이터</td><td>위치·접근성 데이터 취득</td></tr>
+<tr><td>일본기상청(JMA)</td><td>월별 기후·관측 데이터</td><td>City <code>climate</code>와 월별 추천 근거</td></tr>
+<tr><td>JNTO Statistics / RESAS</td><td>방문객 수, 관광 통계, 지역별 지표</td><td>City 보조 지표</td></tr>
+<tr><td>도도부현·시정촌 공식 관광 사이트</td><td>운영시간, 입장료, 최신 축제 일정</td><td>누락·최신성 확인</td></tr>
+</tbody></table></div>
+<h1 id="s3" class="s-h1">3. 데이터 취득 파이프라인</h1>
+<h2 id="s3-1" class="s-h2">3.1 처리 흐름</h2>
+<pre><code>자동 수집
+↓
+DB 임시 적재
+↓
+취득 상태 분류
+↓
+공식 사이트 확인 / Web Search Worker
+↓
+수동 검수
+↓
+정규화 DB 적재</code></pre>
+<p class="doc-p">정의된 모든 필드가 DB에 들어가도록 시도한다. 운영시간, 운영기간, 입장료, 사진, 축제 기간처럼 출처별 표현 차이가 큰 값도 최초 수집 대상에 포함하며, 자동 수집 실패 시 같은 파이프라인 안에서 공식 확인 또는 수동 검수로 채운다.</p>
+<h2 id="s3-2" class="s-h2">3.2 취득 상태 관리</h2>
+<div class="table-wrap wide"><table class="info-tbl">
+<thead><tr><th>취득 상태</th><th>기준</th><th>처리 방식</th></tr></thead><tbody>
+<tr><td><code>collected</code></td><td>자동 수집 값이 있고 출처가 명확함</td><td>DB 적재</td></tr>
+<tr><td><code>needs_review</code></td><td>값은 있으나 표현이 모호하거나 최신성 확인이 필요함</td><td>공식 사이트 확인 또는 수동 검수</td></tr>
+<tr><td><code>missing</code></td><td>자동 수집에서 값을 찾지 못함</td><td>Web Search Worker 또는 수동 입력 대상</td></tr>
+<tr><td><code>blocked</code></td><td>약관·저작권·접근 제한으로 수집 불가</td><td>딥링크 또는 빈 값으로 대체하고 사유 기록</td></tr>
+</tbody></table></div>
+<h2 id="s3-3" class="s-h2">3.3 원본 및 정규화 저장</h2>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>구분</th><th>저장 내용</th></tr></thead><tbody>
+<tr><td>Raw 데이터</td><td>API 응답, HTML 수집 원본, 공식 사이트 확인 결과, 이미지 메타데이터</td></tr>
+<tr><td>정규화 데이터</td><td>City, Attraction, Festival, 기후, 통계, 검색 링크</td></tr>
+<tr><td>검수 메타데이터</td><td><code>verified_at</code>, <code>verified_source_url</code>, <code>verification_note</code>, <code>data_confidence</code></td></tr>
+<tr><td>출처 메타데이터</td><td><code>source_name</code>, <code>source_url</code>, <code>collected_at</code>, <code>license_type</code></td></tr>
+</tbody></table></div>
 <h1 id="s4" class="s-h1">4. 데이터 품질 정합성 관리 방법</h1>
-<p class="doc-p">수집된 데이터의 품질 및 매핑 신뢰성을 보장하기 위해 아래 4가지 정합성 검증 방안을 적용한다.</p>
-<ul class="bullet-list">
-<li><strong>본문 외 텍스트 혼선 방지 검증</strong>: 위키피디아 텍스트 추출 시 본문 설명 텍스트와 표(Table), 인포박스, 각주 등이 단순하게 그대로 얽혀 들어가지 않고 올바르게 영역별로 분리 및 필터링되었는지 추출 샘플을 대조하여 검증한다.</li>
-<li><strong>행정구역 명칭 오매핑 검증</strong>: 한국의 시/군/구 및 일본의 시/정/촌/구 명칭을 지리 정보 표준 코드와 대조하여, 행정구역 접미사 생략이나 오기(예: &quot;시&quot;와 &quot;군&quot;의 혼용)로 인해 엉뚱한 목적지 ID와 매핑되지 않도록 매핑 예외 목록을 구축하여 검증한다.</li>
-<li><strong>다국어 매핑 일관성 검증</strong>: 일본 지역명 및 축제명의 번역 표기와 일본어 원어(한자/가나) 표기가 일대일로 어긋남 없이 매핑 구조를 유지하고 있는지 정합성을 철저히 대조한다.</li>
-<li><strong>관광 링크 유효성 검증</strong>: 수집한 지자체 관광 웹사이트 URL에 대해 사전에 HTTP 요청 상태 코드 검사를 수행하여 깨진 링크(Broken Link, 404 에러 등)가 데이터베이스에 저장되는 것을 차단한다.</li>
-</ul>
+<p class="doc-p">수집된 데이터의 품질 및 매핑 신뢰성을 보장하기 위해 다음 검증 기준을 적용한다.</p>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>검증 항목</th><th>기준</th></tr></thead><tbody>
+<tr><td>City 매핑</td><td>모든 Attraction과 Festival은 하나의 City에 연결되어야 한다.</td></tr>
+<tr><td>행정구역 정합성</td><td>한국 시·군·구 코드와 일본 시·정·촌·구 코드가 내부 City ID와 일치해야 한다.</td></tr>
+<tr><td>출처 기록</td><td>모든 자동 수집 데이터는 출처명, 출처 URL, 수집 시각을 가진다.</td></tr>
+<tr><td>전체 필드 상태</td><td>정의된 모든 필드는 <code>collected</code>, <code>needs_review</code>, <code>missing</code>, <code>blocked</code> 중 하나의 상태를 가진다.</td></tr>
+<tr><td>최신성</td><td>운영시간, 운영기간, 입장료, 축제 기간은 확인일을 기록한다.</td></tr>
+<tr><td>링크 유효성</td><td>공식 URL과 딥링크는 HTTP 상태와 리다이렉션을 주기적으로 점검한다.</td></tr>
+<tr><td>저작권</td><td>사진과 설명문은 사용 가능 조건을 확인한다. 설명문은 내부 요약문으로 저장한다.</td></tr>
+<tr><td>다국어 매핑</td><td>일본 지역명·축제명은 일본어 원문과 한국어 표기가 같은 대상을 가리키는지 대조한다.</td></tr>
+</tbody></table></div>
 <h1 id="s5" class="s-h1">5. 법적 요소 검토</h1>
 <p class="doc-p">공공데이터 및 오픈 백과사전을 활용하는 만큼 기본 라이선스 기준에 근거하여 법적 의무 사항을 준수한다.</p>
 <ul class="bullet-list">
-<li><strong>위키피디아 라이선스 준수</strong>: 위키피디아 한국어/일본어 버전의 텍스트 콘텐츠는 크리에이티브 커먼즈 저작자표시-동일조건변경허락 3.0/4.0(CC BY-SA) 라이선스를 따르므로, 로브 서비스 화면 내에 사용된 설명의 원저작자 링크와 출처를 명확히 표기하여 라이선스 조건에 부합하도록 구성한다.</li>
-<li><strong>대한민국 공공데이터 활용 조건 준수</strong>: 지자체 홈페이지 및 한국관광공사 Open API 데이터의 공공누리(KOGL) 유형별 조건에 맞추어 라이선스를 준수하며, 상업적 활용에 문제없는 데이터만을 DB에 적재한다.</li>
+<li><strong>위키피디아 라이선스 준수</strong>: 위키피디아 한국어/일본어 버전의 텍스트 콘텐츠는 CC BY-SA 라이선스 조건에 따라 출처와 원문 링크를 기록한다.</li>
+<li><strong>대한민국 공공데이터 활용 조건 준수</strong>: 한국관광공사 TourAPI, 대한민국구석구석, 공공데이터포털, 지자체 데이터는 공공누리 유형과 API 이용 조건을 확인한다.</li>
+<li><strong>일본 공식·상업 플랫폼 제약 준수</strong>: JNTO, JTA, 지자체 관광 사이트, Yahoo Japan, じゃらん, 楽天トラベル, 食べログ 등은 이용약관과 크롤링 허용 범위를 확인한다.</li>
+<li><strong>사진 사용 조건 확인</strong>: 사진은 저작권 위험이 크므로 자동 수집 값이 있더라도 사용 가능 조건을 확인하고, 불명확하면 <code>needs_review</code> 또는 <code>blocked</code>로 관리한다.</li>
+<li><strong>변동 정보 표시</strong>: 운영시간, 입장료, 축제 기간은 변경 가능성이 높으므로 서비스 화면에 &quot;확인일 기준&quot; 문구를 표시한다.</li>
 </ul>
 <h1 id="s6" class="s-h1">6. 수집 정책 및 제외 범위</h1>
 <ul class="bullet-list">
-<li><strong>데이터 수집 주기</strong>: 데이터의 변경 주기가 잦지 않고 초기 MVP 목적지 데이터베이스 구축에 집중하므로, 수집 주기는 <strong>1년 단위</strong>로 제한하여 데이터 갱신 및 재수집을 수행한다.</li>
-<li><strong>제외 범위</strong>: 실시간 API 호출 데이터와 결합하기 위한 런타임 캐싱 정책은 데이터 수집 단계의 고려 범위를 초과하므로 <strong>본 데이터 수집 계획 명세에서 제외</strong>한다.</li>
+<li><strong>수집 주기</strong>: City 기본 정보는 연 1회 이상, 운영시간·입장료·축제 기간은 최신성 상태에 따라 재확인한다.</li>
+<li><strong>실시간 응답 보강</strong>: DB 값이 없거나 오래된 경우 Web Search Worker가 공식 사이트 또는 공공 관광 페이지를 확인한다.</li>
+<li><strong>상업 플랫폼 데이터</strong>: 숙박·맛집 플랫폼 데이터는 직접 저장보다 검색 딥링크 제공을 우선한다.</li>
+<li><strong>본문 원문 저장 제한</strong>: 외부 설명문은 원문 전체 복제가 아니라 내부 요약문으로 저장한다.</li>
 </ul>
-<h1 id="s9" class="s-h1">9. 변경 이력</h1>
+<h1 id="s7" class="s-h1">7. 본 문서 반영 이력</h1>
 <div class="table-wrap wide"><table class="info-tbl change-log-tbl">
 <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
 <tr><td>v0.1</td><td>2026-06-02</td><td>로브 기획팀</td><td>데이터 수집 계획서 초안 및 일관된 템플릿 구조 작성</td></tr>
 <tr><td>v0.2</td><td>2026-06-02</td><td>로브 기획팀</td><td>한일 수집 범위, 3종 데이터 모델, 전처리 인프라, 품질·법적 검토 기준 반영</td></tr>
+<tr><td>v0.3</td><td>2026-06-02</td><td>로브 기획팀</td><td>한국·일본 데이터 취득 초안을 main 문서에 반영하고 전체 필드 일괄 취득 전략으로 재정리</td></tr>
 </tbody></table></div>
-<p class="doc-p">v0.2에서는 중간 발표 이전 단계 기준 수집 범위(한국 40개 지역, 일본 316개 지역), 지역·관광지·축제 데이터 모델, 지리·기후 정보 수집 목적, S3/Lambda 기반 전처리 인프라, 4대 정합성 검증, 라이선스 준수, 1년 주기 갱신 정책을 함께 정리했다.</p>
+<p class="doc-p">v0.3에서는 <code>korea_data_acquisition_plan.md</code>와 <code>japan_data_acquisition_plan.md</code>의 핵심 내용을 main 문서에 반영했다. City, Attraction, Festival 관계를 기준으로 한국·일본 공통 수집 필드와 국가별 출처를 정리하고, 자동 수집·공식 확인·Web Search Worker·수동 검수를 하나의 취득 파이프라인으로 통합했다.</p>
         <nav class="doc-nav" aria-label="이전 다음 문서">
           <a class="doc-nav-home" href="../index.html">문서 홈</a>
           <div class="doc-nav-pager">
