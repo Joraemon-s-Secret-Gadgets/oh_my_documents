@@ -1274,6 +1274,53 @@
         overflow-wrap: anywhere;
       }
 
+      /* ── DOCUMENT NAVIGATION ── */
+      .doc-nav {
+        margin-top: 48px;
+        padding-top: 18px;
+        border-top: 1px solid var(--rule);
+      }
+      .doc-nav-home {
+        display: inline-flex;
+        align-items: center;
+        min-height: 36px;
+        padding: 7px 12px;
+        border: 1px solid var(--rule);
+        border-radius: 7px;
+        background: var(--white);
+        color: var(--ink2);
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+      .doc-nav-pager {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 14px;
+      }
+      .doc-nav-link {
+        display: block;
+        min-height: 72px;
+        padding: 13px 16px;
+        border: 1px solid var(--rule);
+        border-radius: 7px;
+        background: var(--white);
+        color: var(--ink3);
+        font-size: 0.78rem;
+        line-height: 1.45;
+        word-break: keep-all;
+        overflow-wrap: anywhere;
+      }
+      .doc-nav-link strong {
+        display: block;
+        margin-top: 4px;
+        color: var(--ink);
+        font-size: 0.92rem;
+      }
+      .doc-nav-link.disabled {
+        opacity: 0.52;
+      }
+
       /* ── RESPONSIVE ── */
       @media (max-width: 840px) {
         aside {
@@ -1286,6 +1333,9 @@
           font-size: 1.7rem;
         }
         .card-grid {
+          grid-template-columns: 1fr;
+        }
+        .doc-nav-pager {
           grid-template-columns: 1fr;
         }
       }

@@ -3,54 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — 데이터베이스 설계 명세서 v0.1</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="../assets/css/requirements.css" />
+    <meta http-equiv="refresh" content="0; url=./06_database_design.html" />
+    <title>문서 위치 변경</title>
+    <link rel="stylesheet" href="../assets/css/site.css" />
   </head>
   <body>
-    <div class="layout">
-      <aside>
-        <div class="aside-brand">
-          <div class="aside-logo">로브</div>
-          <div class="aside-ver">Database Design · v0.1</div>
-          <div class="aside-status"><div class="status-dot"></div><span>기획 단계</span></div>
-        </div>
-        <nav class="toc">
-<div class="toc-section"><a class="toc-link active" href="#cover">표지 / 문서 정보</a></div>
-<div class="toc-section">
-<div class="toc-section-hd">1. 문서 개요</div>
-<a class="toc-link" href="#s1">1. 문서 개요</a>
-<a class="toc-link" href="#s1-1">1.1 목적</a>
-<a class="toc-link" href="#s1-2">1.2 데이터베이스 방향</a>
-</div>
-        </nav>
-      </aside>
-      <main id="cover">
-<h1 id="cover-title" class="s-h1">로브 (Lovv) 데이터베이스 설계 명세서</h1>
-<blockquote>
-<p class="doc-p">문서 버전: v0.1</p>
-<p class="doc-p">문서 상태: 기획 단계 (Planning)</p>
-<p class="doc-p">기준 문서: <code>docs/01_requirements/01_requirements.md</code> v1.5</p>
-</blockquote>
-<h1 id="s1" class="s-h1">1. 문서 개요</h1>
-<h2 id="s1-1" class="s-h2">1.1 목적</h2>
-<p class="doc-p">본 문서는 로브 서비스의 핵심 데이터 모델, 테이블 후보, 관계, 인덱스, 보존 정책을 정의한다. PoC에서는 일부 데이터를 정적 파일과 로컬 스토리지로 대체할 수 있으나, Production 전환 시 본 문서를 기준으로 데이터베이스를 설계한다.</p>
-<h2 id="s1-2" class="s-h2">1.2 데이터베이스 방향</h2>
-<div class="table-wrap"><table class="info-tbl">
-<thead><tr><th>항목</th><th>결정</th><th>비고</th></tr></thead><tbody>
-<tr><td>기본 모델</td><td>관계형 데이터베이스 우선</td><td>서비스 핵심 데이터는 정규화된 관계형 모델을 기준으로 설계한다.</td></tr>
-<tr><td>RDBMS</td><td>MySQL 8 LTS</td><td>목적지, 축제, 사용자, 저장 일정, 검토 이력 등 핵심 트랜잭션 데이터를 저장한다.</td></tr>
-<tr><td>NoSQL</td><td>AWS DynamoDB</td><td>AgentCore와 SAM(Serverless Application Model) 로그를 적재한다.</td></tr>
-<tr><td>VectorDB</td><td>PoC 단계에서는 VectorDB로 구현</td><td>이후 GraphDB로 이관할지 결정한다.</td></tr>
-<tr><td>이유</td><td>ACID 트랜잭션 필요</td><td>목적지, 축제, 사용자, 저장 일정, 검토 이력 간 관계가 명확하다.</td></tr>
-<tr><td>보조 저장소</td><td>DynamoDB 및 VectorDB</td><td>운영 로그와 RAG/검색 보조 데이터를 핵심 RDBMS와 분리해 관리한다.</td></tr>
-</tbody></table></div>
-      </main>
-    </div>
-    <script src="../assets/js/requirements.js" defer></script>
+    <main class="site-shell">
+      <section>
+        <h1 class="site-title">문서 위치가 변경되었습니다</h1>
+        <p><code>05_database_design.html</code>는 최신 문서 번호 체계에 따라 <a href="./06_database_design.html"><code>06_database_design.html</code></a>로 이동했습니다.</p>
+      </section>
+    </main>
   </body>
 </html>
