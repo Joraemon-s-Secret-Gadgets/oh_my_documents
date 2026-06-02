@@ -154,19 +154,12 @@
 <tr><td>CORS 제약</td><td>브라우저 보안 정책(Same-Origin Policy)으로 인해 외부 API를 클라이언트에서 직접 호출할 수 없는 제약</td></tr>
 </tbody></table></div>
 <h1 id="s2" class="s-h1">2. 이해관계자</h1>
-<p class="doc-p">최종 사용자</p>
-<p class="doc-p">자유여행자 (FIT)</p>
-<p class="doc-p">취향·시기·동행·이동 범위를 입력하고 소도시 집중 일정을 추천받는다.</p>
-<p class="doc-p">한→일 / 일→한 양방향.</p>
-<p class="doc-p">운영 사용자</p>
-<p class="doc-p">지자체·관광 운영자</p>
-<p class="doc-p">소도시 관광 집중도를 모니터링하고 수요 분산 전략을 검토한다.</p>
-<p class="doc-p">내부 사용자</p>
-<p class="doc-p">서비스 관리자</p>
-<p class="doc-p">소도시·축제 데이터, 추천 정책, 공지사항을 관리한다.</p>
-<p class="doc-p">연계 기관</p>
-<p class="doc-p">공공 데이터 제공 기관</p>
-<p class="doc-p">관광지·축제·날씨·교통 데이터를 API 형태로 제공한다 (한국관광공사·JNTO 등).</p>
+<div class="card-grid">
+<div class="mini-card"><div class="mc-type">최종 사용자</div><div class="mc-name">자유여행자 (FIT)</div><div class="mc-desc">취향·시기·동행·이동 범위를 입력하고 소도시 집중 일정을 추천받는다. 한→일 / 일→한 양방향.</div></div>
+<div class="mini-card"><div class="mc-type">운영 사용자</div><div class="mc-name">지자체·관광 운영자</div><div class="mc-desc">소도시 관광 집중도를 모니터링하고 수요 분산 전략을 검토한다.</div></div>
+<div class="mini-card"><div class="mc-type">내부 사용자</div><div class="mc-name">서비스 관리자</div><div class="mc-desc">소도시·축제 데이터, 추천 정책, 공지사항을 관리한다.</div></div>
+<div class="mini-card"><div class="mc-type">연계 기관</div><div class="mc-name">공공 데이터 제공 기관</div><div class="mc-desc">관광지·축제·날씨·교통 데이터를 API 형태로 제공한다 (한국관광공사·JNTO 등).</div></div>
+</div>
 <h2 id="s2-1" class="s-h2">2.1 역할 모델</h2>
 <p class="doc-p">이해관계자는 실제 서비스 권한 체계에서 다음 역할(Role)로 관리한다. 하나의 기관 또는 사용자가 여러 역할을 가질 수 있으며, MVP 단계에서는 조회·제안·승인·관리 권한을 중심으로 단순화한다.</p>
 <div class="table-wrap wide extra-wide"><table class="info-tbl">
@@ -402,27 +395,14 @@
 <tr><td>7. 외부 정보 보강</td><td>일정 카드</td><td>지도·날씨 표시·숙소 링크</td><td>최종 추천 결과</td></tr>
 </tbody></table></div>
 <h1 id="s5" class="s-h1">5. API 연동 요구사항</h1>
-<p class="doc-p">각 플랫폼 API는 역할을 분담하여 정보를 보완 제공한다. 클라이언트 측 직접 호출이 불가한 REST API는 딥링크로 대체하며, 향후 백엔드 프록시를 통해 연동한다.</p>
-<p class="doc-p">🌐</p>
-<p class="doc-p">Google Maps Platform</p>
-<p class="doc-p">장소 상세 · 사진 · 주변 명소 (전 지역)</p>
-<p class="doc-p"><strong>역할:</strong> 플랫폼 공통 지도 + Places API로 실시간 장소 정보</p>
-<p class="doc-p"><strong>상태:</strong> ✓ 클라이언트 직접 연동</p>
-<p class="doc-p">🟡</p>
-<p class="doc-p">Kakao Maps</p>
-<p class="doc-p">카카오 지도 · 주변 맛집·숙박 (국내 전용)</p>
-<p class="doc-p"><strong>역할:</strong> 카카오 지도 SDK + Local REST API (맛집 검색)</p>
-<p class="doc-p"><strong>상태:</strong> △ SDK + REST Key 선택</p>
-<p class="doc-p">🔴</p>
-<p class="doc-p">Yahoo Japan</p>
-<p class="doc-p">일본 여행 · 숙박 · 맛집 (일본 전용)</p>
-<p class="doc-p"><strong>역할:</strong> Yahoo Travel · じゃらん · 食べログ 딥링크</p>
-<p class="doc-p"><strong>상태:</strong> 딥링크 / REST 백엔드 예정</p>
-<p class="doc-p">☀</p>
-<p class="doc-p">WeatherAPI</p>
-<p class="doc-p">실시간 날씨 (전 지역 · API Key 필요)</p>
-<p class="doc-p"><strong>역할:</strong> 목적지 상세 화면의 기온, 날씨 상태, 풍속, 습도 자동 제공</p>
-<p class="doc-p"><strong>상태:</strong> △ API Key 설정 필요</p>
+<p class="doc-p">각 플랫폼 API는 역할을 분담하여 정보를 보완 제공한다.</p>
+<p class="doc-p">클라이언트 측 직접 호출이 불가한 REST API는 딥링크로 대체하며, 향후 백엔드 프록시를 통해 연동한다.</p>
+<div class="api-grid">
+<div class="api-card"><div class="api-card-hd"><div class="api-card-ico api-ic-g">G</div><div><div class="api-card-name">Google Maps Platform</div><div class="api-card-role">장소 상세 · 사진 · 주변 명소 (전 지역)</div></div></div><div class="api-card-body"><p><strong>역할:</strong> 플랫폼 공통 지도 + Places API로 실시간 장소 정보</p><p><strong>상태:</strong> ✓ 클라이언트 직접 연동</p></div></div>
+<div class="api-card"><div class="api-card-hd"><div class="api-card-ico api-ic-k">K</div><div><div class="api-card-name">Kakao Maps</div><div class="api-card-role">카카오 지도 · 주변 맛집·숙박 (국내 전용)</div></div></div><div class="api-card-body"><p><strong>역할:</strong> 카카오 지도 SDK + Local REST API (맛집 검색)</p><p><strong>상태:</strong> △ SDK + REST Key 선택</p></div></div>
+<div class="api-card"><div class="api-card-hd"><div class="api-card-ico api-ic-y">Y</div><div><div class="api-card-name">Yahoo Japan</div><div class="api-card-role">일본 여행 · 숙박 · 맛집 (일본 전용)</div></div></div><div class="api-card-body"><p><strong>역할:</strong> Yahoo Travel · じゃらん · 食べログ 딥링크</p><p><strong>상태:</strong> 딥링크 / REST 백엔드 예정</p></div></div>
+<div class="api-card"><div class="api-card-hd"><div class="api-card-ico api-ic-w">W</div><div><div class="api-card-name">WeatherAPI</div><div class="api-card-role">실시간 날씨 (전 지역 · API Key 필요)</div></div></div><div class="api-card-body"><p><strong>역할:</strong> 목적지 상세 화면의 기온, 날씨 상태, 풍속, 습도 자동 제공</p><p><strong>상태:</strong> △ API Key 설정 필요</p></div></div>
+</div>
 <h2 id="s5-1" class="s-h2">5.1 Google Maps Platform</h2>
 <div class="table-wrap"><table class="info-tbl decision-tbl">
 <thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
@@ -446,9 +426,7 @@
 <tr><td>CORS 제약</td><td>Maps SDK: 없음 / Local REST: 등록 도메인 한정 (로컬 파일 환경 제약) → 오류 시 딥링크 대체</td></tr>
 </tbody></table></div>
 <h2 id="s5-3" class="s-h2">5.3 Yahoo Japan</h2>
-<p class="doc-p"><strong>⚠ Yahoo Japan Maps JS SDK 지원 중단:</strong></p>
-<p class="doc-p">Yahoo Japan Maps JavaScript SDK(Yjans)가 서비스 종료되어 일본 소도시 지도는 Google Maps API로 대체 제공한다.</p>
-<p class="doc-p">Yahoo Japan REST API는 CORS 제한으로 클라이언트 직접 호출이 불가하며, 딥링크 방식으로 제공한다.</p>
+<div class="warn-box"><p><strong>⚠ Yahoo Japan Maps JS SDK 지원 중단:</strong></p><p>Yahoo Japan Maps JavaScript SDK(Yjans)가 서비스 종료되어 일본 소도시 지도는 Google Maps API로 대체 제공한다. Yahoo Japan REST API는 CORS 제한으로 클라이언트 직접 호출이 불가하며, 딥링크 방식으로 제공한다.</p></div>
 <div class="table-wrap"><table class="info-tbl decision-tbl">
 <thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
 <tr><td>역할</td><td>일본 소도시 여행 정보, 숙박·음식점 플랫폼 딥링크 제공</td></tr>
@@ -560,20 +538,10 @@
 <p class="doc-p">테이블 구조, 컬렉션 구조, 인덱스, 저장소 선택 등 저장 구조 설계는 별도 설계 문서에서 다룬다.</p>
 <h1 id="s8" class="s-h1">8. 제약사항 및 가정</h1>
 <h2 id="s8-1" class="s-h2">8.1 기술적 제약사항</h2>
-<p class="doc-p"><strong>Yahoo Japan Maps SDK 지원 중단:</strong></p>
-<p class="doc-p">Yahoo Japan Maps JavaScript SDK(Yjans)가 지원 중단되어 일본 소도시 지도는 Google Maps API로 대체 제공한다.</p>
-<p class="doc-p"><strong>Yahoo Japan REST API CORS:</strong></p>
-<p class="doc-p">Local Search 등 REST API는 CORS 제한이 있다.</p>
-<p class="doc-p">향후 백엔드 프록시 서버를 통해 연동한다.</p>
-<p class="doc-p">App ID는 향후 사용을 위해 입력 항목만 준비한다.</p>
-<p class="doc-p"><strong>Kakao REST API 도메인 제약:</strong></p>
-<p class="doc-p">로컬 파일 환경(</p>
-<p class="doc-p"><code>file://</code></p>
-<p class="doc-p">)에서는 CORS 정책으로 Kakao Local REST API 호출이 제한될 수 있다.</p>
-<p class="doc-p">등록된 도메인 환경에서 정상 동작한다.</p>
-<p class="doc-p"><strong>Google Places API 과금:</strong></p>
-<p class="doc-p">Places API는 무료 한도 초과 시 과금이 발생한다.</p>
-<p class="doc-p">서비스 규모에 따른 비용 산정이 필요하다.</p>
+<div class="warn-box"><p><strong>Yahoo Japan Maps SDK 지원 중단:</strong></p><p>Yahoo Japan Maps JavaScript SDK(Yjans)가 지원 중단되어 일본 소도시 지도는 Google Maps API로 대체 제공한다.</p></div>
+<div class="warn-box"><p><strong>Yahoo Japan REST API CORS:</strong></p><p>Local Search 등 REST API는 CORS 제한이 있다. 향후 백엔드 프록시 서버를 통해 연동한다. App ID는 향후 사용을 위해 입력 항목만 준비한다.</p></div>
+<div class="warn-box"><p><strong>Kakao REST API 도메인 제약:</strong></p><p>로컬 파일 환경( <code>file://</code> )에서는 CORS 정책으로 Kakao Local REST API 호출이 제한될 수 있다. 등록된 도메인 환경에서 정상 동작한다.</p></div>
+<div class="warn-box"><p><strong>Google Places API 과금:</strong></p><p>Places API는 무료 한도 초과 시 과금이 발생한다. 서비스 규모에 따른 비용 산정이 필요하다.</p></div>
 <h2 id="s8-2" class="s-h2">8.2 가정사항</h2>
 <ul class="bullet-list">
 <li>서비스 초기에는 단일 HTML 파일 기반 데모로 운영하며, API 키는 사용자가 직접 입력한다.</li>
@@ -625,15 +593,7 @@
 <tr><td>QA 담당자</td><td>테스트 계획, 기능 검증, 권한·데이터 품질 검증</td><td>0.5~1명</td></tr>
 <tr><td>운영 담당자</td><td>배포, 모니터링, API Key 교체·만료 대응, 장애 대응</td><td>0.5~1명</td></tr>
 </tbody></table></div>
-<p class="doc-p"><strong>역할 구분:</strong></p>
-<p class="doc-p">본 절의 PM, 개발자, QA 등은 프로젝트 수행 인력 역할이다.</p>
-<p class="doc-p"><code>2. 이해관계자</code>의</p>
-<p class="doc-p"><code>R-USER</code></p>
-<p class="doc-p">,</p>
-<p class="doc-p"><code>R-LOCAL-OPERATOR</code></p>
-<p class="doc-p">,</p>
-<p class="doc-p"><code>R-ADMIN</code></p>
-<p class="doc-p">등 서비스 권한 Role ID와 구분한다.</p>
+<div class="note-box"><p><strong>역할 구분:</strong></p><p>본 절의 PM, 개발자, QA 등은 프로젝트 수행 인력 역할이다.</p><p><a href="#s2">2. 이해관계자</a>의 <code>R-USER</code>, <code>R-LOCAL-OPERATOR</code>, <code>R-ADMIN</code> 등 서비스 권한 Role ID와 구분한다.</p></div>
 <h2 id="s9-4" class="s-h2">9.4 단계별 인력 분배</h2>
 <div class="table-wrap wide extra-wide"><table class="info-tbl">
 <thead><tr><th>구분</th><th>기간</th><th>핵심 투입</th><th>보조 투입</th><th>목표</th></tr></thead><tbody>

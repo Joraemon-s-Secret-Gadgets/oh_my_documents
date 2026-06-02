@@ -262,6 +262,48 @@ def render_blocks(markdown: str) -> tuple[str, list[tuple[int, str, str]]]:
             i += 1
             continue
 
+        if stripped.startswith("**⚠") and stripped.endswith(":**"):
+            flush_paragraph()
+            flush_list()
+            title = stripped
+            body_lines: list[str] = []
+            i += 1
+            while i < len(lines):
+                body = lines[i].strip()
+                if body.startswith("#") or body.startswith("|"):
+                    break
+                if body:
+                    body_lines.append(body)
+                i += 1
+            if body_lines:
+                output.append(
+                    '<div class="warn-box">'
+                    f"<p>{inline(title)}</p>"
+                    f"<p>{inline(' '.join(body_lines))}</p>"
+                    "</div>"
+                )
+            else:
+                output.append(f'<p class="doc-p">{inline(title)}</p>')
+            continue
+
+        if stripped == "**역할 구분:**":
+            flush_paragraph()
+            flush_list()
+            body_lines: list[str] = []
+            i += 1
+            while i < len(lines):
+                body = lines[i].strip()
+                if body.startswith("#") or body.startswith("|"):
+                    break
+                if body:
+                    body_lines.append(body)
+                i += 1
+            if body_lines:
+                output.append(render_role_distinction_box(body_lines))
+            else:
+                output.append(f'<p class="doc-p">{inline(stripped)}</p>')
+            continue
+
         if re.match(r"^\|.+\|$", stripped) and i + 1 < len(lines) and re.match(r"^\|\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?$", lines[i + 1].strip()):
             flush_paragraph()
             flush_list()
@@ -289,6 +331,21 @@ def render_blocks(markdown: str) -> tuple[str, list[tuple[int, str, str]]]:
             output.append(f'<{tag} id="{hid}" class="{klass}">{inline(text)}</{tag}>')
             fallback += 1
             i += 1
+            if text == "2. 이해관계자":
+                cards_html, next_index = collect_stakeholder_cards(lines, i)
+                if cards_html:
+                    output.append(cards_html)
+                    i = next_index
+            if text == "5. API 연동 요구사항":
+                cards_html, next_index = collect_api_cards(lines, i)
+                if cards_html:
+                    output.append(cards_html)
+                    i = next_index
+            if text == "8.1 기술적 제약사항":
+                boxes_html, next_index = collect_constraint_boxes(lines, i)
+                if boxes_html:
+                    output.append(boxes_html)
+                    i = next_index
             continue
 
         if stripped.startswith(">"):
@@ -334,6 +391,163 @@ def render_toc(headings: list[tuple[int, str, str]]) -> str:
     if current_open:
         lines.append("</div>")
     return "\n".join(lines)
+
+
+def collect_stakeholder_cards(lines: list[str], start: int) -> tuple[str, int]:
+    cursor = start
+    items: list[str] = []
+    while cursor < len(lines):
+        stripped = lines[cursor].strip()
+        if stripped.startswith("#"):
+            break
+        if stripped:
+            items.append(stripped)
+        cursor += 1
+
+    card_data: list[tuple[str, str, str]] = []
+    if len(items) >= 13 and items[0] == "최종 사용자":
+        card_data = [
+            (items[0], items[1], " ".join(items[2:4])),
+            (items[4], items[5], items[6]),
+            (items[7], items[8], items[9]),
+            (items[10], items[11], items[12]),
+        ]
+
+    cards = []
+    for card_type, name, description in card_data:
+        cards.append(
+            '<div class="mini-card">'
+            f'<div class="mc-type">{inline(card_type)}</div>'
+            f'<div class="mc-name">{inline(name)}</div>'
+            f'<div class="mc-desc">{inline(description)}</div>'
+            "</div>"
+        )
+
+    if not cards:
+        return "", start
+    return '<div class="card-grid">\n' + "\n".join(cards) + "\n</div>", cursor
+
+
+def collect_api_cards(lines: list[str], start: int) -> tuple[str, int]:
+    cursor = start
+    items: list[str] = []
+    while cursor < len(lines):
+        stripped = lines[cursor].strip()
+        if stripped.startswith("#"):
+            break
+        if stripped:
+            items.append(stripped)
+        cursor += 1
+
+    card_icons = {"🌐", "🟡", "🔴", "☀"}
+    first_card = next((idx for idx, item in enumerate(items) if item in card_icons), -1)
+    if first_card < 0:
+        return "", start
+
+    intro = items[:first_card]
+    card_items = items[first_card:]
+    icon_map = {
+        "Google Maps Platform": ("api-ic-g", "G"),
+        "Kakao Maps": ("api-ic-k", "K"),
+        "Yahoo Japan": ("api-ic-y", "Y"),
+        "WeatherAPI": ("api-ic-w", "W"),
+    }
+    card_data: list[tuple[str, str, str, str]] = []
+    for idx in range(0, len(card_items), 5):
+        chunk = card_items[idx : idx + 5]
+        if len(chunk) < 5:
+            break
+        if chunk[0] not in card_icons:
+            return "", start
+        if not chunk[3].startswith("**역할:**") or not chunk[4].startswith("**상태:**"):
+            return "", start
+        card_data.append((chunk[1], chunk[2], chunk[3], chunk[4]))
+
+    output = [f'<p class="doc-p">{inline(item)}</p>' for item in intro]
+    cards = []
+    for name, role, summary, status in card_data:
+        icon_class, icon_text = icon_map.get(name, ("api-ic-w", "API"))
+        cards.append(
+            '<div class="api-card">'
+            '<div class="api-card-hd">'
+            f'<div class="api-card-ico {icon_class}">{inline(icon_text)}</div>'
+            "<div>"
+            f'<div class="api-card-name">{inline(name)}</div>'
+            f'<div class="api-card-role">{inline(role)}</div>'
+            "</div>"
+            "</div>"
+            '<div class="api-card-body">'
+            f"<p>{inline(summary)}</p>"
+            f"<p>{inline(status)}</p>"
+            "</div>"
+            "</div>"
+        )
+
+    if not cards:
+        return "", start
+    output.append('<div class="api-grid">\n' + "\n".join(cards) + "\n</div>")
+    return "\n".join(output), cursor
+
+
+def collect_constraint_boxes(lines: list[str], start: int) -> tuple[str, int]:
+    cursor = start
+    groups: list[tuple[str, list[str]]] = []
+    current_title = ""
+    current_body: list[str] = []
+
+    while cursor < len(lines):
+        stripped = lines[cursor].strip()
+        if stripped.startswith("#"):
+            break
+        if not stripped:
+            cursor += 1
+            continue
+
+        if stripped.startswith("**") and stripped.endswith(":**"):
+            if current_title:
+                groups.append((current_title, current_body))
+            current_title = stripped
+            current_body = []
+        elif current_title:
+            current_body.append(stripped)
+        else:
+            return "", start
+        cursor += 1
+
+    if current_title:
+        groups.append((current_title, current_body))
+
+    boxes = []
+    for title, body in groups:
+        if not body:
+            continue
+        boxes.append(
+            '<div class="warn-box">'
+            f"<p>{inline(title)}</p>"
+            f"<p>{inline(' '.join(body))}</p>"
+            "</div>"
+        )
+
+    if not boxes:
+        return "", start
+    return "\n".join(boxes), cursor
+
+
+def render_role_distinction_box(body_lines: list[str]) -> str:
+    lead = inline(body_lines[0]) if body_lines else ""
+    role_ids = [line.strip("`") for line in body_lines if line.startswith("`R-")]
+    role_links = ", ".join(f"<code>{html.escape(role_id)}</code>" for role_id in role_ids)
+    reference = (
+        '<a href="#s2">2. 이해관계자</a>의 '
+        f"{role_links} 등 서비스 권한 Role ID와 구분한다."
+    )
+    return (
+        '<div class="note-box">'
+        "<p><strong>역할 구분:</strong></p>"
+        f"<p>{lead}</p>"
+        f"<p>{reference}</p>"
+        "</div>"
+    )
 
 
 def render_doc_nav(doc: Document) -> str:
