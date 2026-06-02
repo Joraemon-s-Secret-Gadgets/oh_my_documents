@@ -1,6 +1,6 @@
 ---
 작성자: Codex
-상태: 진행전
+상태: 진행중
 ---
 
 # 서비스 흐름 HTML 반영 계획
@@ -34,34 +34,35 @@
 
 - `pages/02_service_flow.html`의 문서 버전을 `v0.2`로 갱신한다.
 - 문서 상태를 `검토 중 (Review)` 기준으로 갱신한다.
-- 기준 문서를 `docs/01_requirements/01_requirements.md` v1.8로 갱신한다.
+- 기준 문서를 `요구사항 명세서`로 갱신한다.
 - TOC를 v0.2의 13개 섹션 구조에 맞게 재구성한다.
 - 본문에 `User Flow`, `Service Flow`, 운영·관리자 데이터 흐름, 관련 요구사항 및 API 영향 섹션을 추가한다.
 - `index.html`의 서비스 흐름 카드 버전, 상태, 설명을 v0.2 기준으로 갱신한다.
 
 ## 작업 체크리스트
 
-- [ ] 루트 `AGENT.md`와 `docs/02_service_flow/AGENT.md` 지침을 재확인한다.
-- [ ] `docs/02_service_flow/02_service_flow.md` v0.2 섹션 목록과 `pages/02_service_flow.html`의 현재 섹션을 매핑한다.
-- [ ] `pages/02_service_flow.html`의 `<title>`, aside 버전, 문서 상태, 기준 문서 정보를 v0.2로 갱신한다.
-- [ ] `pages/02_service_flow.html`의 TOC를 섹션 1~13 구조에 맞춰 갱신한다.
-- [ ] 문서 개요와 사용자 유형 섹션을 v0.2 내용으로 갱신한다.
-- [ ] `User Flow` 7단계 표를 HTML에 반영한다.
-- [ ] `Service Flow` 8단계 표를 HTML에 반영하고 API 경로 표기를 `/api/v1` 기준과 정합화한다.
-- [ ] 온보딩, 목적지 탐색, 챗봇 및 AI 일정 생성 흐름을 v0.2 내용으로 갱신한다.
-- [ ] 추천 결과, 실시간 피드백, 저장·피드백·마이페이지 흐름을 v0.2 내용으로 갱신한다.
-- [ ] 운영·관리자 데이터 흐름, 예외 흐름, 관련 요구사항 및 API 영향, 변경 이력을 추가한다.
-- [ ] `index.html`의 서비스 흐름 문서 카드 버전과 설명을 갱신한다.
-- [ ] HTML 렌더링, TOC anchor, 표 구조, 상대 링크를 검증한다.
-- [ ] `git diff`로 의도하지 않은 파일 변경이 없는지 확인한다.
+- [x] 루트 `AGENT.md`와 `docs/02_service_flow/AGENT.md` 지침을 재확인한다.
+- [x] `docs/02_service_flow/02_service_flow.md` v0.2 섹션 목록과 `pages/02_service_flow.html`의 현재 섹션을 매핑한다.
+- [x] `pages/02_service_flow.html`의 `<title>`, aside 버전, 문서 상태, 기준 문서 정보를 v0.2로 갱신한다.
+- [x] `pages/02_service_flow.html`의 TOC를 섹션 1~13 구조에 맞춰 갱신한다.
+- [x] 문서 개요와 사용자 유형 섹션을 v0.2 내용으로 갱신한다.
+- [x] `User Flow` 7단계 표를 HTML에 반영한다.
+- [x] `Service Flow` 8단계 표를 HTML에 반영하고 API 경로 표기를 `/api/v1` 기준과 정합화한다.
+- [x] 온보딩, 목적지 탐색, 챗봇 및 AI 일정 생성 흐름을 v0.2 내용으로 갱신한다.
+- [x] 추천 결과, 실시간 피드백, 저장·피드백·마이페이지 흐름을 v0.2 내용으로 갱신한다.
+- [x] 운영·관리자 데이터 흐름, 예외 흐름, 관련 요구사항 및 API 영향, 변경 이력을 추가한다.
+- [x] `index.html`의 서비스 흐름 문서 카드 버전과 설명을 갱신한다.
+- [x] TOC anchor, 표 구조, 상대 링크를 정적으로 검증한다.
+- [ ] 브라우저에서 HTML 렌더링을 검증한다.
+- [x] `git diff`로 의도하지 않은 파일 변경이 없는지 확인한다.
 
 ## 검증 방법
 
-- [ ] `docs/02_service_flow/02_service_flow.md`와 `pages/02_service_flow.html`의 문서 버전, 상태, 기준 문서가 일치하는지 확인한다.
-- [ ] HTML 본문에 Markdown v0.2의 섹션 1~13이 모두 반영됐는지 확인한다.
-- [ ] `pages/02_service_flow.html`의 TOC 링크가 각 섹션 id로 이동하는지 확인한다.
-- [ ] 긴 표가 기존 `table-wrap` 안에 들어가며 레이아웃을 깨지 않는지 확인한다.
-- [ ] `index.html`에서 `pages/02_service_flow.html`로 이동 가능한지 확인한다.
+- [x] `docs/02_service_flow/02_service_flow.md`와 `pages/02_service_flow.html`의 문서 버전, 상태, 기준 문서가 일치하는지 확인한다.
+- [x] HTML 본문에 Markdown v0.2의 섹션 1~13이 모두 반영됐는지 확인한다.
+- [x] `pages/02_service_flow.html`의 TOC 링크가 각 섹션 id로 이동하는지 확인한다.
+- [x] 긴 표가 기존 `table-wrap` 안에 들어가며 레이아웃을 깨지 않는지 정적으로 확인한다.
+- [x] `index.html`에서 `pages/02_service_flow.html`로 이동 가능한지 확인한다.
 
 ## 리스크와 대응
 

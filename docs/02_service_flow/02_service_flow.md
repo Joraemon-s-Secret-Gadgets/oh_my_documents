@@ -2,7 +2,7 @@
 
 > 문서 버전: v0.2
 > 문서 상태: 검토 중 (Review)
-> 기준 문서: `docs/01_requirements/01_requirements.md` v1.8
+> 기준 문서: 요구사항 명세서
 
 # 1. 문서 개요
 
