@@ -1,0 +1,797 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=22mm]{geometry}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\usepackage{kotex}
+\usepackage{graphicx}
+\usepackage[table]{xcolor}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{setspace}
+\setmainfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setsansfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setmonofont{Consolas}
+\newCJKfontfamily\jpfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setCJKmainfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setCJKsansfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setCJKmonofont[Path=C:/Windows/Fonts/]{malgun.ttf}
+\XeTeXlinebreaklocale "ko"
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\binoppenalty=10000
+\relpenalty=10000
+\emergencystretch=2em
+\sloppy
+\newcommand{\DocNeedspace}[1]{\par\ifdim\dimexpr\pagegoal-\pagetotal\relax<#1\newpage\fi}
+\definecolor{MainOrange}{HTML}{F26518}
+\definecolor{DarkCharcoal}{HTML}{222222}
+\definecolor{SoftBeige}{HTML}{FFF3E7}
+\definecolor{CardPeach}{HTML}{FCE7DB}
+\definecolor{MutedBrown}{HTML}{D44A14}
+\definecolor{SubTextGray}{HTML}{666666}
+\hypersetup{colorlinks=true, linkcolor=DarkCharcoal, urlcolor=MutedBrown}
+\renewcommand{\arraystretch}{1.35}
+\setlength{\tabcolsep}{2pt}
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\setlist[itemize]{leftmargin=*, itemsep=2pt, topsep=2pt}
+\setstretch{1.08}
+\setlength{\headheight}{30pt}
+\setcounter{tocdepth}{2}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\hbox{\makebox[42pt][c]{\includegraphics[width=38pt,height=13pt,keepaspectratio]{../assets/images/SK-Networks-logo.png}}\hspace{0.7em}\makebox[42pt][c]{\includegraphics[width=44pt,height=15pt,keepaspectratio]{../assets/images/en-core-logo.png}}\hspace{0.7em}\makebox[42pt][c]{\includegraphics[width=38pt,height=13pt,keepaspectratio]{../assets/images/playdata-logo.png}}}}
+\rhead{\scriptsize v0.2 | 검토 중}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{MainOrange}\leaders\hrule height \headrulewidth\hfill}}
+\begin{document}
+\begin{titlepage}
+\thispagestyle{empty}
+
+\noindent \hbox to\textwidth{\makebox[0.28\textwidth][c]{\includegraphics[width=0.22\textwidth,height=0.82cm,keepaspectratio]{../assets/images/SK-Networks-logo.png}}\hfil \makebox[0.28\textwidth][c]{\includegraphics[width=0.26\textwidth,height=0.98cm,keepaspectratio]{../assets/images/en-core-logo.png}}\hfil \makebox[0.28\textwidth][c]{\includegraphics[width=0.22\textwidth,height=0.82cm,keepaspectratio]{../assets/images/playdata-logo.png}}}
+\vspace{1em}
+\par\noindent\color{MainOrange}\rule{\textwidth}{1.2pt}\color{DarkCharcoal}
+
+\centering
+\vspace*{0.16\textheight}
+{\Huge\bfseries 한국 데이터 취득 계획서\par}
+
+\vspace{1.5em}
+{\large 로브 서비스 데이터 수집 계획\par}
+
+\vfill
+{\Large\bfseries 조라에몽의 만능 도구들\par}\vspace{0.8em}
+{\Large 이창우, 전승권, 전종혁, 조동휘, 최수아\\[0.8em]{\large 멘토 최민수}\par}
+\vspace{2em}
+{\large 2026-06-03\par}
+\end{titlepage}
+\begingroup
+\fontsize{11.7pt}{12.5pt}\selectfont
+\setlength{\parskip}{0pt}
+\tableofcontents
+\endgroup
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{1. 문서 개요}
+\addcontentsline{toc}{section}{1. 문서 개요}
+
+\DocNeedspace{8\baselineskip}
+\subsection*{1.1 목적}
+\addcontentsline{toc}{subsection}{1.1 목적}
+
+\DocNeedspace{3\baselineskip}
+본 문서는 여행 추천 Multi-Agent 서비스에서 한국 소도시 추천에 필요한 도시·관광지·축제 데이터를 한 번에 취득하기 위한 범위, 데이터 소스, 검증 방식, 저장 구조를 정의한다.
+
+
+\DocNeedspace{3\baselineskip}
+이번 초안의 핵심은 다음과 같다.
+
+
+\begin{itemize}
+\item City, Attraction, Festival의 정의된 항목을 모두 수집 대상으로 둔다.
+\item 한국관광공사 TourAPI와 대한민국구석구석 기반 데이터를 중심으로 관광지·축제 정보를 취득한다.
+\item 운영시간, 운영기간, 입장료, 사진처럼 출처별 표현 차이가 큰 항목도 최초 취득 범위에 포함한다.
+\item 자동 수집, 공식 사이트 확인, Web Search Worker, 수동 검수를 하나의 취득 파이프라인으로 묶어 처리한다.
+\item 한국 데이터는 City 기준 JSON 파일 안에 Attraction과 Festival 배열을 포함하는 구조로 저장한다.
+\end{itemize}
+
+\DocNeedspace{8\baselineskip}
+\subsection*{1.2 문서 관리표}
+\addcontentsline{toc}{subsection}{1.2 문서 관리표}
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.250\linewidth}>{\RaggedRight\arraybackslash}p{0.710\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.250\linewidth}}{\textbf{항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.710\linewidth}}{\textbf{내용}} \\
+\midrule
+\endhead
+문서명 & 한국 데이터 취득 계획서 \\
+문서 버전 & v0.2 \\
+문서 상태 & 본 문서 반영 전 초안 \\
+작성일 & 2026-06-02 \\
+개정일 & 2026-06-03 \\
+작성 주체 & 로브 기획팀 \\
+적용 범위 & 한국 소도시 City, Attraction, Festival 데이터 취득 및 검증 \\
+기준 산출물 & \texttt{docs/04\_data\_collect\_plan/korea\_data\_acquisition\_plan.md} \\
+후속 반영 대상 & 데이터 취득 결과서 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+\newpage
+
+\DocNeedspace{8\baselineskip}
+\subsection*{1.3 데이터 수집 매트릭스}
+\addcontentsline{toc}{subsection}{1.3 데이터 수집 매트릭스}
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\renewcommand{\arraystretch}{1.12}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.150\linewidth}>{\RaggedRight\arraybackslash}p{0.405\linewidth}>{\RaggedRight\arraybackslash}p{0.405\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.150\linewidth}}{\textbf{대상}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.405\linewidth}}{\textbf{수집 범위 및 방식}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.405\linewidth}}{\textbf{주요 출처 및 검증}} \\
+\midrule
+\endhead
+City & 추천 기준 지역. 시·군·구 단위 소도시를 하나의 추천 단위로 관리하고, 행정구역 코드와 대표 좌표를 기준으로 정규화한다. & 행정구역 데이터, Wikipedia, Wikidata, 기상청, 지자체 관광 사이트를 사용한다. 명칭, 코드, 좌표, 공식 출처를 검증한다. \\
+Attraction & 일정 카드와 추천 상세 화면에 노출되는 관광지 데이터다. TourAPI로 자동 수집한 뒤 운영시간, 입장료, 사진을 공식 출처로 보강한다. & TourAPI, 대한민국구석구석, 지자체 공식 관광 사이트를 사용한다. City 매핑, 좌표, 운영 정보, 확인일을 검증한다. \\
+Festival & 월별 추천과 계절성 추천의 근거가 되는 축제·행사 데이터다. 행사정보 수집 후 연도별 일정 변동 여부를 공식 페이지로 확인한다. & TourAPI 행사정보, 대한민국구석구석, 지자체 공식 관광 사이트를 사용한다. 개최지, 기간, 공식 링크, 사진 조건을 검증한다. \\
+Statistics & 추천 점수와 지역 보조 지표에 사용하는 통계 데이터다. 방문자 수와 관광 동향을 City 기준으로 연결한다. & 한국관광 데이터랩, 공공데이터포털을 사용한다. 기준 기간, 지역 코드, 지표 정의를 검증한다. \\
+\bottomrule
+\end{longtable}
+\renewcommand{\arraystretch}{1}
+\end{small}
+
+\newpage
+
+\DocNeedspace{8\baselineskip}
+\subsection*{1.4 운영 및 검증 체크리스트}
+\addcontentsline{toc}{subsection}{1.4 운영 및 검증 체크리스트}
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.220\linewidth}>{\RaggedRight\arraybackslash}p{0.430\linewidth}>{\RaggedRight\arraybackslash}p{0.310\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.220\linewidth}}{\textbf{점검 항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.430\linewidth}}{\textbf{확인 내용}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.310\linewidth}}{\textbf{산출물}} \\
+\midrule
+\endhead
+수집 전 정의 & 필드명, 데이터 유형, 원문 값과 정규화 값, 필수 여부를 사전에 확정한다. & 필드 사전, 수집 매트릭스 \\
+파일럿 수집 & 대표 시·군·구 1개 이상을 대상으로 TourAPI 수집과 공식 확인 흐름을 먼저 실행한다. & 파일럿 로그, 누락 필드 목록 \\
+취득 상태 분류 & 모든 필드는 \texttt{collected}, \texttt{needs\_review}, \texttt{missing}, \texttt{blocked} 중 하나로 분류한다. & 취득 상태 JSON \\
+공식 출처 검증 & 운영시간, 운영기간, 입장료, 축제 기간은 공식 사이트 또는 공공 관광 페이지를 우선한다. & 검증 URL, 확인일, 검증 메모 \\
+법적 검토 & 설명문은 내부 요약문으로 재작성하고 사진은 공공누리 유형 또는 사용 가능 조건을 확인한다. & 라이선스 메모, 차단 사유 \\
+저장 및 접근 & Raw JSON, 정규화 JSON, 출처 메타데이터, 검수 메타데이터를 분리 저장한다. & Raw 저장소, 정규화 JSON, 메타데이터 로그 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{2. 목표 데이터 모델}
+\addcontentsline{toc}{section}{2. 목표 데이터 모델}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{2.1 관계 구조}
+\addcontentsline{toc}{subsection}{2.1 관계 구조}
+
+
+\begin{verbatim}
+City
+ ├── Attraction
+ └── Festival
+\end{verbatim}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.393\linewidth}>{\RaggedRight\arraybackslash}p{0.587\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.393\linewidth}}{\textbf{관계}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.587\linewidth}}{\textbf{설명}} \\
+\midrule
+\endhead
+\texttt{City 1:N Attraction} & 하나의 한국 도시는 여러 관광지를 가진다. \\
+\texttt{City 1:N Festival} & 하나의 한국 도시는 여러 축제·행사를 가진다. \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{2.2 City 데이터}
+\addcontentsline{toc}{subsection}{2.2 City 데이터}
+
+
+\DocNeedspace{3\baselineskip}
+City는 추천의 기준 지역이다. 한국 목적지는 시·군·구 단위의 소도시를 기본 단위로 관리한다.
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.194\linewidth}>{\RaggedRight\arraybackslash}p{0.370\linewidth}>{\RaggedRight\arraybackslash}p{0.105\linewidth}>{\RaggedRight\arraybackslash}p{0.271\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.194\linewidth}}{\textbf{필드}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.370\linewidth}}{\textbf{수집 방식}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.105\linewidth}}{\textbf{수집 상태}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.271\linewidth}}{\textbf{설명}} \\
+\midrule
+\endhead
+\texttt{city\_id} & 내부 생성 & 전부 수집 & 시스템 내부 지역 식별자 \\
+\texttt{city\_name\_ko} & Wikipedia / 행정구역 데이터 / 수동 정규화 & 전부 수집 & 한국어 도시명 \\
+\texttt{province} & 행정구역 데이터 & 전부 수집 & 광역시·도 \\
+\texttt{district\_type} & 행정구역 데이터 & 전부 수집 & 시·군·구 구분 \\
+\texttt{location} & Wikipedia / TourAPI / 행정구역 데이터 & 전부 수집 & 위치 정보, 좌표 또는 행정 위치 \\
+\texttt{latitude} & TourAPI / Wikidata / 지도 보조 & 전부 수집 & 대표 위도 \\
+\texttt{longitude} & TourAPI / Wikidata / 지도 보조 & 전부 수집 & 대표 경도 \\
+\texttt{description} & Wikipedia / 대한민국구석구석 기반 요약 & 전부 수집 & 도시 역사·문화·특징 설명 \\
+\texttt{climate} & 기상청 API허브 / 기후통계 & 전부 수집 & 기후 개요 또는 월별 기후 메모 \\
+\texttt{site\_url} & 지자체 문화관광 홈페이지 / 대한민국구석구석 & 전부 수집 & 도시 또는 관광 공식 사이트 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{2.3 Attraction 데이터}
+\addcontentsline{toc}{subsection}{2.3 Attraction 데이터}
+
+
+\DocNeedspace{3\baselineskip}
+Attraction은 도시와 1:N 관계를 가지며, 일정 카드와 추천 결과 상세 화면의 핵심 소재로 사용한다.
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.218\linewidth}>{\RaggedRight\arraybackslash}p{0.332\linewidth}>{\RaggedRight\arraybackslash}p{0.105\linewidth}>{\RaggedRight\arraybackslash}p{0.285\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.218\linewidth}}{\textbf{필드}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.332\linewidth}}{\textbf{수집 방식}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.105\linewidth}}{\textbf{수집 상태}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.285\linewidth}}{\textbf{설명}} \\
+\midrule
+\endhead
+\texttt{attraction\_id} & 내부 생성 & 전부 수집 & 관광지 식별자 \\
+\texttt{city\_id} & City 매핑 & 전부 수집 & 소속 도시 \\
+\texttt{content\_id} & 한국관광공사 TourAPI & 전부 수집 & TourAPI 콘텐츠 ID \\
+\texttt{content\_type\_id} & 한국관광공사 TourAPI & 전부 수집 & 관광지·문화시설·음식점 등 콘텐츠 유형 \\
+\texttt{name} & TourAPI / 대한민국구석구석 & 전부 수집 & 관광지명 \\
+\texttt{address} & TourAPI / 공식 사이트 & 전부 수집 & 주소 \\
+\texttt{description} & TourAPI 공통정보·소개정보 기반 요약 & 전부 수집 & 관광지 설명 \\
+\texttt{site\_url} & TourAPI / 공식 사이트 & 전부 수집 & 공식 또는 안내 페이지 \\
+\texttt{opening\_hours} & TourAPI 소개정보 / 공식 사이트 / 검수 & 전부 수집 & 운영시간 \\
+\texttt{opening\_period} & TourAPI 소개정보 / 공식 사이트 / 검수 & 전부 수집 & 계절 운영기간 \\
+\texttt{latitude} & TourAPI 위치정보 & 전부 수집 & 위도 \\
+\texttt{longitude} & TourAPI 위치정보 & 전부 수집 & 경도 \\
+\texttt{admission\_fee} & TourAPI 소개정보 / 공식 사이트 / 검수 & 전부 수집 & 입장료 \\
+\texttt{photo\_url} & TourAPI 이미지정보 / 공식 사이트 / 검수 & 전부 수집 & 대표 사진 URL \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+\newpage
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{2.4 Festival 데이터}
+\addcontentsline{toc}{subsection}{2.4 Festival 데이터}
+
+
+\DocNeedspace{3\baselineskip}
+Festival은 도시와 1:N 관계를 가지며, 월별 추천과 계절성 추천의 주요 근거로 사용한다.
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.189\linewidth}>{\RaggedRight\arraybackslash}p{0.370\linewidth}>{\RaggedRight\arraybackslash}p{0.105\linewidth}>{\RaggedRight\arraybackslash}p{0.276\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.189\linewidth}}{\textbf{필드}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.370\linewidth}}{\textbf{수집 방식}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.105\linewidth}}{\textbf{수집 상태}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.276\linewidth}}{\textbf{설명}} \\
+\midrule
+\endhead
+\texttt{festival\_id} & 내부 생성 & 전부 수집 & 축제 식별자 \\
+\texttt{city\_id} & City 매핑 & 전부 수집 & 개최 도시 \\
+\texttt{content\_id} & 한국관광공사 TourAPI & 전부 수집 & TourAPI 행사 콘텐츠 ID \\
+\texttt{name} & TourAPI 행사정보 / 대한민국구석구석 & 전부 수집 & 축제명 \\
+\texttt{address} & TourAPI / 공식 사이트 & 전부 수집 & 개최 장소 주소 \\
+\texttt{period} & TourAPI 행사 시작일·종료일 / 공식 사이트 & 전부 수집 & 개최 기간 또는 개최 월 \\
+\texttt{description} & TourAPI 공통정보·소개정보 기반 요약 & 전부 수집 & 축제 설명 \\
+\texttt{site\_url} & TourAPI / 공식 사이트 & 전부 수집 & 공식 또는 안내 페이지 \\
+\texttt{photo\_url} & TourAPI 이미지정보 / 공식 사이트 / 검수 & 전부 수집 & 대표 사진 URL \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{3. 데이터 소스 전략}
+\addcontentsline{toc}{section}{3. 데이터 소스 전략}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{3.1 한국관광공사 TourAPI}
+\addcontentsline{toc}{subsection}{3.1 한국관광공사 TourAPI}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.107\linewidth}>{\RaggedRight\arraybackslash}p{0.873\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.107\linewidth}}{\textbf{항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.873\linewidth}}{\textbf{내용}} \\
+\midrule
+\endhead
+주 용도 & 관광지 정보, 축제 정보, 이미지 정보, 지역 기반 관광정보 \\
+취득 대상 & 관광지명, 주소, 위도, 경도, 설명, 운영시간, 입장료, 이미지, 축제명, 축제 기간 \\
+장점 & 전국 관광정보를 API로 제공하며 지역기반·위치기반·키워드검색·행사정보·이미지정보 등을 함께 조회할 수 있다. \\
+한계 & 운영시간·입장료·휴무일은 콘텐츠 유형별 필드가 다르고 누락될 수 있다. \\
+적용 방식 & Attraction과 Festival 자동 수집의 1차 소스로 사용한다. \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{3.2 대한민국구석구석 및 지자체 문화관광 홈페이지}
+\addcontentsline{toc}{subsection}{3.2 대한민국구석구석 및 지자체 문화관광 홈페이지}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.107\linewidth}>{\RaggedRight\arraybackslash}p{0.873\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.107\linewidth}}{\textbf{항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.873\linewidth}}{\textbf{내용}} \\
+\midrule
+\endhead
+주 용도 & 도시 관광 링크, 공식 설명, 최신 운영정보 확인 \\
+취득 대상 & 지자체 문화관광 홈페이지 URL, 관광지 상세 링크, 축제 상세 링크, 공지성 최신 정보 \\
+장점 & 공식 또는 준공식 관광 안내 성격이 강해 서비스 설명과 출처 표기에 적합하다. \\
+한계 & 페이지 구조가 지자체마다 다르고, 운영시간·요금 표기 방식이 일정하지 않다. \\
+적용 방식 & TourAPI 수집값의 공식 확인 및 최신성 검증 소스로 사용한다. \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{3.3 Wikipedia / Wikidata}
+\addcontentsline{toc}{subsection}{3.3 Wikipedia / Wikidata}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.110\linewidth}>{\RaggedRight\arraybackslash}p{0.870\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.110\linewidth}}{\textbf{항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.870\linewidth}}{\textbf{내용}} \\
+\midrule
+\endhead
+주 용도 & 도시 정보, 위치 정보, 역사·문화 개요 \\
+취득 대상 & 도시명, 위치, 설명, 대표 좌표, 외부 링크 \\
+장점 & 도시 단위 설명과 위치 정보가 체계적이며 전국 커버가 가능하다. \\
+한계 & 관광지·축제 상세 정보는 불완전할 수 있고, 설명문 사용 시 라이선스 표기가 필요하다. \\
+적용 방식 & City 자동 수집의 보조 소스로 사용한다. \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{3.4 기상청 API허브 및 기후통계}
+\addcontentsline{toc}{subsection}{3.4 기상청 API허브 및 기후통계}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.124\linewidth}>{\RaggedRight\arraybackslash}p{0.856\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.124\linewidth}}{\textbf{항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.856\linewidth}}{\textbf{내용}} \\
+\midrule
+\endhead
+주 용도 & 기후 데이터, 월별 여행 적합도 보강 \\
+취득 대상 & 월별 평균 기온, 강수량, 폭염·한파·강설 등 계절성 메모 \\
+장점 & 공식 기상기후 데이터로 월별 추천 근거를 만들 수 있다. \\
+한계 & 시·군·구와 관측 지점 매핑 기준을 별도로 정의해야 한다. \\
+적용 방식 & City의 \texttt{climate}와 계절 추천 지표 산출에 사용한다. \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{3.5 관광 통계 및 보조 공공데이터}
+\addcontentsline{toc}{subsection}{3.5 관광 통계 및 보조 공공데이터}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.281\linewidth}>{\RaggedRight\arraybackslash}p{0.425\linewidth}>{\RaggedRight\arraybackslash}p{0.253\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.281\linewidth}}{\textbf{출처}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.425\linewidth}}{\textbf{사용 목적}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.253\linewidth}}{\textbf{적용 방식}} \\
+\midrule
+\endhead
+한국관광 데이터랩 & 지역별 관광 동향, 방문자 통계, 관광 수요 참고 & City 기준 보조 지표 \\
+행정안전부 행정구역 데이터 & 시·군·구 코드와 행정구역 정규화 & City ID와 지역 매핑 \\
+공공데이터포털 지자체 관광 데이터 & 지자체별 관광 링크·관광 자원 보강 & 공식 링크와 누락 데이터 보강 \\
+지자체 공식 문화관광 사이트 & 운영시간, 입장료, 최신 축제 일정 확인 & 누락·최신성 확인 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{4. 전체 취득 범위}
+\addcontentsline{toc}{section}{4. 전체 취득 범위}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{4.1 전체 수집 대상}
+\addcontentsline{toc}{subsection}{4.1 전체 수집 대상}
+
+
+\DocNeedspace{3\baselineskip}
+아래 항목은 모두 최초 취득 대상으로 둔다. 자동 수집에서 누락되거나 신뢰도가 낮은 값은 제외하지 않고 공식 사이트 확인, Web Search Worker, 수동 검수로 이어서 채운다.
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.105\linewidth}>{\RaggedRight\arraybackslash}p{0.403\linewidth}>{\RaggedRight\arraybackslash}p{0.341\linewidth}>{\RaggedRight\arraybackslash}p{0.091\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.105\linewidth}}{\textbf{구분}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.403\linewidth}}{\textbf{수집 항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.341\linewidth}}{\textbf{주요 출처}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.091\linewidth}}{\textbf{누락 시 처리}} \\
+\midrule
+\endhead
+도시 & 도시명, 위치, 설명, 기후, 사이트 링크, 위도, 경도 & Wikipedia, Wikidata, 기상청, 지자체 관광 사이트 &  \\
+관광지 & 관광지명, 운영시간, 운영기간, 주소, 위도, 경도, 설명, 입장료, 사이트 링크, 사진 & TourAPI, 대한민국구석구석, 공식 사이트 &  \\
+축제 & 축제명, 주소, 기간, 설명, 사진, 사이트 링크 & TourAPI 행사정보, 대한민국구석구석, 공식 사이트 &  \\
+통계 & 방문자 수, 지역별 관광 동향, 혼잡 참고 지표 & 한국관광 데이터랩, 공공데이터포털 &  \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+\DocNeedspace{8\baselineskip}
+\subsection*{4.2 취득 상태 관리}
+\addcontentsline{toc}{subsection}{4.2 취득 상태 관리}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.175\linewidth}>{\RaggedRight\arraybackslash}p{0.472\linewidth}>{\RaggedRight\arraybackslash}p{0.313\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.175\linewidth}}{\textbf{취득 상태}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.472\linewidth}}{\textbf{기준}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.313\linewidth}}{\textbf{처리 방식}} \\
+\midrule
+\endhead
+\texttt{collected} & 자동 수집 값이 있고 출처가 명확함 & 정규화 JSON 저장 \\
+\texttt{needs\_review} & 값은 있으나 표현이 모호하거나 최신성 확인이 필요함 & 수동 검수 \\
+\texttt{missing} & 자동 수집에서 값을 찾지 못함 & Web Search 또는 수동 입력 대상 \\
+\texttt{blocked} & 약관·저작권·접근 제한으로 수집 불가 & 딥링크 또는 빈 값으로 대체하고 사유 기록 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+\DocNeedspace{8\baselineskip}
+\subsection*{4.3 공식 확인 우선순위}
+\addcontentsline{toc}{subsection}{4.3 공식 확인 우선순위}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.131\linewidth}>{\RaggedRight\arraybackslash}p{0.184\linewidth}>{\RaggedRight\arraybackslash}p{0.645\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.131\linewidth}}{\textbf{항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.184\linewidth}}{\textbf{확인 우선순위}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.645\linewidth}}{\textbf{사유}} \\
+\midrule
+\endhead
+운영시간 & 높음 & 사용자 질문 빈도가 높고 일정 구성에 직접 영향을 준다. \\
+운영기간 & 높음 & 계절 운영, 휴관일, 임시 중단 등 예외가 많다. \\
+입장료 & 중간 & 무료·유료·계절 요금·패키지 요금이 혼재한다. \\
+사진 & 중간 & 공공누리 유형과 외부 이미지 사용 조건 확인이 필요하다. \\
+위도·경도 & 높음 & 지도 표시와 동선 계산에 필요하다. \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{3\baselineskip}
+공식 사이트 또는 수동 검수로 확인한 값에는 \texttt{verified\_at}, \texttt{verified\_source\_url}, \texttt{verification\_note}를 함께 기록한다.
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{5. 수집 전략}
+\addcontentsline{toc}{section}{5. 수집 전략}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{5.1 자동 수집 전략}
+\addcontentsline{toc}{subsection}{5.1 자동 수집 전략}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.080\linewidth}>{\RaggedRight\arraybackslash}p{0.392\linewidth}>{\RaggedRight\arraybackslash}p{0.488\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.080\linewidth}}{\textbf{대상}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.392\linewidth}}{\textbf{자동 수집 소스}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.488\linewidth}}{\textbf{처리 방식}} \\
+\midrule
+\endhead
+도시 & Wikipedia, Wikidata, 행정구역 데이터, 기상청 & 도시명, 위치, 설명, 기후, 사이트 링크, 위도, 경도를 추출하고 City JSON 객체로 정규화한다. \\
+관광지 & TourAPI, 대한민국구석구석, 공식 사이트 & 관광지명, 운영시간, 운영기간, 주소, 위도, 경도, 설명, 입장료, 사이트 링크, 사진을 추출하고 City와 매핑한다. \\
+축제 & TourAPI 행사정보, 대한민국구석구석, 공식 사이트 & 축제명, 주소, 기간, 설명, 사진, 사이트 링크를 추출하고 City와 매핑한다. \\
+통계 & 한국관광 데이터랩, 공공데이터포털 & 방문객 수, 관광 통계, 지역별 지표를 수집하고 City 기준 보조 지표로 연결한다. \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{5.2 공식 확인 및 검수 전략}
+\addcontentsline{toc}{subsection}{5.2 공식 확인 및 검수 전략}
+
+
+\DocNeedspace{3\baselineskip}
+공식 확인과 검수는 자동 수집에서 실패했거나 검수 필요 상태로 분류된 항목에 적용한다. 이 과정은 별도 단계가 아니라 같은 취득 파이프라인의 후속 처리로 본다.
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.136\linewidth}>{\RaggedRight\arraybackslash}p{0.844\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.136\linewidth}}{\textbf{확인 항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.844\linewidth}}{\textbf{입력 기준}} \\
+\midrule
+\endhead
+운영시간 & 공식 사이트에 명시된 최신 운영시간만 입력 \\
+운영기간 & 계절 운영 또는 축제 기간이 명확한 경우 입력 \\
+입장료 & 공식 사이트 또는 공공 관광 페이지에 있는 금액만 입력 \\
+사진 & 공공누리 유형 또는 사용 가능 조건이 명확한 이미지 사용 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{5.3 데이터 정규화 규칙}
+\addcontentsline{toc}{subsection}{5.3 데이터 정규화 규칙}
+
+
+\begin{itemize}
+\item 도시명은 \texttt{city\_name\_ko}, \texttt{city\_name\_en}을 분리 저장한다.
+\item 시·군·구는 행정구역 코드와 내부 \texttt{city\_id}를 매핑한다.
+\item 관광지와 축제는 반드시 \texttt{city\_id}를 가진다.
+\item TourAPI의 \texttt{contentid}, \texttt{contenttypeid}, \texttt{areacode}, \texttt{sigungucode}, \texttt{cat1}, \texttt{cat2}, \texttt{cat3}를 원본 참조 필드로 저장한다.
+\item 기간 정보는 원문 문자열(\texttt{period\_text})과 정규화 값(\texttt{start\_date}, \texttt{end\_date}, \texttt{month})을 함께 저장한다.
+\item 운영시간과 입장료는 최신성이 낮을 수 있으므로 \texttt{data\_confidence}를 별도 기록한다.
+\item 외부 설명문은 원문 복제가 아니라 내부 요약문으로 재작성한다.
+\end{itemize}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{6. 단일 취득 파이프라인}
+\addcontentsline{toc}{section}{6. 단일 취득 파이프라인}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{6.1 처리 흐름}
+\addcontentsline{toc}{subsection}{6.1 처리 흐름}
+
+
+\begin{verbatim}
+자동 수집
+↓
+Raw JSON 임시 저장
+↓
+취득 상태 분류
+↓
+공식 사이트 확인 / Web Search Worker
+↓
+수동 검수
+↓
+정규화 JSON 저장
+\end{verbatim}
+
+
+\DocNeedspace{3\baselineskip}
+정의된 모든 필드가 JSON 파일에 들어가도록 시도하는 것이 목표다. 운영시간·입장료·사진도 최초 수집 대상에 포함하며, 자동 수집 실패 시 \texttt{missing} 또는 \texttt{needs\_review} 상태로 남기고 같은 파이프라인 안에서 공식 확인 또는 수동 검수로 채운다.
+
+
+\DocNeedspace{3\baselineskip}
+예시:
+
+
+\begin{verbatim}
+사용자 질문: 순천만국가정원 운영시간 알려줘
+
+1. JSON 파일에서 순천만국가정원 Attraction 조회
+2. opening_hours가 없거나 오래된 값이면 Web Search Worker 실행
+3. 공식 사이트 또는 공식 관광 페이지 확인
+4. 운영시간과 확인 출처를 함께 반환
+\end{verbatim}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{6.2 Web Search Worker 적용 조건}
+\addcontentsline{toc}{subsection}{6.2 Web Search Worker 적용 조건}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.450\linewidth}>{\RaggedRight\arraybackslash}p{0.530\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.450\linewidth}}{\textbf{조건}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.530\linewidth}}{\textbf{처리}} \\
+\midrule
+\endhead
+JSON 파일에 정보 없음 & 공식 사이트 검색 \\
+운영시간·입장료 값이 오래됨 & 공식 사이트 재확인 \\
+축제 기간이 연도별로 바뀜 & 해당 연도 공식 페이지 확인 \\
+공식 출처가 아닌 블로그·SNS만 존재 & 답변 근거로 사용하지 않거나 낮은 신뢰도로 표시 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{7. 저장 구조}
+\addcontentsline{toc}{section}{7. 저장 구조}
+
+
+\DocNeedspace{3\baselineskip}
+한국 데이터는 초기 취득 단계에서 관계형 테이블이 아니라 JSON 파일로 저장한다. JSON 파일 안에서는 City를 기준 객체로 두고, 해당 도시의 Attraction과 Festival을 배열로 포함한다.
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{7.1 JSON 파일 구성}
+\addcontentsline{toc}{subsection}{7.1 JSON 파일 구성}
+
+
+\DocNeedspace{10\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.194\linewidth}>{\RaggedRight\arraybackslash}p{0.546\linewidth}>{\RaggedRight\arraybackslash}p{0.220\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.194\linewidth}}{\textbf{구분}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.546\linewidth}}{\textbf{저장 내용}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.220\linewidth}}{\textbf{예시 파일명}} \\
+\midrule
+\endhead
+도시 단위 JSON & 하나의 City와 해당 도시의 Attraction, Festival 목록을 함께 저장한다. & \texttt{city/suncheon.json} \\
+원본 수집 JSON & TourAPI 응답, HTML 수집 결과, 공식 사이트 확인 결과를 원본 형태로 보관한다. & \texttt{raw/tourapi.json} \\
+검수 메타데이터 JSON & 취득 상태, 확인일, 확인 출처, 검수 메모를 별도 기록한다. & \texttt{review/suncheon.json} \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{7.2 JSON 구조 예시}
+\addcontentsline{toc}{subsection}{7.2 JSON 구조 예시}
+
+
+\DocNeedspace{10\baselineskip}
+\begin{small}
+\renewcommand{\arraystretch}{1.14}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.175\linewidth}>{\RaggedRight\arraybackslash}p{0.555\linewidth}>{\RaggedRight\arraybackslash}p{0.230\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.175\linewidth}}{\textbf{JSON 키}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.555\linewidth}}{\textbf{저장 내용}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.230\linewidth}}{\textbf{예시 값}} \\
+\midrule
+\endhead
+\texttt{city} & 도시명, 행정구역, 좌표, 소개, 공식 관광 사이트, 기후 요약을 저장한다. & \texttt{city\_id}\newline \texttt{KR-JEONNAM-SUNCHEON} \\
+\texttt{attractions} & 해당 City에 속한 관광지 배열이다. 주소, 좌표, 운영시간, 입장료, 출처를 항목별로 저장한다. & \texttt{name}\newline 순천만국가정원 \\
+\texttt{festivals} & 해당 City에 속한 축제 배열이다. 개최 장소, 기간, 공식 링크, 사진 사용 조건을 항목별로 저장한다. & \texttt{name}\newline 순천만갈대축제 \\
+\texttt{metadata} & 수집 상태, 수집일, 검수일, 검수자, 확인 출처를 저장한다. & \texttt{status}\newline \texttt{needs\_review} \\
+\bottomrule
+\end{longtable}
+\renewcommand{\arraystretch}{1}
+\end{small}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{7.3 저장 원칙}
+\addcontentsline{toc}{subsection}{7.3 저장 원칙}
+
+
+\begin{itemize}
+\item City, Attraction, Festival의 관계는 JSON 내부의 중첩 구조로 표현한다.
+\item 모든 객체에는 수집 상태와 출처 메타데이터를 함께 기록한다.
+\item 운영시간, 입장료, 축제 기간처럼 변경 가능성이 높은 값에는 확인일과 확인 출처를 포함한다.
+\item 원본 수집 JSON과 정규화 JSON은 분리하여 보관한다.
+\item 추후 DB 적재가 필요할 경우 JSON 파일을 기준으로 테이블 또는 컬렉션으로 변환한다.
+\end{itemize}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{8. 품질 검증 기준}
+\addcontentsline{toc}{section}{8. 품질 검증 기준}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.123\linewidth}>{\RaggedRight\arraybackslash}p{0.857\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.123\linewidth}}{\textbf{검증 항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.857\linewidth}}{\textbf{기준}} \\
+\midrule
+\endhead
+City 매핑 & 모든 Attraction과 Festival은 하나의 City에 연결되어야 한다. \\
+출처 기록 & 모든 자동 수집 데이터는 \texttt{source\_name}, \texttt{source\_url}, \texttt{collected\_at}을 가진다. \\
+전체 필드 상태 & 정의된 모든 필드는 \texttt{collected}, \texttt{needs\_review}, \texttt{missing}, \texttt{blocked} 중 하나의 상태를 가진다. \\
+최신성 & 운영시간, 운영기간, 입장료는 확인일을 기록한다. \\
+저작권 & 사진과 설명문은 사용 가능 조건을 확인한다. 설명문은 내부 요약문으로 저장한다. \\
+공식성 & 자동 수집과 Web Search Worker는 공식 사이트 또는 공공 관광 페이지를 우선한다. \\
+행정구역 정합성 & TourAPI 지역 코드와 내부 City ID가 같은 시·군·구를 가리키는지 검증한다. \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{10\baselineskip}
+\section*{9. 법적·운영 제약}
+\addcontentsline{toc}{section}{9. 법적·운영 제약}
+
+
+\begin{itemize}
+\item Wikipedia 기반 설명은 라이선스 조건에 따라 출처와 원문 링크를 기록한다.
+\item TourAPI와 공공데이터포털 데이터는 공공누리 유형, API 이용 조건, 출처 표기 조건을 확인한다.
+\item 지자체 관광 페이지는 이용약관과 크롤링 허용 범위를 확인한다.
+\item 사진은 저작권 위험이 크므로 자동 수집 값이 있더라도 사용 가능 조건을 확인하고, 불명확하면 \texttt{needs\_review} 또는 \texttt{blocked}로 관리한다.
+\item 운영시간과 입장료는 변경 가능성이 높으므로 "확인일 기준" 문구를 서비스에 표시한다.
+\end{itemize}
+
+
+\DocNeedspace{10\baselineskip}
+\section*{10. 데이터 취득 결과서 작성 계획}
+\addcontentsline{toc}{section}{10. 데이터 취득 결과서 작성 계획}
+
+
+\DocNeedspace{3\baselineskip}
+이 초안이 확정되면 다음 항목을 데이터 취득 결과서에 작성한다.
+
+
+\begin{itemize}
+\item 대한민국 데이터 출처 항목에 TourAPI, 대한민국구석구석, 기상청, 행정구역 데이터의 역할을 표로 작성한다.
+\item 데이터 전처리 방식 및 인프라 구성 항목에 자동 수집, 공식 확인, Web Search Worker, 검수 흐름을 작성한다.
+\item 데이터 품질 정합성 관리 방법 항목에 City 매핑, TourAPI 코드 매핑, 출처 기록, 최신성 검증을 작성한다.
+\item 법적 요소 검토 항목에 TourAPI·공공누리·지자체 사이트 이용 조건을 작성한다.
+\end{itemize}
+
+
+\DocNeedspace{10\baselineskip}
+\section*{11. 참고 출처}
+\addcontentsline{toc}{section}{11. 참고 출처}
+
+
+\begin{itemize}
+\item 한국관광공사 TourAPI 국문 관광정보 서비스: https://www.data.go.kr/data/15101578/openapi.do
+\item 대한민국구석구석: https://korean.visitkorea.or.kr/
+\item 한국관광 데이터랩: https://datalab.visitkorea.or.kr/
+\item 기상청 API허브: https://apihub.kma.go.kr/
+\item 공공데이터포털: https://www.data.go.kr/
+\end{itemize}
+
+
+\DocNeedspace{10\baselineskip}
+\section*{12. 변경 이력}
+\addcontentsline{toc}{section}{12. 변경 이력}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{0.132\linewidth}>{\RaggedRight\arraybackslash}p{0.154\linewidth}>{\RaggedRight\arraybackslash}p{0.132\linewidth}>{\RaggedRight\arraybackslash}p{0.522\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.132\linewidth}}{\textbf{버전}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.154\linewidth}}{\textbf{날짜}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.132\linewidth}}{\textbf{작성자}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.522\linewidth}}{\textbf{변경 내용}} \\
+\midrule
+\endhead
+v0.2 & 2026-06-03 & 로브 기획팀 & 일본 데이터 취득 계획서 양식을 참조해 문서 개요, JSON 저장 구조, PDF 가독성 기준, 결과서 작성 계획 반영 \\
+v0.1 & 2026-06-02 & 로브 기획팀 & 한국 데이터 취득 계획서 초안 작성 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+\end{document}

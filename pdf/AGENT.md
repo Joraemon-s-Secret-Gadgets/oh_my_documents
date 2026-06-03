@@ -51,11 +51,34 @@ xelatex -interaction=nonstopmode -halt-on-error project_plan.tex
 - 목차는 2단계 깊이까지만 표시한다.
 - 큰 섹션은 `--section-pagebreak` 기준으로 새 페이지에서 시작한다.
 - CI는 `assets/images/`의 SK Networks, en-core, PlayData 로고를 표지와 헤더에 함께 배치한다.
-- PDF 색상은 로브 서비스 CI 색상을 사용한다.
-  - `LovvGreen`: `#1B3B32`
-  - `LovvGreenDark`: `#10251F`
-  - `LovvGold`: `#D4AF37`
-  - `LovvPaper`: `#F7F3EA`
+- PDF 색상은 저장소 루트의 `color-map.md`를 기준으로 사용한다.
+  - 제목과 본문 기본 텍스트는 `Dark Charcoal`을 우선 사용한다.
+  - 표지 구분선, 핵심 강조, 주요 포인트에는 `Main Orange`를 사용한다.
+  - 배경 또는 옅은 강조 영역이 필요하면 `Soft Beige`와 `Card Peach`를 사용한다.
+  - 보조 설명, 캡션, 상태 문구에는 `Sub Text Gray`를 사용한다.
+  - 색상 HEX 값을 직접 새로 정의하지 말고, 먼저 `color-map.md`의 색상명을 확인한다.
+  - 색상 기준을 바꿔야 할 경우 PDF 파일만 고치지 말고 `color-map.md` 기준 변경 여부를 사용자에게 확인한다.
+
+## PDF Cover Page Rules
+
+새 PDF 문서를 만들거나 기존 PDF 표지를 수정할 때는 `pdf/project_plan.tex`와 `pdf/requirements_definition.tex`의 표지 형식을 기준으로 한다.
+
+- 표지 상단에는 SK Networks, en-core, PlayData 로고 3개를 같은 줄에 배치한다.
+- 로고 아래에는 `color-map.md`의 `Main Orange` 색상 가로 구분선을 넣는다.
+- 표지 중앙에는 문서 제목을 크게 표시한다.
+  - 예: `프로젝트 기획서`, `요구사항 명세서`, `일본 데이터 취득 계획서`
+- 제목 아래에는 문서 적용 범위 또는 서비스 라벨을 한 줄로 표시한다.
+  - 예: `로브 서비스`, `로브 서비스 전체`, `로브 서비스 데이터 수집 계획`
+- 표지에 인터넷 템플릿, 참조 양식, 참고 양식 같은 출처성 문구를 넣지 않는다. 참조 출처가 필요하면 본문 참고 출처 섹션에만 둔다.
+- 표지 하단에는 팀명을 먼저 표시한다.
+  - 팀명: `조라에몽의 만능 도구들`
+- 팀명 아래에는 팀원 이름을 한 줄에 표시한다.
+  - 팀원: `이창우, 전승권, 전종혁, 조동휘, 최수아`
+- 멘토는 팀원과 구분해 다음 줄에 `멘토 최민수`로 표시한다.
+  - `최민수`만 단독 표기하거나 `멘토:`처럼 다른 표기법을 섞지 않는다.
+- 표지 날짜는 문서 작성일 또는 사용자가 지정한 기준일을 사용한다. PDF 양식만 수정한 경우에도 기존 문서 날짜와 충돌하지 않도록 필요하면 개정일을 문서 관리표에 별도 표기한다.
+- 표지 구성은 불필요한 부제, 버전 라벨, 초안 설명을 과하게 넣지 않고 기존 PDF들과 같은 밀도와 여백을 유지한다.
+- 표지 변경 후에는 PDF를 다시 빌드하고, 목차가 영향을 받는 경우 `xelatex`를 두 번 실행한다.
 
 ## Current Project Plan Page Break Rules
 
