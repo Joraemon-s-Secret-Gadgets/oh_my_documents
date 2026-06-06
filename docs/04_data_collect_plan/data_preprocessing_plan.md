@@ -1,23 +1,23 @@
 # 로브 (Lovv) 데이터 전처리 계획서 초안
 
-> 문서 버전: v0.2
+> 문서 버전: v0.3
 > 문서 상태: 초안 (Draft)
 > 작성일: 2026-06-03
-> 기준 문서: `docs/04_data_collect_plan/04_data_collect_plan.md` v0.3
+> 기준 문서: `docs/04_data_collect_plan/04_data_collect_plan.md` v0.4
 > 상세 기준: `docs/04_data_collect_plan/korea_data_acquisition_plan.md`, `docs/04_data_collect_plan/japan_data_acquisition_plan.md`
 
 # 1. 문서 개요
 
 ## 1.1 목적
 
-본 문서는 로브(Lovv)의 대한민국·일본 지역 추천 데이터가 수집된 이후 AWS S3에 원본을 적재하고 AWS Lambda로 전처리한 뒤 NoSQL 저장소인 Amazon DynamoDB에 서비스용 데이터를 적재하기 위한 원본 정제, 표준화, 품질 검증, 파생 데이터 생성, 적재 기준을 정의한다.
+본 문서는 로브(Lovv)의 한국·일본 지역 추천 데이터가 수집된 이후 AWS S3에 원본을 적재하고 AWS Lambda로 전처리한 뒤 NoSQL 저장소인 Amazon DynamoDB에 서비스용 데이터를 적재하기 위한 원본 정제, 표준화, 품질 검증, 파생 데이터 생성, 적재 기준을 정의한다.
 
 수집 계획서는 City, Attraction, Festival 데이터를 먼저 폭넓게 취득하고 이후 검증·보정하는 방향을 가진다. 본 전처리 계획서는 그 다음 단계에서 원본 데이터의 표현 차이와 누락·중복·최신성 문제를 정리하여 서비스 사용 가능한 데이터셋으로 변환하는 데 초점을 둔다.
 
 ## 1.2 전처리 원칙
 
-- **Raw 보존**: API 응답, HTML 추출 결과, 수동 검수 입력값은 S3 Raw 영역에 원본 형태로 보존한다.
-- **Lambda 기반 처리**: S3 Object Created 이벤트 또는 배치 트리거를 통해 Lambda 전처리 함수를 실행한다.
+- **Raw 보존**: API 응답, HTML 추출 결과, 수동 검수 입력값은 JSON 문서로 저장한 뒤 S3 Raw 영역에 보존한다.
+- **Lambda 기반 배치 처리**: S3 Raw Bucket에 일정 기간 누적된 JSON 원본을 Lambda가 배치 단위로 읽어 전처리한다.
 - **DynamoDB 적재**: 서비스 조회용 데이터는 Raw와 분리하여 DynamoDB 테이블에 정규화 문서 형태로 적재한다.
 - **국가별 차이 흡수**: 한국 시·군·구와 일본 시·정·촌·구의 명칭, 행정구역, 날짜, 주소 표현 차이를 공통 스키마로 매핑한다.
 - **상태 기반 처리**: 모든 필드는 `collected`, `needs_review`, `missing`, `blocked` 상태를 유지하고 전처리 결과에도 상태를 전파한다.
@@ -56,14 +56,14 @@ City
 
 ## 3.1 구성 방향
 
-수집 결과는 먼저 S3에 원본 파일로 적재하고, Lambda가 원본 파일을 읽어 정제·정규화·품질 검증·파생 필드 생성을 수행한 뒤 DynamoDB에 저장한다.
+수집 결과는 먼저 JSON 원본 파일로 직렬화해 S3 Raw Bucket에 적재한다. Raw 원본은 재사용과 재처리를 위해 일정 기간 Prefix 단위로 누적 보관하고, 보관 기간 또는 처리 기준이 충족되면 Lambda가 해당 원본 JSON 묶음을 읽어 정제·정규화·품질 검증·파생 필드 생성을 수행한 뒤 DynamoDB에 저장한다.
 
 ```text
 Collector / Web Search Worker / Manual Review
 ↓
 S3 Raw Bucket
 ↓
-S3 Event 또는 Batch Trigger
+Raw 보관 기간 / 배치 기준 충족
 ↓
 AWS Lambda Preprocessor
 ↓
@@ -76,9 +76,9 @@ Search Index / RAG Dataset / Admin Review
 
 | 구성 요소 | 역할 | 저장/처리 단위 |
 | --- | --- | --- |
-| S3 Raw Bucket | 수집 원본 보존 | 국가, 출처, 엔티티 유형, 수집일 기준 객체 |
+| S3 Raw Bucket | 수집 원본 누적 보존 | 국가, 출처, 엔티티 유형, 수집일 기준 객체 |
 | S3 Processed Prefix | Lambda 처리 결과와 품질 리포트 보존 | 정규화 JSON, 실패 리포트, 검수 대상 목록 |
-| Lambda Preprocessor | 스키마 검증, 필드 정제, 정규화, 중복 후보 탐지, DynamoDB 적재 | S3 객체 단위 또는 배치 묶음 |
+| Lambda Preprocessor | 일정 기간 누적된 Raw JSON 묶음의 스키마 검증, 필드 정제, 정규화, 중복 후보 탐지, DynamoDB 적재 | S3 Prefix 또는 배치 묶음 |
 | DynamoDB | City, Attraction, Festival, 검수 상태, 품질 메타데이터 저장 | 엔티티 단위 Item |
 | CloudWatch Logs | Lambda 실행 로그와 실패 원인 기록 | 실행 요청 단위 |
 | DLQ 또는 실패 Prefix | 처리 실패 이벤트 격리 | 실패 S3 객체 또는 이벤트 |
@@ -87,7 +87,7 @@ Search Index / RAG Dataset / Admin Review
 
 | 영역 | 예시 Prefix | 내용 |
 | --- | --- | --- |
-| Raw | `raw/{country}/{source}/{entity_type}/{yyyy}/{mm}/{dd}/` | 수집 원본 API 응답, HTML 추출값, 수동 입력 원본 |
+| Raw | `raw/{country}/{source}/{entity_type}/{yyyy}/{mm}/{dd}/` | JSON으로 저장한 수집 원본 API 응답, HTML 추출값, 수동 입력 원본 |
 | Processed | `processed/{country}/{entity_type}/{yyyy}/{mm}/{dd}/` | Lambda 전처리 결과 JSON |
 | Quality | `quality/{country}/{entity_type}/{yyyy}/{mm}/{dd}/` | 품질 검증 리포트 |
 | Review | `review/{queue_name}/{yyyy}/{mm}/{dd}/` | 수동 검수 대상 목록 |
@@ -100,7 +100,9 @@ Search Index / RAG Dataset / Admin Review
 ```text
 S3 Raw 데이터 적재
 ↓
-Lambda 실행
+Raw 보관 기간 / 배치 기준 확인
+↓
+Lambda 배치 실행
 ↓
 스키마 검증
 ↓
@@ -123,8 +125,9 @@ DynamoDB 적재
 
 | 단계 | 처리 내용 | 산출물 |
 | --- | --- | --- |
-| S3 Raw 데이터 적재 | API 응답, HTML 추출값, 수동 입력값을 원본 형태로 저장 | S3 Raw Object |
-| Lambda 실행 | S3 이벤트 또는 배치 트리거로 전처리 함수 실행 | Lambda Invocation |
+| S3 Raw 데이터 적재 | API 응답, HTML 추출값, 수동 입력값을 JSON 문서로 저장 | S3 Raw Object |
+| Raw 보관 기간 / 배치 기준 확인 | 일정 기간 또는 처리 기준만큼 누적된 Raw Prefix를 전처리 대상으로 확정 | Batch Manifest |
+| Lambda 배치 실행 | 확정된 S3 Prefix 또는 Manifest를 입력으로 전처리 함수 실행 | Lambda Invocation |
 | 스키마 검증 | 필수 필드 존재 여부, 타입, 인코딩, 날짜 포맷 점검 | schema_validation_result |
 | 필드 정제 | 공백, HTML 태그, 제어문자, 중복 문장, 깨진 URL 제거 | cleaned_fields |
 | 엔티티 정규화 | 도시·관광지·축제명, 행정구역, 좌표, 날짜를 공통 포맷으로 변환 | normalized_entities |
@@ -160,7 +163,7 @@ ID는 재처리 시에도 바뀌지 않아야 한다. 원본 ID가 없는 일본
 
 | 국가 | 처리 기준 |
 | --- | --- |
-| 대한민국 | 광역시·도, 시·군·구, 읍·면·동을 분리하고 행정구역 코드와 매핑한다. |
+| 한국 | 광역시·도, 시·군·구, 읍·면·동을 분리하고 행정구역 코드와 매핑한다. |
 | 일본 | 도도부현, 시·정·촌·구를 분리하고 e-Stat 또는 Statistical LOD 기준 코드와 매핑한다. |
 | 공통 | 주소가 없거나 모호한 경우 좌표, 공식 사이트 설명, 지도 링크를 보조 근거로 사용한다. |
 
@@ -191,7 +194,7 @@ ID는 재처리 시에도 바뀌지 않아야 한다. 원본 ID가 없는 일본
 | `city_name_local` | 한국은 한국어명, 일본은 일본어 원문명을 저장 |
 | `province_or_prefecture` | 국가별 행정구역 체계에 맞춰 표준화 |
 | `description` | 외부 원문을 그대로 저장하지 않고 내부 요약문으로 재작성 |
-| `climate` | 월별 기온·강수·계절 메모를 추천용 구조로 분리 |
+| `climate` | Wikipedia 취득값과 한국 기상청 또는 일본기상청(JMA) 비교 결과를 월별 기온·강수·계절 메모 구조로 분리 |
 | `site_url` | 공식 관광 사이트 또는 지자체 사이트 우선 |
 
 ## 6.2 Attraction 전처리
@@ -340,6 +343,8 @@ RAG 문서는 외부 원문을 그대로 복제하지 않고 내부 요약문과
 | --- | --- |
 | 재처리 주기 | City 기본 정보는 정기 배치, 운영시간·입장료·축제 기간은 최신성 상태에 따라 우선 재처리 |
 | 부분 재처리 | 특정 S3 Prefix, 특정 출처, 특정 국가, 특정 City 단위로 Lambda 재실행 가능해야 함 |
+| Raw 보관 기간 | 원본 JSON은 재사용 가능한 기간 동안 S3 Raw Bucket에 보관하고, 보관 기간 만료 후에는 보존 정책에 따라 Glacier 전환 또는 삭제를 검토 |
+| 배치 전처리 기준 | 보관 기간 경과, Prefix 단위 수집 완료, 수동 검수 마감 등 운영 기준 중 하나가 충족되면 Lambda 전처리를 실행 |
 | 변경 감지 | 동일 원본 ID의 핵심 필드가 바뀌면 DynamoDB 변경 이력 후보를 남김 |
 | 롤백 | DynamoDB 적재 실패 시 기존 승인 Item을 유지하고 신규 결과는 실패 Prefix에 격리 |
 | 감사 추적 | S3 Raw URI, Lambda 실행 시각, Web Search Worker 확인, 수동 검수 결과를 모두 이력화 |
@@ -370,5 +375,6 @@ RAG 문서는 외부 원문을 그대로 복제하지 않고 내부 요약문과
 
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 | --- | --- | --- | --- |
-| v0.1 | 2026-06-03 | 로브 기획팀 | 데이터 수집 계획서를 기반으로 전처리 계획서 초안 작성 |
-| v0.2 | 2026-06-03 | 로브 기획팀 | S3 Raw 적재, Lambda 전처리, DynamoDB 적재 아키텍처 반영 |
+| v0.1 | 2026-06-03 | LLM 파트 | 데이터 수집 계획서를 기반으로 전처리 계획서 초안 작성 |
+| v0.2 | 2026-06-03 | LLM 파트 | S3 Raw 적재, Lambda 전처리, DynamoDB 적재 아키텍처 반영 |
+| v0.3 | 2026-06-06 | LLM 파트 | S3 Raw 누적 보관 후 Lambda 배치 전처리 및 DynamoDB 적재 흐름 반영 |

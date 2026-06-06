@@ -1,0 +1,276 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=22mm]{geometry}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\usepackage{kotex}
+\usepackage{graphicx}
+\usepackage[table]{xcolor}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{setspace}
+\setmainfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setsansfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setmonofont{Consolas}
+\newCJKfontfamily\jpfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setCJKmainfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setCJKsansfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setCJKmonofont[Path=C:/Windows/Fonts/]{malgun.ttf}
+\XeTeXlinebreaklocale "ko"
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\binoppenalty=10000
+\relpenalty=10000
+\emergencystretch=2em
+\sloppy
+\newcommand{\DocNeedspace}[1]{\par\ifdim\dimexpr\pagegoal-\pagetotal\relax<#1\newpage\fi}
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue}
+\definecolor{LovvGreen}{HTML}{1B3B32}
+\definecolor{LovvGreenDark}{HTML}{10251F}
+\definecolor{LovvGold}{HTML}{D4AF37}
+\definecolor{LovvPaper}{HTML}{F7F3EA}
+\renewcommand{\arraystretch}{1.35}
+\setlength{\tabcolsep}{2pt}
+\setlength{\LTleft}{\fill}
+\setlength{\LTright}{\fill}
+\setlist[itemize]{leftmargin=*, itemsep=2pt, topsep=2pt}
+\setstretch{1.08}
+\setlength{\headheight}{30pt}
+\setcounter{tocdepth}{2}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\hbox{\makebox[42pt][c]{\includegraphics[width=38pt,height=13pt,keepaspectratio]{../assets/images/SK-Networks-logo.png}}\hspace{0.7em}\makebox[42pt][c]{\includegraphics[width=44pt,height=15pt,keepaspectratio]{../assets/images/en-core-logo.png}}\hspace{0.7em}\makebox[42pt][c]{\includegraphics[width=38pt,height=13pt,keepaspectratio]{../assets/images/playdata-logo.png}}}}
+\rhead{\scriptsize v0.1 | 임시 기록 (Draft)}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{LovvGreen}\leaders\hrule height \headrulewidth\hfill}}
+\begin{document}
+\begin{titlepage}
+\thispagestyle{empty}
+
+\noindent \hbox to\textwidth{\makebox[0.28\textwidth][c]{\includegraphics[width=0.22\textwidth,height=0.82cm,keepaspectratio]{../assets/images/SK-Networks-logo.png}}\hfil \makebox[0.28\textwidth][c]{\includegraphics[width=0.26\textwidth,height=0.98cm,keepaspectratio]{../assets/images/en-core-logo.png}}\hfil \makebox[0.28\textwidth][c]{\includegraphics[width=0.22\textwidth,height=0.82cm,keepaspectratio]{../assets/images/playdata-logo.png}}}
+\vspace{1em}
+\par\noindent\color{LovvGold}\rule{\textwidth}{1.2pt}\color{black}
+
+\centering
+\vspace*{0.16\textheight}
+{\Huge\bfseries 전처리 예산 산정서\par}
+
+\vspace{1.5em}
+{\large 로브 서비스 전처리 예산 산정\par}
+
+\vfill
+{\Large\bfseries 조라에몽의 만능 도구들\par}\vspace{0.8em}
+{\Large 이창우, 전승권, 전종혁, 조동휘, 최수아\\[0.8em]{\large 멘토 최민수}\par}
+\vspace{2em}
+{\large 2026-05-30\par}
+\end{titlepage}
+\begingroup
+\fontsize{11.7pt}{12.5pt}\selectfont
+\setlength{\parskip}{0pt}
+\tableofcontents
+\endgroup
+\newpage
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{1. 목적}
+\addcontentsline{toc}{section}{1. 목적}
+
+
+\DocNeedspace{3\baselineskip}
+본 문서는 S3 Raw 적재, Lambda 전처리, DynamoDB 적재, Bedrock 기반 LLM 태깅을 1주일 동안 PoC로 운영할 때 필요한 예상 비용을 임시로 기록한다.
+
+
+\DocNeedspace{3\baselineskip}
+비용은 실제 AWS 사용량, 모델 선택, 재처리 횟수, 로그 보존량, 환율에 따라 달라질 수 있다.\newline 본 문서는 예산 검토를 위한 1차 산정값으로 사용한다.
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{2. 산정 가정}
+\addcontentsline{toc}{section}{2. 산정 가정}
+
+
+\DocNeedspace{28\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.370\linewidth}>{\RaggedRight\arraybackslash}m{0.570\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.370\linewidth}}{\textbf{항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.570\linewidth}}{\textbf{가정}} \\
+\midrule
+\endhead
+데이터 건수 & 기본 PoC 기준 20,000건 \\
+Raw 평균 크기 & 건당 100KB \\
+Lambda 실행 & Raw 누적 후 배치 단위 실행 \\
+Lambda 메모리 & 1GB \\
+Lambda 평균 실행 시간 & 3초 \\
+DynamoDB 모드 & {\footnotesize On-\allowbreak{}Demand} \\
+DynamoDB Item 크기 & 건당 약 5KB \\
+LLM 태깅 입력 & 건당 800 tokens \\
+LLM 태깅 출력 & 건당 120 tokens \\
+LLM 모델 기준 & Amazon Bedrock 저가 태깅 모델 기준 \\
+환율 & 1 USD = 1,514 KRW \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{3. 1주일 기본 PoC 예산}
+\addcontentsline{toc}{section}{3. 1주일 기본 PoC 예산}
+
+
+\DocNeedspace{20\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.337\linewidth}>{\RaggedRight\arraybackslash}m{0.277\linewidth}>{\RaggedRight\arraybackslash}m{0.307\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.337\linewidth}}{\textbf{항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.277\linewidth}}{\textbf{USD 예상}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.307\linewidth}}{\textbf{원화 환산}} \\
+\midrule
+\endhead
+S3 저장 및 요청 & \texttt{\$0.\allowbreak{}30 \textasciitilde{} \$0.\allowbreak{}50} & 약 454원 \textasciitilde{} 757원 \\
+Lambda 배치 전처리 & \texttt{\$1.\allowbreak{}00} & 약 1,514원 \\
+DynamoDB 쓰기·읽기·저장 & \texttt{< \$0.\allowbreak{}10} & 약 151원 미만 \\
+Bedrock LLM 태깅 & \texttt{\$2.\allowbreak{}76} & 약 4,179원 \\
+CloudWatch 로그 및 재처리 여유 & \texttt{\$1.\allowbreak{}00 \textasciitilde{} \$3.\allowbreak{}00} & 약 1,514원 \textasciitilde{} 4,542원 \\
+합계 예상 & \texttt{\$5.\allowbreak{}00 \textasciitilde{} \$7.\allowbreak{}00} & 약 7,570원 \textasciitilde{} 10,598원 \\
+권장 예산 & \texttt{\$10.\allowbreak{}00 \textasciitilde{} \$15.\allowbreak{}00} & 약 15,140원 \textasciitilde{} 22,710원 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{3\baselineskip}
+기본 PoC는 1주일 기준 \textbf{약 2만 원 내외}로 예산을 잡는다.\newline 재처리와 로그 증가를 고려하더라도 임시 예산 상한은 \textbf{3만 원 이하}로 본다.
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{4. 규모별 예산}
+\addcontentsline{toc}{section}{4. 규모별 예산}
+
+
+\DocNeedspace{12\baselineskip}
+\begin{footnotesize}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.125\linewidth}>{\RaggedRight\arraybackslash}m{0.159\linewidth}>{\RaggedRight\arraybackslash}m{0.219\linewidth}>{\RaggedRight\arraybackslash}m{0.138\linewidth}>{\RaggedRight\arraybackslash}m{0.240\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.125\linewidth}}{\textbf{규모}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.159\linewidth}}{\textbf{데이터 건수}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.219\linewidth}}{\textbf{USD 예상}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.138\linewidth}}{\textbf{권장 예산}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.240\linewidth}}{\textbf{원화 권장 예산}} \\
+\midrule
+\endhead
+소규모 & 5,000건 & \texttt{\$2 \textasciitilde{} \$3} & \texttt{\$5} & 약 7,570원 \\
+기본 PoC & 20,000건 & \texttt{\$5 \textasciitilde{} \$7} & \texttt{\$10 \textasciitilde{} \$15} & 약 15,140원 \textasciitilde{} 22,710원 \\
+확장 PoC & 100,000건 & \texttt{\$25 \textasciitilde{} \$35} & \texttt{\$40} & 약 60,560원 \\
+\bottomrule
+\end{longtable}
+\end{footnotesize}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{5. LLM 태깅 비용 주의사항}
+\addcontentsline{toc}{section}{5. LLM 태깅 비용 주의사항}
+
+
+\DocNeedspace{3\baselineskip}
+LLM 태깅은 모델 선택에 따라 비용 차이가 크다.
+
+
+\DocNeedspace{3\baselineskip}
+저가 태깅 모델을 사용하면 20,000건 기준 LLM 비용은 약 \texttt{\$2.\allowbreak{}76}, 원화 약 4,179원 수준으로 예상한다.
+
+
+\DocNeedspace{3\baselineskip}
+반면 Claude Sonnet급 모델로 전건 태깅을 수행하면 동일한 20,000건 기준으로 LLM 비용만 약 \texttt{\$168}, 원화 약 254,352원 수준까지 증가할 수 있다.
+
+
+\DocNeedspace{3\baselineskip}
+따라서 PoC 기본 정책은 다음과 같이 둔다.
+
+
+\begin{itemize}
+\item 규칙 기반 태깅을 1차로 수행한다.
+\item 카테고리·설명·국가별 표현 차이 때문에 애매한 데이터만 LLM으로 보강한다.
+\item LLM 결과에는 \texttt{tag\_\allowbreak{}source}, \texttt{tag\_\allowbreak{}confidence}, \texttt{tag\_\allowbreak{}status}를 남긴다.
+\item 운영 전환 시 Lambda 내부 직접 호출보다 비동기 태깅 Job으로 분리한다.
+\end{itemize}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{6. 예산 관리 기준}
+\addcontentsline{toc}{section}{6. 예산 관리 기준}
+
+
+\DocNeedspace{18\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.140\linewidth}>{\RaggedRight\arraybackslash}m{0.800\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.140\linewidth}}{\textbf{관리 항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.800\linewidth}}{\textbf{기준}} \\
+\midrule
+\endhead
+리전 & \texttt{us-\allowbreak{}east-\allowbreak{}1} 단일 리전 기준 \\
+S3 & Raw, processed, failed Prefix를 분리하고 불필요한 중복 원본 저장을 줄인다. \\
+Lambda & Raw Prefix 또는 Manifest 기준 배치로 처리하되, 타임아웃 위험이 있으면 작은 배치로 나눈다. \\
+{\scriptsize DynamoDB} & PoC는 On-Demand로 시작하고, 사용 패턴이 고정되면 Provisioned 전환을 검토한다. \\
+Bedrock & 저가 모델 또는 Batch/Flex 옵션을 우선 검토한다. \\
+{\scriptsize CloudWatch} & 디버그 로그는 PoC 기간에만 상세하게 남기고 보존 기간을 제한한다. \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{7. 참고 단가 기준}
+\addcontentsline{toc}{section}{7. 참고 단가 기준}
+
+
+\DocNeedspace{14\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.222\linewidth}>{\RaggedRight\arraybackslash}m{0.718\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.222\linewidth}}{\textbf{서비스}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.718\linewidth}}{\textbf{기준}} \\
+\midrule
+\endhead
+AWS Lambda & 요청 수와 GB-second 기준 과금 \\
+Amazon S3 & 저장량, PUT/GET/LIST 요청, 데이터 전송량 기준 과금 \\
+Amazon DynamoDB & On-Demand read/write request, 저장량 기준 과금 \\
+Amazon Bedrock & 모델별 input/output token 기준 과금 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{8. 변경 이력}
+\addcontentsline{toc}{section}{8. 변경 이력}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{footnotesize}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.125\linewidth}>{\RaggedRight\arraybackslash}m{0.125\linewidth}>{\RaggedRight\arraybackslash}m{0.080\linewidth}>{\RaggedRight\arraybackslash}m{0.570\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.125\linewidth}}{\textbf{버전}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.125\linewidth}}{\textbf{날짜}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.080\linewidth}}{\textbf{작성자}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.570\linewidth}}{\textbf{변경 내용}} \\
+\midrule
+\endhead
+v0.1 & {\footnotesize 2026-\allowbreak{}06-\allowbreak{}03} & LLM 파트 & 버지니아 리전 기준 1주일 전처리 PoC 예산과 환율 적용 금액 임시 기록 \\
+\bottomrule
+\end{longtable}
+\end{footnotesize}
+
+\end{document}

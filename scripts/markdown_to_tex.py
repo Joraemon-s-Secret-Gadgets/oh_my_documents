@@ -17,6 +17,18 @@ SPECIAL_CHARS = {
 }
 
 
+def add_soft_breaks_to_escaped_token(text: str) -> str:
+    return (
+        text.replace(r"\_", r"\_\allowbreak{}")
+        .replace("-", r"-\allowbreak{}")
+        .replace("/", r"/\allowbreak{}")
+        .replace(".", r".\allowbreak{}")
+        .replace(":", r":\allowbreak{}")
+        .replace("|", r"|\allowbreak{}")
+        .replace(">", r">\allowbreak{}")
+    )
+
+
 def escape_latex(text: str) -> str:
     japanese_terms = {
         "楽天トラベル": "Rakuten Travel",
@@ -34,7 +46,11 @@ def escape_latex(text: str) -> str:
         text = text.replace(source, target)
     text = text.replace("ー", "-")
     escaped = "".join(SPECIAL_CHARS.get(char, char) for char in text)
-    escaped = re.sub(r"`([^`]+)`", r"\\texttt{\1}", escaped)
+    escaped = re.sub(
+        r"`([^`]+)`",
+        lambda match: r"\texttt{" + add_soft_breaks_to_escaped_token(match.group(1)) + "}",
+        escaped,
+    )
     escaped = re.sub(r"\*\*([^*]+)\*\*", r"\\textbf{\1}", escaped)
     escaped = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r"\1 (\\url{\2})", escaped)
     escaped = re.sub(r"([一-龯ぁ-ゟ゠-ヿー]+)", r"{\\jpfont \1}", escaped)
@@ -61,13 +77,13 @@ def split_table_row(line: str) -> list[str]:
 
 def table_target_width(column_count: int) -> float:
     target_by_columns = {
-        2: 0.980,
-        3: 0.960,
-        4: 0.940,
-        5: 0.920,
-        6: 0.880,
+        2: 0.940,
+        3: 0.920,
+        4: 0.900,
+        5: 0.880,
+        6: 0.850,
     }
-    return target_by_columns.get(column_count, 0.860)
+    return target_by_columns.get(column_count, 0.830)
 
 
 def normalize_column_widths(widths: list[float], column_count: int, min_widths: list[float] | None = None) -> list[float]:
@@ -139,6 +155,8 @@ def table_to_latex(
     else:
         widths = infer_column_widths(header, body)
     centered_columns = centered_columns or set()
+    table_font = "footnotesize" if column_count >= 4 else "small"
+    table_needspace = min(38, max(8, 6 + len(body) * 2)) if len(body) <= 15 else 8
     col_specs = []
     for index, width in enumerate(widths):
         alignment = r"\centering" if index in centered_columns else r"\RaggedRight"
@@ -146,8 +164,8 @@ def table_to_latex(
     col_spec = "".join(col_specs)
 
     result = [
-        r"\DocNeedspace{8\baselineskip}",
-        r"\begin{small}",
+        rf"\DocNeedspace{{{table_needspace}\baselineskip}}",
+        rf"\begin{{{table_font}}}",
         rf"\begin{{longtable}}{{@{{}}{col_spec}@{{}}}}",
         r"\toprule",
         " & ".join(
@@ -163,7 +181,7 @@ def table_to_latex(
     for row in body:
         padded = row[:column_count] + [""] * max(0, column_count - len(row))
         result.append(" & ".join(format_table_cell(cell, forced_line_breaks) for cell in padded[:column_count]) + r" \\")
-    result.extend([r"\bottomrule", r"\end{longtable}", r"\end{small}", ""])
+    result.extend([r"\bottomrule", r"\end{longtable}", rf"\end{{{table_font}}}", ""])
     return result
 
 
@@ -176,10 +194,18 @@ def format_table_cell(cell: str, forced_line_breaks: dict[str, list[str]] | None
         return r"{\footnotesize Production}"
     if re.fullmatch(r"[A-Z]+(?:-[A-Z0-9]+)+-\d+", cell):
         return r"{\footnotesize " + escape_latex(cell).replace("-", r"-\allowbreak{}") + "}"
+    if re.fullmatch(r"[A-Za-z]{8,}", cell):
+        return r"{\scriptsize " + escape_latex(cell) + "}"
+    if re.fullmatch(r"[A-Za-z0-9_./:-]{8,}", cell):
+        return r"{\footnotesize " + add_soft_breaks_to_escaped_token(escape_latex(cell)) + "}"
     return escape_latex(cell)
 
 
-def format_body_text(text: str) -> str:
+def add_sentence_line_breaks(text: str) -> str:
+    return re.sub(r"\.\s+(?=\S)", lambda _: r".\newline ", text)
+
+
+def format_body_text(text: str, split_sentences: bool = False) -> str:
     forced_line_breaks = {
         "본 문서는 로브(Lovv) 서비스의 아이디어 기획 단계에서 제품의 핵심 기능, API 연동 요구사항, 비기능 요구사항을 정의한다.": [
             "본 문서는 로브(Lovv) 서비스의 아이디어 기획 단계에서 제품의 핵심 기능,",
@@ -195,7 +221,72 @@ def format_body_text(text: str) -> str:
     if "제외하고 " in text:
         before, after = text.split("제외하고 ", 1)
         return escape_latex(before + "제외하고") + r"\newline " + escape_latex(after)
-    return escape_latex(text)
+    formatted = escape_latex(text)
+    if split_sentences:
+        return add_sentence_line_breaks(formatted)
+    return formatted
+
+
+def code_block_to_latex(lines: list[str], language: str | None = None) -> list[str]:
+    result = [
+        r"\DocNeedspace{7\baselineskip}",
+        r"\begin{quote}",
+        r"\begin{scriptsize}",
+        r"\ttfamily",
+        r"\RaggedRight",
+        r"\setlength{\parskip}{1pt}",
+    ]
+    if language:
+        result.append(r"\textcolor{LovvGreen}{\textbf{" + escape_latex(language) + r"}}\\[0.2em]")
+    for line in lines:
+        leading_spaces = len(line) - len(line.lstrip(" "))
+        prefix = rf"\hspace*{{{leading_spaces * 0.55:.2f}em}}" if leading_spaces else ""
+        content = line.lstrip(" ")
+        if not content:
+            result.append(r"\mbox{}\\")
+            continue
+        escaped = add_soft_breaks_to_escaped_token(escape_latex(content))
+        result.append(prefix + escaped + r"\\")
+    result.extend([r"\end{scriptsize}", r"\end{quote}", ""])
+    return result
+
+
+def acquisition_pipeline_flow_to_latex(lines: list[str]) -> list[str]:
+    stages = [line.strip() for line in lines if line.strip() and line.strip() != "↓"]
+    descriptions = {
+        "자동 수집": "Wikipedia, TourAPI, JNTO/JTA, 기상청/JMA 등 정의된 출처에서 City, Attraction, Festival 원본을 취득한다.",
+        "JSON 직렬화": "엔티티 유형, 출처, 수집 시각, 신뢰도 메타데이터를 포함해 JSON 문서로 저장한다.",
+        "S3 Raw Bucket 적재": "재사용과 재처리를 위해 원본 JSON을 Raw Prefix에 먼저 적재한다.",
+        "Raw 보관 기간 경과": "일정 기간 누적 후 배치 기준이 충족되면 전처리 대상으로 전환한다.",
+        "Lambda 배치 전처리": "Raw JSON을 읽어 필드 정규화, 누락 탐지, 출처 검증 메타데이터를 생성한다.",
+        "취득 상태 분류": "collected, needs_review, missing, blocked 상태로 분류하고 후속 작업을 결정한다.",
+        "공식 사이트 확인 / Web Search Worker": "모호하거나 누락된 값은 공식 사이트 확인 또는 검색 Worker로 보강한다.",
+        "수동 검수": "운영시간, 입장료, 사진, 축제 기간처럼 자동 판정이 어려운 값을 검수한다.",
+        "정규화 DB 적재": "검증된 데이터를 DynamoDB 정규화 테이블에 적재하고 서비스 조회 대상으로 전환한다.",
+    }
+    result = [
+        r"\DocNeedspace{18\baselineskip}",
+        r"\begin{center}",
+        r"\renewcommand{\arraystretch}{1.45}",
+        r"\begin{footnotesize}",
+        r"\begin{tabular}{@{}>{\centering\arraybackslash}m{0.085\linewidth}>{\RaggedRight\arraybackslash}m{0.230\linewidth}>{\RaggedRight\arraybackslash}m{0.605\linewidth}@{}}",
+        r"\toprule",
+        r"\rowcolor{LovvGreen!12}\textbf{순서} & \textbf{단계} & \textbf{처리 내용} \\",
+        r"\midrule",
+    ]
+    for index, stage in enumerate(stages, start=1):
+        result.append(
+            rf"\textcolor{{LovvGreen}}{{\textbf{{{index:02d}}}}} & "
+            + r"\textbf{"
+            + escape_latex(stage)
+            + "} & "
+            + escape_latex(descriptions.get(stage, "데이터 취득 파이프라인의 후속 처리 단계로 관리한다."))
+            + r" \\"
+        )
+        if index < len(stages):
+            result.append(r"\addlinespace[0.12em]")
+    result.extend([r"\bottomrule", r"\end{tabular}", r"\end{footnotesize}", r"\end{center}", ""])
+    return result
 
 
 def issue_table_to_paragraphs(rows: list[str]) -> list[str]:
@@ -263,7 +354,7 @@ def success_criteria_table_to_latex(rows: list[str]) -> list[str]:
         r"\DocNeedspace{8\baselineskip}",
         r"\begin{center}",
         r"\renewcommand{\arraystretch}{1.55}",
-        r"\begin{tabular}{@{}>{\RaggedRight\arraybackslash}m{0.250\linewidth}>{\RaggedRight\arraybackslash}m{0.730\linewidth}@{}}",
+        r"\begin{tabular}{@{}>{\RaggedRight\arraybackslash}m{0.230\linewidth}>{\RaggedRight\arraybackslash}m{0.690\linewidth}@{}}",
         r"\toprule",
         r"\rowcolor{LovvGreen!12}\multicolumn{1}{c}{\textbf{구분}} & \multicolumn{1}{c}{\textbf{성공 기준}} \\",
         r"\midrule",
@@ -344,6 +435,8 @@ def markdown_to_latex(
     i = 0
     in_list = False
     in_code = False
+    code_language: str | None = None
+    code_lines: list[str] = []
     current_heading = ""
     preface_skipped = not skip_preface
 
@@ -361,17 +454,22 @@ def markdown_to_latex(
         if line.startswith("```"):
             in_list = close_list(output, in_list)
             if not in_code:
-                output.append(r"\begin{verbatim}")
                 in_code = True
+                code_language = line.strip().removeprefix("```").strip() or None
+                code_lines = []
             else:
-                output.append(r"\end{verbatim}")
-                output.append("")
+                if current_heading == "3.1 처리 흐름":
+                    output.extend(acquisition_pipeline_flow_to_latex(code_lines))
+                else:
+                    output.extend(code_block_to_latex(code_lines, code_language))
                 in_code = False
+                code_language = None
+                code_lines = []
             i += 1
             continue
 
         if in_code:
-            output.append(line)
+            code_lines.append(line)
             i += 1
             continue
 
@@ -385,6 +483,33 @@ def markdown_to_latex(
                 output.extend(issue_table_to_paragraphs(table_lines))
             elif current_heading == "3.2 성공 기준":
                 output.extend(success_criteria_table_to_latex(table_lines))
+            elif current_heading == "3.3 원본 및 정규화 저장":
+                output.extend(
+                    table_to_latex(
+                        table_lines,
+                        forced_line_breaks={
+                            "Raw 데이터": ["Raw", "데이터"],
+                            "정규화 데이터": ["정규화", "데이터"],
+                            "검수 메타데이터": ["검수", "메타데이터"],
+                            "출처 메타데이터": ["출처", "메타데이터"],
+                        },
+                    )
+                )
+            elif current_heading == "4. 데이터 품질 정합성 관리 방법":
+                output.extend(
+                    table_to_latex(
+                        table_lines,
+                        forced_line_breaks={
+                            "City 매핑": ["City", "매핑"],
+                            "행정구역 정합성": ["행정구역", "정합성"],
+                            "출처 기록": ["출처", "기록"],
+                            "전체 필드 상태": ["전체 필드", "상태"],
+                            "기후 정합성": ["기후", "정합성"],
+                            "링크 유효성": ["링크", "유효성"],
+                            "다국어 매핑": ["다국어", "매핑"],
+                        },
+                    )
+                )
             elif current_heading == "4.2 사용자 흐름":
                 output.extend(
                     table_to_latex(
@@ -448,7 +573,7 @@ def markdown_to_latex(
                     output.append(r"\addtocontents{toc}{\protect\clearpage}")
                 output.append(r"\addcontentsline{toc}{section}{" + text + "}")
             elif level == 2:
-                output.append(r"\DocNeedspace{8\baselineskip}")
+                output.append(r"\DocNeedspace{24\baselineskip}")
                 output.append(r"\subsection*{" + text + "}")
                 if toc_pagebreak_before and raw_text in toc_pagebreak_before:
                     output.append(r"\addtocontents{toc}{\protect\clearpage}")
@@ -491,7 +616,7 @@ def markdown_to_latex(
 
         in_list = close_list(output, in_list)
         output.append(r"\DocNeedspace{3\baselineskip}")
-        output.append(format_body_text(line.strip()))
+        output.append(format_body_text(line.strip(), split_sentences=True))
         output.append("")
         i += 1
 
@@ -587,8 +712,8 @@ def markdown_to_latex(
 \definecolor{{LovvPaper}}{{HTML}}{{F7F3EA}}
 \renewcommand{{\arraystretch}}{{1.35}}
 \setlength{{\tabcolsep}}{{2pt}}
-\setlength{{\LTleft}}{{0pt}}
-\setlength{{\LTright}}{{0pt}}
+\setlength{{\LTleft}}{{\fill}}
+\setlength{{\LTright}}{{\fill}}
 \setlist[itemize]{{leftmargin=*, itemsep=2pt, topsep=2pt}}
 \setstretch{{1.08}}
 \setlength{{\headheight}}{{30pt}}
