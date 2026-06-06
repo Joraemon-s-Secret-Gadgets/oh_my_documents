@@ -1,0 +1,630 @@
+# 한국 데이터 취득 계획서
+
+> 문서 버전: v0.2
+> 문서 상태: 실제 수집 데이터 구조 및 API 명세 분석 결과 반영
+> 원본 문서: `oh_my_documents/docs/04_data_collect_plan/korea_data_acquisition_plan.md` v0.1
+> 작성일: 2026-06-06
+> 반영 예정 문서: `docs/04_data_collect_plan/04_data_collect_plan.md`
+> 반영 예정 HTML: `pages/04_data_collect_plan.html`
+
+> **[업데이트 요약]**
+> 실제 데이터 수집(tour-api-korea 레포지토리 참고) 및 TourAPI 명세 확인을 거쳐 강원(GW)·경북(GB) 지역 데이터 수집 가능성을 검증하였다.
+> 이 문서는 실제 수집에 사용된 데이터 구조(`data/raw/final/*.json`) 및 API 명세를 기준으로 Attraction·Festival·방문객 통계 데이터 모델을 갱신한 것이다.
+> 변경 사항은 `> [변경]` 블록으로 표시한다.
+
+---
+
+# 1. 목적
+
+본 문서는 여행 추천 Multi-Agent 서비스에서 한국 소도시 추천에 필요한 도시·관광지·축제 데이터를 한 번에 취득하기 위한 범위, 데이터 소스, 검증 방식, 저장 구조를 정의한다.
+
+이번 문서의 핵심은 다음과 같다.
+
+- City, Attraction, Festival의 정의된 항목을 모두 수집 대상으로 둔다.
+- 한국관광공사 TourAPI 4.0(KorService2) 및 관광 빅데이터 API(DataLabService)를 중심으로 관광지·축제 정보를 취득한다.
+- 운영시간, 운영기간, 입장료, 사진처럼 출처별 표현 차이가 큰 항목도 최초 취득 범위에 포함한다. 단, TourAPI에서 실제 제공률이 낮은 항목은 `missing`으로 관리한다.
+- 자동 수집, 공식 사이트 확인, Web Search Worker, 수동 검수를 하나의 취득 파이프라인으로 묶어 처리한다.
+- 추천 DB는 `City 1:N Attraction`, `City 1:N Festival` 관계를 기준으로 설계한다.
+- 관광지·축제는 6대 핵심 테마로 분류하여 관리한다.
+
+---
+
+# 2. 목표 데이터 모델
+
+## 2.1 관계 구조
+
+```text
+City
+ ├── Attraction
+ └── Festival
+```
+
+| 관계 | 설명 |
+| --- | --- |
+| `City 1:N Attraction` | 하나의 한국 도시는 여러 관광지를 가진다. |
+| `City 1:N Festival` | 하나의 한국 도시는 여러 축제·행사를 가진다. |
+
+## 2.2 City 데이터
+
+City는 추천의 기준 지역이다. 한국 목적지는 시·군·구 단위의 소도시를 기본 단위로 관리한다.
+
+> [변경] `city_id` 형식이 `KR-{도_코드}-{CITY_EN}` 형식으로 확정되었다. 예: `KR-42-GANGNEUNG`(강원 강릉시), `KR-47-ANDONG`(경북 안동시). 기존 예시의 `KR-JEONNAM-SUNCHEON` 형식은 폐기한다.
+> [변경] `province`와 `district_type` 필드 대신 `prefecture_id`(도/광역시 단위 외래키)를 사용한다. `data/KR/prefectures.json`에 별도 저장된 광역시·도 레코드를 참조한다.
+> [변경] `climate` 필드는 `climate_table`로 명칭 변경. Wikipedia 기후 표 wikitext를 저장하며, 자동 취득이 실패한 경우 `needs_review` 상태로 관리한다.
+> [변경] City 데이터 출처로 Wikipedia/Wikidata를 검토하고 있다. API 명세 및 실제 수집 테스트를 거쳐 `data/KR/cities.json`에 40개 도시 데이터 적재가 가능함을 확인하였다.
+
+| 필드 | 수집 방식 | 실제 수집 및 명세 확인 상태 | 설명 |
+| --- | --- | --- | --- |
+| `city_id` | 내부 생성 | ✅ 실제 수집 확인 | 시스템 내부 지역 식별자. 형식: `KR-{도_코드}-{CITY_EN}` |
+| `city_name_ko` | Wikipedia / 수동 정규화 | ✅ 실제 수집 확인 | 한국어 도시명 |
+| `prefecture_id` | Wikipedia / Wikidata | ✅ 실제 수집 확인 | 광역시·도 단위 외래키. `data/KR/prefectures.json` 참조 |
+| `location` | Wikipedia / Wikidata | ✅ 실제 수집 확인 | 행정 위치 문자열 |
+| `latitude` | Wikipedia / Wikidata | ✅ 실제 수집 확인 | 대표 위도 |
+| `longitude` | Wikipedia / Wikidata | ✅ 실제 수집 확인 | 대표 경도 |
+| `description` | Wikipedia 기반 내부 요약 | ✅ 실제 수집 확인 | 도시 역사·문화·특징 설명 |
+| `climate_table` | Wikipedia | ⚠️ 검토 필요 | Wikipedia 기후 표 wikitext. 자동 취득 실패 시 수작업 필요 표시 |
+| `site_urls` | Wikipedia 외부 링크 / 지자체 관광 사이트 | ✅ 실제 수집 확인 | 지자체 문화관광 홈페이지 URL (1-2개) |
+
+## 2.3 Attraction 데이터
+
+Attraction은 도시와 1:N 관계를 가지며, 일정 카드와 추천 결과 상세 화면의 핵심 소재로 사용한다.
+
+아래 필드는 실제 수집 과정(tour-api-korea 레포지토리 설계 참고)에서 검증된 출력 파일(`data/raw/final/{city_en}.json`)의 `attractions` 배열 구조 및 API 명세를 기준으로 정의한다.
+각 레코드는 TourAPI 리스트 필드, `_assigned_theme`(테마 분류), `detail.common`(공통 상세), `detail.intro`(유형별 소개 상세)로 구성된다.
+
+### 공통 필드 (리스트 + detail.common)
+
+| 필드 | TourAPI 원본 필드 | 실제 수집 및 명세 확인 상태 | 설명 |
+| --- | --- | --- | --- |
+| `contentid` | `contentid` | ✅ 실제 수집 확인 | TourAPI 콘텐츠 ID. 내부 `attraction_id` 생성에 사용 |
+| `contenttypeid` | `contenttypeid` | ✅ 실제 수집 확인 | 콘텐츠 유형 코드 (12·14·15·28·32·38·39) |
+| `title` | `title` | ✅ 실제 수집 확인 | 관광지명 (한국어) |
+| `addr1` | `addr1` | ✅ 실제 수집 확인 | 주소 1 |
+| `addr2` | `addr2` | ✅ 실제 수집 확인 | 주소 2 (건물명, 층수 등). 빈 문자열 가능 |
+| `mapx` | `mapx` | ✅ 실제 수집 확인 | 경도 (문자열 형식) |
+| `mapy` | `mapy` | ✅ 실제 수집 확인 | 위도 (문자열 형식) |
+| `tel` | `tel` | 일부 실제 수집 확인 | 연락 전화번호. 빈 문자열 가능 |
+| `firstimage` | `firstimage` | 일부 실제 수집 확인 | 대표 이미지 URL. 없으면 빈 문자열 |
+| `firstimage2` | `firstimage2` | 일부 실제 수집 확인 | 대표 이미지 썸네일 URL. 없으면 빈 문자열 |
+| `cpyrhtDivCd` | `cpyrhtDivCd` | 일부 실제 수집 확인 | 공공누리 저작권 유형 (Type1·Type3 등). 없으면 빈 문자열 |
+| `areacode` | `areacode` | 일부 실제 수집 확인 | TourAPI 지역 코드. 일부 레코드에서 빈 문자열 |
+| `sigungucode` | `sigungucode` | 일부 실제 수집 확인 | TourAPI 시군구 코드. 일부 레코드에서 빈 문자열 |
+| `lDongRegnCd` | `lDongRegnCd` | ✅ 실제 수집 확인 | 법정동 지역 코드 |
+| `lDongSignguCd` | `lDongSignguCd` | ✅ 실제 수집 확인 | 법정동 시군구 코드 |
+| `lclsSystm1` | `lclsSystm1` | ✅ 실제 수집 확인 | TourAPI 대분류 코드 |
+| `lclsSystm2` | `lclsSystm2` | ✅ 실제 수집 확인 | TourAPI 중분류 코드 |
+| `lclsSystm3` | `lclsSystm3` | ✅ 실제 수집 확인 | TourAPI 소분류 코드 |
+| `cat1` | `detail.common.cat1` | 일부 실제 수집 확인 | TourAPI cat1 대분류. 일부 레코드에서 빈 문자열 |
+| `cat2` | `detail.common.cat2` | 일부 실제 수집 확인 | TourAPI cat2 중분류 |
+| `cat3` | `detail.common.cat3` | 일부 실제 수집 확인 | TourAPI cat3 소분류 |
+| `overview` | `detail.common.overview` | ✅ 실제 수집 확인 | 관광지 설명 (한국어 전문) |
+| `homepage` | `detail.common.homepage` | 일부 실제 수집 확인 | 공식 홈페이지 URL (HTML 앵커 태그 포함 가능). 없으면 빈 문자열 |
+| `_assigned_theme` | 내부 생성 | ✅ 실제 수집 확인 | 분류 코드 매핑으로 할당한 6대 테마 값 |
+
+### 소개 상세 필드 (detail.intro) — 콘텐츠 유형별 주요 필드
+
+`detail.intro`의 필드명은 `contenttypeid`에 따라 달라진다.
+
+**관광지 (12)**
+
+| 필드 | TourAPI 원본 필드 | 실제 수집 및 명세 확인 상태 | 설명 |
+| --- | --- | --- | --- |
+| 운영시간 | `usetime` | ⚠️ API 명세상 제공률 낮음 확인 | 운영시간 문자열 |
+| 휴무일 | `restdate` | 일부 실제 수집 확인 | 휴무일 |
+| 입장료 | `usefee` | ⚠️ API 명세상 제공률 낮음 확인 | 입장료 문자열 |
+| 주차 | `parking` | 일부 실제 수집 확인 | 주차 가능 여부 |
+| 문의 | `infocenter` | 일부 실제 수집 확인 | 문의처 |
+
+**음식점 (39)**
+
+| 필드 | TourAPI 원본 필드 | 실제 수집 및 명세 확인 상태 | 설명 |
+| --- | --- | --- | --- |
+| 대표 메뉴 | `treatmenu` | ✅ 대부분 실제 수집 확인 | 대표 메뉴명. `description`에 `[대표 메뉴]` 접두어로 추가 |
+| 첫 번째 메뉴 | `firstmenu` | 일부 실제 수집 확인 | 주력 단품 메뉴명 |
+| 운영시간 | `opentimefood` | ✅ 대부분 실제 수집 확인 | 영업시간 문자열 (HTML 태그 포함 가능) |
+| 휴무일 | `restdatefood` | ✅ 대부분 실제 수집 확인 | 휴무일 문자열 |
+| 포장 | `packing` | 일부 실제 수집 확인 | 포장 가능 여부 |
+| 예약 | `reservationfood` | 일부 실제 수집 확인 | 예약 방법 |
+| 주차 | `parkingfood` | 일부 실제 수집 확인 | 주차 가능 여부 |
+| 문의 | `infocenterfood` | 일부 실제 수집 확인 | 문의처 전화번호 |
+
+> **photo_url**: `firstimage`·`firstimage2` 필드로 URL을 취득할 수 있으나, 이미지가 없는 레코드는 빈 문자열이다. `cpyrhtDivCd`로 저작권 유형(Type1·Type3 등)을 함께 저장한다.
+
+## 2.4 Festival 데이터
+
+Festival은 도시와 1:N 관계를 가지며, 월별 추천과 계절성 추천의 주요 근거로 사용한다.
+
+아래 필드는 실제 수집 과정(tour-api-korea 레포지토리 설계 참고)에서 검증된 출력 파일(`data/raw/final/{city_en}.json`)의 `festivals` 배열 구조 및 API 명세를 기준으로 정의한다.
+축제 레코드는 `contenttypeid == "15"`이며, 리스트 필드·`_assigned_theme`·`detail.common`·`detail.intro`로 구성된다.
+
+### 공통 필드 (리스트 + detail.common)
+
+| 필드 | TourAPI 원본 필드 | 실제 수집 및 명세 확인 상태 | 설명 |
+| --- | --- | --- | --- |
+| `contentid` | `contentid` | ✅ 실제 수집 확인 | TourAPI 콘텐츠 ID. 내부 `festival_id` 생성에 사용 |
+| `contenttypeid` | `contenttypeid` | ✅ 실제 수집 확인 | 항상 `"15"` (축제행사) |
+| `title` | `title` | ✅ 실제 수집 확인 | 축제명 (한국어) |
+| `addr1` | `addr1` | ✅ 실제 수집 확인 | 개최 장소 주소 1 |
+| `addr2` | `addr2` | ✅ 실제 수집 확인 | 주소 2. 빈 문자열 가능 |
+| `mapx` | `mapx` | ✅ 실제 수집 확인 | 경도 (문자열 형식) |
+| `mapy` | `mapy` | ✅ 실제 수집 확인 | 위도 (문자열 형식) |
+| `tel` | `tel` | 일부 실제 수집 확인 | 연락 전화번호. 빈 문자열 가능 |
+| `eventstartdate` | `eventstartdate` | ✅ 실제 수집 확인 | 축제 시작일 (YYYYMMDD 형식) |
+| `eventenddate` | `eventenddate` | ✅ 실제 수집 확인 | 축제 종료일 (YYYYMMDD 형식) |
+| `firstimage` | `firstimage` | 일부 실제 수집 확인 | 대표 이미지 URL. 없으면 빈 문자열 |
+| `firstimage2` | `firstimage2` | 일부 실제 수집 확인 | 대표 이미지 썸네일 URL |
+| `cpyrhtDivCd` | `cpyrhtDivCd` | 일부 실제 수집 확인 | 공공누리 저작권 유형 |
+| `lDongRegnCd` | `lDongRegnCd` | ✅ 실제 수집 확인 | 법정동 지역 코드 |
+| `lDongSignguCd` | `lDongSignguCd` | ✅ 실제 수집 확인 | 법정동 시군구 코드 |
+| `lclsSystm1` | `lclsSystm1` | ✅ 실제 수집 확인 | TourAPI 대분류 코드 (`"EV"` 고정) |
+| `lclsSystm2` | `lclsSystm2` | ✅ 실제 수집 확인 | TourAPI 중분류 코드 |
+| `lclsSystm3` | `lclsSystm3` | ✅ 실제 수집 확인 | TourAPI 소분류 코드 |
+| `progresstype` | `progresstype` | 일부 실제 수집 확인 | 행사 진행 유형 (예: `"전국"`, `"지역"`) |
+| `overview` | `detail.common.overview` | ✅ 실제 수집 확인 | 축제 설명 (한국어 전문) |
+| `homepage` | `detail.common.homepage` | 일부 실제 수집 확인 | 공식 홈페이지 URL. 없으면 빈 문자열 |
+| `_assigned_theme` | 내부 생성 | ✅ 실제 수집 확인 | 6대 테마 값. 수동 오버라이드 46건 적용 |
+
+### 소개 상세 필드 (detail.intro) — 축제 유형 (contenttypeid: 15)
+
+| 필드 | TourAPI 원본 필드 | 실제 수집 및 명세 확인 상태 | 설명 |
+| --- | --- | --- | --- |
+| 입장료 | `usetimefestival` | ⚠️ API 명세상 제공률 낮음 확인 | 이용 요금 및 시간 문자열 |
+| 공연 시간 | `playtime` | 일부 실제 수집 확인 | 공연·행사 운영 시간 |
+| 행사 장소명 | `eventplace` | 일부 실제 수집 확인 | 개최 장소 명칭 |
+| 주관 기관 | `sponsor1` | 일부 실제 수집 확인 | 주최·주관 기관명 |
+| 주관 기관 연락처 | `sponsor1tel` | 일부 실제 수집 확인 | 주관 기관 전화번호 |
+| 프로그램 | `program` | 일부 실제 수집 확인 | 세부 프로그램 설명 |
+| 할인 정보 | `discountinfofestival` | ⚠️ API 명세상 제공률 낮음 확인 | 할인 조건 |
+
+## 2.5 방문객 통계 데이터 (신규)
+
+> [신규] TourAPI DataLab Service(관광 빅데이터 API)를 활용한 월별 도시별 방문객 통계가 파이프라인에 추가되었다.
+> 고유 방문자 수의 특성상 일별 단순 합산 시 중복 집계 문제가 발생하므로, **1달 단위 구간 쿼리**로 취득하고 해당 월의 일수로 나눈 **월별 일평균**을 최종 지표로 사용한다.
+
+아래 필드는 `data/raw/final/{city_en}.json`의 `visitor_statistics.monthly_statistics` 배열 구조를 기준으로 정의한다.
+
+| 필드 | TourAPI 원본 필드 | 실제 수집 및 명세 확인 상태 | 설명 |
+| --- | --- | --- | --- |
+| `month` | `month` | ✅ 실제 수집 확인 | 월 문자열 (예: `"2025-01"`) |
+| `days` | `days` | ✅ 실제 수집 확인 | 해당 월의 일수. 일평균 계산에 사용 |
+| `locals_total` | `locals_total` | ✅ 실제 수집 확인 | 해당 월 전체 현지인 방문 수 합계 |
+| `locals_daily_avg` | `locals_daily_avg` | ✅ 실제 수집 확인 | 현지인 일평균 방문객 수 (`locals_total / days`) |
+| `out_of_town_total` | `out_of_town_total` | ✅ 실제 수집 확인 | 해당 월 전체 외지인 방문 수 합계 |
+| `out_of_town_daily_avg` | `out_of_town_daily_avg` | ✅ 실제 수집 확인 | 외지인 일평균 방문객 수 |
+| `foreigners_total` | `foreigners_total` | ✅ 실제 수집 확인 | 해당 월 전체 외국인 방문 수 합계 |
+| `foreigners_daily_avg` | `foreigners_daily_avg` | ✅ 실제 수집 확인 | 외국인 일평균 방문객 수 |
+| `total_visitors` | `total_visitors` | ✅ 실제 수집 확인 | 세 항목 합계 (total) |
+| `total_daily_avg` | `total_daily_avg` | ✅ 실제 수집 확인 | 전체 일평균 방문객 수 |
+
+상위 레벨에는 `visitor_statistics.year`, `visitor_statistics.annual_totals`, `visitor_statistics.annual_daily_averages`도 함께 저장한다.
+
+---
+
+# 3. 데이터 소스 전략
+
+## 3.1 한국관광공사 TourAPI 4.0 (KorService2)
+
+> [변경] TourAPI 버전이 **4.0(KorService2)**으로 확정되었다. 실제 구현 과정에서 확인된 동작 특성을 추가한다.
+
+| 항목 | 내용 |
+| --- | --- |
+| 주 용도 | 관광지 목록, 축제 목록, 공통 상세정보, 소개 상세정보 |
+| 취득 대상 | 관광지명, 주소, 위도, 경도, 설명(overview), 운영시간, 입장료, 축제명, 축제 기간 |
+| 장점 | 전국 관광정보를 API로 제공하며 지역기반·행사정보 등을 함께 조회할 수 있다. |
+| 한계 | 운영시간·입장료는 콘텐츠 유형별 필드가 다르고 실제 제공률이 낮다. `detailCommon2` 호출 시 `overviewYN` 등 추가 파라미터를 전달하면 `INVALID_REQUEST_PARAMETER_ERROR`(코드 10)가 발생한다. |
+| 적용 방식 | Attraction과 Festival 자동 수집의 1차 소스로 사용한다. |
+| API 인증 | 디코딩된 키(Decoded Key)만 사용 가능하다. `requests` 라이브러리가 파라미터를 자동 URL 인코딩하므로 인코딩된 키 사용 시 이중 인코딩으로 인증 오류가 발생한다. |
+| 키 관리 | 여러 키를 Pool로 관리하며, 쿼터 초과(`resultCode == "0022"`) 시에만 자동 로테이션한다. 인증·파라미터 오류에서는 즉시 중단(Fail-Fast)한다. |
+
+## 3.2 한국관광공사 관광 빅데이터 API (DataLabService)
+
+> [신규] 이동통신 데이터 기반 방문객 통계 API가 파이프라인에 추가되었다.
+
+| 항목 | 내용 |
+| --- | --- |
+| 주 용도 | 지역별 관광객 방문 통계 |
+| 취득 대상 | 현지인·외지인·외국인 방문객 일별 수치 (1달 단위 구간 집계) |
+| 장점 | 이동통신 기반 고유 방문자 수 데이터로 추천 지표 보강에 활용할 수 있다. |
+| 한계 | 일별 데이터를 직접 합산하면 기간 내 재방문자가 중복 집계된다. **반드시 1달 단위 구간으로 쿼리해야 한다.** |
+| 적용 방식 | 도시별 월별 일평균 방문객 통계를 산출하여 `data/KR/visitor_statistics.json`에 별도 저장한다. |
+
+## 3.3 대한민국구석구석 및 지자체 문화관광 홈페이지
+
+| 항목 | 내용 |
+| --- | --- |
+| 주 용도 | 도시 관광 링크, 공식 설명, 최신 운영정보 확인 |
+| 취득 대상 | 지자체 문화관광 홈페이지 URL, 최신 운영정보 |
+| 장점 | 공식 또는 준공식 관광 안내 성격이 강해 서비스 설명과 출처 표기에 적합하다. |
+| 한계 | 페이지 구조가 지자체마다 다르고, 운영시간·요금 표기 방식이 일정하지 않다. |
+| 적용 방식 | TourAPI 수집값의 공식 확인 및 최신성 검증 소스로 사용한다. City의 `site_urls`로 저장한다. |
+
+## 3.4 Wikipedia / Wikidata
+
+> [변경] City 데이터의 **주요 취득 후보 소스**로 검토 중이다. v0.1에서 보조 소스로 기재된 것을 변경하여 검토 대상을 넓힌다.
+
+| 항목 | 내용 |
+| --- | --- |
+| 주 용도 | 도시 정보, 위치 정보, 역사·문화 개요 |
+| 취득 대상 | 도시명, 위치, 설명, 대표 좌표, 기후 표, 외부 링크 |
+| 장점 | 도시 단위 설명과 위치 정보가 체계적이며 전국 커버가 가능하다. 한국어 위키백과와 Wikidata를 함께 사용하면 좌표·다국어 도시명을 안정적으로 취득할 수 있다. |
+| 한계 | 관광지·축제 상세 정보는 불완전할 수 있고, 설명문 사용 시 라이선스 표기가 필요하다. 기후 표 자동 취득 성공률이 낮아 수작업 보완이 필요한 도시가 많다. |
+| 적용 방식 | City 자동 수집의 후보 소스 중 하나로 검토한다. Attraction·Festival에는 사용하지 않는다. |
+
+## 3.5 기상청 API허브 및 기후통계
+
+| 항목 | 내용 |
+| --- | --- |
+| 주 용도 | 기후 데이터, 월별 여행 적합도 보강 |
+| 취득 대상 | 월별 평균 기온, 강수량, 폭염·한파·강설 등 계절성 메모 |
+| 장점 | 공식 기상기후 데이터로 월별 추천 근거를 만들 수 있다. |
+| 한계 | 시·군·구와 관측 지점 매핑 기준을 별도로 정의해야 한다. Wikipedia 기후 표 자동 취득이 실패한 도시의 보완 소스로 사용한다. |
+| 적용 방식 | City의 `climate_table` 보완 및 계절 추천 지표 산출에 사용한다. |
+
+## 3.6 관광 통계 및 보조 공공데이터
+
+| 출처 | 사용 목적 | 적용 방식 |
+| --- | --- | --- |
+| 한국관광 데이터랩 (DataLabService) | 지역별 관광 동향, 방문자 통계 | 도시별 월별 일평균 방문객 통계 산출 |
+| 행정안전부 행정구역 데이터 | 시·군·구 코드와 행정구역 정규화 | City ID와 TourAPI 지역 코드 매핑 |
+| 공공데이터포털 지자체 관광 데이터 | 지자체별 관광 링크·관광 자원 보강 | 공식 링크와 누락 데이터 보강 |
+| 지자체 공식 문화관광 사이트 | 운영시간, 입장료, 최신 축제 일정 확인 | 누락·최신성 확인 |
+
+---
+
+# 4. 전체 취득 범위
+
+## 4.1 전체 수집 대상 및 현황
+
+> [변경] 각 항목별 **현재 수집 상태**를 추가한다 (강원·경북 기준).
+
+| 구분 | 수집 항목 | 주요 출처 | 실제 수집 및 명세 확인 상태 |
+| --- | --- | --- | --- |
+| 도시 | 도시명, 위치, 설명, 기후 표, 사이트 링크, 위도, 경도 | Wikipedia, Wikidata | ✅ 40개 도시 실제 수집 및 검증 완료 (`data/KR/cities.json`) |
+| 관광지 | 관광지명, 주소, 위도, 경도, 설명, 운영시간*, 입장료*, 테마 | TourAPI 4.0 KorService2 | ✅ 3,709건 실제 수집 및 명세 확인 완료 |
+| 축제 | 축제명, 주소, 기간, 설명, 테마 | TourAPI 4.0 KorService2 | ✅ 106건 실제 수집 및 명세 확인 완료 (테마 수동 재분류 46건 포함) |
+| 통계 | 현지인·외지인·외국인 일평균 방문객 (월별) | DataLab Service | ✅ 2025년 12개월 실제 수집 및 명세 확인 완료 |
+
+*운영시간·입장료는 TourAPI 실제 제공률이 낮아 상당수가 `missing` 상태임.
+
+## 4.2 취득 상태 관리
+
+| 취득 상태 | 기준 | 처리 방식 |
+| --- | --- | --- |
+| `collected` | 자동 수집 값이 있고 출처가 명확함 | DB 적재 |
+| `needs_review` | 값은 있으나 표현이 모호하거나 최신성 확인이 필요함 | 수동 검수 |
+| `missing` | 자동 수집에서 값을 찾지 못함 | Web Search 또는 수동 입력 대상 |
+| `blocked` | 약관·저작권·접근 제한으로 수집 불가 | 딥링크 또는 빈 값으로 대체하고 사유 기록 |
+
+## 4.3 공식 확인 우선순위
+
+| 항목 | 확인 우선순위 | 사유 |
+| --- | --- | --- |
+| 운영시간 | 높음 | 사용자 질문 빈도가 높고 일정 구성에 직접 영향을 준다. |
+| 운영기간 | 높음 | 계절 운영, 휴관일, 임시 중단 등 예외가 많다. |
+| 입장료 | 중간 | 무료·유료·계절 요금·패키지 요금이 혼재한다. |
+| 사진 | 중간 | 공공누리 유형과 외부 이미지 사용 조건 확인이 필요하다. |
+| 위도·경도 | 높음 | 지도 표시와 동선 계산에 필요하다. |
+
+공식 사이트 또는 수동 검수로 확인한 값에는 `verified_at`, `verified_source_url`, `verification_note`를 함께 기록한다.
+
+---
+
+# 5. 수집 전략
+
+## 5.1 자동 수집 전략
+
+| 대상 | 자동 수집 소스 | 처리 방식 |
+| --- | --- | --- |
+| 도시 | Wikipedia, Wikidata | 도시명, 위치, 설명, 기후, 사이트 링크, 위도, 경도를 추출하고 City 레코드로 정규화한다. |
+| 관광지 | TourAPI 4.0 KorService2 | `/areaBasedList2` → 테마 분류 → `/detailCommon2` + `/detailIntro2` 순서로 수집한다. 체크포인트 파일로 재시작을 지원한다. |
+| 축제 | TourAPI 4.0 KorService2 | `/searchFestival2`로 리스트 수집 후 `/detailCommon2` + `/detailIntro2`로 상세 수집한다. |
+| 통계 | DataLab Service (`/stayAnalysisVisitorList`) | 1달 단위 구간 쿼리로 월별 데이터를 수집하고 일수로 나눈 일평균을 저장한다. |
+
+## 5.2 TourAPI 수집 파이프라인 상세
+
+> [신규] 실제 수집 및 TourAPI 명세 분석을 통해 확인된 수집 파이프라인의 단계별 구조를 정의한다.
+
+```text
+Stage 1: 리스트 수집 및 통합
+  ├── /areaBasedList2 → 시군구별 관광지 목록
+  ├── /searchFestival2 → 축제 목록
+  ├── 시군구 → 40개 도시 단위 그룹화
+  └── 6대 테마 분류 매핑 + 축제 수동 오버라이드 적용
+
+Stage 2: 상세정보 스크래핑 (Network-bound, 체크포인트 지원)
+  ├── 관광지: /detailCommon2(contentId만 전달) → 공통 정보
+  ├── 관광지: /detailIntro2 → 콘텐츠 유형별 소개 정보
+  ├── 축제: /detailCommon2 → 공통 정보
+  └── 축제: /detailIntro2 → 축제 소개 정보
+
+Stage 3: 상세정보 병합 및 빌드
+  ├── 캐시 파일 → data/raw/detail/ 전개
+  └── 리스트 + 상세 병합 → data/raw/final/{city_en}.json
+
+Stage 4: 방문객 통계 수집 및 병합
+  └── DataLab 1달 단위 쿼리 → 월별 일평균 산출 → visitor_statistics.json
+
+Stage 5: 정규화 및 패키징
+  └── data/raw/final/ → Lovv_scraping 포맷 변환 및 실제 수집 파일 빌드 → data/KR/
+```
+
+## 5.3 공식 확인 및 검수 전략
+
+공식 확인과 검수는 자동 수집에서 실패했거나 검수 필요 상태로 분류된 항목에 적용한다. 이 과정은 별도 단계가 아니라 같은 취득 파이프라인의 후속 처리로 본다.
+
+| 확인 항목 | 입력 기준 |
+| --- | --- |
+| 운영시간 | 공식 사이트에 명시된 최신 운영시간만 입력 |
+| 운영기간 | 계절 운영 또는 축제 기간이 명확한 경우 입력 |
+| 입장료 | 공식 사이트 또는 공공 관광 페이지에 있는 금액만 입력 |
+| 사진 | 공공누리 유형 또는 사용 가능 조건이 명확한 이미지 사용 |
+
+## 5.4 데이터 정규화 규칙
+
+> [변경] Lovv_scraping 포맷 확정에 따라 정규화 규칙을 갱신한다.
+
+- `city_id` 형식: `KR-{도_코드}-{CITY_EN}` (예: `KR-42-GANGNEUNG`)
+- `attraction_id` 형식: `KR-{도_코드}-{CITY_EN}-ATT-{contentId}`
+- `festival_id` 형식: `KR-{도_코드}-{CITY_EN}-FES-{contentId}`
+- 관광지와 축제는 반드시 `city_id`를 가진다. 단, 포항시(남구·북구)는 `KR-47-POHANG`으로 통합한다.
+- 음식점(`contentTypeId == "39"`)의 `treatmenu`는 `[대표 메뉴]` 접두어로 `description`에 추가한다. `admission_fee`는 빈 문자열로 처리한다.
+- 축제 기간은 `period_start`(YYYYMMDD)·`period_end`(YYYYMMDD)로 분리 저장한다.
+- 운영시간과 입장료는 최신성이 낮을 수 있으므로 `data_confidence`를 `medium` 또는 `low`로 기록한다.
+- 외부 설명문은 원문 복제가 아니라 내부 요약문으로 재작성하거나 TourAPI `overview` 값을 그대로 저장한다.
+- `detailCommon2` 호출 시 `contentId`만 파라미터로 전달한다. 추가 파라미터 전달 시 `INVALID_REQUEST_PARAMETER_ERROR`(코드 10)가 발생한다.
+
+---
+
+# 6. 단일 취득 파이프라인
+
+## 6.1 처리 흐름
+
+```text
+자동 수집 (TourAPI / DataLab / Wikipedia)
+↓
+파일 기반 캐시 및 체크포인트 저장
+↓
+취득 상태 분류 (field_status 할당)
+↓
+정규화 및 Lovv_scraping 포맷 변환
+↓
+공식 사이트 확인 / Web Search Worker (missing·needs_review 항목)
+↓
+수동 검수
+↓
+정규화 DB 적재 (data/KR/)
+```
+
+정의된 모든 필드가 출력에 들어가도록 시도하는 것이 목표다. 운영시간·입장료도 최초 수집 대상에 포함하며, 자동 수집 실패 시 `missing` 또는 `needs_review` 상태로 남기고 같은 파이프라인 안에서 공식 확인 또는 수동 검수로 채운다.
+
+예시:
+
+```text
+사용자 질문: 순천만국가정원 운영시간 알려줘
+
+1. DB에서 순천만국가정원 Attraction 조회
+2. opening_hours가 없거나 오래된 값이면 Web Search Worker 실행
+3. 공식 사이트 또는 공식 관광 페이지 확인
+4. 운영시간과 확인 출처를 함께 반환
+```
+
+## 6.2 API Key Rotation 전략
+
+> [신규] 실제 수집 파이프라인 및 API 명세 분석에서 확인된 키 관리 정책이다.
+
+| 상황 | 처리 방식 |
+| --- | --- |
+| 쿼터 초과 (`resultCode == "0022"` 또는 LIMIT/EXCEEDED 메시지) | 다음 키로 자동 로테이션 |
+| 인증 오류 (`resultCode == "20"`, `"30"` 등) | 즉시 `TourAPIError` 발생 및 중단 (Fail-Fast) |
+| 잘못된 파라미터 오류 (`resultCode == "10"`) | 즉시 `TourAPIError` 발생 및 중단 (Fail-Fast) |
+| 모든 키 소진 | 체크포인트 파일 저장 후 graceful stop |
+
+## 6.3 Web Search Worker 적용 조건
+
+| 조건 | 처리 |
+| --- | --- |
+| DB에 정보 없음 | 공식 사이트 검색 |
+| 운영시간·입장료 값이 오래됨 | 공식 사이트 재확인 |
+| 축제 기간이 연도별로 바뀜 | 해당 연도 공식 페이지 확인 |
+| 공식 출처가 아닌 블로그·SNS만 존재 | 답변 근거로 사용하지 않거나 낮은 신뢰도로 표시 |
+
+---
+
+# 7. 저장 구조
+
+## 7.1 핵심 파일
+
+> [변경] 데이터베이스 테이블 대신 실제 수집 및 명세 확인용 JSON 파일 기반 저장 구조로 정의한다.
+
+```text
+data/KR/
+  ├── prefectures.json     # 광역시·도 레코드 (KR-42 강원, KR-47 경북)
+  ├── cities.json          # 40개 도시 레코드 ✅ 실제 수집 확인
+  ├── attractions.json     # 관광지 레코드 (3,709건)
+  ├── festivals.json       # 축제 레코드 (106건)
+  └── visitor_statistics.json  # 월별 방문객 통계 (40도시 × 12개월)
+```
+
+## 7.2 City 예시
+
+```json
+{
+  "city_id": "KR-42-GANGNEUNG",
+  "city_name_ko": "강릉시",
+  "prefecture_id": "KR-42",
+  "location": "대한민국 강원특별자치도",
+  "latitude": 37.75,
+  "longitude": 128.9,
+  "description": "강릉시는 강원특별자치도 동해안 중부에 위치한 시로 경포대, 오죽헌 등 관광자원이 풍부하다.",
+  "climate_table": {"caption": "수작업 필요", "wikitext": "수작업 필요"},
+  "site_urls": ["https://www.gn.go.kr/tour/index.do"],
+  "source_name": "Wikipedia",
+  "source_url": "https://ko.wikipedia.org/wiki/강릉시",
+  "collected_at": "2026-06-05T17:28:11+09:00",
+  "field_status": {
+    "city_name_ko": "collected",
+    "prefecture_id": "collected",
+    "latitude": "collected",
+    "longitude": "collected",
+    "description": "collected",
+    "climate_table": "needs_review",
+    "site_urls": "collected"
+  }
+}
+```
+
+## 7.3 Attraction 예시
+
+```json
+{
+  "attraction_id": "KR-42-GANGNEUNG-ATT-126508",
+  "city_id": "KR-42-GANGNEUNG",
+  "name_ko": "경포해변",
+  "content_type_id": "12",
+  "theme": "바다·해안",
+  "address": "강원특별자치도 강릉시 창해로 514",
+  "description": "강릉의 대표 해변으로 길이 약 6km의 백사장이 펼쳐진다.",
+  "admission_fee": "",
+  "opening_hours": "",
+  "latitude": 37.7970,
+  "longitude": 128.9017,
+  "source_name": "TourAPI 4.0 (KorService2)",
+  "source_url": "https://apis.data.go.kr/B551011/KorService2/detailCommon2?contentId=126508",
+  "collected_at": "2026-06-05T00:00:00+09:00",
+  "field_status": {
+    "name_ko": "collected",
+    "theme": "collected",
+    "address": "collected",
+    "description": "collected",
+    "admission_fee": "missing",
+    "opening_hours": "missing",
+    "latitude": "collected",
+    "longitude": "collected"
+  }
+}
+```
+
+## 7.4 Festival 예시
+
+```json
+{
+  "festival_id": "KR-42-GANGNEUNG-FES-2762975",
+  "city_id": "KR-42-GANGNEUNG",
+  "name_ko": "강릉단오제",
+  "theme": "역사·전통",
+  "address": "강원특별자치도 강릉시 남대천 일원",
+  "period_start": "20250525",
+  "period_end": "20250601",
+  "description": "유네스코 인류무형문화유산으로 등재된 강릉단오제는 매년 음력 5월에 열린다.",
+  "latitude": 37.7512,
+  "longitude": 128.8761,
+  "source_name": "TourAPI 4.0 (KorService2)",
+  "collected_at": "2026-06-05T00:00:00+09:00",
+  "field_status": {
+    "name_ko": "collected",
+    "theme": "collected",
+    "period_start": "collected",
+    "period_end": "collected",
+    "description": "collected",
+    "admission_fee": "missing"
+  }
+}
+```
+
+## 7.5 방문객 통계 예시
+
+```json
+{
+  "city_id": "KR-42-GANGNEUNG",
+  "year": 2025,
+  "month": "2025-01",
+  "daily_avg_local": 12340,
+  "daily_avg_nonlocal": 45678,
+  "daily_avg_foreign": 123,
+  "daily_avg_total": 58141,
+  "query_start_date": "20250101",
+  "query_end_date": "20250131"
+}
+```
+
+---
+
+# 8. 6대 테마 분류
+
+> [신규] 관광지와 축제를 아래 6대 핵심 테마로 분류한다. TourAPI 카테고리 코드(`cat1`·`cat2`·`cat3`)를 기준으로 자동 매핑하고, 축제는 수동 오버라이드를 추가로 적용한다.
+
+| 테마 | 설명 | 강원+경북 관광지 수 | 강원+경북 축제 수 |
+| --- | --- | --- | --- |
+| `온천·휴양` | 온천, 스파, 리조트, 힐링 | 120 | 0 |
+| `바다·해안` | 바다, 해안, 해수욕장, 해양 활동 | 249 | 0 |
+| `역사·전통` | 역사, 문화유산, 전통 문화 | 1,001 | 10 |
+| `미식·노포` | 맛집, 전통 음식점, 식당 | 2,480 | 22 |
+| `자연·트레킹` | 자연, 등산, 트레킹, 국립공원 | 687 | 13 |
+| `예술·감성` | 예술, 디자인, 감성, 문화, 행사 | 374 | 61 |
+| **합계** | | **4,911** | **106** |
+
+> **축제 테마 수동 재분류**: 기존에 `예술·감성`으로 자동 분류된 축제 61건 중 46건을 수동 검토 후 구체적인 테마로 재분류하였다. 오버라이드 목록은 `crawling/KR/targets/festival_theme_overrides.json`에 보존한다.
+
+---
+
+# 9. 품질 검증 기준
+
+> [변경] 실제 수집 데이터 및 API 명세 분석을 통해 도출된 검증 항목을 추가한다.
+
+| 검증 항목 | 기준 |
+| --- | --- |
+| City 매핑 | 모든 Attraction과 Festival은 `data/KR/cities.json`에 존재하는 `city_id`를 가져야 한다. |
+| ID 유일성 | `attraction_id`, `festival_id`, `city_id`는 각 파일 내에서 유일해야 한다. |
+| 출처 기록 | 모든 자동 수집 데이터는 `source_name`, `source_url`, `collected_at`을 가진다. |
+| 전체 필드 상태 | 정의된 모든 필드는 `collected`, `needs_review`, `missing`, `blocked` 중 하나의 상태를 가진다. |
+| 최신성 | 운영시간, 운영기간, 입장료는 확인일을 기록한다. |
+| 저작권 | 사진과 설명문은 사용 가능 조건을 확인한다. 설명문은 내부 요약문으로 저장한다. |
+| 수량 정합성 | 관광지 3,709건, 축제 106건, 도시 40개, 방문객 통계 480건(40×12)이 확인되어야 한다. |
+| 포항 통합 | 포항시 남구·북구 레코드가 `KR-47-POHANG`으로 통합되어 있어야 한다. |
+| 행정구역 정합성 | TourAPI 지역 코드와 내부 City ID가 같은 시·군·구를 가리키는지 검증한다. |
+
+---
+
+# 10. 법적·운영 제약
+
+- TourAPI와 공공데이터포털 데이터는 공공누리 유형, API 이용 조건, 출처 표기 조건을 확인한다.
+- TourAPI 일일 쿼터 제한을 준수한다. 쿼터 초과 시 자동 키 로테이션을 사용하며, 키 소진 시 graceful stop 후 체크포인트에서 재시작한다.
+- Wikipedia 기반 설명은 라이선스 조건에 따라 출처와 원문 링크를 기록한다.
+- 지자체 관광 페이지는 이용약관과 크롤링 허용 범위를 확인한다.
+- 사진은 저작권 위험이 크므로 자동 수집 값이 있더라도 공공누리 유형을 확인하고, 불명확하면 `needs_review` 또는 `blocked`로 관리한다.
+- 운영시간과 입장료는 변경 가능성이 높으므로 "확인일 기준" 문구를 서비스에 표시한다.
+- API 키는 `.env` / `.env.local`로 관리하며 Git에 절대 커밋하지 않는다.
+
+---
+
+# 11. 본 문서 반영 계획
+
+이 초안이 확정되면 다음 순서로 본 문서와 HTML에 반영한다.
+
+1. `04_data_collect_plan.md`의 `2.2 수집 데이터 정보 및 분량`을 한국 City, Attraction, Festival 관계 기준으로 보강한다.
+2. `2.4.1 대한민국 데이터 출처`에 TourAPI 4.0, DataLab Service, Wikipedia/Wikidata의 역할을 표로 반영한다.
+3. `3. 데이터 전처리 방식 및 인프라 구성`에 5단계 파이프라인과 체크포인트 전략, 키 로테이션 정책을 추가한다.
+4. `4. 데이터 품질 정합성 관리 방법`에 City 매핑, TourAPI 코드 매핑, 출처 기록, 최신성 검증, 수량 검증을 추가한다.
+5. `5. 법적 요소 검토`에 TourAPI·공공누리·지자체 사이트 이용 조건, API 키 보안 관리를 추가한다.
+6. `scripts/generate_pages.py`를 실행하여 `pages/04_data_collect_plan.html`에 반영한다.
+
+---
+
+# 12. 참고 출처
+
+- 한국관광공사 TourAPI 4.0(KorService2): https://www.data.go.kr/data/15101578/openapi.do
+- 한국관광공사 관광 빅데이터 API(DataLabService): https://www.data.go.kr/data/15010913/openapi.do
+- 대한민국구석구석: https://korean.visitkorea.or.kr/
+- 한국관광 데이터랩: https://datalab.visitkorea.or.kr/
+- 기상청 API허브: https://apihub.kma.go.kr/
+- 공공데이터포털: https://www.data.go.kr/
+- Lovv_scraping KR Spec: `Lovv_scraping/docs/specs/kr_attraction_festival_acquisition_spec_ko.md`
+
+---
+
+# 13. 변경 이력
+
+| 버전 | 날짜 | 작성자 | 변경 내용 |
+| --- | --- | --- | --- |
+| v0.1 | 2026-06-02 | 로브 기획팀 | 한국 데이터 취득 계획서 초안 작성 |
+| v0.2 | 2026-06-06 | 로브 기획팀 | 실제 수집 데이터 및 API 명세 분석 결과 반영: Attraction·Festival·방문객 통계 데이터 모델을 실제 수집 필드 기준으로 갱신, city_id 형식 확정, TourAPI 동작 특성, 5단계 파이프라인, 6대 테마 분류 현황 추가 |
