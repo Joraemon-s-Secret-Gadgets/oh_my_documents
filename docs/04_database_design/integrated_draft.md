@@ -1,8 +1,8 @@
-﻿# 로브 (Lovv) 데이터베이스 설계 명세서
+# 로브 (Lovv) 데이터베이스 설계 명세서
 
 > 문서 버전: v0.2
 > 문서 상태: 설계 초안 (Draft)
-> 기준 문서: `docs/01_requirements/01_requirements.md` v1.8, `docs/02_service_flow/02_service_flow.md` v0.2, `docs/05_api_spec/05_api_spec.md` v0.1, `docs/07_agent_spec/07_agent_spec.md` v0.3
+> 기준 문서: 요구사항 명세서 v1.7, 서비스 흐름 명세서 v0.2, API 명세서 v0.1, Agent 명세서 v0.4
 
 # 1. 문서 개요
 
@@ -19,25 +19,25 @@ PoC에서는 일부 데이터를 정적 JSON과 브라우저 로컬 스토리지
 | 권장 RDBMS | MySQL 8 LTS | 기존 DBMS 문서의 MySQL 8 LTS 결정을 기준으로 서비스 핵심 관계형 데이터를 저장한다. |
 | ID 전략 | `CHAR(36)` UUID 문자열 | 분산 생성과 외부 연동을 고려해 논리 ID는 UUID를 사용하되, MySQL에서는 `CHAR(36)`으로 저장한다. |
 | JSON 저장 | MySQL `JSON` | 구조화 조건, 추천 근거, 점수 상세, 태그 스냅샷처럼 유연한 필드는 MySQL JSON 타입을 사용한다. |
-| VectorDB | 별도 VectorDB | RAG 검색 인덱스는 MySQL 핵심 RDBMS와 분리해 관리한다. |
+| RAG Vector Index | S3 vector 기능 활용 | RAG 검색 인덱스는 MySQL 핵심 RDBMS와 분리하고, S3 vector 기능 기반으로 관리한다. |
 | 로그 저장소 | DynamoDB 또는 로그 전용 저장소 | Agent/SAM 실행 로그, 장문 원문 로그는 핵심 RDBMS와 분리한다. |
 | 대화 로그 | 장기 저장 금지 | 추천에 필요한 구조화 조건, 최종 추천 결과, 명시적 피드백만 저장한다. 디버깅용 메시지 저장은 TTL·마스킹·동의가 있는 경우로 제한한다. |
 
 ## 1.3 저장소별 책임 매핑
 
-서비스 아키텍처는 MySQL 8 LTS, VectorDB/RAG Index, DynamoDB Logs의 3개 저장소로 나눈다.
-MySQL은 정합성과 관계가 필요한 원장 데이터, VectorDB는 의미 검색용 복제 인덱스, DynamoDB는 대량·비정형·TTL 로그를 담당한다.
+서비스 아키텍처는 MySQL 8 LTS, S3 vector 기반 RAG Index, DynamoDB Logs의 3개 저장소로 나눈다.
+MySQL은 정합성과 관계가 필요한 원장 데이터, S3 vector 기반 RAG Index는 의미 검색용 복제 인덱스, DynamoDB는 대량·비정형·TTL 로그를 담당한다.
 
 | 저장소 | 저장 책임 | 대표 데이터 |
 | --- | --- | --- |
 | MySQL 8 LTS | 서비스 원장 데이터와 트랜잭션 데이터 | `users`, `user_preferences`, `destinations`, `festivals`, `itineraries`, `user_feedback`, `audit_logs` |
-| VectorDB / RAG Index | 추천 검색을 위한 임베딩과 청크 인덱스 | 목적지 청크, 축제 청크, 로컬 정보 청크, 임베딩 벡터 |
+| S3 vector / RAG Index | 추천 검색을 위한 임베딩과 청크 인덱스 | 목적지 청크, 축제 청크, 로컬 정보 청크, 임베딩 벡터 |
 | DynamoDB Logs (NoSQL) | TTL 가능한 비정형 로그와 상세 실행 추적 | API logs, Agent traces, feedback event logs, admin operation logs |
 
 | 데이터 성격 | 원장 저장 | 로그/인덱스 저장 |
 | --- | --- | --- |
 | 사용자, 선호, 일정, 명시적 좋아요/싫어요 | MySQL | 필요한 경우 DynamoDB에 이벤트 로그 복제 |
-| 목적지, 축제, 장소, 체험, 출처 | MySQL | 검색용 청크와 임베딩은 VectorDB |
+| 목적지, 축제, 장소, 체험, 출처 | MySQL | 검색용 청크와 임베딩은 S3 vector index |
 | Agent 실행 상태 | MySQL `agent_runs`, `async_jobs` | 상세 trace, tool 호출 로그는 DynamoDB |
 | 관리자 승인/반려 원장 | MySQL `audit_logs`, `data_submission_reviews` | 상세 운영 trace는 DynamoDB |
 | API 호출 로그 | 저장하지 않음 또는 집계만 MySQL | DynamoDB |
@@ -915,21 +915,21 @@ Raw 데이터를 정규화 테이블에 넣기 전 취득 상태를 분류하는
 | 테이블 | 주요 컬럼 | 설명 |
 | --- | --- | --- |
 | `rag_documents` | `id`, `target_type`, `target_id`, `title`, `source_id`, `language`, `status`, `created_at` | RAG 문서 단위 |
-| `rag_chunks` | `id`, `document_id`, `chunk_no`, `content_summary`, `embedding_ref`, `metadata_json`, `created_at` | 검색 청크. 실제 벡터는 별도 VectorDB에 저장하고 MySQL에는 참조 키와 메타데이터만 둔다. |
+| `rag_chunks` | `id`, `document_id`, `chunk_no`, `content_summary`, `embedding_ref`, `metadata_json`, `created_at` | 검색 청크. 실제 벡터는 S3 vector index에 저장하고 MySQL에는 참조 키와 메타데이터만 둔다. |
 
-### VectorDB / RAG Index
+### S3 vector / RAG Index
 
-VectorDB는 MySQL 원장 데이터를 검색용으로 복제한 인덱스다.
-따라서 VectorDB의 데이터가 원본이 아니며, 재색인 또는 장애 복구 시 MySQL의 `destinations`, `festivals`, `attractions`, `experiences`, `content_sources`를 기준으로 다시 생성할 수 있어야 한다.
+S3 vector index는 MySQL 원장 데이터를 검색용으로 복제한 인덱스다.
+따라서 S3 vector index의 데이터가 원본이 아니며, 재색인 또는 장애 복구 시 MySQL의 `destinations`, `festivals`, `attractions`, `experiences`, `content_sources`를 기준으로 다시 생성할 수 있어야 한다.
 
-| 인덱스 대상 | 원본 MySQL 테이블 | VectorDB 저장 내용 |
+| 인덱스 대상 | 원본 MySQL 테이블 | S3 vector 저장 내용 |
 | --- | --- | --- |
 | Destinations | `destinations`, `destination_themes`, `destination_monthly_weather`, `destination_crowd_metrics` | 소도시 설명, 추천 이유, 계절·혼잡·날씨 근거 청크와 임베딩 |
 | Festivals | `festivals`, `festival_date_verifications`, `content_sources` | 축제 설명, 개최 시기, 날짜 검증 상태, 출처 청크와 임베딩 |
 | Local Info | `attractions`, `experiences`, `destination_external_links`, `content_sources` | 장소, 체험, 딥링크, 운영 정보 요약 청크와 임베딩 |
 | Embeddings | `rag_chunks.embedding_ref` | 벡터 ID, 모델 버전, 청크 메타데이터 |
 
-VectorDB에는 사용자 개인정보, 대화 전문, 비공개 운영 메모를 저장하지 않는다.
+S3 vector index에는 사용자 개인정보, 대화 전문, 비공개 운영 메모를 저장하지 않는다.
 
 ### DynamoDB Logs
 
@@ -1102,7 +1102,7 @@ Agent는 `confirmed` 결과만 일정에 직접 배치한다.
 
 ## 8.9 데이터 수집 계획 반영 기준
 
-`docs/04_data_collect_plan`의 핵심 흐름은 `자동 수집 → DB 임시 적재 → 취득 상태 분류 → 공식 사이트 확인/Web Search Worker → 수동 검수 → 정규화 DB 적재`다.
+`docs/03_data_collect_plan`의 핵심 흐름은 `자동 수집 → DB 임시 적재 → 취득 상태 분류 → 공식 사이트 확인/Web Search Worker → 수동 검수 → 정규화 DB 적재`다.
 이를 ERD에 반영하기 위해 `data_ingestion_batches`, `raw_source_snapshots`, `staging_records`, `data_verifications`를 둔다.
 정규화 원장은 `destinations`, `attractions`, `festivals`에 저장하고, Raw 원본과 검수 이력은 별도 테이블에 보존한다.
 
@@ -1138,7 +1138,7 @@ Agent는 `confirmed` 결과만 일정에 직접 배치한다.
 3. API 명세에 인증 세션, 검색 조건, Agent 실행 상태, 비동기 작업 상태 조회 엔드포인트를 추가할지 결정한다.
 4. MySQL 8 LTS DDL 또는 ORM 모델로 변환한다.
 5. PoC 시드 데이터 기준으로 `destinations`, `themes`, `destination_themes`, `festivals`, `destination_monthly_weather`를 우선 적재한다.
-6. RAG 검색용 별도 VectorDB의 제품과 인덱스 스키마를 결정한다.
+6. RAG 검색용 S3 vector index의 prefix, metadata filter, 재색인 스키마를 결정한다.
 7. DynamoDB 로그 그룹별 파티션 키, 정렬 키, TTL 기준을 확정한다.
 8. Raw 수집 데이터 저장 위치(S3 또는 파일 저장소), 보존 기간, 해시 정책을 확정한다.
 9. `chat_messages`를 실제 구현할 경우 TTL 삭제 배치와 개인정보 마스킹 정책을 먼저 정의한다.
@@ -1147,5 +1147,5 @@ Agent는 `confirmed` 결과만 일정에 직접 배치한다.
 
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 | --- | --- | --- | --- |
-| v0.2 | 2026-06-04 | 로브 기획팀 | 첨부 ERD 초안, 04 데이터 수집 계획, MySQL 8 LTS, VectorDB/RAG Index, DynamoDB NoSQL 로그 구조를 통합한 DB 설계 초안 작성 |
+| v0.2 | 2026-06-04 | 로브 기획팀 | 첨부 ERD 초안, 04 데이터 수집 계획, MySQL 8 LTS, S3 vector 기반 RAG Index, DynamoDB NoSQL 로그 구조를 통합한 DB 설계 초안 작성 |
 | v0.1 | 2026-05-29 | 로브 기획팀 | 데이터베이스 설계 명세서 초안 작성 |

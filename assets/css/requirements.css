@@ -475,6 +475,26 @@
         flex-shrink: 0;
       }
 
+      .doc-figure {
+        margin: 16px 0 24px;
+      }
+
+      .doc-figure img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--rule);
+        border-radius: 8px;
+        background: var(--white);
+      }
+
+      .doc-figure figcaption {
+        margin-top: 8px;
+        color: var(--ink3);
+        font-size: 0.82rem;
+        line-height: 1.5;
+      }
+
       /* ── SIMPLE 2-COL TABLE ── */
       .info-tbl {
         width: 100%;

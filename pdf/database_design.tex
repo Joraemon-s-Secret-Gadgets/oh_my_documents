@@ -1,0 +1,844 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=22mm]{geometry}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\usepackage{kotex}
+\usepackage{graphicx}
+\usepackage[table]{xcolor}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{setspace}
+\setmainfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setsansfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setmonofont{Consolas}
+\newfontfamily\jpfont[Path=C:/Windows/Fonts/]{NotoSansJP-VF.ttf}
+\setCJKmainfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setCJKsansfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setCJKmonofont[Path=C:/Windows/Fonts/]{malgun.ttf}
+\XeTeXlinebreaklocale "ko"
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\binoppenalty=10000
+\relpenalty=10000
+\emergencystretch=2em
+\sloppy
+\newcommand{\DocNeedspace}[1]{\par\ifdim\dimexpr\pagegoal-\pagetotal\relax<#1\newpage\fi}
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue}
+\definecolor{LovvGreen}{HTML}{1B3B32}
+\definecolor{LovvGreenDark}{HTML}{10251F}
+\definecolor{LovvGold}{HTML}{D4AF37}
+\definecolor{LovvPaper}{HTML}{F7F3EA}
+\renewcommand{\arraystretch}{1.35}
+\setlength{\tabcolsep}{2pt}
+\setlength{\LTleft}{\fill}
+\setlength{\LTright}{\fill}
+\setlist[itemize]{leftmargin=*, itemsep=2pt, topsep=2pt}
+\setstretch{1.08}
+\setlength{\headheight}{30pt}
+\setcounter{tocdepth}{2}
+\newcommand{\TocNoChildTight}{\vspace{-0.28em}}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\hbox{\makebox[42pt][c]{\includegraphics[width=38pt,height=13pt,keepaspectratio]{../assets/images/SK-Networks-logo.png}}\hspace{0.7em}\makebox[42pt][c]{\includegraphics[width=44pt,height=15pt,keepaspectratio]{../assets/images/en-core-logo.png}}\hspace{0.7em}\makebox[42pt][c]{\includegraphics[width=38pt,height=13pt,keepaspectratio]{../assets/images/playdata-logo.png}}}}
+\rhead{\scriptsize v0.3 | 설계 진행중 (Designing)}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{LovvGreen}\leaders\hrule height \headrulewidth\hfill}}
+\begin{document}
+\begin{titlepage}
+\thispagestyle{empty}
+
+\noindent \hbox to\textwidth{\makebox[0.28\textwidth][c]{\includegraphics[width=0.22\textwidth,height=0.82cm,keepaspectratio]{../assets/images/SK-Networks-logo.png}}\hfil \makebox[0.28\textwidth][c]{\includegraphics[width=0.26\textwidth,height=0.98cm,keepaspectratio]{../assets/images/en-core-logo.png}}\hfil \makebox[0.28\textwidth][c]{\includegraphics[width=0.22\textwidth,height=0.82cm,keepaspectratio]{../assets/images/playdata-logo.png}}}
+\vspace{1em}
+\par\noindent\color{LovvGold}\rule{\textwidth}{1.2pt}\color{black}
+
+\centering
+\vspace*{0.16\textheight}
+{\Huge\bfseries 데이터베이스 설계 명세서\par}
+
+\vspace{1.5em}
+{\large 로브 서비스 데이터베이스 설계\par}
+
+\vfill
+{\Large\bfseries 조라에몽의 만능 도구들\par}\vspace{0.8em}
+{\Large 이창우, 전승권, 전종혁, 조동휘, 최수아\\[0.8em]{\large 멘토 최민수}\par}
+\vspace{2em}
+{\large 2026-05-30\par}
+\end{titlepage}
+\begingroup
+\fontsize{11.7pt}{12.5pt}\selectfont
+\setlength{\parskip}{0pt}
+\tableofcontents
+\endgroup
+\newpage
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{1. 문서 개요}
+\addcontentsline{toc}{section}{1. 문서 개요}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{1.1 목적}
+\addcontentsline{toc}{subsection}{1.1 목적}
+
+
+\DocNeedspace{3\baselineskip}
+본 문서는 로브 서비스의 핵심 데이터 모델, 테이블 후보, 관계, 인덱스, 보존 정책을 정의한다.
+
+\DocNeedspace{3\baselineskip}
+PoC에서는 일부 데이터를 정적 파일과 로컬 스토리지로 대체할 수 있으나, Production 전환 시 본 문서를 기준으로 데이터베이스를 설계한다.
+
+
+\DocNeedspace{24\baselineskip}
+\subsection*{1.2 설계 기준}
+\addcontentsline{toc}{subsection}{1.2 설계 기준}
+
+
+\DocNeedspace{18\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.160\linewidth}>{\RaggedRight\arraybackslash}m{0.272\linewidth}>{\RaggedRight\arraybackslash}m{0.488\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.160\linewidth}}{\textbf{항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.272\linewidth}}{\textbf{결정}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.488\linewidth}}{\textbf{비고}} \\
+\midrule
+\endhead
+기본 모델 & 관계형 데이터베이스 우선 & 서비스 핵심 데이터는 정규화된 관계형 모델을 기준으로 설계한다. \\
+RDBMS & MySQL 8 LTS & 사용자, 목적지, 축제, 추천, 저장 일정, 검토 이력 등 핵심 트랜잭션 데이터를 저장한다. \\
+NoSQL & AWS DynamoDB & AgentCore/SAM 실행 상태, 비동기 작업, 사용자 이벤트 로그, API 로그처럼 TTL이 필요한 비정형 데이터를 저장한다. \\
+RAG Vector Index & S3 vector 기능 활용 & RAG 검색용 chunk, embedding, metadata filter를 S3 vector 기능 기반 검색 인덱스로 관리한다. 별도 벡터 DB 제품 도입은 기본 전제가 아니다. \\
+대화 전문 & 저장하지 않음 & 요구사항 \texttt{NFR-\allowbreak{}013}에 따라 사용자 대화 로그 전문은 서버나 외부 저장소에 장기 저장하지 않는다. \\
+보조 저장소 & DynamoDB 및 S3 vector index & 로그성 데이터와 검색 보조 데이터를 MySQL 원장과 분리해 관리한다. \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{24\baselineskip}
+\subsection*{1.3 저장소 책임}
+\addcontentsline{toc}{subsection}{1.3 저장소 책임}
+
+
+\DocNeedspace{14\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.139\linewidth}>{\RaggedRight\arraybackslash}m{0.389\linewidth}>{\RaggedRight\arraybackslash}m{0.392\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.139\linewidth}}{\textbf{저장소}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.389\linewidth}}{\textbf{책임}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.392\linewidth}}{\textbf{주요 데이터}} \\
+\midrule
+\endhead
+MySQL 8 LTS & 서비스 원장, 트랜잭션, 조회 기준 데이터 & 사용자 계정, 역할, 선호, 일정, 피드백, 북마크, 방문 기록, 목적지, 축제, 검수 이력 \\
+{\scriptsize Dynamo\allowbreak{}DB} & 비정형 실행 상태, 이벤트 로그, TTL 로그, 수집 정규화 결과 & Agent 실행 상태, async job, 사용자 행동 이벤트, API 호출 로그, feedback clickstream, admin operation trace, City/Attraction/Festival/VisitorStatistics 정규화 문서 \\
+S3 vector index & 의미 검색 인덱스 & 목적지·축제·관광지 문서 chunk, embedding, source reference, metadata filter \\
+Object Storage & 원본 수집 파일과 대용량 정적 산출물 & S3 Raw 수집 원본, 전처리 결과, 이미지/첨부 파일 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{2. 개념 설계}
+\addcontentsline{toc}{section}{2. 개념 설계}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{2.1 핵심 도메인}
+\addcontentsline{toc}{subsection}{2.1 핵심 도메인}
+
+
+\DocNeedspace{20\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.080\linewidth}>{\RaggedRight\arraybackslash}m{0.466\linewidth}>{\RaggedRight\arraybackslash}m{0.374\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.080\linewidth}}{\textbf{도메인}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.466\linewidth}}{\textbf{설명}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.374\linewidth}}{\textbf{대표 엔티티}} \\
+\midrule
+\endhead
+사용자·권한 & 일반 여행 사용자, 관광 운영자, 서비스 관리자, 데이터 제공 기관의 계정과 권한 & User, SocialAccount, Role, Organization \\
+개인화 & 온보딩 선호, 북마크, 방문 기록, 별점, 좋아요/싫어요 기반 개인화 입력 & UserProfile, UserPreference, Bookmark, VisitRecord, UserFeedback \\
+여행 콘텐츠 & 국가, 도시, 소도시, 관광지, 축제, 체험, 외부 링크, 방문·관광 통계 & Destination, Attraction, Festival, Experience, VisitorStatistics, ContentSource \\
+추천·일정 & 추천 요청, 추천 결과, 생성 일정, 일정 아이템, 대체 일정 & RecommendationRequest, RecommendationResult, Itinerary \\
+운영 검수 & 수집 데이터 배치, 원천 스냅샷, 검수 상태, 승인·반려 이력 & DataSubmission, DataVerification, AuditLog \\
+Agent·로그 & Agent 실행, 비동기 작업, API 호출, 사용자 이벤트, 운영 trace & AgentRun, AsyncJob, EventLog \\
+RAG 검색 & 검색 문서, chunk, embedding, metadata filter & RagDocument, RagChunk, S3VectorIndex \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{24\baselineskip}
+\subsection*{2.2 사용자 데이터 개념 모델}
+\addcontentsline{toc}{subsection}{2.2 사용자 데이터 개념 모델}
+
+
+\DocNeedspace{3\baselineskip}
+사용자 데이터는 최종 상태를 보존해야 하는 원장 데이터와, 분석·디버깅에 필요한 일시 이벤트 데이터로 나눈다.
+
+
+\DocNeedspace{12\baselineskip}
+\begin{footnotesize}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.105\linewidth}>{\RaggedRight\arraybackslash}m{0.129\linewidth}>{\RaggedRight\arraybackslash}m{0.378\linewidth}>{\RaggedRight\arraybackslash}m{0.288\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.105\linewidth}}{\textbf{구분}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.129\linewidth}}{\textbf{저장소}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.378\linewidth}}{\textbf{저장 대상}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.288\linewidth}}{\textbf{저장하지 않는 대상}} \\
+\midrule
+\endhead
+사용자 원장 & MySQL & 계정, 소셜 계정, 역할, 온보딩 결과, 선호 테마, 저장 일정, 피드백, 북마크, 방문 기록, 별점 & 대화 전문, 민감 자유 입력 원문 \\
+사용자 이벤트 & {\scriptsize Dynamo\allowbreak{}DB} & 로그인/로그아웃 이벤트, 추천 실행 이벤트, 피드백 클릭 이벤트, 화면 이벤트, 오류 로그 & 사용자 상태의 최종 원장, 삭제 권한이 필요한 본문 데이터 \\
+추천 검색 보조 & S3 vector index & 사용자 조건과 매칭할 콘텐츠 chunk 및 embedding & 사용자 개인정보, 대화 전문, 비공개 운영 메모 \\
+\bottomrule
+\end{longtable}
+\end{footnotesize}
+
+
+\DocNeedspace{24\baselineskip}
+\subsection*{2.3 개념 ERD}
+\addcontentsline{toc}{subsection}{2.3 개념 ERD}
+
+
+\DocNeedspace{18\baselineskip}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth,height=0.72\textheight,keepaspectratio]{../assets/images/database-concept-erd.png}
+\caption*{Lovv 개념 ERD}
+\end{figure}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{3. 논리 설계}
+\addcontentsline{toc}{section}{3. 논리 설계}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{3.1 MySQL 논리 모델}
+\addcontentsline{toc}{subsection}{3.1 MySQL 논리 모델}
+
+
+\DocNeedspace{3\baselineskip}
+MySQL은 서비스 화면과 API가 신뢰해야 하는 최종 상태를 저장한다.
+
+\DocNeedspace{3\baselineskip}
+사용자가 조회·수정·삭제할 수 있어야 하는 데이터는 MySQL에 원장으로 둔다.
+
+
+\DocNeedspace{22\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.080\linewidth}>{\RaggedRight\arraybackslash}m{0.414\linewidth}>{\RaggedRight\arraybackslash}m{0.426\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.080\linewidth}}{\textbf{영역}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.414\linewidth}}{\textbf{테이블}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.426\linewidth}}{\textbf{책임}} \\
+\midrule
+\endhead
+인증·권한 & \texttt{users}, \texttt{user\_\allowbreak{}social\_\allowbreak{}accounts}, \texttt{roles}, \texttt{user\_\allowbreak{}roles}, \texttt{organizations} & 사용자 식별, 소셜 로그인 연결, 권한과 소속 관리 \\
+사용자 프로필 & \texttt{user\_\allowbreak{}profiles}, \texttt{user\_\allowbreak{}preferences}, \texttt{user\_\allowbreak{}preference\_\allowbreak{}themes} & 온보딩 완료 상태, 대도시 스타일 선택, 기본 테마 가중치 \\
+추천 조건 & \texttt{recommendation\_\allowbreak{}requests}, \texttt{search\_\allowbreak{}criteria} & 구조화된 추천 요청과 확정 조건 저장 \\
+추천 결과 & \texttt{recommendation\_\allowbreak{}results}, \texttt{recommendation\_\allowbreak{}candidate\_\allowbreak{}scores} & 추천 결과, 점수, explainability, 후보 비교 근거 \\
+일정 & \texttt{itineraries}, \texttt{itinerary\_\allowbreak{}days}, \texttt{itinerary\_\allowbreak{}items}, \texttt{saved\_\allowbreak{}itineraries} & 생성 일정, 일정 상세, 사용자 저장 목록 \\
+개인화 행동 & \texttt{user\_\allowbreak{}feedback}, \texttt{bookmarks}, \texttt{visit\_\allowbreak{}records}, \texttt{visit\_\allowbreak{}ratings} & 좋아요/싫어요, 북마크, 실제 방문 기록, 방문 별점 \\
+콘텐츠 & \texttt{destinations}, \texttt{attractions}, \texttt{festivals}, \texttt{experiences}, \texttt{visitor\_\allowbreak{}statistics}, \texttt{content\_\allowbreak{}sources} & 목적지·관광지·축제·체험, 방문·관광 통계, 출처 원장 \\
+운영 검수 & \texttt{data\_\allowbreak{}submissions}, \texttt{data\_\allowbreak{}submission\_\allowbreak{}reviews}, \texttt{data\_\allowbreak{}verifications}, \texttt{audit\_\allowbreak{}logs} & 데이터 제안, 승인·반려, 검수 이력 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{24\baselineskip}
+\subsection*{3.2 RDB 사용자 설계}
+\addcontentsline{toc}{subsection}{3.2 RDB 사용자 설계}
+
+
+\DocNeedspace{3\baselineskip}
+사용자 RDB 설계는 Production 기준의 계정 기반 저장을 담당한다.
+
+\DocNeedspace{3\baselineskip}
+PoC에서는 로컬 스토리지로 대체할 수 있으나, Production에서는 아래 테이블을 기준으로 마이페이지와 개인화 API를 구현한다.
+
+
+\DocNeedspace{5\baselineskip}
+\subsubsection*{3.2.1 \texttt{users}}
+
+
+\DocNeedspace{24\baselineskip}
+\begin{footnotesize}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.210\linewidth}>{\RaggedRight\arraybackslash}m{0.139\linewidth}>{\RaggedRight\arraybackslash}m{0.170\linewidth}>{\RaggedRight\arraybackslash}m{0.381\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.210\linewidth}}{\textbf{컬럼}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.139\linewidth}}{\textbf{타입}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.170\linewidth}}{\textbf{제약}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.381\linewidth}}{\textbf{설명}} \\
+\midrule
+\endhead
+\texttt{id} & char(36) & PK & 사용자 ID \\
+\texttt{email} & varchar(255) & unique, nullable & 이메일. 소셜 로그인만 사용할 경우 nullable \\
+\texttt{display\_\allowbreak{}name} & varchar(80) & not null & 서비스 표시명 \\
+\texttt{profile\_\allowbreak{}image\_\allowbreak{}url} & varchar(500) & {\scriptsize nullable} & 프로필 이미지 \\
+\texttt{status} & enum & not null & \texttt{active}, \texttt{blocked}, \texttt{deleted} \\
+\texttt{last\_\allowbreak{}login\_\allowbreak{}at} & {\scriptsize datetime} & {\scriptsize nullable} & 마지막 로그인 시각 \\
+\texttt{created\_\allowbreak{}at} & {\scriptsize datetime} & not null & 생성 시각 \\
+\texttt{updated\_\allowbreak{}at} & {\scriptsize datetime} & not null & 수정 시각 \\
+\texttt{deleted\_\allowbreak{}at} & {\scriptsize datetime} & {\scriptsize nullable} & 탈퇴 또는 삭제 시각 \\
+\bottomrule
+\end{longtable}
+\end{footnotesize}
+
+
+\DocNeedspace{5\baselineskip}
+\subsubsection*{3.2.2 \texttt{user\_\allowbreak{}social\_\allowbreak{}accounts}}
+
+
+\DocNeedspace{16\baselineskip}
+\begin{footnotesize}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.223\linewidth}>{\RaggedRight\arraybackslash}m{0.160\linewidth}>{\RaggedRight\arraybackslash}m{0.103\linewidth}>{\RaggedRight\arraybackslash}m{0.414\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.223\linewidth}}{\textbf{컬럼}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.160\linewidth}}{\textbf{타입}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.103\linewidth}}{\textbf{제약}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.414\linewidth}}{\textbf{설명}} \\
+\midrule
+\endhead
+\texttt{id} & char(36) & PK & 소셜 계정 연결 ID \\
+\texttt{user\_\allowbreak{}id} & char(36) & FK & \texttt{users.\allowbreak{}id} \\
+\texttt{provider} & varchar(30) & not null & \texttt{google}, \texttt{kakao}, \texttt{naver} 등 \\
+\texttt{provider\_\allowbreak{}user\_\allowbreak{}id} & varchar(255) & not null & 소셜 제공자 사용자 ID \\
+\texttt{created\_\allowbreak{}at} & {\scriptsize datetime} & not null & 연결 시각 \\
+\bottomrule
+\end{longtable}
+\end{footnotesize}
+
+
+\DocNeedspace{3\baselineskip}
+Unique: (\texttt{provider}, \texttt{provider\_\allowbreak{}user\_\allowbreak{}id})
+
+
+\DocNeedspace{5\baselineskip}
+\subsubsection*{3.2.3 \texttt{user\_\allowbreak{}profiles}}
+
+
+\DocNeedspace{20\baselineskip}
+\begin{footnotesize}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.352\linewidth}>{\RaggedRight\arraybackslash}m{0.158\linewidth}>{\RaggedRight\arraybackslash}m{0.127\linewidth}>{\RaggedRight\arraybackslash}m{0.262\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.352\linewidth}}{\textbf{컬럼}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.158\linewidth}}{\textbf{타입}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.127\linewidth}}{\textbf{제약}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.262\linewidth}}{\textbf{설명}} \\
+\midrule
+\endhead
+\texttt{user\_\allowbreak{}id} & char(36) & PK, FK & \texttt{users.\allowbreak{}id} \\
+\texttt{onboarding\_\allowbreak{}completed} & boolean & not null & 온보딩 완료 여부 \\
+\texttt{onboarding\_\allowbreak{}completed\_\allowbreak{}at} & {\scriptsize datetime} & {\scriptsize nullable} & 온보딩 완료 시각 \\
+\texttt{country\_\allowbreak{}track} & varchar(20) & {\scriptsize nullable} & 한국/일본 등 추천 트랙 \\
+\texttt{preferred\_\allowbreak{}styles} & json & {\scriptsize nullable} & 선택한 대도시 스타일 스냅샷 \\
+\texttt{created\_\allowbreak{}at} & {\scriptsize datetime} & not null & 생성 시각 \\
+\texttt{updated\_\allowbreak{}at} & {\scriptsize datetime} & not null & 수정 시각 \\
+\bottomrule
+\end{longtable}
+\end{footnotesize}
+
+
+\DocNeedspace{5\baselineskip}
+\subsubsection*{3.2.4 \texttt{user\_\allowbreak{}preferences}}
+
+
+\DocNeedspace{22\baselineskip}
+\begin{footnotesize}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.312\linewidth}>{\RaggedRight\arraybackslash}m{0.152\linewidth}>{\RaggedRight\arraybackslash}m{0.109\linewidth}>{\RaggedRight\arraybackslash}m{0.326\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.312\linewidth}}{\textbf{컬럼}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.152\linewidth}}{\textbf{타입}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.109\linewidth}}{\textbf{제약}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.326\linewidth}}{\textbf{설명}} \\
+\midrule
+\endhead
+\texttt{id} & char(36) & PK & 선호 프로필 ID \\
+\texttt{user\_\allowbreak{}id} & char(36) & FK & \texttt{users.\allowbreak{}id} \\
+\texttt{country\_\allowbreak{}track} & varchar(20) & not null & 한국/일본 등 추천 대상 \\
+\texttt{selected\_\allowbreak{}city\_\allowbreak{}style} & varchar(80) & {\scriptsize nullable} & 온보딩에서 선택한 대도시 스타일 \\
+\texttt{travel\_\allowbreak{}experience\_\allowbreak{}level} & varchar(30) & {\scriptsize nullable} & 초심자/경험자 등 여행 경험 수준 \\
+\texttt{mobility\_\allowbreak{}preference} & varchar(30) & {\scriptsize nullable} & 도보, 대중교통, 렌터카 등 이동 선호 \\
+\texttt{created\_\allowbreak{}at} & {\scriptsize datetime} & not null & 생성 시각 \\
+\texttt{updated\_\allowbreak{}at} & {\scriptsize datetime} & not null & 수정 시각 \\
+\bottomrule
+\end{longtable}
+\end{footnotesize}
+
+
+\DocNeedspace{3\baselineskip}
+Index: (\texttt{user\_\allowbreak{}id}, \texttt{country\_\allowbreak{}track})
+
+
+\DocNeedspace{5\baselineskip}
+\subsubsection*{3.2.5 \texttt{user\_\allowbreak{}preference\_\allowbreak{}themes}}
+
+
+\DocNeedspace{12\baselineskip}
+\begin{footnotesize}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.223\linewidth}>{\RaggedRight\arraybackslash}m{0.182\linewidth}>{\RaggedRight\arraybackslash}m{0.124\linewidth}>{\RaggedRight\arraybackslash}m{0.371\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.223\linewidth}}{\textbf{컬럼}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.182\linewidth}}{\textbf{타입}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.124\linewidth}}{\textbf{제약}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.371\linewidth}}{\textbf{설명}} \\
+\midrule
+\endhead
+\texttt{preference\_\allowbreak{}id} & char(36) & PK, FK & \texttt{user\_\allowbreak{}preferences.\allowbreak{}id} \\
+\texttt{theme\_\allowbreak{}id} & char(36) & PK, FK & \texttt{themes.\allowbreak{}id} \\
+\texttt{weight} & decimal(5,2) & not null & 테마 가중치 \\
+\bottomrule
+\end{longtable}
+\end{footnotesize}
+
+
+\DocNeedspace{5\baselineskip}
+\subsubsection*{3.2.6 \texttt{saved\_\allowbreak{}itineraries}}
+
+
+\DocNeedspace{18\baselineskip}
+\begin{footnotesize}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.238\linewidth}>{\RaggedRight\arraybackslash}m{0.207\linewidth}>{\RaggedRight\arraybackslash}m{0.133\linewidth}>{\RaggedRight\arraybackslash}m{0.323\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.238\linewidth}}{\textbf{컬럼}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.207\linewidth}}{\textbf{타입}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.133\linewidth}}{\textbf{제약}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.323\linewidth}}{\textbf{설명}} \\
+\midrule
+\endhead
+\texttt{id} & char(36) & PK & 저장 ID \\
+\texttt{user\_\allowbreak{}id} & char(36) & FK & \texttt{users.\allowbreak{}id} \\
+\texttt{itinerary\_\allowbreak{}id} & char(36) & FK & \texttt{itineraries.\allowbreak{}id} \\
+\texttt{title} & varchar(160) & {\scriptsize nullable} & 사용자 지정 제목 \\
+\texttt{created\_\allowbreak{}at} & {\scriptsize datetime} & not null & 저장 시각 \\
+\texttt{deleted\_\allowbreak{}at} & {\scriptsize datetime} & {\scriptsize nullable} & 사용자 삭제 시각 \\
+\bottomrule
+\end{longtable}
+\end{footnotesize}
+
+
+\DocNeedspace{3\baselineskip}
+Unique: (\texttt{user\_\allowbreak{}id}, \texttt{itinerary\_\allowbreak{}id}, \texttt{deleted\_\allowbreak{}at})
+
+
+\DocNeedspace{5\baselineskip}
+\subsubsection*{3.2.7 \texttt{user\_\allowbreak{}feedback}}
+
+
+\DocNeedspace{24\baselineskip}
+\begin{footnotesize}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.173\linewidth}>{\RaggedRight\arraybackslash}m{0.123\linewidth}>{\RaggedRight\arraybackslash}m{0.095\linewidth}>{\RaggedRight\arraybackslash}m{0.509\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.173\linewidth}}{\textbf{컬럼}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.123\linewidth}}{\textbf{타입}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.095\linewidth}}{\textbf{제약}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.509\linewidth}}{\textbf{설명}} \\
+\midrule
+\endhead
+\texttt{id} & char(36) & PK & 피드백 ID \\
+\texttt{user\_\allowbreak{}id} & char(36) & FK & \texttt{users.\allowbreak{}id} \\
+\texttt{target\_\allowbreak{}type} & enum & not null & \texttt{destination}, \texttt{festival}, \texttt{itinerary}, \texttt{recommendation\_\allowbreak{}result} \\
+\texttt{target\_\allowbreak{}id} & char(36) & not null & 대상 ID \\
+\texttt{feedback\_\allowbreak{}type} & enum & not null & \texttt{like}, \texttt{dislike} \\
+\texttt{reason\_\allowbreak{}code} & varchar(60) & {\scriptsize nullable} & 선택형 피드백 사유 \\
+\texttt{created\_\allowbreak{}at} & {\scriptsize datetime} & not null & 생성 시각 \\
+\texttt{updated\_\allowbreak{}at} & {\scriptsize datetime} & not null & 수정 시각 \\
+\texttt{deleted\_\allowbreak{}at} & {\scriptsize datetime} & {\scriptsize nullable} & 삭제 시각 \\
+\bottomrule
+\end{longtable}
+\end{footnotesize}
+
+
+\DocNeedspace{3\baselineskip}
+Index: (\texttt{user\_\allowbreak{}id}, \texttt{created\_\allowbreak{}at}), (\texttt{target\_\allowbreak{}type}, \texttt{target\_\allowbreak{}id}, \texttt{feedback\_\allowbreak{}type})
+
+
+\DocNeedspace{5\baselineskip}
+\subsubsection*{3.2.8 \texttt{bookmarks}, \texttt{visit\_\allowbreak{}records}, \texttt{visit\_\allowbreak{}ratings}}
+
+
+\DocNeedspace{12\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.200\linewidth}>{\RaggedRight\arraybackslash}m{0.540\linewidth}>{\RaggedRight\arraybackslash}m{0.179\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.200\linewidth}}{\textbf{테이블}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.540\linewidth}}{\textbf{주요 컬럼}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.179\linewidth}}{\textbf{책임}} \\
+\midrule
+\endhead
+\texttt{bookmarks} & \texttt{id}, \texttt{user\_\allowbreak{}id}, \texttt{target\_\allowbreak{}type}, \texttt{target\_\allowbreak{}id}, \texttt{created\_\allowbreak{}at}, \texttt{deleted\_\allowbreak{}at} & 소도시·대도시 북마크 \\
+\texttt{visit\_\allowbreak{}records} & \texttt{id}, \texttt{user\_\allowbreak{}id}, \texttt{destination\_\allowbreak{}id}, \texttt{visited\_\allowbreak{}on}, \texttt{trip\_\allowbreak{}type}, \texttt{route\_\allowbreak{}json}, \texttt{memo}, \texttt{created\_\allowbreak{}at}, \texttt{deleted\_\allowbreak{}at} & 실제 방문 기록 \\
+\texttt{visit\_\allowbreak{}ratings} & \texttt{id}, \texttt{visit\_\allowbreak{}record\_\allowbreak{}id}, \texttt{user\_\allowbreak{}id}, \texttt{destination\_\allowbreak{}id}, \texttt{rating}, \texttt{rating\_\allowbreak{}reason}, \texttt{created\_\allowbreak{}at}, \texttt{deleted\_\allowbreak{}at} & 방문 소도시 별점 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{5\baselineskip}
+\subsubsection*{3.2.9 콘텐츠 및 방문 통계 원장}
+
+
+\DocNeedspace{3\baselineskip}
+수집 파이프라인의 정규화 문서는 DynamoDB에 먼저 적재할 수 있으나, API와 운영 검수에서 확정 기준으로 쓰는 콘텐츠 원장은 MySQL에 둔다.
+
+
+\DocNeedspace{16\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.210\linewidth}>{\RaggedRight\arraybackslash}m{0.452\linewidth}>{\RaggedRight\arraybackslash}m{0.258\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.210\linewidth}}{\textbf{테이블}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.452\linewidth}}{\textbf{주요 컬럼}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.258\linewidth}}{\textbf{책임}} \\
+\midrule
+\endhead
+\texttt{destinations} & \texttt{id}, \texttt{country}, \texttt{province\_\allowbreak{}or\_\allowbreak{}prefecture}, \texttt{city\_\allowbreak{}name}, \texttt{latitude}, \texttt{longitude}, \texttt{theme\_\allowbreak{}tags}, \texttt{recommended\_\allowbreak{}months}, \texttt{is\_\allowbreak{}active}, \texttt{source\_\allowbreak{}id}, \texttt{created\_\allowbreak{}at}, \texttt{updated\_\allowbreak{}at} & City/소도시 기준 원장 \\
+\texttt{attractions} & \texttt{id}, \texttt{destination\_\allowbreak{}id}, \texttt{name}, \texttt{content\_\allowbreak{}type}, \texttt{theme\_\allowbreak{}tags}, \texttt{address}, \texttt{source\_\allowbreak{}id}, \texttt{quality\_\allowbreak{}status}, \texttt{created\_\allowbreak{}at}, \texttt{updated\_\allowbreak{}at} & 관광지·체험 콘텐츠 원장 \\
+\texttt{festivals} & \texttt{id}, \texttt{destination\_\allowbreak{}id}, \texttt{name}, \texttt{start\_\allowbreak{}date}, \texttt{end\_\allowbreak{}date}, \texttt{date\_\allowbreak{}status}, \texttt{source\_\allowbreak{}id}, \texttt{quality\_\allowbreak{}status}, \texttt{created\_\allowbreak{}at}, \texttt{updated\_\allowbreak{}at} & 축제 콘텐츠와 검증 상태 원장 \\
+\texttt{visitor\_\allowbreak{}statistics} & \texttt{id}, \texttt{destination\_\allowbreak{}id}, \texttt{period}, \texttt{visitor\_\allowbreak{}type}, \texttt{value}, \texttt{unit}, \texttt{source\_\allowbreak{}type}, \texttt{source\_\allowbreak{}id}, \texttt{quality\_\allowbreak{}status}, \texttt{created\_\allowbreak{}at}, \texttt{updated\_\allowbreak{}at} & 월별 방문·관광 통계 보조 지표 \\
+\texttt{content\_\allowbreak{}sources} & \texttt{id}, \texttt{source\_\allowbreak{}type}, \texttt{source\_\allowbreak{}url}, \texttt{license\_\allowbreak{}type}, \texttt{raw\_\allowbreak{}s3\_\allowbreak{}uri}, \texttt{collected\_\allowbreak{}at}, \texttt{checksum}, \texttt{created\_\allowbreak{}at} & 수집 출처와 S3 Raw 원본 참조 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{3\baselineskip}
+Index: \texttt{destinations(country, province\_\allowbreak{}or\_\allowbreak{}prefecture)}, \texttt{attractions(destination\_\allowbreak{}id, content\_\allowbreak{}type)}, \texttt{festivals(destination\_\allowbreak{}id, start\_\allowbreak{}date)}, \texttt{visitor\_\allowbreak{}statistics(destination\_\allowbreak{}id, period)}
+
+
+\DocNeedspace{24\baselineskip}
+\subsection*{3.3 DynamoDB NoSQL 사용자 설계}
+\addcontentsline{toc}{subsection}{3.3 DynamoDB NoSQL 사용자 설계}
+
+
+\DocNeedspace{3\baselineskip}
+DynamoDB는 사용자 원장을 대체하지 않는다.
+
+\DocNeedspace{3\baselineskip}
+사용자 상태, 저장 일정, 명시적 선호의 최종값은 MySQL에 두고, DynamoDB에는 실행 추적과 TTL 이벤트를 둔다.
+
+\DocNeedspace{3\baselineskip}
+또한 데이터 수집 계획의 S3 Raw Bucket -> Lambda 전처리 결과는 City, Attraction, Festival, VisitorStatistics 단위의 정규화 문서로 DynamoDB에 적재한다.\newline 이 정규화 문서는 검색·추천 후보 생성의 빠른 조회용이며, 운영 검수와 API 원장으로 확정된 값은 MySQL 테이블과 연결한다.
+
+
+\DocNeedspace{20\baselineskip}
+\begin{footnotesize}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.145\linewidth}>{\RaggedRight\arraybackslash}m{0.207\linewidth}>{\RaggedRight\arraybackslash}m{0.190\linewidth}>{\RaggedRight\arraybackslash}m{0.207\linewidth}>{\RaggedRight\arraybackslash}m{0.130\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.145\linewidth}}{\textbf{테이블}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.207\linewidth}}{\textbf{Partition Key}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.190\linewidth}}{\textbf{Sort Key}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.207\linewidth}}{\textbf{주요 속성}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.130\linewidth}}{\textbf{TTL}} \\
+\midrule
+\endhead
+\texttt{lovv\_\allowbreak{}user\_\allowbreak{}event\_\allowbreak{}logs} & \texttt{pk} = \texttt{USER\#\allowbreak{}\{\allowbreak{}user\_\allowbreak{}id\_\allowbreak{}hash\allowbreak{}\}} 또는 \texttt{ANON\#\allowbreak{}\{\allowbreak{}anonymous\_\allowbreak{}session\_\allowbreak{}id\allowbreak{}\}} & \texttt{sk} = \texttt{EVENT\#\allowbreak{}\{\allowbreak{}created\_\allowbreak{}at\allowbreak{}\}\#\allowbreak{}\{\allowbreak{}event\_\allowbreak{}id\allowbreak{}\}} & \texttt{event\_\allowbreak{}type}, \texttt{request\_\allowbreak{}id}, \texttt{session\_\allowbreak{}id}, \texttt{screen}, \texttt{action}, \texttt{target\_\allowbreak{}type}, \texttt{target\_\allowbreak{}id}, \texttt{metadata\_\allowbreak{}summary}, \texttt{ip\_\allowbreak{}hash}, \texttt{user\_\allowbreak{}agent\_\allowbreak{}hash} & \texttt{expires\_\allowbreak{}at} \\
+\texttt{lovv\_\allowbreak{}agent\_\allowbreak{}runs} & \texttt{pk} = \texttt{RUN\#\allowbreak{}\{\allowbreak{}agent\_\allowbreak{}run\_\allowbreak{}id\allowbreak{}\}} & \texttt{sk} = \texttt{STATE\#\allowbreak{}\{\allowbreak{}created\_\allowbreak{}at\allowbreak{}\}} & \texttt{user\_\allowbreak{}id\_\allowbreak{}hash}, \texttt{session\_\allowbreak{}id}, \texttt{recommendation\_\allowbreak{}request\_\allowbreak{}id}, \texttt{status}, \texttt{node\_\allowbreak{}name}, \texttt{tool\_\allowbreak{}name}, \texttt{next\_\allowbreak{}node}, \texttt{fulfilled\_\allowbreak{}matrix\_\allowbreak{}summary}, \texttt{target\_\allowbreak{}region}, \texttt{validation\_\allowbreak{}retry\_\allowbreak{}count}, \texttt{token\_\allowbreak{}usage}, \texttt{error\_\allowbreak{}code}, \texttt{payload\_\allowbreak{}summary} & \texttt{expires\_\allowbreak{}at} \\
+\texttt{lovv\_\allowbreak{}festival\_\allowbreak{}verify\_\allowbreak{}cache} & \texttt{pk} = \texttt{FESTIVAL\#\allowbreak{}\{\allowbreak{}festival\_\allowbreak{}id\allowbreak{}\}} & \texttt{sk} = \texttt{YEAR\#\allowbreak{}\{\allowbreak{}travel\_\allowbreak{}year\allowbreak{}\}} & \texttt{date\_\allowbreak{}status}, \texttt{start\_\allowbreak{}date}, \texttt{end\_\allowbreak{}date}, \texttt{source\_\allowbreak{}url}, \texttt{source\_\allowbreak{}type}, \texttt{verified\_\allowbreak{}at}, \texttt{confidence}, \texttt{target\_\allowbreak{}region}, \texttt{travel\_\allowbreak{}month} & \texttt{expires\_\allowbreak{}at} \\
+\texttt{lovv\_\allowbreak{}async\_\allowbreak{}jobs} & \texttt{pk} = \texttt{JOB\#\allowbreak{}\{\allowbreak{}job\_\allowbreak{}id\allowbreak{}\}} & \texttt{sk} = \texttt{STATUS\#\allowbreak{}\{\allowbreak{}updated\_\allowbreak{}at\allowbreak{}\}} & \texttt{job\_\allowbreak{}type}, \texttt{status}, \texttt{requested\_\allowbreak{}by\_\allowbreak{}user\_\allowbreak{}hash}, \texttt{progress}, \texttt{result\_\allowbreak{}ref}, \texttt{error\_\allowbreak{}code} & \texttt{expires\_\allowbreak{}at} \\
+\texttt{lovv\_\allowbreak{}api\_\allowbreak{}logs} & \texttt{pk} = \texttt{API\#\allowbreak{}\{\allowbreak{}yyyy\allowbreak{}MMdd\allowbreak{}\}\#\allowbreak{}\{\allowbreak{}endpoint\_\allowbreak{}group\allowbreak{}\}} & \texttt{sk} = \texttt{created\_\allowbreak{}at\#\allowbreak{}\{\allowbreak{}request\_\allowbreak{}id\allowbreak{}\}} & \texttt{method}, \texttt{path}, \texttt{status}, \texttt{latency\_\allowbreak{}ms}, \texttt{user\_\allowbreak{}id\_\allowbreak{}hash}, \texttt{error\_\allowbreak{}code} & \texttt{expires\_\allowbreak{}at} \\
+\texttt{lovv\_\allowbreak{}content\_\allowbreak{}documents} & \texttt{pk} = \texttt{CONTENT\#\allowbreak{}\{\allowbreak{}country\allowbreak{}\}\#\allowbreak{}\{\allowbreak{}entity\_\allowbreak{}type\allowbreak{}\}} & \texttt{sk} = \texttt{ENTITY\#\allowbreak{}\{\allowbreak{}entity\_\allowbreak{}id\allowbreak{}\}} & \texttt{city\_\allowbreak{}id}, \texttt{source\_\allowbreak{}type}, \texttt{source\_\allowbreak{}url}, \texttt{normalized\_\allowbreak{}payload}, \texttt{quality\_\allowbreak{}status}, \texttt{raw\_\allowbreak{}s3\_\allowbreak{}uri}, \texttt{updated\_\allowbreak{}at} & 없음 \\
+\texttt{lovv\_\allowbreak{}visitor\_\allowbreak{}statistics} & \texttt{pk} = \texttt{CITY\#\allowbreak{}\{\allowbreak{}city\_\allowbreak{}id\allowbreak{}\}} & \texttt{sk} = \texttt{STAT\#\allowbreak{}\{\allowbreak{}period\allowbreak{}\}\#\allowbreak{}\{\allowbreak{}source\_\allowbreak{}type\allowbreak{}\}} & \texttt{country}, \texttt{period}, \texttt{visitor\_\allowbreak{}type}, \texttt{value}, \texttt{unit}, \texttt{source\_\allowbreak{}url}, \texttt{collected\_\allowbreak{}at}, \texttt{quality\_\allowbreak{}status} & 없음 \\
+\bottomrule
+\end{longtable}
+\end{footnotesize}
+
+
+\DocNeedspace{5\baselineskip}
+\subsubsection*{NoSQL 사용자 이벤트 저장 원칙}
+
+
+\DocNeedspace{20\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.120\linewidth}>{\RaggedRight\arraybackslash}m{0.820\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.120\linewidth}}{\textbf{원칙}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.820\linewidth}}{\textbf{내용}} \\
+\midrule
+\endhead
+원장 금지 & 사용자 프로필, 선호 최종값, 저장 일정, 명시적 피드백 최종값은 MySQL을 기준으로 한다. \\
+해시 저장 & \texttt{user\_\allowbreak{}id}, IP, user agent는 원문 대신 해시 또는 마스킹 값으로 저장한다. \\
+대화 전문 금지 & 사용자의 자연어 대화 전문, 민감 자유 입력, 비공개 운영 메모는 저장하지 않는다. \\
+TTL 필수 & 이벤트와 trace에는 \texttt{expires\_\allowbreak{}at}을 두고 보존 기간 이후 자동 삭제한다. \\
+추적 연결 & \texttt{recommendation\_\allowbreak{}request\_\allowbreak{}id}, \texttt{agent\_\allowbreak{}run\_\allowbreak{}id}, \texttt{request\_\allowbreak{}id}로 MySQL 원장과 장애 분석 로그를 연결한다. \\
+검증 캐시 & 축제 검증 캐시는 \texttt{festival\_\allowbreak{}id + travel\allowbreak{}Year} 단위로 저장하고 \texttt{confirmed} 30일, \texttt{tentative} 7일, \texttt{unknown/\allowbreak{}outdated} 1일 TTL을 권장한다. \\
+수집 정규화 & S3 Raw 원본은 Object Storage에 보존하고, Lambda 전처리 결과만 DynamoDB 정규화 문서에 저장한다. \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{24\baselineskip}
+\subsection*{3.4 S3 vector index 논리 모델}
+\addcontentsline{toc}{subsection}{3.4 S3 vector index 논리 모델}
+
+
+\DocNeedspace{3\baselineskip}
+S3 vector index는 MySQL 또는 수집 원천을 검색용으로 복제한 인덱스다.
+
+\DocNeedspace{3\baselineskip}
+S3 vector index의 데이터는 원본이 아니며, 장애 복구나 재색인은 MySQL, DynamoDB 정규화 문서, S3 Raw 원본을 기준으로 수행한다.
+
+\DocNeedspace{3\baselineskip}
+별도 벡터 DB 제품이나 그래프 DB 이관은 현재 설계의 기본 범위가 아니다.
+
+
+\DocNeedspace{16\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.080\linewidth}>{\RaggedRight\arraybackslash}m{0.406\linewidth}>{\RaggedRight\arraybackslash}m{0.434\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.080\linewidth}}{\textbf{인덱스 대상}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.406\linewidth}}{\textbf{원본}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.434\linewidth}}{\textbf{S3 vector metadata}} \\
+\midrule
+\endhead
+목적지 & \texttt{destinations} & \texttt{destination\_\allowbreak{}id}, \texttt{country}, \texttt{region}, \texttt{themes}, \texttt{recommended\_\allowbreak{}months} \\
+축제 & \texttt{festivals} & \texttt{festival\_\allowbreak{}id}, \texttt{destination\_\allowbreak{}id}, \texttt{start\_\allowbreak{}date}, \texttt{end\_\allowbreak{}date}, \texttt{season\_\allowbreak{}tags} \\
+방문·관광 통계 & \texttt{visitor\_\allowbreak{}statistics}, \texttt{lovv\_\allowbreak{}visitor\_\allowbreak{}statistics} & \texttt{city\_\allowbreak{}id}, \texttt{period}, \texttt{visitor\_\allowbreak{}type}, \texttt{trend\_\allowbreak{}summary}, \texttt{source\_\allowbreak{}type} \\
+관광지·체험 & \texttt{attractions}, \texttt{experiences} & \texttt{content\_\allowbreak{}id}, \texttt{destination\_\allowbreak{}id}, \texttt{content\_\allowbreak{}type}, \texttt{theme\_\allowbreak{}tags} \\
+출처 문서 & \texttt{content\_\allowbreak{}sources}, object storage & \texttt{source\_\allowbreak{}id}, \texttt{source\_\allowbreak{}url}, \texttt{collected\_\allowbreak{}at}, \texttt{license\_\allowbreak{}type} \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{3\baselineskip}
+Agent 추천 검색은 S3 vector metadata에 \texttt{city\_\allowbreak{}id}, \texttt{country}, \texttt{latitude}, \texttt{longitude}, \texttt{theme\_\allowbreak{}tags}, \texttt{content\_\allowbreak{}type}, \texttt{recommended\_\allowbreak{}months}를 포함해야 한다.
+
+\DocNeedspace{3\baselineskip}
+\texttt{active\_\allowbreak{}required\_\allowbreak{}themes}, 거리 기반 1차 필터, 콘텐츠 타입 균형, 임베딩 유사도 재랭킹은 이 metadata와 MySQL 원장 필드를 함께 사용한다.
+
+
+\DocNeedspace{24\baselineskip}
+\subsection*{3.5 API 식별자 매핑}
+\addcontentsline{toc}{subsection}{3.5 API 식별자 매핑}
+
+
+\DocNeedspace{3\baselineskip}
+API 명세의 camelCase 식별자는 DB 내부에서는 snake\_case 컬럼 또는 DynamoDB 속성으로 매핑한다.
+
+
+\DocNeedspace{16\baselineskip}
+\begin{footnotesize}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.130\linewidth}>{\RaggedRight\arraybackslash}m{0.296\linewidth}>{\RaggedRight\arraybackslash}m{0.314\linewidth}>{\RaggedRight\arraybackslash}m{0.160\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.130\linewidth}}{\textbf{API 필드}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.296\linewidth}}{\textbf{MySQL 기준}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.314\linewidth}}{\textbf{DynamoDB/S3 vector 기준}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.160\linewidth}}{\textbf{비고}} \\
+\midrule
+\endhead
+\texttt{destina\allowbreak{}tion\allowbreak{}Id} & \texttt{destinations.\allowbreak{}id} & \texttt{city\_\allowbreak{}id}, \texttt{destination\_\allowbreak{}id} metadata & 지도 마커 진입과 추천 후보 필터의 공통 키 \\
+\texttt{festival\allowbreak{}Id} & \texttt{festivals.\allowbreak{}id} & \texttt{lovv\_\allowbreak{}festival\_\allowbreak{}verify\_\allowbreak{}cache.\allowbreak{}pk}, S3 vector metadata & 축제 날짜 검증 캐시와 추천 응답 연결 \\
+\texttt{recommen\allowbreak{}dation\allowbreak{}Id} & \texttt{recommendation\_\allowbreak{}results.\allowbreak{}id} & \texttt{recommendation\_\allowbreak{}request\_\allowbreak{}id}, \texttt{agent\_\allowbreak{}run\_\allowbreak{}id} 연결 속성 & 추천 결과 조회와 Agent trace 분석 연결 \\
+\texttt{itinerary\allowbreak{}Id} & \texttt{itineraries.\allowbreak{}id}, \texttt{saved\_\allowbreak{}itineraries.\allowbreak{}itinerary\_\allowbreak{}id} & 이벤트 로그의 \texttt{target\_\allowbreak{}id} & 저장 일정 조회·삭제 기준 \\
+\texttt{feedback\allowbreak{}Type} & \texttt{user\_\allowbreak{}feedback.\allowbreak{}feedback\_\allowbreak{}type} & 클릭 이벤트의 \texttt{action} 또는 \texttt{feedback\_\allowbreak{}type} & 최종 피드백 원장은 MySQL 기준 \\
+\bottomrule
+\end{longtable}
+\end{footnotesize}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{4. 물리 설계}
+\addcontentsline{toc}{section}{4. 물리 설계}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{4.1 MySQL 물리 설계 기준}
+\addcontentsline{toc}{subsection}{4.1 MySQL 물리 설계 기준}
+
+
+\DocNeedspace{16\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.125\linewidth}>{\RaggedRight\arraybackslash}m{0.815\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.125\linewidth}}{\textbf{기준}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.815\linewidth}}{\textbf{결정}} \\
+\midrule
+\endhead
+ID & \texttt{CHAR(36)} UUID 문자열을 기본으로 한다. \\
+시간 & \texttt{created\_\allowbreak{}at}, \texttt{updated\_\allowbreak{}at}, \texttt{deleted\_\allowbreak{}at}을 기본 감사 컬럼으로 둔다. \\
+삭제 & 사용자 삭제 가능 데이터는 soft delete를 기본으로 하고, 보존 기간 이후 익명화 또는 hard delete를 검토한다. \\
+JSON & 추천 조건 스냅샷, 점수 상세, 일정 경로처럼 유연한 구조는 MySQL \texttt{JSON}을 사용한다. \\
+외래키 & 사용자 원장과 일정·피드백·북마크는 FK를 둔다. 대량 로그는 FK 대신 참조 ID 문자열만 둔다. \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+\DocNeedspace{24\baselineskip}
+\subsection*{4.2 주요 인덱스}
+\addcontentsline{toc}{subsection}{4.2 주요 인덱스}
+
+
+\DocNeedspace{26\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.203\linewidth}>{\RaggedRight\arraybackslash}m{0.737\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.203\linewidth}}{\textbf{조회 패턴}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.737\linewidth}}{\textbf{인덱스 후보}} \\
+\midrule
+\endhead
+현재 사용자 조회 & \texttt{users(email)}, \texttt{user\_\allowbreak{}social\_\allowbreak{}accounts(provider, provider\_\allowbreak{}user\_\allowbreak{}id)} \\
+사용자 마이페이지 일정 & \texttt{saved\_\allowbreak{}itineraries(user\_\allowbreak{}id, created\_\allowbreak{}at desc)} \\
+사용자 선호 조회 & \texttt{user\_\allowbreak{}preferences(user\_\allowbreak{}id, country\_\allowbreak{}track)} \\
+사용자 피드백 이력 & \texttt{user\_\allowbreak{}feedback(user\_\allowbreak{}id, created\_\allowbreak{}at desc)} \\
+대상별 피드백 집계 & \texttt{user\_\allowbreak{}feedback(target\_\allowbreak{}type, target\_\allowbreak{}id, feedback\_\allowbreak{}type)} \\
+북마크 목록 & \texttt{bookmarks(user\_\allowbreak{}id, target\_\allowbreak{}type, created\_\allowbreak{}at desc)} \\
+방문 기록 & \texttt{visit\_\allowbreak{}records(user\_\allowbreak{}id, visited\_\allowbreak{}on desc)} \\
+목적지 탐색 & \texttt{destinations(country, is\_\allowbreak{}active)}, \texttt{destinations(country, province\_\allowbreak{}or\_\allowbreak{}prefecture)} \\
+방문·관광 통계 조회 & \texttt{visitor\_\allowbreak{}statistics(destination\_\allowbreak{}id, period)}, \texttt{visitor\_\allowbreak{}statistics(source\_\allowbreak{}type, period)} \\
+추천 결과 조회 & \texttt{recommendation\_\allowbreak{}results(recommendation\_\allowbreak{}request\_\allowbreak{}id)}, \texttt{itineraries(owner\_\allowbreak{}user\_\allowbreak{}id, created\_\allowbreak{}at desc)} \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+\DocNeedspace{24\baselineskip}
+\subsection*{4.3 DynamoDB 물리 설계 기준}
+\addcontentsline{toc}{subsection}{4.3 DynamoDB 물리 설계 기준}
+
+
+\DocNeedspace{16\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.156\linewidth}>{\RaggedRight\arraybackslash}m{0.784\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.156\linewidth}}{\textbf{기준}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.784\linewidth}}{\textbf{결정}} \\
+\midrule
+\endhead
+파티션 분산 & 일자, 이벤트 타입, 해시 사용자 ID를 조합해 hot partition을 피한다. \\
+조회 단위 & 사용자 이벤트 타임라인, Agent run 단건 trace, API 일자별 장애 분석을 기준으로 PK/SK를 설계한다. \\
+TTL & 로그성 테이블은 \texttt{expires\_\allowbreak{}at}을 필수 속성으로 둔다. \\
+GSI & \texttt{request\_\allowbreak{}id}, \texttt{agent\_\allowbreak{}run\_\allowbreak{}id}, \texttt{recommendation\_\allowbreak{}request\_\allowbreak{}id}, \texttt{event\_\allowbreak{}type} 조회가 필요하면 GSI를 추가한다. \\
+Payload & 원문 대신 \texttt{payload\_\allowbreak{}summary}, \texttt{error\_\allowbreak{}code}, \texttt{result\_\allowbreak{}ref}처럼 최소 요약만 저장한다. \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+\DocNeedspace{24\baselineskip}
+\subsection*{4.4 DynamoDB GSI 후보}
+\addcontentsline{toc}{subsection}{4.4 DynamoDB GSI 후보}
+
+
+\DocNeedspace{14\baselineskip}
+\begin{footnotesize}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.283\linewidth}>{\RaggedRight\arraybackslash}m{0.280\linewidth}>{\RaggedRight\arraybackslash}m{0.140\linewidth}>{\RaggedRight\arraybackslash}m{0.197\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.283\linewidth}}{\textbf{GSI}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.280\linewidth}}{\textbf{Partition Key}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.140\linewidth}}{\textbf{Sort Key}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.197\linewidth}}{\textbf{용도}} \\
+\midrule
+\endhead
+\texttt{GSI1\allowbreak{}Request\allowbreak{}Lookup} & \texttt{request\_\allowbreak{}id} & \texttt{created\_\allowbreak{}at} & API 요청 단위 trace 연결 \\
+\texttt{GSI2\allowbreak{}Agent\allowbreak{}Run\allowbreak{}Lookup} & \texttt{agent\_\allowbreak{}run\_\allowbreak{}id} & \texttt{created\_\allowbreak{}at} & Agent 실행 전체 단계 조회 \\
+\texttt{GSI3\allowbreak{}Event\allowbreak{}Type\allowbreak{}Daily} & \texttt{event\_\allowbreak{}type\#\allowbreak{}yyyy\allowbreak{}MMdd} & \texttt{created\_\allowbreak{}at} & 이벤트 타입별 일자 분석 \\
+\texttt{GSI4\allowbreak{}Recommendation\allowbreak{}Lookup} & \texttt{recommendation\_\allowbreak{}request\_\allowbreak{}id} & \texttt{created\_\allowbreak{}at} & 추천 요청과 로그 연결 \\
+\bottomrule
+\end{longtable}
+\end{footnotesize}
+
+
+\newpage
+\DocNeedspace{24\baselineskip}
+\subsection*{4.5 S3 vector index 물리 설계 기준}
+\addcontentsline{toc}{subsection}{4.5 S3 vector index 물리 설계 기준}
+
+
+\DocNeedspace{16\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.274\linewidth}>{\RaggedRight\arraybackslash}m{0.666\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.274\linewidth}}{\textbf{기준}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.666\linewidth}}{\textbf{결정}} \\
+\midrule
+\endhead
+Index layout & 국가 또는 콘텐츠 유형별 prefix 분리를 검토하되 PoC는 단일 S3 vector index로 시작한다. \\
+Vector ID & \texttt{source\_\allowbreak{}type\#\allowbreak{}source\_\allowbreak{}id\#\allowbreak{}chunk\_\allowbreak{}no} 형식을 사용한다. \\
+Metadata filter & \texttt{country}, \texttt{destination\_\allowbreak{}id}, \texttt{city\_\allowbreak{}id}, \texttt{content\_\allowbreak{}type}, \texttt{theme\_\allowbreak{}tags}, \texttt{recommended\_\allowbreak{}months}, \texttt{source\_\allowbreak{}type}을 필터로 둔다. \\
+원본 참조 & 각 vector record에는 \texttt{raw\_\allowbreak{}s3\_\allowbreak{}uri} 또는 MySQL 원장 ID를 함께 둔다. \\
+개인정보 & 사용자 ID, 대화 전문, 비공개 운영 메모는 metadata에 저장하지 않는다. \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{5. 보존 정책 및 권한}
+\addcontentsline{toc}{section}{5. 보존 정책 및 권한}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\DocNeedspace{24\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.207\linewidth}>{\RaggedRight\arraybackslash}m{0.448\linewidth}>{\RaggedRight\arraybackslash}m{0.266\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.207\linewidth}}{\textbf{데이터}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.448\linewidth}}{\textbf{보존 정책}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.266\linewidth}}{\textbf{사용자 통제}} \\
+\midrule
+\endhead
+사용자 계정 & 탈퇴 시 soft delete 후 보존 기간 종료 시 익명화 & 탈퇴 가능 \\
+온보딩 선호 & 사용자가 재응답하면 최신값을 원장으로 갱신 & 조회·수정 가능 \\
+저장 일정 & 사용자가 삭제하면 \texttt{deleted\_\allowbreak{}at} 처리 & 조회·삭제 가능 \\
+피드백·북마크 & 개인화에 활용하되 삭제 요청 시 제외 & 조회·삭제 가능 \\
+방문 기록·별점 & 개인화와 마이페이지에 활용 & 조회·삭제 가능 \\
+대화 전문 & 장기 저장하지 않음 & 저장 대상 아님 \\
+Agent trace & DynamoDB TTL 기반 단기 보존 & 원문 개인정보 저장 금지 \\
+API/이벤트 로그 & DynamoDB TTL 기반 단기 보존 & 해시·마스킹 저장 \\
+S3 vector record & 원본 재색인 가능성을 기준으로 운영 보존 & 사용자 개인정보와 대화 전문 저장 금지 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{6. PoC 적용 범위와 Production 전환}
+\addcontentsline{toc}{section}{6. PoC 적용 범위와 Production 전환}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\DocNeedspace{14\baselineskip}
+\begin{small}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.176\linewidth}>{\RaggedRight\arraybackslash}m{0.764\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.176\linewidth}}{\textbf{단계}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.764\linewidth}}{\textbf{적용 범위}} \\
+\midrule
+\endhead
+PoC & 정적 데이터, 로컬 스토리지 기반 사용자 일정·선호·피드백, 최소 MySQL 테이블 또는 샘플 DB, S3 vector 기능 기반 검색 실험 \\
+Production 1차 & 계정 기반 MySQL 사용자 원장, 마이페이지, 저장 일정, 온보딩 선호, 피드백, 북마크, 방문 기록 \\
+Production 운영 & DynamoDB Agent trace, async job, 사용자 이벤트 로그, API 로그, 운영 검수 로그, TTL 정책 \\
+Production 고도화 & 개인화 랭킹 모델 재학습, A/B 테스트 이벤트, S3 vector index 재색인 자동화 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{7. 설계 검토 체크리스트}
+\addcontentsline{toc}{section}{7. 설계 검토 체크리스트}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\begin{itemize}
+\item [ ] 사용자 대화 전문이 MySQL, DynamoDB, S3 vector index 어디에도 장기 저장되지 않는가?
+\item [ ] 사용자 원장 데이터와 이벤트 로그가 MySQL/DynamoDB로 분리되어 있는가?
+\item [ ] 마이페이지에서 조회·삭제해야 하는 데이터가 MySQL에 원장으로 남아 있는가?
+\item [ ] DynamoDB 테이블에 TTL과 해시 저장 원칙이 반영되어 있는가?
+\item [ ] S3 vector index가 원본 저장소가 아니라 재생성 가능한 검색 인덱스로 정의되어 있는가?
+\item [ ] PoC 로컬 스토리지 대체 범위와 Production DB 범위가 분리되어 있는가?
+\end{itemize}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{8. 후속 작업}
+\addcontentsline{toc}{section}{8. 후속 작업}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\begin{itemize}
+\item \texttt{integrated\_\allowbreak{}draft.\allowbreak{}md}의 상세 테이블 후보를 기준으로 MySQL DDL 초안을 작성한다.
+\item DynamoDB \texttt{lovv\_\allowbreak{}user\_\allowbreak{}event\_\allowbreak{}logs}, \texttt{lovv\_\allowbreak{}agent\_\allowbreak{}runs}, \texttt{lovv\_\allowbreak{}async\_\allowbreak{}jobs}, \texttt{lovv\_\allowbreak{}api\_\allowbreak{}logs}의 TTL 기간을 확정한다.
+\item API 명세의 \texttt{/\allowbreak{}me/\allowbreak{}preferences}, \texttt{/\allowbreak{}me/\allowbreak{}itineraries}, \texttt{/\allowbreak{}me/\allowbreak{}feedback} 응답 필드와 테이블 컬럼을 1:1로 매핑한다.
+\item S3 vector index의 prefix, vector ID, metadata filter, 재색인 배치 기준을 기술 명세와 맞춘다.
+\item \texttt{pages/\allowbreak{}04\_\allowbreak{}database\_\allowbreak{}design.\allowbreak{}html}을 대표 Markdown 기준으로 재생성한다.
+\end{itemize}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{9. 변경 이력}
+\addcontentsline{toc}{section}{9. 변경 이력}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\DocNeedspace{12\baselineskip}
+\begin{footnotesize}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.125\linewidth}>{\RaggedRight\arraybackslash}m{0.125\linewidth}>{\RaggedRight\arraybackslash}m{0.080\linewidth}>{\RaggedRight\arraybackslash}m{0.570\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.125\linewidth}}{\textbf{버전}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.125\linewidth}}{\textbf{날짜}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.080\linewidth}}{\textbf{작성자}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.570\linewidth}}{\textbf{변경 내용}} \\
+\midrule
+\endhead
+v0.1 & {\footnotesize 2026-\allowbreak{}06-\allowbreak{}04} & 로브 기획팀 & DBMS 방향 초안 작성 \\
+v0.2 & {\footnotesize 2026-\allowbreak{}06-\allowbreak{}07} & Codex & 개념 설계, 논리 설계, 물리 설계 구조와 RDB/NoSQL 사용자 설계 반영 \\
+v0.3 & {\footnotesize 2026-\allowbreak{}06-\allowbreak{}07} & Codex & 별도 벡터 DB 전제를 S3 vector 기능 기반 RAG 인덱스로 정리하고, VisitorStatistics와 S3 Raw/Lambda/DynamoDB 정규화 흐름 반영 \\
+\bottomrule
+\end{longtable}
+\end{footnotesize}
+
+\end{document}
