@@ -6,6 +6,7 @@
 > 작성일: 2026-06-06
 > 반영 예정 문서: `docs/04_data_collect_plan/04_data_collect_plan.md`
 > 반영 예정 HTML: `pages/04_data_collect_plan.html`
+> 현재 반영 기준: `docs/04_data_collect_plan/korea_data_acquisition_plan.md` v0.3에 병합
 
 > **[업데이트 요약]**
 > 실제 데이터 수집(tour-api-korea 레포지토리 참고) 및 TourAPI 명세 확인을 거쳐 강원(GW)·경북(GB) 지역 데이터 수집 가능성을 검증하였다.
@@ -324,29 +325,16 @@ Festival은 도시와 1:N 관계를 가지며, 월별 추천과 계절성 추천
 
 > [신규] 실제 수집 및 TourAPI 명세 분석을 통해 확인된 수집 파이프라인의 단계별 구조를 정의한다.
 
-```text
-Stage 1: 리스트 수집 및 통합
-  ├── /areaBasedList2 → 시군구별 관광지 목록
-  ├── /searchFestival2 → 축제 목록
-  ├── 시군구 → 40개 도시 단위 그룹화
-  └── 6대 테마 분류 매핑 + 축제 수동 오버라이드 적용
-
-Stage 2: 상세정보 스크래핑 (Network-bound, 체크포인트 지원)
-  ├── 관광지: /detailCommon2(contentId만 전달) → 공통 정보
-  ├── 관광지: /detailIntro2 → 콘텐츠 유형별 소개 정보
-  ├── 축제: /detailCommon2 → 공통 정보
-  └── 축제: /detailIntro2 → 축제 소개 정보
-
-Stage 3: 상세정보 병합 및 빌드
-  ├── 캐시 파일 → data/raw/detail/ 전개
-  └── 리스트 + 상세 병합 → data/raw/final/{city_en}.json
-
-Stage 4: 방문객 통계 수집 및 병합
-  └── DataLab 1달 단위 쿼리 → 월별 일평균 산출 → visitor_statistics.json
-
-Stage 5: 정규화 및 패키징
-  └── data/raw/final/ → Lovv_scraping 포맷 변환 및 실제 수집 파일 빌드 → data/KR/
-```
+| 순서 | 단계 | 처리 내용 |
+| --- | --- | --- |
+| 1 | City 목록 확정 | 강원·경북 40개 City 목록과 내부 `city_id` 기준을 확정한다. |
+| 2 | TourAPI 리스트 수집 | 관광지·축제 후보를 TourAPI 목록 API로 수집한다. |
+| 3 | 테마 자동 분류 | TourAPI 분류 코드와 내부 매핑으로 6대 테마를 자동 분류한다. |
+| 4 | 공통 상세 수집 | `detailCommon2`로 설명, 위치, 이미지 등 공통 상세 정보를 수집한다. |
+| 5 | 유형별 상세 수집 | `detailIntro2`로 관광지·축제 유형별 상세 필드를 보강한다. |
+| 6 | 취득 상태 할당 | 필드별 수집 결과에 따라 `field_status`를 할당한다. |
+| 7 | 로컬 검증 산출물 생성 | `data/KR/*.json` 형태로 City, Attraction, Festival, 통계 검증 산출물을 생성한다. |
+| 8 | S3 적재 대상 확정 | 검증된 산출물을 S3 Raw Prefix 적재 대상으로 확정한다. |
 
 ## 5.3 공식 확인 및 검수 전략
 
@@ -379,23 +367,20 @@ Stage 5: 정규화 및 패키징
 
 ## 6.1 처리 흐름
 
-```text
-자동 수집 (TourAPI / DataLab / Wikipedia)
-↓
-파일 기반 캐시 및 체크포인트 저장
-↓
-취득 상태 분류 (field_status 할당)
-↓
-정규화 및 Lovv_scraping 포맷 변환
-↓
-공식 사이트 확인 / Web Search Worker (missing·needs_review 항목)
-↓
-수동 검수
-↓
-정규화 DB 적재 (data/KR/)
-```
+| 순서 | 단계 | 처리 내용 |
+| --- | --- | --- |
+| 1 | 자동 수집 | TourAPI, DataLab, Wikipedia/Wikidata에서 원천 데이터를 취득한다. |
+| 2 | 캐시·체크포인트 저장 | 중단 후 재시작할 수 있도록 파일 기반 캐시와 체크포인트를 남긴다. |
+| 3 | 취득 상태 할당 | 필드별 취득 결과에 따라 `field_status`를 할당한다. |
+| 4 | 로컬 검증 산출물 생성 | `data/KR/*.json` 형식의 검증 산출물을 생성한다. |
+| 5 | JSON 직렬화 | 수집 데이터와 메타데이터를 재사용 가능한 JSON 원본으로 직렬화한다. |
+| 6 | S3 Raw Prefix 확정 | 국가, 출처, 엔티티 유형, 수집일 기준의 Raw Prefix를 확정한다. |
+| 7 | S3 Raw Bucket 적재 | 검증된 JSON 산출물을 S3 Raw Bucket 적재 대상으로 확정한다. |
 
-정의된 모든 필드가 출력에 들어가도록 시도하는 것이 목표다. 운영시간·입장료도 최초 수집 대상에 포함하며, 자동 수집 실패 시 `missing` 또는 `needs_review` 상태로 남기고 같은 파이프라인 안에서 공식 확인 또는 수동 검수로 채운다.
+정의된 모든 필드가 출력에 들어가도록 시도하는 것이 목표다.
+6.1의 처리 흐름은 ETL 라인 이전의 데이터 취득 범위만 다루며, S3 Raw Bucket 적재에서 종료한다.
+S3 적재 이후의 전처리, 정규화 DB 적재, 운영 중 보완 처리는 본 절의 범위에서 제외한다.
+운영시간·입장료도 최초 수집 대상에 포함하며, 자동 수집 실패 시 `missing` 또는 `needs_review` 상태로 JSON에 남긴다.
 
 예시:
 
@@ -436,7 +421,7 @@ Stage 5: 정규화 및 패키징
 
 > [변경] 데이터베이스 테이블 대신 실제 수집 및 명세 확인용 JSON 파일 기반 저장 구조로 정의한다.
 
-```text
+```
 data/KR/
   ├── prefectures.json     # 광역시·도 레코드 (KR-42 강원, KR-47 경북)
   ├── cities.json          # 40개 도시 레코드 ✅ 실제 수집 확인
@@ -452,7 +437,7 @@ data/KR/
   "city_id": "KR-42-GANGNEUNG",
   "city_name_ko": "강릉시",
   "prefecture_id": "KR-42",
-  "location": "대한민국 강원특별자치도",
+  "location": "한국 강원특별자치도",
   "latitude": 37.75,
   "longitude": 128.9,
   "description": "강릉시는 강원특별자치도 동해안 중부에 위치한 시로 경포대, 오죽헌 등 관광자원이 풍부하다.",
@@ -599,14 +584,15 @@ data/KR/
 
 # 11. 본 문서 반영 계획
 
-이 초안이 확정되면 다음 순서로 본 문서와 HTML에 반영한다.
+이 초안이 확정되면 한국 데이터 취득 계획의 운영 기준을 대표 문서와 공유 산출물에 맞춘다.
+반영 방향은 특정 파일을 단순히 갱신하는 것이 아니라, 수집 기준·전처리 입력·검증 산출물·공유 문서가 같은 데이터 계약을 따르도록 정렬하는 데 둔다.
 
-1. `04_data_collect_plan.md`의 `2.2 수집 데이터 정보 및 분량`을 한국 City, Attraction, Festival 관계 기준으로 보강한다.
-2. `2.4.1 대한민국 데이터 출처`에 TourAPI 4.0, DataLab Service, Wikipedia/Wikidata의 역할을 표로 반영한다.
-3. `3. 데이터 전처리 방식 및 인프라 구성`에 5단계 파이프라인과 체크포인트 전략, 키 로테이션 정책을 추가한다.
-4. `4. 데이터 품질 정합성 관리 방법`에 City 매핑, TourAPI 코드 매핑, 출처 기록, 최신성 검증, 수량 검증을 추가한다.
-5. `5. 법적 요소 검토`에 TourAPI·공공누리·지자체 사이트 이용 조건, API 키 보안 관리를 추가한다.
-6. `scripts/generate_pages.py`를 실행하여 `pages/04_data_collect_plan.html`에 반영한다.
+1. 수집 데이터 정보와 분량은 한국 City, Attraction, Festival, 방문객 통계 관계를 기준으로 정리한다.
+2. 한국 데이터 출처는 TourAPI 4.0, DataLabService, Wikipedia/Wikidata의 역할이 명확히 구분되도록 구성한다.
+3. 데이터 취득 흐름은 S3 Raw Bucket 적재 이전까지의 수집 라인과 이후 전처리 라인이 혼동되지 않도록 구분한다.
+4. 품질 관리는 City 매핑, TourAPI 코드 매핑, 출처 기록, 최신성 검증, 수량 검증을 기준으로 운영한다.
+5. 법적 검토는 TourAPI·공공누리·지자체 사이트 이용 조건과 API 키 보안 관리가 함께 확인되도록 정리한다.
+6. 공유용 HTML과 PDF는 확정된 문서 기준을 사용자가 읽기 쉬운 형태로 제공하도록 재생성하고 검수한다.
 
 ---
 
@@ -626,5 +612,5 @@ data/KR/
 
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 | --- | --- | --- | --- |
-| v0.1 | 2026-06-02 | 로브 기획팀 | 한국 데이터 취득 계획서 초안 작성 |
-| v0.2 | 2026-06-06 | 로브 기획팀 | 실제 수집 데이터 및 API 명세 분석 결과 반영: Attraction·Festival·방문객 통계 데이터 모델을 실제 수집 필드 기준으로 갱신, city_id 형식 확정, TourAPI 동작 특성, 5단계 파이프라인, 6대 테마 분류 현황 추가 |
+| v0.1 | 2026-06-02 | LLM 파트 | 한국 데이터 취득 계획서 초안 작성 |
+| v0.2 | 2026-06-06 | LLM 파트 | 실제 수집 데이터 및 API 명세 분석 결과 반영: Attraction·Festival·방문객 통계 데이터 모델을 실제 수집 필드 기준으로 갱신, city_id 형식 확정, TourAPI 동작 특성, 5단계 파이프라인, 6대 테마 분류 현황 추가 |

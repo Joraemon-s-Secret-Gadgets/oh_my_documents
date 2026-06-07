@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — 데이터 수집 계획서 v0.4</title>
+    <title>로브 (Lovv) — 데이터 수집 계획서 v0.5</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -16,7 +16,7 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">로브</div>
-          <div class="aside-ver">Data Collection · v0.4</div>
+          <div class="aside-ver">Data Collection · v0.5</div>
           <div class="aside-status"><div class="status-dot"></div><span>검토 중</span></div>
         </div>
         <nav class="toc">
@@ -67,7 +67,7 @@
       <main id="cover">
         <h1 id="cover-title" class="s-h1">로브 (Lovv) 데이터 수집 계획서</h1>
 <blockquote>
-<p class="doc-p">문서 버전: v0.4</p>
+<p class="doc-p">문서 버전: v0.5</p>
 <p class="doc-p">문서 상태: 검토 중 (Review)</p>
 <p class="doc-p">기준 문서: <code>docs/01_requirements/01_requirements.md</code> v1.7</p>
 <p class="doc-p">상세 초안: <code>docs/04_data_collect_plan/korea_data_acquisition_plan.md</code>, <code>docs/04_data_collect_plan/japan_data_acquisition_plan.md</code></p>
@@ -78,13 +78,14 @@
 <p class="doc-p">세부 국가별 취득 기준은 다음 문서에 분리하여 관리한다.</p>
 <div class="table-wrap wide"><table class="info-tbl">
 <thead><tr><th>국가</th><th>상세 문서</th><th>역할</th></tr></thead><tbody>
-<tr><td>한국</td><td><code>korea_data_acquisition_plan.md</code></td><td>한국 도·산하 City·Attraction·Festival 취득 필드, Wikipedia·TourAPI 중심 출처, 검수 기준 정의</td></tr>
+<tr><td>한국</td><td><code>korea_data_acquisition_plan.md</code></td><td>강원·경북 40개 City와 TourAPI 4.0 기반 Attraction·Festival·DataLab 통계 취득 필드, 검수 기준 정의</td></tr>
 <tr><td>일본</td><td><code>japan_data_acquisition_plan.md</code></td><td>일본 도도부현·산하 City·Attraction·Festival 취득 필드, Wikipedia·JNTO·JTA 중심 출처, 검수 기준 정의</td></tr>
 </tbody></table></div>
 <h2 id="s1-2" class="s-h2">1.2 수집 원칙</h2>
 <ul class="bullet-list">
 <li><strong>전체 취득</strong>: City, Attraction, Festival의 정의된 필드는 최초 수집 대상에 모두 포함한다.</li>
-<li><strong>우선 취득 범위</strong>: 한국은 경북과 강원의 40개 도시를 우선적으로 취득한 뒤 일본의 관동 지역 지자체를 수집한다.</li>
+<li><strong>우선 취득 범위</strong>: 한국은 강원과 경북의 40개 도시를 우선적으로 취득한 뒤 일본의 관동 지역 지자체를 수집한다.</li>
+<li><strong>한국 실제 검증 범위</strong>: 한국은 <code>data/KR/cities.json</code>, <code>data/KR/attractions.json</code>, <code>data/KR/festivals.json</code>, <code>data/KR/visitor_statistics.json</code> 형태의 로컬 검증 산출물을 기준으로 S3 Raw 적재 전 품질을 확인한다.</li>
 <li><strong>공식 출처 우선</strong>: 관광지 및 축제 정보는 양국 공식 관광 데이터, 공공데이터, 지자체 공식 사이트, 공식 관광 포털을 우선한다.</li>
 <li><strong>최신성 관리</strong>: 운영시간, 운영기간, 입장료, 축제 기간처럼 변경 가능성이 높은 데이터는 확인일과 출처를 함께 저장한다.</li>
 <li><strong>일관성 유지</strong>: 서로 다른 출처의 데이터를 통합할 때 명칭, 행정구역 코드, 좌표, 날짜 포맷의 매핑 기준을 통일한다.</li>
@@ -106,6 +107,7 @@
 </tbody></table></div>
 <h2 id="s2-3" class="s-h2">2.3 City 수집 항목</h2>
 <p class="doc-p">City는 추천의 기준 지역이다. 한국은 도의 간략 정보와 산하 시·군·구 목록을 먼저 취득하고, 일본은 도도부현의 간략 정보와 산하 시·정·촌·구 목록을 먼저 취득한다. 실제 도시 상세 정보 크롤링은 이 산하 도시 목록에 포함된 City만 대상으로 한다.</p>
+<p class="doc-p">한국 실제 수집 기준에서는 강원과 경북의 40개 도시를 <code>KR-{도_코드}-{CITY_EN}</code> 형식의 <code>city_id</code>로 관리한다. 예시는 <code>KR-42-GANGNEUNG</code>, <code>KR-47-ANDONG</code>이며, 광역 단위는 <code>prefecture_id</code>로 연결한다. Wikipedia 기후 표는 <code>climate_table</code>로 보존하고 자동 취득 실패 시 <code>needs_review</code>로 관리한다.</p>
 <div class="table-wrap wide"><table class="info-tbl">
 <thead><tr><th>필드</th><th>한국 주요 출처</th><th>일본 주요 출처</th><th>수집 상태</th></tr></thead><tbody>
 <tr><td><code>city_id</code></td><td>내부 생성</td><td>내부 생성</td><td>전부 수집</td></tr>
@@ -120,7 +122,7 @@
 <tr><td><code>site_url</code></td><td>지자체 문화관광 홈페이지, 대한민국구석구석</td><td>Wikipedia 외부 링크, 공식 관광 사이트</td><td>전부 수집</td></tr>
 </tbody></table></div>
 <h2 id="s2-4" class="s-h2">2.4 Attraction 수집 항목</h2>
-<p class="doc-p">Attraction은 일정 카드와 추천 결과 상세 화면의 핵심 소재로 사용한다.</p>
+<p class="doc-p">Attraction은 일정 카드와 추천 결과 상세 화면의 핵심 소재로 사용한다. 한국은 TourAPI 4.0(KorService2) 기준 강원·경북 관광지 3,709건을 실제 수집 및 명세 확인 범위로 둔다.</p>
 <div class="table-wrap wide"><table class="info-tbl">
 <thead><tr><th>필드</th><th>한국 주요 출처</th><th>일본 주요 출처</th><th>수집 상태</th></tr></thead><tbody>
 <tr><td><code>attraction_id</code></td><td>내부 생성</td><td>내부 생성</td><td>전부 수집</td></tr>
@@ -138,7 +140,7 @@
 <tr><td><code>photo_url</code></td><td>TourAPI 이미지정보, 공식 사이트, 검수</td><td>JNTO, 공식 사이트, 검수</td><td>전부 수집</td></tr>
 </tbody></table></div>
 <h2 id="s2-5" class="s-h2">2.5 Festival 수집 항목</h2>
-<p class="doc-p">Festival은 월별 추천과 계절성 추천의 주요 근거로 사용한다.</p>
+<p class="doc-p">Festival은 월별 추천과 계절성 추천의 주요 근거로 사용한다. 한국은 TourAPI 4.0(KorService2) 기준 강원·경북 축제 106건을 실제 수집 및 명세 확인 범위로 둔다.</p>
 <div class="table-wrap wide"><table class="info-tbl">
 <thead><tr><th>필드</th><th>한국 주요 출처</th><th>일본 주요 출처</th><th>수집 상태</th></tr></thead><tbody>
 <tr><td><code>festival_id</code></td><td>내부 생성</td><td>내부 생성</td><td>전부 수집</td></tr>
@@ -155,13 +157,13 @@
 <h2 id="s2-6-1" class="s-h2">2.6.1 한국 데이터 출처</h2>
 <div class="table-wrap wide"><table class="info-tbl">
 <thead><tr><th>출처</th><th>취득 데이터</th><th>적용 방식</th></tr></thead><tbody>
-<tr><td>한국관광공사 TourAPI</td><td>관광지, 축제, 이미지, 위치, 소개정보, 행사정보</td><td>Attraction·Festival 자동 수집의 1차 소스</td></tr>
+<tr><td>한국관광공사 TourAPI 4.0(KorService2)</td><td>관광지, 축제, 이미지, 위치, 소개정보, 행사정보</td><td>Attraction·Festival 자동 수집의 1차 소스</td></tr>
 <tr><td>대한민국구석구석</td><td>관광지·축제 상세 링크, 공식 설명, 지역 관광 정보</td><td>TourAPI 보강 및 공식 링크 확인</td></tr>
 <tr><td>지자체 문화관광 홈페이지</td><td>운영시간, 입장료, 최신 축제 일정, 공식 공지</td><td>누락·최신성 확인</td></tr>
 <tr><td>Wikipedia API</td><td>도 간략 정보, 도 산하 도시 목록, 원문 링크</td><td>한국 City 크롤링 대상 목록 확보</td></tr>
 <tr><td>Wikipedia 크롤링 / Wikidata</td><td>도 산하 도시의 설명, 위치, 좌표, 외부 링크</td><td>산하 City 상세 정보 취득 및 보강</td></tr>
 <tr><td>기상청 API허브 / 기후통계</td><td>월별 기후, 평균 기온, 강수량, 계절 메모</td><td>Wikipedia에서 취득한 한국 City <code>climate</code> 비교 검증 및 월별 추천 근거</td></tr>
-<tr><td>한국관광 데이터랩</td><td>방문자 수, 관광 동향, 지역별 통계</td><td>City 보조 지표</td></tr>
+<tr><td>한국관광공사 관광 빅데이터 API(DataLabService)</td><td>월별 현지인·외지인·외국인 방문객 통계</td><td>City 보조 지표와 월별 추천 근거</td></tr>
 <tr><td>행정구역 데이터</td><td>시·군·구 코드와 행정구역 정규화</td><td>City ID와 지역 매핑</td></tr>
 </tbody></table></div>
 <h2 id="s2-6-2" class="s-h2">2.6.2 일본 데이터 출처</h2>
@@ -180,6 +182,8 @@
 <h2 id="s3-1" class="s-h2">3.1 처리 흐름</h2>
 <pre><code>자동 수집
 ↓
+로컬 검증 산출물 생성
+↓
 JSON 직렬화
 ↓
 S3 Raw Bucket 적재
@@ -195,7 +199,7 @@ Lambda 배치 전처리
 수동 검수
 ↓
 정규화 DB 적재</code></pre>
-<p class="doc-p">정의된 모든 필드가 JSON 원본으로 저장되도록 시도한다. 수집 결과는 엔티티 유형과 출처별 JSON 문서로 직렬화한 뒤 S3 Raw Bucket에 먼저 적재한다. Raw 데이터는 재사용과 재처리를 위해 일정 기간 누적 보관하고, 보관 기간 또는 배치 기준이 충족되면 Lambda가 해당 Prefix의 JSON 원본을 읽어 전처리한 뒤 DynamoDB에 적재한다. 운영시간, 운영기간, 입장료, 사진, 축제 기간처럼 출처별 표현 차이가 큰 값도 최초 수집 대상에 포함하며, 자동 수집 실패 시 같은 파이프라인 안에서 공식 확인 또는 수동 검수로 채운다.</p>
+<p class="doc-p">정의된 모든 필드가 JSON 원본으로 저장되도록 시도한다. 한국은 실제 수집 검증 단계에서 <code>data/KR/*.json</code> 로컬 산출물로 City, Attraction, Festival, 방문객 통계의 구조와 수량을 먼저 확인한다. 이후 수집 결과는 엔티티 유형과 출처별 JSON 문서로 직렬화한 뒤 S3 Raw Bucket에 적재한다. Raw 데이터는 재사용과 재처리를 위해 일정 기간 누적 보관하고, 보관 기간 또는 배치 기준이 충족되면 Lambda가 해당 Prefix의 JSON 원본을 읽어 전처리한 뒤 DynamoDB에 적재한다. 운영시간, 운영기간, 입장료, 사진, 축제 기간처럼 출처별 표현 차이가 큰 값도 최초 수집 대상에 포함하며, 자동 수집 실패 시 같은 파이프라인 안에서 공식 확인 또는 수동 검수로 채운다.</p>
 <h2 id="s3-2" class="s-h2">3.2 취득 상태 관리</h2>
 <div class="table-wrap wide"><table class="info-tbl">
 <thead><tr><th>취득 상태</th><th>기준</th><th>처리 방식</th></tr></thead><tbody>
@@ -208,6 +212,7 @@ Lambda 배치 전처리
 <div class="table-wrap"><table class="info-tbl">
 <thead><tr><th>구분</th><th>저장 내용</th></tr></thead><tbody>
 <tr><td>Raw 데이터</td><td>API 응답, Wikipedia HTML 수집 원본, 공식 사이트 확인 결과, 이미지 메타데이터를 JSON 문서로 저장한 S3 객체</td></tr>
+<tr><td>로컬 검증 산출물</td><td>한국 <code>data/KR/*.json</code>처럼 S3 Raw 적재 전 수집 구조와 수량을 검증하는 JSON 파일</td></tr>
 <tr><td>S3 Raw 객체</td><td><code>raw/{country}/{source}/{entity_type}/{yyyy}/{mm}/{dd}/</code> Prefix에 저장되는 원본 JSON</td></tr>
 <tr><td>Raw 보관 및 배치 처리</td><td>일정 기간 Raw Prefix에 누적한 뒤 Lambda 배치 전처리 대상으로 사용</td></tr>
 <tr><td>정규화 데이터</td><td>City, Attraction, Festival, 기후, 통계, 검색 링크</td></tr>
@@ -220,6 +225,7 @@ Lambda 배치 전처리
 <thead><tr><th>검증 항목</th><th>기준</th></tr></thead><tbody>
 <tr><td>City 매핑</td><td>모든 Attraction과 Festival은 하나의 City에 연결되어야 한다.</td></tr>
 <tr><td>행정구역 정합성</td><td>한국 시·군·구 코드와 일본 시·정·촌·구 코드가 내부 City ID와 일치해야 한다.</td></tr>
+<tr><td>한국 실제 수집 수량</td><td>한국 강원·경북 기준 City 40개, Attraction 3,709건, Festival 106건, 방문객 통계 12개월 범위를 확인한다.</td></tr>
 <tr><td>출처 기록</td><td>모든 자동 수집 데이터는 출처명, 출처 URL, 수집 시각을 가진다.</td></tr>
 <tr><td>전체 필드 상태</td><td>정의된 모든 필드는 <code>collected</code>, <code>needs_review</code>, <code>missing</code>, <code>blocked</code> 중 하나의 상태를 가진다.</td></tr>
 <tr><td>최신성</td><td>운영시간, 운영기간, 입장료, 축제 기간은 확인일을 기록한다.</td></tr>
@@ -253,8 +259,10 @@ Lambda 배치 전처리
 <tr><td>v0.2</td><td>2026-06-02</td><td>LLM 파트</td><td>한일 수집 범위, 3종 데이터 모델, 전처리 인프라, 품질·법적 검토 기준 반영</td></tr>
 <tr><td>v0.3</td><td>2026-06-02</td><td>LLM 파트</td><td>한국·일본 데이터 취득 초안을 main 문서에 반영하고 전체 필드 일괄 취득 전략으로 재정리</td></tr>
 <tr><td>v0.4</td><td>2026-06-06</td><td>LLM 파트</td><td>도·도도부현 간략 정보와 산하 도시 목록 기반 City 크롤링, JSON 원본의 S3 저장, 기후 데이터 비교 검증 방식 구체화</td></tr>
+<tr><td>v0.5</td><td>2026-06-06</td><td>LLM 파트</td><td>한국 강원·경북 40개 도시 실제 수집 결과, TourAPI 4.0, DataLabService, <code>data/KR/*.json</code> 로컬 검증 산출물과 S3 Raw 적재 관계 반영</td></tr>
 </tbody></table></div>
 <p class="doc-p">v0.4에서는 City 취득 범위와 원본 저장 방식을 정리했다. 한국은 도의 간략 정보와 산하 도시 목록, 일본은 도도부현의 간략 정보와 산하 도시 목록을 먼저 확보하고, 실제 Wikipedia 크롤링은 해당 산하 도시 목록에 포함된 City만 대상으로 수행한다. 취득 결과는 JSON 문서로 저장한 뒤 S3 Raw Bucket에 일정 기간 누적 보관하고, Lambda 배치 전처리 후 DynamoDB에 정규화 결과를 적재한다. 기후 정보는 양국 모두 Wikipedia 취득값을 기준으로 하되 한국은 기상청, 일본은 일본기상청(JMA) 자료와 비교해 정합성을 확인한다.</p>
+<p class="doc-p">v0.5에서는 한국 실제 수집 결과를 반영했다. 강원과 경북의 40개 City는 <code>KR-{도_코드}-{CITY_EN}</code> 형식으로 관리하며, 관광지는 TourAPI 4.0 기준 3,709건, 축제는 106건을 실제 수집 및 명세 확인 범위로 둔다. DataLabService 기반 월별 방문객 통계는 City 보조 지표와 월별 추천 근거로 활용한다. <code>data/KR/*.json</code>은 최종 DB가 아니라 S3 Raw Bucket 적재 전 로컬 검증 산출물로 정의한다.</p>
         <nav class="doc-nav" aria-label="이전 다음 문서">
           <a class="doc-nav-home" href="../index.html">문서 홈</a>
           <div class="doc-nav-pager">

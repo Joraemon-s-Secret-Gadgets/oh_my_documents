@@ -1,9 +1,9 @@
 # 로브 (Lovv) 데이터 전처리 계획서 초안
 
-> 문서 버전: v0.3
+> 문서 버전: v0.4
 > 문서 상태: 초안 (Draft)
 > 작성일: 2026-06-03
-> 기준 문서: `docs/04_data_collect_plan/04_data_collect_plan.md` v0.4
+> 기준 문서: `docs/04_data_collect_plan/04_data_collect_plan.md` v0.5
 > 상세 기준: `docs/04_data_collect_plan/korea_data_acquisition_plan.md`, `docs/04_data_collect_plan/japan_data_acquisition_plan.md`
 
 # 1. 문서 개요
@@ -36,6 +36,7 @@
 | Climate Raw | 월별 평균 기온, 강수량, 계절 메모 | 여행 적합도와 계절 태그 생성 |
 | Statistics Raw | 방문자 수, 관광 동향, 지역 통계 | 혼잡도·인지도 보조 지표 생성 |
 | Verification Raw | 공식 사이트 확인값, 수동 검수 결과, 검수 메모 | 최신성·신뢰도 보정 |
+| Korea Local Validation | `data/KR/prefectures.json`, `cities.json`, `attractions.json`, `festivals.json`, `visitor_statistics.json` | S3 Raw 적재 전 한국 실제 수집 구조와 수량 검증 |
 
 ## 2.2 기준 관계
 
@@ -143,10 +144,11 @@ DynamoDB 적재
 
 | 대상 | ID 형식 | 예시 |
 | --- | --- | --- |
-| 한국 City | `KR-{광역코드}-{도시명}` | `KR-JEONNAM-SUNCHEON` |
+| 한국 City | `KR-{도_코드}-{CITY_EN}` | `KR-42-GANGNEUNG` |
 | 일본 City | `JP-{도도부현}-{도시명}` | `JP-ISHIKAWA-KANAZAWA` |
-| Attraction | `{country_code}-ATTR-{source_or_hash}` | `KR-ATTR-TOURAPI-126508` |
-| Festival | `{country_code}-FEST-{source_or_hash}` | `JP-FEST-HASH-001` |
+| 한국 Attraction | `KR-{도_코드}-{CITY_EN}-ATT-{contentid}` | `KR-42-GANGNEUNG-ATT-126508` |
+| 한국 Festival | `KR-{도_코드}-{CITY_EN}-FES-{contentid}` | `KR-42-GANGNEUNG-FES-2762975` |
+| 일본 Attraction/Festival | `{country_code}-{entity_type}-{source_or_hash}` | `JP-FEST-HASH-001` |
 
 ID는 재처리 시에도 바뀌지 않아야 한다. 원본 ID가 없는 일본 공식 사이트·지자체 페이지 기반 데이터는 URL 정규화 해시를 보조 식별자로 사용한다.
 
@@ -193,8 +195,10 @@ ID는 재처리 시에도 바뀌지 않아야 한다. 원본 ID가 없는 일본
 | `city_name_ko` | 한국 도시명 또는 일본 도시의 한국어 표기를 표준명으로 저장 |
 | `city_name_local` | 한국은 한국어명, 일본은 일본어 원문명을 저장 |
 | `province_or_prefecture` | 국가별 행정구역 체계에 맞춰 표준화 |
+| `prefecture_id` | 한국 강원·경북처럼 광역 단위가 별도 JSON에 있는 경우 상위 행정 단위 외래키로 보존 |
 | `description` | 외부 원문을 그대로 저장하지 않고 내부 요약문으로 재작성 |
 | `climate` | Wikipedia 취득값과 한국 기상청 또는 일본기상청(JMA) 비교 결과를 월별 기온·강수·계절 메모 구조로 분리 |
+| `climate_table` | 한국 Wikipedia 기후 표 wikitext 원본을 보존하고, 전처리 단계에서 `climate` 요약과 월별 추천 지표로 분리 |
 | `site_url` | 공식 관광 사이트 또는 지자체 사이트 우선 |
 
 ## 6.2 Attraction 전처리
@@ -378,3 +382,4 @@ RAG 문서는 외부 원문을 그대로 복제하지 않고 내부 요약문과
 | v0.1 | 2026-06-03 | LLM 파트 | 데이터 수집 계획서를 기반으로 전처리 계획서 초안 작성 |
 | v0.2 | 2026-06-03 | LLM 파트 | S3 Raw 적재, Lambda 전처리, DynamoDB 적재 아키텍처 반영 |
 | v0.3 | 2026-06-06 | LLM 파트 | S3 Raw 누적 보관 후 Lambda 배치 전처리 및 DynamoDB 적재 흐름 반영 |
+| v0.4 | 2026-06-06 | LLM 파트 | 한국 강원·경북 실제 수집 산출물, `KR-{도_코드}-{CITY_EN}` ID 형식, `climate_table` 전처리 기준 반영 |

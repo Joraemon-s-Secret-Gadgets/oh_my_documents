@@ -18,6 +18,16 @@ SPECIAL_CHARS = {
 
 
 def add_soft_breaks_to_escaped_token(text: str) -> str:
+    token_breaks = {
+        "contenttypeid": r"content\allowbreak{}type\allowbreak{}id",
+        "contentid": r"content\allowbreak{}id",
+        "sigungucode": r"sigungu\allowbreak{}code",
+        "lclsSystm1": r"lcls\allowbreak{}Systm1",
+        "lclsSystm2": r"lcls\allowbreak{}Systm2",
+        "lclsSystm3": r"lcls\allowbreak{}Systm3",
+    }
+    for source, target in token_breaks.items():
+        text = text.replace(source, target)
     return (
         text.replace(r"\_", r"\_\allowbreak{}")
         .replace("-", r"-\allowbreak{}")
@@ -246,6 +256,7 @@ def code_block_to_latex(lines: list[str], language: str | None = None) -> list[s
             result.append(r"\mbox{}\\")
             continue
         escaped = add_soft_breaks_to_escaped_token(escape_latex(content))
+        escaped = re.sub(r"([가-힣]+)", r"{\\normalfont \1}", escaped)
         result.append(prefix + escaped + r"\\")
     result.extend([r"\end{scriptsize}", r"\end{quote}", ""])
     return result
