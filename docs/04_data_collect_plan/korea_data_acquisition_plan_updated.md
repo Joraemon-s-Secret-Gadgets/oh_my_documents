@@ -35,15 +35,19 @@
 ## 2.1 관계 구조
 
 ```text
-City
- ├── Attraction
- └── Festival
+Prefecture
+ └── City
+      ├── Attraction
+      ├── Festival
+      └── VisitorStatistics
 ```
 
 | 관계 | 설명 |
 | --- | --- |
+| `Prefecture 1:N City` | 강원과 경북 같은 광역 단위는 여러 City를 가진다. |
 | `City 1:N Attraction` | 하나의 한국 도시는 여러 관광지를 가진다. |
 | `City 1:N Festival` | 하나의 한국 도시는 여러 축제·행사를 가진다. |
+| `City 1:N VisitorStatistics` | 하나의 한국 도시는 월별 방문객 통계 데이터를 가진다. |
 
 ## 2.2 City 데이터
 
@@ -84,7 +88,7 @@ Attraction은 도시와 1:N 관계를 가지며, 일정 카드와 추천 결과 
 | `addr2` | `addr2` | ✅ 실제 수집 확인 | 주소 2 (건물명, 층수 등). 빈 문자열 가능 |
 | `mapx` | `mapx` | ✅ 실제 수집 확인 | 경도 (문자열 형식) |
 | `mapy` | `mapy` | ✅ 실제 수집 확인 | 위도 (문자열 형식) |
-| `tel` | `tel` | 일부 실제 수집 확인 | 연락 전화번호. 빈 문자열 가능 |
+| `tel` | `tel` | ❌ 100% 결측 확인 | 연락 전화번호. 실제 수집 시에는 `detail.intro` 아래의 `infocenter` 계열 연락처를 탐색하는 폴백(Fallback) 수집 로직 적용 필요 |
 | `firstimage` | `firstimage` | 일부 실제 수집 확인 | 대표 이미지 URL. 없으면 빈 문자열 |
 | `firstimage2` | `firstimage2` | 일부 실제 수집 확인 | 대표 이미지 썸네일 URL. 없으면 빈 문자열 |
 | `cpyrhtDivCd` | `cpyrhtDivCd` | 일부 실제 수집 확인 | 공공누리 저작권 유형 (Type1·Type3 등). 없으면 빈 문자열 |
@@ -92,12 +96,12 @@ Attraction은 도시와 1:N 관계를 가지며, 일정 카드와 추천 결과 
 | `sigungucode` | `sigungucode` | 일부 실제 수집 확인 | TourAPI 시군구 코드. 일부 레코드에서 빈 문자열 |
 | `lDongRegnCd` | `lDongRegnCd` | ✅ 실제 수집 확인 | 법정동 지역 코드 |
 | `lDongSignguCd` | `lDongSignguCd` | ✅ 실제 수집 확인 | 법정동 시군구 코드 |
-| `lclsSystm1` | `lclsSystm1` | ✅ 실제 수집 확인 | TourAPI 대분류 코드 |
-| `lclsSystm2` | `lclsSystm2` | ✅ 실제 수집 확인 | TourAPI 중분류 코드 |
-| `lclsSystm3` | `lclsSystm3` | ✅ 실제 수집 확인 | TourAPI 소분류 코드 |
-| `cat1` | `detail.common.cat1` | 일부 실제 수집 확인 | TourAPI cat1 대분류. 일부 레코드에서 빈 문자열 |
-| `cat2` | `detail.common.cat2` | 일부 실제 수집 확인 | TourAPI cat2 중분류 |
-| `cat3` | `detail.common.cat3` | 일부 실제 수집 확인 | TourAPI cat3 소분류 |
+| `lclsSystm1` | `lclsSystm1` | ✅ 실제 수집 확인 | TourAPI 대분류 코드. 테마 매핑의 주 분류 기준으로 활용 |
+| `lclsSystm2` | `lclsSystm2` | ✅ 실제 수집 확인 | TourAPI 중분류 코드. 테마 매핑의 주 분류 기준으로 활용 |
+| `lclsSystm3` | `lclsSystm3` | ✅ 실제 수집 확인 | TourAPI 소분류 코드. 테마 매핑의 주 분류 기준으로 활용 |
+| `cat1` | `detail.common.cat1` | ⚠️ 제공률 낮음 (결측 35%) | TourAPI cat1 대분류. 높은 결측률로 인해 테마 매핑에서 제외하며 보조 참조용으로만 유지 |
+| `cat2` | `detail.common.cat2` | ⚠️ 제공률 낮음 (결측 35%) | TourAPI cat2 중분류 |
+| `cat3` | `detail.common.cat3` | ⚠️ 제공률 낮음 (결측 35%) | TourAPI cat3 소분류 |
 | `overview` | `detail.common.overview` | ✅ 실제 수집 확인 | 관광지 설명 (한국어 전문) |
 | `homepage` | `detail.common.homepage` | 일부 실제 수집 확인 | 공식 홈페이지 URL (HTML 앵커 태그 포함 가능). 없으면 빈 문자열 |
 | `_assigned_theme` | 내부 생성 | ✅ 실제 수집 확인 | 분류 코드 매핑으로 할당한 6대 테마 값 |
@@ -115,6 +119,18 @@ Attraction은 도시와 1:N 관계를 가지며, 일정 카드와 추천 결과 
 | 입장료 | `usefee` | ⚠️ API 명세상 제공률 낮음 확인 | 입장료 문자열 |
 | 주차 | `parking` | 일부 실제 수집 확인 | 주차 가능 여부 |
 | 문의 | `infocenter` | 일부 실제 수집 확인 | 문의처 |
+
+**문화시설 (14)**
+
+| 필드 | TourAPI 원본 필드 | 실제 수집 및 명세 확인 상태 | 설명 |
+| --- | --- | --- | --- |
+| 운영시간 | `usetimeculture` | 일부 실제 수집 확인 | 관람 및 이용시간 문자열 |
+| 휴무일 | `restdateculture` | 일부 실제 수집 확인 | 휴관일 문자열 |
+| 입장료 | `usefee` | 일부 실제 수집 확인 | 관람 요금 및 이용 요금 |
+| 주차 | `parkingculture` | 일부 실제 수집 확인 | 주차 가능 여부 |
+| 주차요금 | `parkingfee` | 일부 실제 수집 확인 | 주차 요금 문자열 |
+| 소요시간 | `spendtime` | 일부 실제 수집 확인 | 관람 소요 시간 |
+| 문의 | `infocenterculture` | 일부 실제 수집 확인 | 문의처 전화번호 |
 
 **음식점 (39)**
 
@@ -149,7 +165,7 @@ Festival은 도시와 1:N 관계를 가지며, 월별 추천과 계절성 추천
 | `addr2` | `addr2` | ✅ 실제 수집 확인 | 주소 2. 빈 문자열 가능 |
 | `mapx` | `mapx` | ✅ 실제 수집 확인 | 경도 (문자열 형식) |
 | `mapy` | `mapy` | ✅ 실제 수집 확인 | 위도 (문자열 형식) |
-| `tel` | `tel` | 일부 실제 수집 확인 | 연락 전화번호. 빈 문자열 가능 |
+| `tel` | `tel` | ❌ 100% 결측 확인 | 연락 전화번호. 실제 수집 시에는 `detail.intro` 아래의 `infocenter` 및 `sponsor1tel` 등을 우선 폴백 매핑 필요 |
 | `eventstartdate` | `eventstartdate` | ✅ 실제 수집 확인 | 축제 시작일 (YYYYMMDD 형식) |
 | `eventenddate` | `eventenddate` | ✅ 실제 수집 확인 | 축제 종료일 (YYYYMMDD 형식) |
 | `firstimage` | `firstimage` | 일부 실제 수집 확인 | 대표 이미지 URL. 없으면 빈 문자열 |
@@ -177,27 +193,20 @@ Festival은 도시와 1:N 관계를 가지며, 월별 추천과 계절성 추천
 | 프로그램 | `program` | 일부 실제 수집 확인 | 세부 프로그램 설명 |
 | 할인 정보 | `discountinfofestival` | ⚠️ API 명세상 제공률 낮음 확인 | 할인 조건 |
 
-## 2.5 방문객 통계 데이터 (신규)
+## 2.5 방문객 통계 데이터 (신규 - 독립 엔티티 분리)
 
 > [신규] TourAPI DataLab Service(관광 빅데이터 API)를 활용한 월별 도시별 방문객 통계가 파이프라인에 추가되었다.
 > 고유 방문자 수의 특성상 일별 단순 합산 시 중복 집계 문제가 발생하므로, **1달 단위 구간 쿼리**로 취득하고 해당 월의 일수로 나눈 **월별 일평균**을 최종 지표로 사용한다.
+> **도시별 원천 데이터(`{city_en}.json`)에서 분리하여 `data/KR/visitor_statistics.json` 및 데이터베이스의 독립된 엔티티(`VisitorStatistics`)로 관리한다.**
 
-아래 필드는 `data/raw/final/{city_en}.json`의 `visitor_statistics.monthly_statistics` 배열 구조를 기준으로 정의한다.
-
-| 필드 | TourAPI 원본 필드 | 실제 수집 및 명세 확인 상태 | 설명 |
+| 필드 | 원본 / 산출 방식 | 실제 수집 및 명세 확인 상태 | 설명 |
 | --- | --- | --- | --- |
-| `month` | `month` | ✅ 실제 수집 확인 | 월 문자열 (예: `"2025-01"`) |
-| `days` | `days` | ✅ 실제 수집 확인 | 해당 월의 일수. 일평균 계산에 사용 |
-| `locals_total` | `locals_total` | ✅ 실제 수집 확인 | 해당 월 전체 현지인 방문 수 합계 |
-| `locals_daily_avg` | `locals_daily_avg` | ✅ 실제 수집 확인 | 현지인 일평균 방문객 수 (`locals_total / days`) |
-| `out_of_town_total` | `out_of_town_total` | ✅ 실제 수집 확인 | 해당 월 전체 외지인 방문 수 합계 |
-| `out_of_town_daily_avg` | `out_of_town_daily_avg` | ✅ 실제 수집 확인 | 외지인 일평균 방문객 수 |
-| `foreigners_total` | `foreigners_total` | ✅ 실제 수집 확인 | 해당 월 전체 외국인 방문 수 합계 |
-| `foreigners_daily_avg` | `foreigners_daily_avg` | ✅ 실제 수집 확인 | 외국인 일평균 방문객 수 |
-| `total_visitors` | `total_visitors` | ✅ 실제 수집 확인 | 세 항목 합계 (total) |
-| `total_daily_avg` | `total_daily_avg` | ✅ 실제 수집 확인 | 전체 일평균 방문객 수 |
-
-상위 레벨에는 `visitor_statistics.year`, `visitor_statistics.annual_totals`, `visitor_statistics.annual_daily_averages`도 함께 저장한다.
+| `city_id` | 내부 매핑 | ✅ 실제 수집 확인 | 통계 대상 도시 ID |
+| `year_month` | DataLabService 조회 기간 | ✅ 실제 수집 확인 | 월 단위 기준 문자열 (예: `"2025-01"`) |
+| `local_daily_avg` | 월 구간 쿼리 / 월 일수 | ✅ 실제 수집 확인 | 현지인 일평균 방문객 수 |
+| `outsider_daily_avg` | 월 구간 쿼리 / 월 일수 | ✅ 실제 수집 확인 | 외지인 일평균 방문객 수 (외지인 총합 / 월 일수) |
+| `foreigner_daily_avg` | 월 구간 쿼리 / 월 일수 | ✅ 실제 수집 확인 | 외국인 일평균 방문객 수 (외국인 총합 / 월 일수) |
+| `source_name` | 내부 지정 | ✅ 실제 수집 확인 | `DataLabService` |
 
 ---
 
@@ -351,15 +360,28 @@ Festival은 도시와 1:N 관계를 가지며, 월별 추천과 계절성 추천
 
 > [변경] Lovv_scraping 포맷 확정에 따라 정규화 규칙을 갱신한다.
 
-- `city_id` 형식: `KR-{도_코드}-{CITY_EN}` (예: `KR-42-GANGNEUNG`)
-- `attraction_id` 형식: `KR-{도_코드}-{CITY_EN}-ATT-{contentId}`
-- `festival_id` 형식: `KR-{도_코드}-{CITY_EN}-FES-{contentId}`
-- 관광지와 축제는 반드시 `city_id`를 가진다. 단, 포항시(남구·북구)는 `KR-47-POHANG`으로 통합한다.
-- 음식점(`contentTypeId == "39"`)의 `treatmenu`는 `[대표 메뉴]` 접두어로 `description`에 추가한다. `admission_fee`는 빈 문자열로 처리한다.
-- 축제 기간은 `period_start`(YYYYMMDD)·`period_end`(YYYYMMDD)로 분리 저장한다.
-- 운영시간과 입장료는 최신성이 낮을 수 있으므로 `data_confidence`를 `medium` 또는 `low`로 기록한다.
-- 외부 설명문은 원문 복제가 아니라 내부 요약문으로 재작성하거나 TourAPI `overview` 값을 그대로 저장한다.
-- `detailCommon2` 호출 시 `contentId`만 파라미터로 전달한다. 추가 파라미터 전달 시 `INVALID_REQUEST_PARAMETER_ERROR`(코드 10)가 발생한다.
+- **식별자 형식**:
+  - `city_id`: `KR-{도_코드}-{CITY_EN}` (예: `KR-42-GANGNEUNG`)
+  - `attraction_id`: `KR-{도_코드}-{CITY_EN}-ATT-{contentId}`
+  - `festival_id`: `KR-{도_코드}-{CITY_EN}-FES-{contentId}`
+  - 모든 관광지와 축제는 반드시 유효한 `city_id`를 가진다. (예: 포항시 남구·북구는 `KR-47-POHANG`으로 통합)
+- **6대 테마 자동 분류**:
+  - 기존의 `cat1/cat2/cat3` 필드는 약 35%의 결측률을 보여 테마 분류 기준으로 부적합하다.
+  - 따라서, 100% 제공되는 법정/행정 분류 코드인 **`lclsSystm1`, `lclsSystm2`, `lclsSystm3` 코드를 기준으로 6대 테마를 자동 매핑**한다.
+- **전화번호 결측 및 통합 수집 (Phone Fallback)**:
+  - 공통 정보의 `tel` 필드는 100% 결측되어 비어있다.
+  - 이에 따라, `detail.intro` 내의 유형별 소개 연락처 필드(`infocenter`, `infocenterculture`, `infocenterfood`, `sponsor1tel` 등)를 순차적으로 탐색하여 최종 저장 데이터의 연락처 필드로 자동 폴백 적재한다.
+- **100% 결측 속성의 정제**:
+  - 음식점의 `scalefood` 및 축제의 `bookingplace`, `discountinfofestival`, `eventhomepage`, `festivalgrade`, `sponsor2tel`, `subevent` 등 실제 제공률이 0%인 100% 결측 필드들은 저장 구조 및 수집 대상에서 완전히 생략하거나 Optional로 관리하여 스키마 정합성을 확보한다.
+- **Boolean 결측 왜곡 예방**:
+  - 유모차 대여, 신용카드 사용, 반려동물 동반 등 결측률이 매우 높은 Boolean 대상 필드들은 정보 누락(결측) 시 일괄 `false`로 변환하지 않는다. 데이터 누락 상태는 `null` 또는 필드 생략(undefined)으로 보존하며, 로우 데이터상에 명확한 거부 표현('N', '불가', '없음')이 기재된 경우에만 `false`로 정규화한다.
+- **기타 음식점 및 축제 처리**:
+  - 음식점(`contentTypeId == "39"`)의 `treatmenu`는 `[대표 메뉴]` 접두어로 `description`에 추가한다. `admission_fee`는 빈 문자열로 처리한다.
+  - 축제 기간은 `period_start`(YYYYMMDD)·`period_end`(YYYYMMDD)로 분리 저장한다.
+- **기타 수집 제약**:
+  - 운영시간과 입장료는 최신성이 낮을 수 있으므로 `data_confidence`를 `medium` 또는 `low`로 기록한다.
+  - 외부 설명문은 원문 복제가 아니라 내부 요약문으로 재작성하거나 TourAPI `overview` 값을 그대로 저장한다.
+  - `detailCommon2` 호출 시 `contentId`만 파라미터로 전달한다. 추가 파라미터 전달 시 `INVALID_REQUEST_PARAMETER_ERROR`(코드 10)가 발생한다.
 
 ---
 
@@ -469,20 +491,24 @@ data/KR/
   "theme": "바다·해안",
   "address": "강원특별자치도 강릉시 창해로 514",
   "description": "강릉의 대표 해변으로 길이 약 6km의 백사장이 펼쳐진다.",
-  "admission_fee": "",
-  "opening_hours": "",
   "latitude": 37.7970,
   "longitude": 128.9017,
   "source_name": "TourAPI 4.0 (KorService2)",
   "source_url": "https://apis.data.go.kr/B551011/KorService2/detailCommon2?contentId=126508",
   "collected_at": "2026-06-05T00:00:00+09:00",
+  "detail_intro": {
+    "usetime": "00:00~24:00 (해수욕장 개장 기간 중)",
+    "restdate": "연중무휴",
+    "usefee": "무료",
+    "parking": "가능",
+    "infocenter": "033-640-4531"
+  },
   "field_status": {
     "name_ko": "collected",
     "theme": "collected",
     "address": "collected",
     "description": "collected",
-    "admission_fee": "missing",
-    "opening_hours": "missing",
+    "detail_intro": "collected",
     "latitude": "collected",
     "longitude": "collected"
   }
@@ -505,13 +531,24 @@ data/KR/
   "longitude": 128.8761,
   "source_name": "TourAPI 4.0 (KorService2)",
   "collected_at": "2026-06-05T00:00:00+09:00",
+  "detail_intro": {
+    "usetimefestival": "무료 (일부 체험 프로그램 유료)",
+    "playtime": "행사 기간 중 상시 진행",
+    "eventplace": "강릉시 남대천 행사정",
+    "sponsor1": "(사)강릉단오제위원회",
+    "sponsor1tel": "033-641-1593",
+    "program": "신주빚기, 대관령국사성황제, 영신제, 본행사 등",
+    "discountinfofestival": ""
+  },
   "field_status": {
     "name_ko": "collected",
     "theme": "collected",
     "period_start": "collected",
     "period_end": "collected",
     "description": "collected",
-    "admission_fee": "missing"
+    "detail_intro": "collected",
+    "latitude": "collected",
+    "longitude": "collected"
   }
 }
 ```
@@ -521,14 +558,11 @@ data/KR/
 ```json
 {
   "city_id": "KR-42-GANGNEUNG",
-  "year": 2025,
-  "month": "2025-01",
-  "daily_avg_local": 12340,
-  "daily_avg_nonlocal": 45678,
-  "daily_avg_foreign": 123,
-  "daily_avg_total": 58141,
-  "query_start_date": "20250101",
-  "query_end_date": "20250131"
+  "year_month": "2025-01",
+  "local_daily_avg": 12340,
+  "outsider_daily_avg": 45678,
+  "foreigner_daily_avg": 123,
+  "source_name": "DataLabService"
 }
 ```
 
@@ -536,7 +570,10 @@ data/KR/
 
 # 8. 6대 테마 분류
 
-> [신규] 관광지와 축제를 아래 6대 핵심 테마로 분류한다. TourAPI 카테고리 코드(`cat1`·`cat2`·`cat3`)를 기준으로 자동 매핑하고, 축제는 수동 오버라이드를 추가로 적용한다.
+> [신규] 관광지와 축제를 아래 6대 핵심 테마로 분류한다. 
+> 실제 수집 데이터 분석 결과, TourAPI의 `cat1/cat2/cat3` 필드는 결측률이 약 35%에 달해 분류 기준으로 부적합한 것으로 확인되었습니다.
+> 따라서 테마 자동 분류는 제공률이 100%인 **TourAPI의 행정/법정 분류 코드인 `lclsSystm1`·`lclsSystm2`·`lclsSystm3`을 기준으로 자동 매핑**하며, 축제의 경우 추가적인 수동 오버라이드를 적용합니다.
+> **[필터링 규칙] 수집 파이프라인(`scripts/scrape_list.py`)은 6대 테마 중 하나로 정상 매핑되는 항목만 최종 필터링하여 수집합니다. 6대 테마에 분류되지 않는 카테고리('테마 없음' 및 '제외' 대상 코드)의 관광지 및 축제는 수집 단계에서 원천적으로 필터링(Drop)되어 최종 JSON 데이터셋에서 배제됩니다.**
 
 | 테마 | 설명 | 강원+경북 관광지 수 | 강원+경북 축제 수 |
 | --- | --- | --- | --- |
@@ -547,6 +584,26 @@ data/KR/
 | `자연·트레킹` | 자연, 등산, 트레킹, 국립공원 | 687 | 13 |
 | `예술·감성` | 예술, 디자인, 감성, 문화, 행사 | 374 | 61 |
 | **합계** | | **4,911** | **106** |
+
+### 8.1 테마별 세부 소분류(`lclsSystm`) 매핑 규격 (명시적 제외 조건 반영)
+
+자동 매핑 프로그램(`scripts/build_mapping_dict.py`)의 제외 규칙(`should_exclude`)이 적용된 최종 매핑 규격입니다.
+
+| 6대 테마 | 분류 범위 (중분류 / 소분류) | 핵심 매핑 대상 소분류 코드 예시 |
+| :--- | :--- | :--- |
+| **온천·휴양** | • **개별 소분류** (자연공원) | `NA040600` (자연휴양림)<br>*(※ `EX05` 웰니스관광 전체는 대분류 '체험관광'으로 제외, `NA010500` 약수터는 명칭 제외)* |
+| **바다·해안** | • **자연경관(하천/해양)** (`NA02` 일부 소분류)<br>• **개별 소분류** (랜드마크) | `NA020700` (항구/포구), `NA020800` (해안절경), `NA020900` (해변/해수욕장), `VE010800` (등대)<br>*(※ `EX070100` 유람선관광은 대분류 '체험관광'으로 제외)* |
+| **역사·전통** | • **역사관광** (`HS` 대분류 일부)<br>• **개별 소분류** (전시시설) | `HS010100` (고궁), `HS010200` (성곽), `HS010400` (고택), `HS010600` (민속마을), `HS030100` (불교성지/사찰), `VE070100` (박물관)<br>*(※ `EX` 전통/사찰체험은 대분류 '체험관광'으로 제외, `북한관광지`, `기타안보관광지`, `기타 종교성지`는 명칭 제외)* |
+| **미식·노포** | • **관광식당** (`FD010100` 소분류 한정) | `FD010100` (관광식당)<br>*(※ 모범음식점, 카페/찻집, 제과/분식 등 일반 간이음식 및 주점 계열 소분류 전체 제외)* |
+| **자연·트레킹** | • **자연관광** (`NA` 대분류 대부분)<br>• **개별 소분류** (도시공원/문화관광) | `NA010100` (산/고개), `NA010200` (숲), `NA010400` (계곡), `NA020100` (강), `NA020200` (호수), `NA030100` (동굴), `NA040100` (국립공원), `NA040700` (수목원/정원), `VE030100` (시민공원), `VE040300` (둘레길)<br>*(※ `NA010500` 약수터는 명칭 제외)* |
+| **예술·감성** | • **문화시설/랜드마크** (`VE` 중분류 일부) | `VE01` 랜드마크관광 일부(건물/타워/전망대/다리/대교/분수 등), `VE020500` (천문대), `VE070600` (미술관/화랑)<br>*(※ `EX02` 공예체험은 대분류 '체험관광'으로 제외, 중분류가 '공연시설', '교육시설', '복합관광시설', '기타문화관광지'인 소분류 전체 제외)* |
+
+#### ⚠️ 스크립트 기반 명시적 제외 규칙 (`should_exclude`)
+데이터 품질 및 여행 추천 서비스의 고유 정체성 유지를 위해 스크립트 상에서 필터링하는 조건입니다.
+1. **대분류 제외**: `체험관광` 대분류 전체 제외 (예: 공예체험, 웰니스스파, 사찰/전통문화체험 일체 배제)
+2. **중분류 제외**: `기타문화관광지` (서점 등), `레저스포츠시설` (스포츠경기장 등), `교육시설` (도서관, 학교 등), `공연시설` (공연장, 영화관 등), `복합관광시설` (관광단지, 리조트 등) 전체 제외
+3. **소분류 명칭 제외**: `기타주점`, `클럽`, `기타간이음식`, `북한관광지`, `기타안보관광지`, `기타 종교성지`, `약수터` 강제 제외
+4. **미식·노포 테마 제한**: 음식점(`FD` 대분류)은 오직 `FD010100` (관광식당) 코드만 수집하고, 그 외 모범음식점, 카페, 간이음식, 일반 주점 등은 전부 배제
 
 > **축제 테마 수동 재분류**: 기존에 `예술·감성`으로 자동 분류된 축제 61건 중 46건을 수동 검토 후 구체적인 테마로 재분류하였다. 오버라이드 목록은 `crawling/KR/targets/festival_theme_overrides.json`에 보존한다.
 
@@ -614,3 +671,4 @@ data/KR/
 | --- | --- | --- | --- |
 | v0.1 | 2026-06-02 | LLM 파트 | 한국 데이터 취득 계획서 초안 작성 |
 | v0.2 | 2026-06-06 | LLM 파트 | 실제 수집 데이터 및 API 명세 분석 결과 반영: Attraction·Festival·방문객 통계 데이터 모델을 실제 수집 필드 기준으로 갱신, city_id 형식 확정, TourAPI 동작 특성, 5단계 파이프라인, 6대 테마 분류 현황 추가 |
+| v0.3 | 2026-06-07 | LLM 파트 | 실데이터 결측률 분석 및 팀원 설계 피드백 반영: 6대 테마 분류 기준을 lclsSystm 코드로 정정하고 스크립트 내 명시적 제외 조건(should_exclude)과 미식·노포 테마의 관광식당(FD010100) 한정 제한 필터링 규격을 반영한 세부 소분류 매핑 규격표 추가, 6대 테마 비대상 카테고리의 수집 시점 원천 필터링(Drop) 배제 규칙 명시, tel 결측에 따른 intro infocenter 계열 폴백 수집 정의, scalefood/bookingplace 등 100% 결측 필드 제외/Optional화, Boolean 결측치 왜곡 예방 정책 반영, 방문객 통계(VisitorStatistics)를 독립 엔티티 및 파일로 분리 |
