@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로브 (Lovv) — 기술 명세서 v0.2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/requirements.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside>
+        <div class="aside-brand">
+          <div class="aside-logo">로브</div>
+          <div class="aside-ver">Technical Spec · v0.2</div>
+          <div class="aside-status"><div class="status-dot"></div><span>검토 중</span></div>
+        </div>
+        <nav class="toc">
+<div class="toc-section"><a class="toc-link active" href="#cover">표지 / 문서 정보</a></div>
+<div class="toc-section">
+<div class="toc-section-hd">1. 문서 개요</div>
+<a class="toc-link" href="#s1">1. 문서 개요</a>
+<a class="toc-link" href="#s1-1">1.1 목적</a>
+<a class="toc-link" href="#s1-2">1.2 설계 원칙</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">2. 시스템 개요</div>
+<a class="toc-link" href="#s2">2. 시스템 개요</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">3. 배포 단계별 기술 범위</div>
+<a class="toc-link" href="#s3">3. 배포 단계별 기술 범위</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">4. 프론트엔드 명세</div>
+<a class="toc-link" href="#s4">4. 프론트엔드 명세</a>
+<a class="toc-link" href="#s4-1">4.1 주요 화면</a>
+<a class="toc-link" href="#s4-2">4.2 클라이언트 상태</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">5. 백엔드 명세</div>
+<a class="toc-link" href="#s5">5. 백엔드 명세</a>
+<a class="toc-link" href="#s5-1">5.1 모듈 구성</a>
+<a class="toc-link" href="#s5-2">5.2 공통 응답 원칙</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">6. 데이터 처리 명세</div>
+<a class="toc-link" href="#s6">6. 데이터 처리 명세</a>
+<a class="toc-link" href="#s6-1">6.1 추천용 데이터</a>
+<a class="toc-link" href="#s6-2">6.2 표시용 데이터</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">7. 보안 및 개인정보</div>
+<a class="toc-link" href="#s7">7. 보안 및 개인정보</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">8. 품질 및 관측성</div>
+<a class="toc-link" href="#s8">8. 품질 및 관측성</a>
+<a class="toc-link" href="#s8-1">8.1 Agent 런타임 경계</a>
+</div>
+<div class="toc-section">
+<div class="toc-section-hd">9. 변경 이력</div>
+<a class="toc-link" href="#s9">9. 변경 이력</a>
+</div>
+        </nav>
+      </aside>
+      <main id="cover">
+        <h1 id="cover-title" class="s-h1">로브 (Lovv) 기술 명세서</h1>
+<blockquote>
+<p class="doc-p">문서 버전: v0.2</p>
+<p class="doc-p">문서 상태: 검토 중 (Review)</p>
+<p class="doc-p">기준 문서: 요구사항 명세서 v1.7, 서비스 흐름 명세서 v0.2, 데이터 수집 계획서 v0.6, 데이터베이스 설계 명세서 v0.2, Agent 명세서 v0.4, API 명세서 v0.1</p>
+</blockquote>
+<h1 id="s1" class="s-h1">1. 문서 개요</h1>
+<h2 id="s1-1" class="s-h2">1.1 목적</h2>
+<p class="doc-p">본 문서는 로브 서비스의 시스템 구성, 프론트엔드·백엔드·데이터·AI/RAG·외부 연동 기술 방향을 정의한다. 구현 세부 코드는 포함하지 않고, PoC와 Production 단계에서 공통으로 지켜야 할 기술 경계와 책임을 명세한다.</p>
+<h2 id="s1-2" class="s-h2">1.2 설계 원칙</h2>
+<ul class="bullet-list">
+<li>Markdown 요구사항 명세서를 source of truth로 삼고 구현 문서는 이를 참조한다.</li>
+<li>프론트엔드는 사용자 입력, 지도, 결과 화면, 로컬 저장을 담당한다.</li>
+<li>백엔드는 인증, 데이터 검증, 외부 API 프록시, 추천 파이프라인 실행을 담당한다.</li>
+<li>외부 API 응답은 신뢰하지 않고 경계에서 검증한다.</li>
+<li>추천 로직은 실시간 예보가 아닌 월별 기상 경향 통계 데이터를 기반으로 Supervisor 노드가 폴백 상태를 판단한다.</li>
+</ul>
+<h1 id="s2" class="s-h1">2. 시스템 개요</h1>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>계층</th><th>책임</th></tr></thead><tbody>
+<tr><td>Client Web</td><td>온보딩, 지도, 챗봇 UI, 추천 결과, 마이페이지, 로컬 스토리지</td></tr>
+<tr><td>Backend API</td><td>인증·인가, 데이터 조회, 추천 요청, 저장/피드백, 운영 데이터 검토</td></tr>
+<tr><td>Recommendation Agent</td><td>조건 분류, 후보 검색, 후보 선정, 일정 구성, 추천 이유 생성</td></tr>
+<tr><td>Data Store</td><td>목적지, 축제, 월별 기상 경향, 사용자 저장 데이터, 운영 검토 이력</td></tr>
+<tr><td>External APIs</td><td>Google Maps, Kakao Maps, Yahoo Japan 딥링크, WeatherAPI 표시용 데이터</td></tr>
+</tbody></table></div>
+<h1 id="s3" class="s-h1">3. 배포 단계별 기술 범위</h1>
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
+<thead><tr><th>영역</th><th>PoC</th><th>Production</th></tr></thead><tbody>
+<tr><td>프론트엔드</td><td>단일 웹 앱, 로컬 스토리지 저장</td><td>계정 기반 저장, 마이페이지 완성</td></tr>
+<tr><td>백엔드</td><td>추천 API 및 외부 API 프록시 최소 구현</td><td>인증·인가, 운영/검토 API, 감사 이력</td></tr>
+<tr><td>데이터</td><td>정적 JSON 또는 시드 데이터</td><td>관리형 DB와 데이터 갱신 파이프라인</td></tr>
+<tr><td>AI/RAG</td><td>문서/정적 데이터 기반 검색 및 프롬프트</td><td>평가, 재시도, 정책 관리, 모니터링</td></tr>
+<tr><td>외부 API</td><td>지도/날씨 표시와 딥링크</td><td>키 보안, 호출량 제어, 캐시</td></tr>
+</tbody></table></div>
+<h1 id="s4" class="s-h1">4. 프론트엔드 명세</h1>
+<h2 id="s4-1" class="s-h2">4.1 주요 화면</h2>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>화면</th><th>책임</th></tr></thead><tbody>
+<tr><td>온보딩</td><td>대도시 스타일 선택, 기본 테마 매핑, 선호 저장</td></tr>
+<tr><td>메인 지도</td><td>국가·월·테마 필터, 소도시 마커 표시, 마커 클릭 진입</td></tr>
+<tr><td>챗봇</td><td>자연어 조건 입력, 추가 질문, 축제 포함 여부 확인</td></tr>
+<tr><td>추천 결과</td><td>소도시 1곳 일정 카드, 추천 이유, 외부 링크, 피드백</td></tr>
+<tr><td>마이페이지</td><td>저장 일정, 온보딩 선호, 피드백 이력 조회</td></tr>
+</tbody></table></div>
+<h2 id="s4-2" class="s-h2">4.2 클라이언트 상태</h2>
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
+<thead><tr><th>상태</th><th>저장 위치</th><th>설명</th></tr></thead><tbody>
+<tr><td>onboardingProfile</td><td>PoC 로컬 스토리지</td><td>기본 테마 선호</td></tr>
+<tr><td>selectedDestination</td><td>메모리/URL 상태</td><td>지도 마커로 선택한 소도시</td></tr>
+<tr><td>recommendationSession</td><td>메모리</td><td>국가, 월, 테마, 일정 유형, 축제 포함 여부</td></tr>
+<tr><td>savedItineraries</td><td>PoC 로컬 스토리지</td><td>저장된 추천 일정</td></tr>
+<tr><td>feedbackHistory</td><td>PoC 로컬 스토리지</td><td>좋아요/싫어요 기록</td></tr>
+</tbody></table></div>
+<h1 id="s5" class="s-h1">5. 백엔드 명세</h1>
+<h2 id="s5-1" class="s-h2">5.1 모듈 구성</h2>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>모듈</th><th>책임</th></tr></thead><tbody>
+<tr><td>Auth Module</td><td>로그인, 역할 기반 인가, 세션/토큰 관리</td></tr>
+<tr><td>User Preference Module</td><td>온보딩 선호, 피드백, 저장 일정 관리</td></tr>
+<tr><td>Destination Module</td><td>소도시, 테마, 계절, 혼잡도 데이터 조회</td></tr>
+<tr><td>Recommendation Module</td><td>LangGraph 기반 Agent 실행, Supervisor Router 상태 제어, 결정적 Skill 호출, 후보 선정, 일정·설명 생성, 검증 루프 제어</td></tr>
+<tr><td>External Proxy Module</td><td>WeatherAPI, Kakao Local 등 서버 경유 호출</td></tr>
+<tr><td>Admin Review Module</td><td>데이터 제안, 승인, 반려, 이력 관리</td></tr>
+</tbody></table></div>
+<h2 id="s5-2" class="s-h2">5.2 공통 응답 원칙</h2>
+<p class="doc-p">모든 API 오류는 동일한 구조를 사용한다.</p>
+<pre><code>{
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;VALIDATION_ERROR&quot;,
+    &quot;message&quot;: &quot;요청 값이 올바르지 않습니다.&quot;,
+    &quot;details&quot;: {}
+  }
+}</code></pre>
+<h1 id="s6" class="s-h1">6. 데이터 처리 명세</h1>
+<h2 id="s6-1" class="s-h2">6.1 추천용 데이터</h2>
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
+<thead><tr><th>데이터</th><th>처리 방식</th></tr></thead><tbody>
+<tr><td>통합 목적지 DB</td><td>축제명, 장소 개요, 이미지, 위경도 좌표 등 무거운 마스터 정보를 저장하고 있는 DB로, 1차 조회 시 성능과 레이턴시 확보를 위해 사용</td></tr>
+<tr><td>S3 vector 기반 RAG Index</td><td>장소·테마·자연어 조건의 임베딩 검색과 유사도 재랭킹에 사용. 정형 필터는 DB, 의미 검색은 S3 vector 기능 기반 인덱스로 분리</td></tr>
+<tr><td>축제 검증 캐시</td><td><code>festival_<wbr>id + travelYear</code> 기준으로 해당 연도 날짜 검증 결과를 재사용해 웹 검색 비용과 지연을 줄임</td></tr>
+<tr><td>실시간 API 교차 검증</td><td>당해 연도 정확한 개최 일정/기간 등 실시간 최신화가 필수적인 특정 항목에 한해, <code>Festival_<wbr>Verifier_<wbr>Agent</code>가 공식 웹 출처를 확인하고 정적 필드를 보완하는 하이브리드 데이터 연동</td></tr>
+<tr><td>목적지 기본 정보</td><td>정규화된 소도시 단위로 관리</td></tr>
+<tr><td>테마 태그</td><td>기본 6개 테마와 확장 테마 분리</td></tr>
+<tr><td>월별 기상 경향</td><td>추천용 정적 통계 데이터(장마 플래그, 태풍 경향 등)로 관리</td></tr>
+<tr><td>축제·행사</td><td>지역, 월, 개최 상태, 출처 링크 포함</td></tr>
+<tr><td>혼잡도</td><td>방문객 수 또는 대체 지표 기반 점수화</td></tr>
+</tbody></table></div>
+<h2 id="s6-2" class="s-h2">6.2 표시용 데이터</h2>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>데이터</th><th>처리 방식</th></tr></thead><tbody>
+<tr><td>현재 날씨</td><td>WeatherAPI를 통해 상세 화면에 표시</td></tr>
+<tr><td>지도/장소 상세</td><td>Google Maps/Kakao Maps 링크와 API 결과 사용</td></tr>
+<tr><td>숙소 검색 링크</td><td>직접 추천 없이 플랫폼 검색 URL 생성</td></tr>
+</tbody></table></div>
+<h1 id="s7" class="s-h1">7. 보안 및 개인정보</h1>
+<div class="table-wrap"><table class="info-tbl">
+<thead><tr><th>항목</th><th>정책</th></tr></thead><tbody>
+<tr><td>대화 로그</td><td>전문 저장 금지</td></tr>
+<tr><td>일정·선호·피드백</td><td>PoC 로컬, Production 계정 기반 저장</td></tr>
+<tr><td>API Key</td><td>서버 환경 변수 또는 프록시에서 관리</td></tr>
+<tr><td>운영 기능</td><td>역할 기반 인증·인가 필수</td></tr>
+<tr><td>외부 응답</td><td>스키마 검증 후 사용</td></tr>
+<tr><td>Agent 권한</td><td>AgentCore Identity 또는 동등한 권한 경계로 Memory, Gateway Skill, Browser, Knowledge Base 접근 범위를 분리</td></tr>
+<tr><td>Agent 정책</td><td>국가 혼합 금지, 미검증 축제 일정 배치 금지, 대화 원문 trace 금지를 Policy/Validation Skill로 강제</td></tr>
+</tbody></table></div>
+<h1 id="s8" class="s-h1">8. 품질 및 관측성</h1>
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
+<thead><tr><th>항목</th><th>기준</th></tr></thead><tbody>
+<tr><td>추천 처리 시간</td><td>멀티스텝 Agent 전체 8초 이내 목표</td></tr>
+<tr><td>RAG 검색</td><td>1초 이내 반환 목표</td></tr>
+<tr><td>외부 API 실패</td><td>폴백 메시지와 부분 결과 제공</td></tr>
+<tr><td>추천 품질</td><td>추천 이유와 출처를 함께 제공</td></tr>
+<tr><td>Agent 추적</td><td>노드명, next_node, matrix 상태, retry_count, fallback 여부, latency, token 사용량을 redacted trace로 기록</td></tr>
+<tr><td>운영 추적</td><td>데이터 제안·검토·승인 이력 저장</td></tr>
+</tbody></table></div>
+<h2 id="s8-1" class="s-h2">8.1 Agent 런타임 경계</h2>
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
+<thead><tr><th>계층</th><th>기술 후보</th><th>책임</th></tr></thead><tbody>
+<tr><td>Runtime</td><td>LangGraph, AgentCore Runtime</td><td>Supervisor와 Sub-Agent 그래프 실행</td></tr>
+<tr><td>Memory</td><td>AgentCore Memory, DynamoDB</td><td>세션 상태, 롤링 요약, <code>fulfilled_<wbr>matrix</code>, 축제 검증 캐시 저장</td></tr>
+<tr><td>Gateway</td><td>Lambda/API 기반 Skill</td><td>Scoring, Matrix Transition, Validation, Link, Weather, Packaging 같은 결정적 Skill 실행</td></tr>
+<tr><td>Model</td><td>Amazon Bedrock Converse API</td><td>Sub-Agent별 LLM 추론과 모델 교체 추상화</td></tr>
+<tr><td>Retrieval</td><td>S3 vector 기반 RAG Index</td><td>자연어·테마 임베딩 검색과 정형 필터 병행</td></tr>
+<tr><td>Evaluation</td><td>AgentCore Evaluations 또는 동등 하네스</td><td>trajectory, 조건 충족, 근거성, 루프 안전성 회귀 평가</td></tr>
+</tbody></table></div>
+<h1 id="s9" class="s-h1">9. 변경 이력</h1>
+<div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
+<thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+<tr><td>v0.2</td><td>2026-05-31</td><td>로브 기획팀</td><td>통합 목적지 DB 및 실시간 API 교차 검증 하이브리드 아키텍처 반영, Recommendation Module 내 Supervisor Router의 상태 제어 역할 추가</td></tr>
+<tr><td>v0.1</td><td>2026-05-29</td><td>로브 기획팀</td><td>기술 명세서 초안 작성</td></tr>
+</tbody></table></div>
+        <nav class="doc-nav" aria-label="이전 다음 문서">
+          <a class="doc-nav-home" href="../index.html">문서 홈</a>
+          <div class="doc-nav-pager">
+            <a class="doc-nav-link" href="./05_agent_spec.html">이전 문서<br><strong>Agent 명세서</strong></a>
+            <a class="doc-nav-link" href="./07_api_spec.html">다음 문서<br><strong>API 명세서</strong></a>
+          </div>
+        </nav>
+      </main>
+    </div>
+    <script src="../assets/js/requirements.js" defer></script>
+  </body>
+</html>
