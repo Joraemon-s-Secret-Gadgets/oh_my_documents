@@ -50,17 +50,8 @@ DOCUMENTS = [
         "설계·명세 문서",
     ),
     Document(
-        "docs/03_technical_spec/03_technical_spec.md",
-        "03_technical_spec.html",
-        "Technical Spec",
-        "로브 (Lovv) — 기술 명세서",
-        "프론트엔드, 백엔드, 데이터, 외부 API, AI/RAG 계층의 기술 책임과 경계를 정의합니다.",
-        "검토 중",
-        "설계·명세 문서",
-    ),
-    Document(
-        "docs/04_data_collect_plan/04_data_collect_plan.md",
-        "04_data_collect_plan.html",
+        "docs/03_data_collect_plan/03_data_collect_plan.md",
+        "03_data_collect_plan.html",
         "Data Collection",
         "로브 (Lovv) — 데이터 수집 계획서",
         "한국·일본 지역 추천 품질 확보를 위한 수집 범위, 출처, 전처리, 품질 관리 기준을 정의합니다.",
@@ -68,17 +59,8 @@ DOCUMENTS = [
         "설계·명세 문서",
     ),
     Document(
-        "docs/05_api_spec/05_api_spec.md",
-        "05_api_spec.html",
-        "API Spec",
-        "로브 (Lovv) — API 명세서",
-        "추천, 지도, 저장, 피드백, 운영 검토 API의 계약과 공통 오류 형식을 정의합니다.",
-        "기획 단계",
-        "설계·명세 문서",
-    ),
-    Document(
-        "docs/06_database_design/06_database_design.md",
-        "06_database_design.html",
+        "docs/04_database_design/04_database_design.md",
+        "04_database_design.html",
         "Database Design",
         "로브 (Lovv) — 데이터베이스 설계 명세서",
         "목적지, 축제, 사용자, 저장 일정, 피드백, 운영 검토 데이터 모델을 정의합니다.",
@@ -86,21 +68,46 @@ DOCUMENTS = [
         "설계·명세 문서",
     ),
     Document(
-        "docs/07_agent_spec/07_agent_spec.md",
-        "07_agent_spec.html",
+        "docs/05_agent_spec/05_agent_spec.md",
+        "05_agent_spec.html",
         "Agent Spec",
         "로브 (Lovv) — Agent 명세서",
         "조건 분류, 검색, 후보 선정, 일정 구성, 설명 생성 Agent 파이프라인을 정의합니다.",
         "검토 중",
         "설계·명세 문서",
     ),
+    Document(
+        "docs/06_technical_spec/06_technical_spec.md",
+        "06_technical_spec.html",
+        "Technical Spec",
+        "로브 (Lovv) — 기술 명세서",
+        "프론트엔드, 백엔드, 데이터, 외부 API, AI/RAG 계층의 기술 책임과 경계를 정의합니다.",
+        "검토 중",
+        "설계·명세 문서",
+    ),
+    Document(
+        "docs/07_api_spec/07_api_spec.md",
+        "07_api_spec.html",
+        "API Spec",
+        "로브 (Lovv) — API 명세서",
+        "추천, 지도, 저장, 피드백, 운영 검토 API의 계약과 공통 오류 형식을 정의합니다.",
+        "기획 단계",
+        "설계·명세 문서",
+    ),
 ]
 
 
 REDIRECTS = {
-    "04_api_spec.html": "05_api_spec.html",
-    "05_database_design.html": "06_database_design.html",
-    "06_agent_spec.html": "07_agent_spec.html",
+    "03_technical_spec.html": "06_technical_spec.html",
+    "04_api_spec.html": "07_api_spec.html",
+    "04_data_collect_plan.html": "03_data_collect_plan.html",
+    "05_database_design.html": "04_database_design.html",
+    "05_technical_spec.html": "06_technical_spec.html",
+    "05_api_spec.html": "07_api_spec.html",
+    "06_agent_spec.html": "05_agent_spec.html",
+    "06_api_spec.html": "07_api_spec.html",
+    "06_database_design.html": "04_database_design.html",
+    "07_agent_spec.html": "05_agent_spec.html",
 }
 
 
@@ -203,6 +210,20 @@ def render_table(lines: list[str]) -> str:
         tbody_rows.append("<tr>" + "".join(f"<td>{inline(cell)}</td>" for cell in cells[: len(header)]) + "</tr>")
     tbody = "<tbody>\n" + "\n".join(tbody_rows) + "\n</tbody>"
     return f'<div class="{wrap_class}"><table class="{table_class}">\n{thead}{tbody}</table></div>'
+
+
+def render_image(markdown_src: str, alt: str) -> str:
+    src = markdown_src
+    if src.startswith("../../assets/"):
+        src = "../assets/" + src.removeprefix("../../assets/")
+    elif src.startswith("assets/"):
+        src = "../" + src
+    return (
+        '<figure class="doc-figure">'
+        f'<img src="{html.escape(src)}" alt="{html.escape(alt)}" loading="lazy" />'
+        f'<figcaption>{html.escape(alt)}</figcaption>'
+        "</figure>"
+    )
 
 
 def collect_headings(lines: list[str]) -> list[tuple[int, str, str]]:
@@ -326,6 +347,14 @@ def render_blocks(markdown: str) -> tuple[str, list[tuple[int, str, str]]]:
                 table_lines.append(lines[i])
                 i += 1
             output.append(render_table(table_lines))
+            continue
+
+        image_match = re.match(r"^!\[([^\]]*)\]\(([^)]+)\)$", stripped)
+        if image_match:
+            flush_paragraph()
+            flush_list()
+            output.append(render_image(image_match.group(2).strip(), image_match.group(1).strip()))
+            i += 1
             continue
 
         heading = re.match(r"^(#{1,3})\s+(.+)$", stripped)

@@ -8,7 +8,7 @@
 
 `index.html`과 `pages/*.html`은 공유용 생성물로 취급한다. HTML을 직접 수정해야 하는 경우에도, 같은 변경이 반드시 대응하는 Markdown 원본에 반영되어 있어야 한다.
 
-`docs/00_project_plan/00_project_plan.md`는 다른 상세 문서의 내용을 반영하는 상위 기획 문서다. LLM이 이 파일을 수정할 때는 `docs/01_requirements`부터 `docs/07_agent_spec`까지의 최신 내용을 읽기 전용 기준으로 확인하고, 상세 문서와 모순되지 않게 요약·동기화한다.
+`docs/00_project_plan/00_project_plan.md`는 다른 상세 문서의 내용을 반영하는 상위 기획 문서다. LLM이 이 파일을 수정할 때는 `docs/01_requirements`부터 `docs/07_api_spec`까지의 최신 내용을 읽기 전용 기준으로 확인하고, 상세 문서와 모순되지 않게 요약·동기화한다.
 
 프로젝트 기획서 동기화 작업만으로 상세 문서를 수정하지 않는다. 상세 문서는 사용자가 해당 문서 수정을 요청했거나, 그 문서 자체의 내용을 업데이트하는 작업일 때만 Agent가 수정한다.
 
@@ -18,11 +18,11 @@
 docs/00_project_plan/      상위 프로젝트 기획서. 다른 문서의 내용을 반영한다.
 docs/01_requirements/      요구사항 명세서와 요구사항 보조 자료
 docs/02_service_flow/      서비스 흐름 명세서
-docs/03_technical_spec/    기술 명세서
-docs/04_data_collect_plan/ 데이터 수집 계획서
-docs/05_api_spec/          API 명세서
-docs/06_database_design/   데이터베이스 설계 명세서
-docs/07_agent_spec/        Agent 명세서
+docs/03_data_collect_plan/ 데이터 수집 계획서
+docs/04_database_design/   데이터베이스 설계 명세서
+docs/05_agent_spec/        Agent 명세서
+docs/06_technical_spec/    기술 명세서
+docs/07_api_spec/          API 명세서
 index.html                 GitHub Pages 첫 화면
 pages/*.html               Markdown 원본을 바탕으로 생성된 공유용 HTML 문서
 assets/                    공통 CSS, JS, 이미지 등 정적 리소스
@@ -37,11 +37,11 @@ README.md                  저장소 소개와 운영 방식 요약
 1. 프로젝트 기획서
 2. 요구사항 명세서
 3. 서비스 흐름 명세서
-4. 기술 명세서
-5. 데이터 수집 계획서
-6. API 명세서
-7. 데이터베이스 설계 명세서
-8. Agent 명세서
+4. 데이터 수집 계획서
+5. 데이터베이스 설계 명세서
+6. Agent 명세서
+7. 기술 명세서
+8. API 명세서
 9. UI/UX 가이드
 10. 테스트 계획서
 11. 배포·운영 가이드
@@ -55,11 +55,11 @@ docs/
 ├── 00_project_plan/00_project_plan.md
 ├── 01_requirements/01_requirements.md
 ├── 02_service_flow/02_service_flow.md
-├── 03_technical_spec/03_technical_spec.md
-├── 04_data_collect_plan/04_data_collect_plan.md
-├── 05_api_spec/05_api_spec.md
-├── 06_database_design/06_database_design.md
-└── 07_agent_spec/07_agent_spec.md
+├── 03_data_collect_plan/03_data_collect_plan.md
+├── 04_database_design/04_database_design.md
+├── 05_agent_spec/05_agent_spec.md
+├── 06_technical_spec/06_technical_spec.md
+└── 07_api_spec/07_api_spec.md
 ```
 
 문서 내용이 많아지면 같은 폴더 안에 보조 Markdown 문서를 추가할 수 있다. 단, 각 폴더의 대표 문서는 위 경로를 유지한다.

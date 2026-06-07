@@ -4,7 +4,7 @@
 ## Source of Truth
 
 - `docs/01_requirements/01_requirements.md`는 기능·비기능 요구사항의 기준 문서다.
-- `docs/02_service_flow/02_service_flow.md`부터 `docs/07_agent_spec/07_agent_spec.md`까지는 요구사항 명세서를 상세화한 설계 문서다.
+- `docs/02_service_flow/02_service_flow.md`부터 `docs/07_api_spec/07_api_spec.md`까지는 요구사항 명세서를 상세화한 설계 문서다.
 - `docs/00_project_plan/00_project_plan.md`는 상위 기획 문서이며, 상세 문서들의 최신 내용을 반영해 갱신한다.
 
 ## Project Plan Synchronization
@@ -13,11 +13,11 @@
 
 - `docs/01_requirements/01_requirements.md`
 - `docs/02_service_flow/02_service_flow.md`
-- `docs/03_technical_spec/03_technical_spec.md`
-- `docs/04_data_collect_plan/04_data_collect_plan.md`
-- `docs/05_api_spec/05_api_spec.md`
-- `docs/06_database_design/06_database_design.md`
-- `docs/07_agent_spec/07_agent_spec.md`
+- `docs/03_data_collect_plan/03_data_collect_plan.md`
+- `docs/04_database_design/04_database_design.md`
+- `docs/05_agent_spec/05_agent_spec.md`
+- `docs/06_technical_spec/06_technical_spec.md`
+- `docs/07_api_spec/07_api_spec.md`
 
 상세 문서와 프로젝트 기획서가 충돌하면 상세 문서의 결정을 우선하고, 프로젝트 기획서를 그 결정에 맞게 요약·정리한다.
 
