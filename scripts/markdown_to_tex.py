@@ -22,14 +22,21 @@ def add_soft_breaks_to_escaped_token(text: str) -> str:
         "contenttypeid": r"content\allowbreak{}type\allowbreak{}id",
         "contentid": r"content\allowbreak{}id",
         "sigungucode": r"sigungu\allowbreak{}code",
+        "destinationId": r"destina\allowbreak{}tion\allowbreak{}Id",
+        "recommendationId": r"recommen\allowbreak{}dation\allowbreak{}Id",
+        "feedbackType": r"feedback\allowbreak{}Type",
         "lclsSystm1": r"lcls\allowbreak{}Systm1",
         "lclsSystm2": r"lcls\allowbreak{}Systm2",
         "lclsSystm3": r"lcls\allowbreak{}Systm3",
     }
     for source, target in token_breaks.items():
         text = text.replace(source, target)
+    text = re.sub(r"([a-z0-9])([A-Z])", r"\1\\allowbreak{}\2", text)
     return (
         text.replace(r"\_", r"\_\allowbreak{}")
+        .replace(r"\#", r"\#\allowbreak{}")
+        .replace(r"\{", r"\{\allowbreak{}")
+        .replace(r"\}", r"\allowbreak{}\}")
         .replace("-", r"-\allowbreak{}")
         .replace("/", r"/\allowbreak{}")
         .replace(".", r".\allowbreak{}")
@@ -205,7 +212,7 @@ def format_table_cell(cell: str, forced_line_breaks: dict[str, list[str]] | None
     if re.fullmatch(r"[A-Z]+(?:-[A-Z0-9]+)+-\d+", cell):
         return r"{\footnotesize " + escape_latex(cell).replace("-", r"-\allowbreak{}") + "}"
     if re.fullmatch(r"[A-Za-z]{8,}", cell):
-        return r"{\scriptsize " + escape_latex(cell) + "}"
+        return r"{\scriptsize " + add_soft_breaks_to_escaped_token(escape_latex(cell)) + "}"
     if re.fullmatch(r"[A-Za-z0-9_./:-]{8,}", cell):
         return r"{\footnotesize " + add_soft_breaks_to_escaped_token(escape_latex(cell)) + "}"
     return escape_latex(cell)
@@ -235,6 +242,23 @@ def format_body_text(text: str, split_sentences: bool = False) -> str:
     if split_sentences:
         return add_sentence_line_breaks(formatted)
     return formatted
+
+
+def image_to_latex(markdown_src: str, alt: str) -> list[str]:
+    src = markdown_src.replace("\\", "/")
+    if src.startswith("../../assets/"):
+        src = "../assets/" + src.removeprefix("../../assets/")
+    elif src.startswith("assets/"):
+        src = "../" + src
+    return [
+        r"\DocNeedspace{18\baselineskip}",
+        r"\begin{figure}[htbp]",
+        r"\centering",
+        rf"\includegraphics[width=0.96\linewidth,height=0.72\textheight,keepaspectratio]{{{src}}}",
+        rf"\caption*{{{escape_latex(alt)}}}",
+        r"\end{figure}",
+        "",
+    ]
 
 
 def code_block_to_latex(lines: list[str], language: str | None = None) -> list[str]:
@@ -567,6 +591,14 @@ def markdown_to_latex(
             last_block_was_level1_heading = False
             continue
 
+        image_match = re.match(r"^!\[([^\]]*)\]\(([^)]+)\)$", line.strip())
+        if image_match:
+            in_list = close_list(output, in_list)
+            output.extend(image_to_latex(image_match.group(2).strip(), image_match.group(1).strip()))
+            last_block_was_level1_heading = False
+            i += 1
+            continue
+
         heading = re.match(r"^(#{1,6})\s+(.+)$", line)
         if heading:
             in_list = close_list(output, in_list)
@@ -730,7 +762,7 @@ def markdown_to_latex(
 \setmainfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{{malgun.ttf}}
 \setsansfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{{malgun.ttf}}
 \setmonofont{{Consolas}}
-\newCJKfontfamily\jpfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{{malgun.ttf}}
+\newfontfamily\jpfont[Path=C:/Windows/Fonts/]{{NotoSansJP-VF.ttf}}
 \setCJKmainfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{{malgun.ttf}}
 \setCJKsansfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{{malgun.ttf}}
 \setCJKmonofont[Path=C:/Windows/Fonts/]{{malgun.ttf}}
