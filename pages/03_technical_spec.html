@@ -72,7 +72,7 @@
 <blockquote>
 <p class="doc-p">문서 버전: v0.2</p>
 <p class="doc-p">문서 상태: 검토 중 (Review)</p>
-<p class="doc-p">기준 문서: <code>docs/01_requirements/01_requirements.md</code> v1.5</p>
+<p class="doc-p">기준 문서: <code>docs/<wbr>01_<wbr>requirements/<wbr>01_<wbr>requirements.md</code> v1.5</p>
 </blockquote>
 <h1 id="s1" class="s-h1">1. 문서 개요</h1>
 <h2 id="s1-1" class="s-h2">1.1 목적</h2>
@@ -95,7 +95,7 @@
 <tr><td>External APIs</td><td>Google Maps, Kakao Maps, Yahoo Japan 딥링크, WeatherAPI 표시용 데이터</td></tr>
 </tbody></table></div>
 <h1 id="s3" class="s-h1">3. 배포 단계별 기술 범위</h1>
-<div class="table-wrap wide"><table class="info-tbl">
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
 <thead><tr><th>영역</th><th>PoC</th><th>Production</th></tr></thead><tbody>
 <tr><td>프론트엔드</td><td>단일 웹 앱, 로컬 스토리지 저장</td><td>계정 기반 저장, 마이페이지 완성</td></tr>
 <tr><td>백엔드</td><td>추천 API 및 외부 API 프록시 최소 구현</td><td>인증·인가, 운영/검토 API, 감사 이력</td></tr>
@@ -114,7 +114,7 @@
 <tr><td>마이페이지</td><td>저장 일정, 온보딩 선호, 피드백 이력 조회</td></tr>
 </tbody></table></div>
 <h2 id="s4-2" class="s-h2">4.2 클라이언트 상태</h2>
-<div class="table-wrap wide"><table class="info-tbl">
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
 <thead><tr><th>상태</th><th>저장 위치</th><th>설명</th></tr></thead><tbody>
 <tr><td>onboardingProfile</td><td>PoC 로컬 스토리지</td><td>기본 테마 선호</td></tr>
 <tr><td>selectedDestination</td><td>메모리/URL 상태</td><td>지도 마커로 선택한 소도시</td></tr>
@@ -144,7 +144,7 @@
 }</code></pre>
 <h1 id="s6" class="s-h1">6. 데이터 처리 명세</h1>
 <h2 id="s6-1" class="s-h2">6.1 추천용 데이터</h2>
-<div class="table-wrap wide"><table class="info-tbl">
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
 <thead><tr><th>데이터</th><th>처리 방식</th></tr></thead><tbody>
 <tr><td>통합 목적지 DB</td><td>축제명, 장소 개요, 이미지, 위경도 좌표 등 무거운 마스터 정보를 저장하고 있는 DB로, 1차 조회 시 성능과 레이턴시 확보를 위해 사용</td></tr>
 <tr><td>실시간 API 교차 검증</td><td>당해 연도 정확한 개최 일정/기간 등 실시간 최신화가 필수적인 특정 항목에 한해, Polymorphic_Retriever_Node가 런타임에 외부 API를 실시간 호출해 데이터를 교차 검증하고 정적 필드를 오버라이드(Override)하는 하이브리드 데이터 연동</td></tr>
@@ -180,7 +180,7 @@
 <tr><td>운영 추적</td><td>데이터 제안·검토·승인 이력 저장</td></tr>
 </tbody></table></div>
 <h1 id="s9" class="s-h1">9. 변경 이력</h1>
-<div class="table-wrap wide"><table class="info-tbl change-log-tbl">
+<div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
 <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
 <tr><td>v0.2</td><td>2026-05-31</td><td>로브 기획팀</td><td>통합 목적지 DB 및 실시간 API 교차 검증 하이브리드 아키텍처 반영, Recommendation Module 내 Supervisor Router의 상태 제어 역할 추가</td></tr>
 <tr><td>v0.1</td><td>2026-05-29</td><td>로브 기획팀</td><td>기술 명세서 초안 작성</td></tr>

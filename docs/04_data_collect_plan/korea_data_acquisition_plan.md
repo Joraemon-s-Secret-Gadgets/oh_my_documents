@@ -1,11 +1,11 @@
 # 한국 데이터 취득 계획서
 
-> 문서 버전: v0.3
+> 문서 버전: v0.4
 > 문서 상태: 실제 수집 데이터 구조 및 API 명세 분석 결과 반영
 > 작성일: 2026-06-06
 > 기준 문서: `docs/04_data_collect_plan/korea_data_acquisition_plan_updated.md` v0.2
-> 반영 예정 문서: `docs/04_data_collect_plan/04_data_collect_plan.md`
-> 반영 예정 HTML: `pages/04_data_collect_plan.html`
+> 동기화 대상 문서: `docs/04_data_collect_plan/04_data_collect_plan.md`
+> 공유 산출물: `pages/04_data_collect_plan.html`, `pdf/korea_data_acquisition_plan.pdf`
 
 # 1. 목적
 
@@ -428,3 +428,4 @@ data/KR/
 | v0.1 | 2026-06-02 | LLM 파트 | 한국 데이터 취득 계획서 초안 작성 |
 | v0.2 | 2026-06-06 | LLM 파트 | 도 간략 정보와 산하 도시 목록 기반 City 크롤링, JSON 원본의 S3 저장, 기후 데이터 비교 검증 방식으로 구체화 |
 | v0.3 | 2026-06-06 | LLM 파트 | 강원·경북 40개 도시 실제 수집 결과, TourAPI 4.0, DataLabService, `data/KR/*.json` 검증 산출물과 S3 Raw 적재 흐름 반영 |
+| v0.4 | 2026-06-07 | LLM 파트 | 대표 문서와 공유 산출물 동기화 상태에 맞춰 문서 메타 표현 정리 |

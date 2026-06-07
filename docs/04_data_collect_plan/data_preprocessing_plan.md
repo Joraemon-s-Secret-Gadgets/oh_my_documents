@@ -1,9 +1,9 @@
 # 로브 (Lovv) 데이터 전처리 계획서 초안
 
-> 문서 버전: v0.4
+> 문서 버전: v0.5
 > 문서 상태: 초안 (Draft)
 > 작성일: 2026-06-03
-> 기준 문서: `docs/04_data_collect_plan/04_data_collect_plan.md` v0.5
+> 기준 문서: `docs/04_data_collect_plan/04_data_collect_plan.md` v0.6
 > 상세 기준: `docs/04_data_collect_plan/korea_data_acquisition_plan.md`, `docs/04_data_collect_plan/japan_data_acquisition_plan.md`
 
 # 1. 문서 개요
@@ -12,7 +12,7 @@
 
 본 문서는 로브(Lovv)의 한국·일본 지역 추천 데이터가 수집된 이후 AWS S3에 원본을 적재하고 AWS Lambda로 전처리한 뒤 NoSQL 저장소인 Amazon DynamoDB에 서비스용 데이터를 적재하기 위한 원본 정제, 표준화, 품질 검증, 파생 데이터 생성, 적재 기준을 정의한다.
 
-수집 계획서는 City, Attraction, Festival 데이터를 먼저 폭넓게 취득하고 이후 검증·보정하는 방향을 가진다. 본 전처리 계획서는 그 다음 단계에서 원본 데이터의 표현 차이와 누락·중복·최신성 문제를 정리하여 서비스 사용 가능한 데이터셋으로 변환하는 데 초점을 둔다.
+수집 계획서는 City, Attraction, Festival, VisitorStatistics 데이터를 먼저 폭넓게 취득하고 이후 검증·보정하는 방향을 가진다. 본 전처리 계획서는 그 다음 단계에서 원본 데이터의 표현 차이와 누락·중복·최신성 문제를 정리하여 서비스 사용 가능한 데이터셋으로 변환하는 데 초점을 둔다.
 
 ## 1.2 전처리 원칙
 
@@ -45,13 +45,15 @@
 ```text
 City
  ├── Attraction
- └── Festival
+ ├── Festival
+ └── VisitorStatistics
 ```
 
 | 관계 | 전처리 기준 |
 | --- | --- |
 | `City 1:N Attraction` | 모든 관광지는 하나의 대표 City에 연결한다. 경계 지역은 주소와 좌표를 기준으로 대표 City를 결정하고 예외 메모를 남긴다. |
 | `City 1:N Festival` | 모든 축제는 개최 장소 기준 City에 연결한다. 광역 개최 축제는 주 개최지와 보조 개최지를 분리한다. |
+| `City 1:N VisitorStatistics` | 방문·관광 통계는 월별 또는 지역별 기준으로 City에 연결한다. 출처별 집계 단위가 다른 경우 원본 단위와 정규화 단위를 모두 남긴다. |
 
 # 3. 전처리 아키텍처
 
@@ -80,7 +82,7 @@ Search Index / RAG Dataset / Admin Review
 | S3 Raw Bucket | 수집 원본 누적 보존 | 국가, 출처, 엔티티 유형, 수집일 기준 객체 |
 | S3 Processed Prefix | Lambda 처리 결과와 품질 리포트 보존 | 정규화 JSON, 실패 리포트, 검수 대상 목록 |
 | Lambda Preprocessor | 일정 기간 누적된 Raw JSON 묶음의 스키마 검증, 필드 정제, 정규화, 중복 후보 탐지, DynamoDB 적재 | S3 Prefix 또는 배치 묶음 |
-| DynamoDB | City, Attraction, Festival, 검수 상태, 품질 메타데이터 저장 | 엔티티 단위 Item |
+| DynamoDB | City, Attraction, Festival, VisitorStatistics, 검수 상태, 품질 메타데이터 저장 | 엔티티 단위 Item |
 | CloudWatch Logs | Lambda 실행 로그와 실패 원인 기록 | 실행 요청 단위 |
 | DLQ 또는 실패 Prefix | 처리 실패 이벤트 격리 | 실패 S3 객체 또는 이벤트 |
 
@@ -131,12 +133,12 @@ DynamoDB 적재
 | Lambda 배치 실행 | 확정된 S3 Prefix 또는 Manifest를 입력으로 전처리 함수 실행 | Lambda Invocation |
 | 스키마 검증 | 필수 필드 존재 여부, 타입, 인코딩, 날짜 포맷 점검 | schema_validation_result |
 | 필드 정제 | 공백, HTML 태그, 제어문자, 중복 문장, 깨진 URL 제거 | cleaned_fields |
-| 엔티티 정규화 | 도시·관광지·축제명, 행정구역, 좌표, 날짜를 공통 포맷으로 변환 | normalized_entities |
+| 엔티티 정규화 | 도시·관광지·축제명, 방문·관광 통계, 행정구역, 좌표, 날짜를 공통 포맷으로 변환 | normalized_entities |
 | 중복 제거 및 병합 | 동일 대상의 다중 출처 데이터를 하나의 대표 엔티티로 병합 | merged_entities |
 | 품질 점수 산정 | 출처 신뢰도, 최신성, 필드 충족률, 검수 여부를 점수화 | data_confidence |
 | 파생 필드 생성 | 테마 태그, 월별 추천 태그, 검색 인덱스 텍스트 생성 | feature_dataset |
 | 검수 대상 분류 | 누락·충돌·저작권 위험 항목을 검수 큐로 이동 | review_queue |
-| DynamoDB 적재 | City, Attraction, Festival, 품질 메타데이터를 Item 단위로 저장 | DynamoDB Item |
+| DynamoDB 적재 | City, Attraction, Festival, VisitorStatistics, 품질 메타데이터를 Item 단위로 저장 | DynamoDB Item |
 
 # 5. 공통 정규화 규칙
 
@@ -148,7 +150,9 @@ DynamoDB 적재
 | 일본 City | `JP-{도도부현}-{도시명}` | `JP-ISHIKAWA-KANAZAWA` |
 | 한국 Attraction | `KR-{도_코드}-{CITY_EN}-ATT-{contentid}` | `KR-42-GANGNEUNG-ATT-126508` |
 | 한국 Festival | `KR-{도_코드}-{CITY_EN}-FES-{contentid}` | `KR-42-GANGNEUNG-FES-2762975` |
+| 한국 VisitorStatistics | `KR-{도_코드}-{CITY_EN}-STAT-{yyyyMM}` | `KR-42-GANGNEUNG-STAT-202501` |
 | 일본 Attraction/Festival | `{country_code}-{entity_type}-{source_or_hash}` | `JP-FEST-HASH-001` |
+| 일본 VisitorStatistics | `JP-{prefecture_or_city}-STAT-{period_or_hash}` | `JP-TOKYO-STAT-202501` |
 
 ID는 재처리 시에도 바뀌지 않아야 한다. 원본 ID가 없는 일본 공식 사이트·지자체 페이지 기반 데이터는 URL 정규화 해시를 보조 식별자로 사용한다.
 
@@ -230,7 +234,8 @@ ID는 재처리 시에도 바뀌지 않아야 한다. 원본 ID가 없는 일본
 | 검증 항목 | 기준 | 실패 시 상태 |
 | --- | --- | --- |
 | 필수 필드 | ID, 이름, City 매핑, 출처 URL 존재 | `missing` 또는 `needs_review` |
-| City 매핑 | Attraction/Festival이 하나의 City와 연결됨 | `needs_review` |
+| City 매핑 | Attraction/Festival/VisitorStatistics가 하나의 City와 연결됨 | `needs_review` |
+| 통계 기간 | 방문·관광 통계의 집계 기간과 지표명이 존재함 | `needs_review` |
 | URL 유효성 | HTTP 접근 가능 또는 공식 딥링크 보존 가능 | `needs_review` |
 | 좌표 범위 | 국가별 좌표 범위 안에 존재 | `needs_review` |
 | 날짜 포맷 | ISO 날짜 또는 반복 규칙으로 변환 가능 | `needs_review` |
@@ -290,7 +295,7 @@ RAG 문서는 외부 원문을 그대로 복제하지 않고 내부 요약문과
 | 계층 | 저장 내용 | 용도 |
 | --- | --- | --- |
 | S3 Raw Bucket | 원본 응답, 추출 원문, 수집 메타데이터 | 재처리·감사·오류 추적 |
-| DynamoDB Normalized Tables | City, Attraction, Festival, 검수 상태 | 서비스 조회 |
+| DynamoDB Normalized Tables | City, Attraction, Festival, VisitorStatistics, 검수 상태 | 서비스 조회 |
 | Search Index | 검색 문서, 임베딩 대상 텍스트, 키워드 | RAG·검색 |
 | DynamoDB Review Table | 검수 큐, 검수 결과, 승인·반려 이력 | 운영 관리 |
 
@@ -301,6 +306,7 @@ RAG 문서는 외부 원문을 그대로 복제하지 않고 내부 요약문과
 | `LovvCity` | `country_code` | `city_id` | 국가별 City 정규화 데이터 |
 | `LovvAttraction` | `city_id` | `attraction_id` | City에 속한 Attraction 정규화 데이터 |
 | `LovvFestival` | `city_id` | `festival_id` | City에 속한 Festival 정규화 데이터 |
+| `LovvVisitorStats` | `city_id` | `stat_period` | City에 연결된 월별 또는 지역별 방문·관광 통계 |
 | `LovvDataQuality` | `entity_id` | `checked_at` | 품질 검증 결과, 신뢰도, 실패 사유 |
 | `LovvReviewQueue` | `queue_name` | `entity_id` | 수동 검수 대상과 처리 상태 |
 
@@ -308,8 +314,8 @@ RAG 문서는 외부 원문을 그대로 복제하지 않고 내부 요약문과
 
 | 속성 | 설명 |
 | --- | --- |
-| `entity_id` | City, Attraction, Festival의 안정 식별자 |
-| `entity_type` | `city`, `attraction`, `festival` |
+| `entity_id` | City, Attraction, Festival, VisitorStatistics의 안정 식별자 |
+| `entity_type` | `city`, `attraction`, `festival`, `visitor_statistics` |
 | `country_code` | `KR` 또는 `JP` |
 | `source_name` | 원본 출처명 |
 | `source_url` | 원본 또는 공식 확인 URL |
@@ -328,6 +334,7 @@ RAG 문서는 외부 원문을 그대로 복제하지 않고 내부 요약문과
 | City | 표준 ID, 도시명, 국가, 행정구역, 출처 URL |
 | Attraction | 표준 ID, 이름, City 매핑, 출처 URL, 주소 또는 좌표 |
 | Festival | 표준 ID, 이름, City 매핑, 기간 원문 또는 개최 월, 출처 URL |
+| VisitorStatistics | 표준 ID, City 매핑, 집계 기간, 지표명, 수치, 출처 URL |
 | 검색 문서 | 내부 요약문, 출처 링크, 최신성 상태 |
 | 서비스 노출 | 필수 필드 충족, 저작권 위험 없음, `blocked` 아님 |
 
@@ -368,6 +375,7 @@ RAG 문서는 외부 원문을 그대로 복제하지 않고 내부 요약문과
 | `city_normalized` | 국가별 도시 표준 엔티티 |
 | `attraction_normalized` | City와 연결된 관광지 표준 엔티티 |
 | `festival_normalized` | City와 연결된 축제 표준 엔티티 |
+| `visitor_statistics_normalized` | City와 연결된 방문·관광 통계 보조 지표 |
 | `data_quality_report` | 누락, 충돌, 최신성, 저작권 위험 리포트 |
 | `review_queue` | 수동 검수 대상 목록 |
 | `rag_documents` | 추천 Agent와 검색용 내부 요약 문서 |
@@ -383,3 +391,4 @@ RAG 문서는 외부 원문을 그대로 복제하지 않고 내부 요약문과
 | v0.2 | 2026-06-03 | LLM 파트 | S3 Raw 적재, Lambda 전처리, DynamoDB 적재 아키텍처 반영 |
 | v0.3 | 2026-06-06 | LLM 파트 | S3 Raw 누적 보관 후 Lambda 배치 전처리 및 DynamoDB 적재 흐름 반영 |
 | v0.4 | 2026-06-06 | LLM 파트 | 한국 강원·경북 실제 수집 산출물, `KR-{도_코드}-{CITY_EN}` ID 형식, `climate_table` 전처리 기준 반영 |
+| v0.5 | 2026-06-07 | LLM 파트 | VisitorStatistics 관계, 정규화 산출물, DynamoDB 후보 테이블, 적재 조건 보완 |

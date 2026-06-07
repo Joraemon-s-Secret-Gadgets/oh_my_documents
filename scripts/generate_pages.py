@@ -82,7 +82,7 @@ DOCUMENTS = [
         "Database Design",
         "로브 (Lovv) — 데이터베이스 설계 명세서",
         "목적지, 축제, 사용자, 저장 일정, 피드백, 운영 검토 데이터 모델을 정의합니다.",
-        "기획 단계",
+        "설계 진행중",
         "설계·명세 문서",
     ),
     Document(
@@ -133,7 +133,11 @@ def heading_id(text: str, fallback: int) -> str:
 
 def inline(value: str) -> str:
     escaped = html.escape(value)
-    escaped = re.sub(r"`([^`]+)`", lambda m: f"<code>{m.group(1)}</code>", escaped)
+    def code_html(match: re.Match[str]) -> str:
+        code = re.sub(r"([/_#])", r"\1<wbr>", match.group(1))
+        return f"<code>{code}</code>"
+
+    escaped = re.sub(r"`([^`]+)`", code_html, escaped)
     escaped = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", escaped)
     escaped = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2">\1</a>', escaped)
     return escaped
@@ -172,6 +176,15 @@ def table_classes(header: list[str], body: list[list[str]]) -> tuple[str, str]:
         table_classes.append("agent-pipeline-tbl")
     if {"항목", "내용"}.issubset(normalized) or {"항목", "결정"}.issubset(normalized):
         table_classes.append("decision-tbl")
+    if {"컬럼", "타입", "제약", "설명"}.issubset(normalized):
+        table_classes.append("db-schema-tbl")
+    if {"테이블", "partition-key", "sort-key", "주요-속성", "ttl"}.issubset(normalized):
+        table_classes.append("db-nosql-tbl")
+        wrap_classes.extend(["wide", "extra-wide"])
+    if {"테이블", "주요-컬럼", "책임"}.issubset(normalized):
+        table_classes.append("db-summary-tbl")
+    if "wide" in wrap_classes or "extra-wide" in wrap_classes:
+        wrap_classes.append("scroll-table")
 
     return " ".join(dict.fromkeys(wrap_classes)), " ".join(dict.fromkeys(table_classes))
 
@@ -381,6 +394,8 @@ def render_toc(headings: list[tuple[int, str, str]]) -> str:
     lines = ['<div class="toc-section"><a class="toc-link active" href="#cover">표지 / 문서 정보</a></div>']
     current_open = False
     for level, text, hid in headings:
+        if level > 2:
+            continue
         if level == 1:
             if current_open:
                 lines.append("</div>")

@@ -163,6 +163,14 @@
         color: rgba(255, 255, 255, 0.55);
         transition: all 0.18s;
         border-left: 2px solid transparent;
+        line-height: 1.45;
+        word-break: keep-all;
+        overflow-wrap: anywhere;
+      }
+      .toc-link code {
+        color: inherit;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.68rem;
       }
       .toc-link:hover {
         color: #fff;
@@ -265,6 +273,7 @@
         color: var(--navy);
         line-height: 1.2;
         margin-bottom: 6px;
+        overflow-wrap: anywhere;
       }
       .cover-subtitle {
         font-size: 1rem;
@@ -475,11 +484,21 @@
       }
       .table-wrap {
         width: 100%;
-        overflow-x: auto;
+        max-width: 100%;
+        overflow-x: visible;
         margin: 12px 0 20px;
         border: 1px solid var(--rule);
         border-radius: 8px;
         background: var(--white);
+      }
+      .table-wrap.scroll-table {
+        overflow-x: auto;
+        overflow-y: hidden;
+      }
+      .table-wrap.scroll-table::after {
+        content: "";
+        display: block;
+        height: 4px;
       }
       .table-wrap .info-tbl {
         min-width: 100%;
@@ -487,17 +506,18 @@
       }
       @media (min-width: 1024px) {
         .table-wrap.wide {
-          width: min(1180px, calc(100vw - var(--sidebar-w) - 72px));
-          max-width: none;
+          width: 100%;
+          max-width: 100%;
         }
         .table-wrap.extra-wide {
-          width: min(1320px, calc(100vw - var(--sidebar-w) - 48px));
+          width: 100%;
+          max-width: 100%;
         }
-        .table-wrap.wide .info-tbl {
-          min-width: 900px;
+        .table-wrap.scroll-table.wide .info-tbl {
+          min-width: 1080px;
         }
-        .table-wrap.extra-wide .info-tbl {
-          min-width: 1120px;
+        .table-wrap.scroll-table.extra-wide .info-tbl {
+          min-width: 1360px;
         }
       }
       .table-wrap .role-list-tbl,
@@ -768,6 +788,77 @@
         padding: 1px 5px;
         border-radius: 3px;
         border: 1px solid var(--rule);
+        word-break: normal;
+        overflow-wrap: normal;
+        white-space: nowrap;
+      }
+      main#cover > blockquote code,
+      p.doc-p code {
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+      .info-tbl code {
+        white-space: nowrap;
+        overflow-wrap: normal;
+      }
+      .db-schema-tbl {
+        table-layout: fixed;
+      }
+      .table-wrap .db-schema-tbl {
+        min-width: 1040px;
+      }
+      .db-schema-tbl th:first-child,
+      .db-schema-tbl td:first-child {
+        width: 190px;
+      }
+      .db-schema-tbl th:nth-child(2),
+      .db-schema-tbl td:nth-child(2) {
+        width: 130px;
+      }
+      .db-schema-tbl th:nth-child(3),
+      .db-schema-tbl td:nth-child(3) {
+        width: 130px;
+      }
+      .db-schema-tbl td:first-child,
+      .db-schema-tbl td:nth-child(2),
+      .db-schema-tbl td:nth-child(3) {
+        word-break: normal;
+        overflow-wrap: normal;
+      }
+      .db-nosql-tbl {
+        table-layout: fixed;
+        font-size: 0.76rem;
+      }
+      .table-wrap .db-nosql-tbl {
+        min-width: 1520px;
+      }
+      .db-nosql-tbl th:first-child,
+      .db-nosql-tbl td:first-child {
+        width: 190px;
+      }
+      .db-nosql-tbl th:nth-child(2),
+      .db-nosql-tbl td:nth-child(2),
+      .db-nosql-tbl th:nth-child(3),
+      .db-nosql-tbl td:nth-child(3) {
+        width: 250px;
+      }
+      .db-nosql-tbl th:last-child,
+      .db-nosql-tbl td:last-child {
+        width: 100px;
+      }
+      .db-summary-tbl {
+        table-layout: fixed;
+      }
+      .table-wrap .db-summary-tbl {
+        min-width: 1160px;
+      }
+      .db-summary-tbl th:first-child,
+      .db-summary-tbl td:first-child {
+        width: 170px;
+      }
+      .db-summary-tbl th:nth-child(2),
+      .db-summary-tbl td:nth-child(2) {
+        width: 560px;
       }
       pre {
         margin: 12px 0 20px;
@@ -1396,14 +1487,59 @@
 
       /* ── RESPONSIVE ── */
       @media (max-width: 840px) {
+        html,
+        body,
+        .layout {
+          width: 100%;
+          max-width: 100%;
+          overflow-x: hidden;
+        }
         aside {
           display: none;
         }
         main {
+          flex: 0 0 100%;
+          min-width: 0;
           padding: 20px 16px 60px;
+          width: 100%;
+          max-width: 100%;
+          overflow-x: hidden;
         }
         .cover-title {
-          font-size: 1.7rem;
+          font-size: 1.45rem;
+          line-height: 1.28;
+          word-break: keep-all;
+          overflow-wrap: anywhere;
+        }
+        main#cover > h1#cover-title {
+          font-size: 1.45rem;
+          line-height: 1.28;
+          word-break: keep-all;
+          overflow-wrap: anywhere;
+        }
+        p.doc-p {
+          word-break: break-all;
+          overflow-wrap: anywhere;
+        }
+        .cover-meta,
+        main#cover > blockquote {
+          grid-template-columns: 1fr;
+          min-width: 0;
+        }
+        .meta-item,
+        main#cover > blockquote p {
+          border-right: 0;
+          border-top: 1px solid var(--rule);
+          min-width: 0;
+          word-break: keep-all;
+          overflow-wrap: anywhere;
+        }
+        main#cover > blockquote code {
+          word-break: break-all;
+        }
+        .meta-item:first-child,
+        main#cover > blockquote p:first-child {
+          border-top: 0;
         }
         .card-grid {
           grid-template-columns: 1fr;
@@ -1412,11 +1548,12 @@
         .table-wrap.extra-wide {
           width: 100%;
           max-width: 100%;
-          overflow-x: auto;
         }
-        .table-wrap.wide .info-tbl,
-        .table-wrap.extra-wide .info-tbl {
-          min-width: 760px;
+        .table-wrap.scroll-table.wide .info-tbl {
+          min-width: 900px;
+        }
+        .table-wrap.scroll-table.extra-wide .info-tbl {
+          min-width: 1120px;
         }
         .doc-nav-pager {
           grid-template-columns: 1fr;

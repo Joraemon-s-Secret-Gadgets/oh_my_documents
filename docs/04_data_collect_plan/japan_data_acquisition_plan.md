@@ -1,23 +1,25 @@
-# 일본 데이터 취득 계획서 초안
+# 일본 데이터 취득 계획서
 
-> 문서 버전: v0.4
-> 문서 상태: 본 문서 반영 전 초안
+> 문서 버전: v0.5
+> 문서 상태: 관동 우선 수집 및 S3 Raw 계약 보완
 > 작성일: 2026-06-02
-> 반영 예정 문서: `docs/04_data_collect_plan/04_data_collect_plan.md`
-> 반영 예정 HTML: `pages/04_data_collect_plan.html`
+> 동기화 대상 문서: `docs/04_data_collect_plan/04_data_collect_plan.md`
+> 공유 산출물: `pages/04_data_collect_plan.html`, `pdf/japan_data_acquisition_plan.pdf`
 
 # 1. 목적
 
-본 문서는 여행 추천 Multi-Agent 서비스에서 일본 소도시 추천에 필요한 도시·관광지·축제 데이터를 한 번에 취득하기 위한 범위, 데이터 소스, 검증 방식, 저장 구조를 정의한다.
+본 문서는 여행 추천 Multi-Agent 서비스에서 일본 소도시 추천에 필요한 도시·관광지·축제·방문객 통계 데이터를 한 번에 취득하기 위한 범위, 데이터 소스, 검증 방식, 저장 구조를 정의한다.
 
-이번 초안의 핵심은 다음과 같다.
+이번 문서의 핵심은 다음과 같다.
 
-- City, Attraction, Festival의 정의된 항목을 모두 수집 대상으로 둔다.
+- City, Attraction, Festival, VisitorStatistics의 정의된 항목을 모두 수집 대상으로 둔다.
+- 일본은 관동 지역 지자체를 우선 수집 범위로 둔다.
 - 도도부현의 간략 정보와 산하 도시 목록을 먼저 취득하고, 산하 도시 목록에 포함된 City만 Wikipedia 문서 크롤링 대상으로 둔다.
 - 취득 결과는 JSON 문서로 저장한 뒤 S3 Raw Bucket에 적재한다.
+- 로컬 검증 산출물은 `data/JP/*.json` 형태로 관리한다.
 - 운영시간, 운영기간, 입장료, 사진처럼 출처별 표현 차이가 큰 항목도 최초 취득 범위에 포함한다.
 - 자동 수집, 공식 사이트 확인, Web Search Worker, 수동 검수를 하나의 취득 파이프라인으로 묶어 처리한다.
-- 추천 DB는 `City 1:N Attraction`, `City 1:N Festival` 관계를 기준으로 설계한다.
+- 추천 DB는 `City 1:N Attraction`, `City 1:N Festival`, `City 1:N VisitorStatistics` 관계를 기준으로 설계한다.
 
 # 2. 목표 데이터 모델
 
@@ -26,17 +28,21 @@
 ```text
 City
  ├── Attraction
- └── Festival
+ ├── Festival
+ └── VisitorStatistics
 ```
 
 | 관계 | 설명 |
 | --- | --- |
 | `City 1:N Attraction` | 하나의 일본 도시는 여러 관광지를 가진다. |
 | `City 1:N Festival` | 하나의 일본 도시는 여러 축제·행사를 가진다. |
+| `City 1:N VisitorStatistics` | 하나의 일본 도시는 지역별 또는 월별 관광 통계 보조 지표를 가진다. |
 
 ## 2.2 City 데이터
 
 City는 추천의 기준 지역이다. 일본 목적지는 시·정·촌·구 단위의 소도시를 기본 단위로 관리한다. 도도부현 문서에서는 간략 정보와 산하 도시 목록만 취득하고, 상세 정보 크롤링은 이 산하 도시 목록에 포함된 City만 대상으로 한다.
+
+최초 운영 범위는 대표 문서의 수집 우선순위에 맞춰 관동 지역 지자체를 우선 대상으로 둔다.
 
 | 필드 | 수집 방식 | 수집 상태 | 설명 |
 | --- | --- | --- | --- |
@@ -84,6 +90,23 @@ Festival은 도시와 1:N 관계를 가지며, 월별 추천과 계절성 추천
 | `description` | JNTO / JTA 기반 요약 | 전부 수집 | 축제 설명 |
 | `site_url` | JNTO / JTA / 공식 사이트 | 전부 수집 | 공식 또는 안내 페이지 |
 | `photo_url` | JNTO / 공식 사이트 / 검수 | 전부 수집 | 대표 사진 URL |
+
+## 2.5 VisitorStatistics 데이터
+
+VisitorStatistics는 도시별 추천 보조 지표와 월별·지역별 수요 판단에 사용한다.
+
+일본 통계는 한국 DataLabService처럼 확정 수량을 전제로 하지 않고, JNTO Statistics, e-Stat, RESAS에서 제공 가능한 집계 단위를 우선 수집한 뒤 City와 연결한다.
+
+| 필드 | 수집 방식 | 수집 상태 | 설명 |
+| --- | --- | --- | --- |
+| `statistics_id` | 내부 생성 | 전부 수집 | 통계 식별자 |
+| `city_id` | City 매핑 | 전부 수집 | 연결 City |
+| `period` | JNTO Statistics / e-Stat / RESAS | 전부 수집 | 월별 또는 연도별 집계 기간 |
+| `metric_name` | 원본 통계 항목 | 전부 수집 | 방문객 수, 관광 지표, 지역 지표명 |
+| `metric_value` | 원본 통계 수치 | 전부 수집 | 지표 값 |
+| `metric_unit` | 원본 통계 단위 | 전부 수집 | 명, 건, 비율 등 |
+| `source_name` | JNTO Statistics / e-Stat / RESAS | 전부 수집 | 통계 출처 |
+| `source_url` | 원본 API 또는 통계 페이지 | 전부 수집 | 원본 링크 |
 
 # 3. 데이터 소스 전략
 
@@ -143,16 +166,17 @@ Festival은 도시와 1:N 관계를 가지며, 월별 추천과 계절성 추천
 아래 항목은 모두 최초 취득 대상으로 둔다. 자동 수집에서 누락되거나 신뢰도가 낮은 값은 제외하지 않고 공식 사이트 확인, Web Search Worker, 수동 검수로 이어서 채운다.
 
 | 구분 | 수집 항목 | 주요 출처 | 누락 시 처리 |
-| --- | --- | --- |
-| 도시 | 도도부현 간략 정보, 산하 도시 목록, 도시명, 위치, 설명, 기후, 사이트 링크, 위도, 경도 | Wikipedia API, Wikipedia 크롤링, Wikidata, JMA 비교 자료 |
-| 관광지 | 관광지명, 운영시간, 운영기간, 주소, 위도, 경도, 설명, 입장료, 사이트 링크, 사진 | JNTO, JTA, 공식 사이트, Wikidata |
-| 축제 | 축제명, 주소, 기간, 설명, 사진, 사이트 링크 | JNTO, JTA, 공식 사이트 |
+| --- | --- | --- | --- |
+| 도시 | 도도부현 간략 정보, 산하 도시 목록, 도시명, 위치, 설명, 기후, 사이트 링크, 위도, 경도 | Wikipedia API, Wikipedia 크롤링, Wikidata, JMA 비교 자료 | `needs_review` 또는 산하 도시 목록 재확인 |
+| 관광지 | 관광지명, 운영시간, 운영기간, 주소, 위도, 경도, 설명, 입장료, 사이트 링크, 사진 | JNTO, JTA, 공식 사이트, Wikidata | 공식 사이트 확인 또는 Web Search Worker |
+| 축제 | 축제명, 주소, 기간, 설명, 사진, 사이트 링크 | JNTO, JTA, 공식 사이트 | 공식 사이트 확인 또는 수동 검수 |
+| 통계 | 방문객 수, 관광 통계, 지역별 지표 | JNTO Statistics, e-Stat, RESAS | 집계 단위 확인 후 `needs_review` |
 
 ## 4.2 취득 상태 관리
 
 | 취득 상태 | 기준 | 처리 방식 |
 | --- | --- | --- |
-| `collected` | 자동 수집 값이 있고 출처가 명확함 | DB 적재 |
+| `collected` | 자동 수집 값이 있고 출처가 명확함 | JSON 저장 후 S3 Raw Bucket 적재 |
 | `needs_review` | 값은 있으나 표현이 모호하거나 최신성 확인이 필요함 | 수동 검수 |
 | `missing` | 자동 수집에서 값을 찾지 못함 | Web Search 또는 수동 입력 대상 |
 | `blocked` | 약관·저작권·접근 제한으로 수집 불가 | 딥링크 또는 빈 값으로 대체하고 사유 기록 |
@@ -175,7 +199,7 @@ Festival은 도시와 1:N 관계를 가지며, 월별 추천과 계절성 추천
 
 | 대상 | 자동 수집 소스 | 처리 방식 |
 | --- | --- | --- |
-| 도시 | Wikipedia API, Wikipedia 크롤링, Wikidata, JMA | 도도부현 간략 정보와 산하 도시 목록을 먼저 추출하고, 산하 도시 목록에 포함된 City 문서만 크롤링해 설명·위치·외부 링크·기후를 추출한다. 기후는 일본기상청(JMA) 자료와 비교한 뒤 City 테이블로 정규화한다. |
+| 도시 | Wikipedia API, Wikipedia 크롤링, Wikidata, JMA | 관동 지역 도도부현과 산하 지자체를 우선 대상으로 삼는다. 도도부현 간략 정보와 산하 도시 목록을 먼저 추출하고, 산하 도시 목록에 포함된 City 문서만 크롤링해 설명·위치·외부 링크·기후를 추출한다. 기후는 일본기상청(JMA) 자료와 비교한 뒤 City 테이블로 정규화한다. |
 | 관광지 | JNTO, JTA, 공식 사이트, Wikidata | 관광지명, 운영시간, 운영기간, 주소, 위도, 경도, 설명, 입장료, 사이트 링크, 사진을 추출하고 City와 매핑한다. |
 | 축제 | JNTO, JTA, 공식 사이트 | 축제명, 주소, 기간, 설명, 사진, 사이트 링크를 추출하고 City와 매핑한다. |
 | 통계 | JNTO Statistics, e-Stat, RESAS | 방문객 수, 관광 통계, 지역별 지표를 수집하고 City 기준 보조 지표로 연결한다. |
@@ -207,24 +231,20 @@ Festival은 도시와 1:N 관계를 가지며, 월별 추천과 계절성 추천
 ```text
 자동 수집
 ↓
-JSON 직렬화
-↓
-S3 Raw Bucket 적재
-↓
-Raw 보관 기간 경과
-↓
-Lambda 배치 전처리
-↓
 취득 상태 분류
 ↓
 공식 사이트 확인 / Web Search Worker
 ↓
 수동 검수
 ↓
-정규화 DB 적재
+JSON 직렬화
+↓
+data/JP/*.json 검증 산출물 생성
+↓
+S3 Raw Bucket 적재 대상 확정
 ```
 
-정의된 모든 필드가 JSON 원본으로 저장되도록 시도하는 것이 목표다. 수집 결과는 엔티티 유형과 출처별 JSON 문서로 직렬화한 뒤 S3 Raw Bucket에 먼저 적재한다. Raw 원본은 재사용과 재처리를 위해 일정 기간 누적 보관하고, 보관 기간 또는 배치 기준이 충족되면 Lambda가 전처리한 뒤 DynamoDB에 적재한다. 운영시간·입장료·사진도 최초 수집 대상에 포함하며, 자동 수집 실패 시 `missing` 또는 `needs_review` 상태로 남기고 같은 파이프라인 안에서 공식 확인 또는 수동 검수로 채운다.
+정의된 모든 필드가 JSON 원본으로 저장되도록 시도하는 것이 목표다. 수집 결과는 엔티티 유형과 출처별 JSON 문서로 직렬화하고 `data/JP/*.json` 로컬 검증 산출물로 구조를 확인한 뒤 S3 Raw Bucket 적재 대상으로 확정한다. Raw 원본을 일정 기간 누적 보관한 뒤 Lambda가 전처리하고 DynamoDB에 적재하는 과정은 전처리 계획서에서 관리한다. 운영시간·입장료·사진도 최초 수집 대상에 포함하며, 자동 수집 실패 시 `missing` 또는 `needs_review` 상태로 남기고 같은 취득 파이프라인 안에서 공식 확인 또는 수동 검수로 채운다.
 
 예시:
 
@@ -248,37 +268,46 @@ Lambda 배치 전처리
 
 # 7. 저장 구조
 
-## 7.1 핵심 테이블
+## 7.1 로컬 검증 산출물과 S3 Raw 계약
 
 ```text
 City
 Attraction
 Festival
+VisitorStatistics
 S3 Raw Bucket
 ```
 
 수집 원본은 DB에 바로 쓰지 않고 JSON 파일로 저장한 뒤 S3 Raw Bucket에 적재한다. S3 객체는 국가, 출처, 엔티티 유형, 수집일 기준 Prefix로 구분한다. 일정 기간 누적된 Raw Prefix는 Lambda 배치 전처리의 입력으로 재사용하며, 전처리 결과만 DynamoDB에 정규화 Item으로 적재한다.
 
+| 로컬 파일 | 내용 | S3 Raw 적재 기준 |
+| --- | --- | --- |
+| `data/JP/prefectures.json` | 관동 지역 도도부현 간략 정보 | `raw/JP/wikipedia/prefecture/{yyyy}/{mm}/{dd}/` |
+| `data/JP/cities.json` | 관동 지역 산하 지자체 City 목록과 상세 정보 | `raw/JP/wikipedia/city/{yyyy}/{mm}/{dd}/` |
+| `data/JP/attractions.json` | JNTO/JTA/공식 사이트 기반 관광지 | `raw/JP/jnto/attraction/{yyyy}/{mm}/{dd}/` |
+| `data/JP/festivals.json` | JNTO/JTA/공식 사이트 기반 축제 | `raw/JP/jnto/festival/{yyyy}/{mm}/{dd}/` |
+| `data/JP/visitor_statistics.json` | JNTO Statistics, e-Stat, RESAS 기반 관광 통계 | `raw/JP/statistics/visitor_statistics/{yyyy}/{mm}/{dd}/` |
+
 ## 7.2 City 예시
 
 | 필드 | 예시 |
 | --- | --- |
-| `city_id` | `JP-ISHIKAWA-KANAZAWA` |
-| `city_name_ko` | 가나자와 |
-| `city_name_ja` | 金沢市 |
-| `prefecture` | 石川県 |
-| `description` | 전통 정원, 금박 공예, 성하마을 문화가 남아 있는 이시카와현의 대표 소도시 |
-| `climate` | 겨울 강설량이 많고 여름은 습도가 높다. 봄·가을 관광 적합도가 높다. |
+| `city_id` | `JP-TOKYO-TAITO` |
+| `city_name_ko` | 다이토구 |
+| `city_name_ja` | 台東区 |
+| `prefecture` | 東京都 |
+| `description` | 아사쿠사와 우에노를 중심으로 전통 문화와 도시 관광 자원이 밀집한 도쿄의 지자체 |
+| `climate` | 여름은 고온다습하고 겨울은 비교적 건조하다. 봄·가을 관광 적합도가 높다. |
 | `site_url` | 공식 관광 사이트 URL |
 
 ## 7.3 Attraction 예시
 
 | 필드 | 예시 |
 | --- | --- |
-| `name` | 兼六園 |
-| `city_id` | `JP-ISHIKAWA-KANAZAWA` |
-| `address` | 石川県金沢市兼六町 |
-| `description` | 일본 3대 정원 중 하나로 계절별 경관이 강한 관광지 |
+| `name` | 東京スカイツリー |
+| `city_id` | `JP-TOKYO-SUMIDA` |
+| `address` | 東京都墨田区押上 |
+| `description` | 전망대와 상업시설을 함께 갖춘 도쿄 동부의 대표 관광지 |
 | `opening_hours` | 공식 사이트 확인값 |
 | `admission_fee` | 공식 사이트 확인값 |
 | `site_url` | 공식 사이트 URL |
@@ -287,22 +316,36 @@ S3 Raw Bucket
 
 | 필드 | 예시 |
 | --- | --- |
-| `name` | 金沢百万石まつり |
-| `city_id` | `JP-ISHIKAWA-KANAZAWA` |
-| `address` | 石川県金沢市 중심부 |
-| `period` | 매년 6월 |
-| `description` | 가나자와의 역사와 마에다 가문 문화를 기념하는 대표 축제 |
+| `name` | 三社祭 |
+| `city_id` | `JP-TOKYO-TAITO` |
+| `address` | 東京都台東区浅草 |
+| `period` | 매년 5월 |
+| `description` | 아사쿠사 신사를 중심으로 열리는 도쿄의 대표 전통 축제 |
 | `photo_url` | 공식 또는 사용 가능 조건이 확인된 이미지 URL |
+
+## 7.5 VisitorStatistics 예시
+
+| 필드 | 예시 |
+| --- | --- |
+| `statistics_id` | `JP-TOKYO-STAT-202501` |
+| `city_id` | `JP-TOKYO-TAITO` |
+| `period` | `2025-01` |
+| `metric_name` | 방문객 수 |
+| `metric_value` | 원본 통계 수치 |
+| `metric_unit` | 명 |
+| `source_name` | JNTO Statistics |
+| `source_url` | 원본 통계 페이지 URL |
 
 # 8. 품질 검증 기준
 
 | 검증 항목 | 기준 |
 | --- | --- |
-| City 매핑 | 모든 Attraction과 Festival은 하나의 City에 연결되어야 한다. |
+| City 매핑 | 모든 Attraction, Festival, VisitorStatistics는 하나의 City에 연결되어야 한다. |
 | 출처 기록 | 모든 자동 수집 데이터는 `source_name`, `source_url`, `collected_at`을 가진다. |
 | 전체 필드 상태 | 정의된 모든 필드는 `collected`, `needs_review`, `missing`, `blocked` 중 하나의 상태를 가진다. |
 | 최신성 | 운영시간, 운영기간, 입장료는 확인일을 기록한다. |
 | 기후 정합성 | Wikipedia에서 취득한 City `climate`를 일본기상청(JMA) 자료와 비교하고 불일치 여부를 검수 메타데이터로 남긴다. |
+| 통계 정합성 | VisitorStatistics는 집계 기간, 지표명, 단위, 출처 URL을 가져야 하며 City 매핑이 불명확하면 `needs_review`로 둔다. |
 | 저작권 | 사진과 설명문은 사용 가능 조건을 확인한다. 설명문은 내부 요약문으로 저장한다. |
 | 공식성 | 자동 수집과 Web Search Worker는 공식 사이트 또는 공공 관광 페이지를 우선한다. |
 
@@ -314,16 +357,17 @@ S3 Raw Bucket
 - 상업 플랫폼의 숙박·맛집 데이터는 직접 저장보다 딥링크 제공을 우선한다.
 - 운영시간과 입장료는 변경 가능성이 높으므로 "확인일 기준" 문구를 서비스에 표시한다.
 
-# 10. 본 문서 반영 계획
+# 10. 운영 반영 방향
 
-이 초안이 확정되면 다음 순서로 본 문서와 HTML에 반영한다.
+본 문서의 핵심 내용은 일본 데이터 취득 계획의 실제 운영 기준으로 정리한다.
+문서 확정 후에는 대표 데이터 취득 계획, 전처리 계획, 공유용 HTML, PDF 산출물이 같은 기준을 바라보도록 순차적으로 동기화한다.
 
-1. `04_data_collect_plan.md`의 `2.2 수집 데이터 정보 및 분량`을 City, Attraction, Festival 관계 기준으로 보강한다.
-2. `2.4.2 일본 데이터 출처`에 Wikipedia, JNTO, JTA, JNTO Statistics의 역할을 표로 반영한다.
-3. `3. 데이터 전처리 방식 및 인프라 구성`에 자동 수집, 공식 확인, Web Search Worker, 검수 흐름을 추가한다.
-4. `4. 데이터 품질 정합성 관리 방법`에 City 매핑, 출처 기록, 최신성 검증을 추가한다.
-5. `6. 수집 정책 및 제외 범위`에 전체 필드 일괄 취득 원칙과 최신성 재확인 정책을 추가한다.
-6. `scripts/generate_pages.py`를 실행하여 `pages/04_data_collect_plan.html`에 반영한다.
+1. 일본 우선 수집 범위는 관동 지역 지자체를 기준으로 시작하고, 이후 동일한 구조로 다른 지역을 확장한다.
+2. City는 도도부현 간략 정보와 산하 도시 목록을 먼저 확보한 뒤 산하 City 문서만 크롤링한다.
+3. Attraction과 Festival은 JNTO, JTA, 공식 관광 사이트를 우선하고 누락 항목은 Web Search Worker 또는 수동 검수로 채운다.
+4. VisitorStatistics는 JNTO Statistics, e-Stat, RESAS의 제공 가능한 집계 단위를 City 보조 지표로 연결한다.
+5. 수집 결과는 `data/JP/*.json` 로컬 검증 산출물로 확인한 뒤 S3 Raw Prefix 적재 대상으로 확정한다.
+6. 공유용 HTML과 PDF 산출물은 확정된 데이터 취득 계획을 사용자가 바로 확인할 수 있는 형태로 갱신한다.
 
 # 11. 참고 출처
 
@@ -343,3 +387,4 @@ S3 Raw Bucket
 | v0.2 | 2026-06-02 | LLM 파트 | 데이터 모델, 자동 수집·검수 범위, Web Search Worker 확인 전략 구체화 |
 | v0.3 | 2026-06-02 | LLM 파트 | 정의 필드를 모두 수집하고 누락 항목은 취득 상태로 관리하는 방향 반영 |
 | v0.4 | 2026-06-02 | LLM 파트 | 단계 경계를 제거하고 도도부현 간략 정보와 산하 도시 목록 기반 City 크롤링, JSON 원본의 S3 저장, 기후 데이터 비교 검증 방식으로 재정리 |
+| v0.5 | 2026-06-07 | LLM 파트 | 관동 우선 수집 범위, VisitorStatistics 보조 데이터, `data/JP/*.json` 검증 산출물, S3 Raw Prefix 기준 보완 |

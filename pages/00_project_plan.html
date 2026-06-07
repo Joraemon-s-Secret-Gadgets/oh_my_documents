@@ -169,7 +169,7 @@
 <li>스키 액티비티 여행 추천</li>
 </ul>
 <h2 id="s4-2" class="s-h2">4.2 사용자 흐름</h2>
-<div class="table-wrap wide"><table class="info-tbl">
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
 <thead><tr><th>단계</th><th>사용자 입력</th><th>시스템 처리</th><th>결과</th></tr></thead><tbody>
 <tr><td>1</td><td>국가, 여행 시기 입력</td><td>추천 대상 국가와 시간 조건 고정</td><td>기본 추천 범위 설정</td></tr>
 <tr><td>2</td><td>자연어 취향 또는 지도 마커 선택</td><td>취향을 테마 또는 추천 진입점으로 해석</td><td>추천 기준 생성</td></tr>
@@ -178,7 +178,7 @@
 <tr><td>5</td><td>후속 질의</td><td>사용자가 “더 조용한 곳”, “축제 없는 곳”처럼 조건을 바꾸면 동일 파이프라인으로 재검색</td><td>조건 변경 기반 재추천</td></tr>
 </tbody></table></div>
 <h1 id="s5" class="s-h1">5. 주요 사용자 및 이해관계자</h1>
-<div class="table-wrap wide"><table class="info-tbl">
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
 <thead><tr><th>구분</th><th>역할</th><th>주요 니즈</th></tr></thead><tbody>
 <tr><td>자유여행자</td><td>일반 여행 사용자</td><td>혼잡하지 않고 취향에 맞는 소도시 여행지 탐색</td></tr>
 <tr><td>지자체·관광 운영자</td><td>관광 운영자</td><td>지역 관광 자원 노출, 수요 분산, 데이터 제안</td></tr>
@@ -191,7 +191,7 @@
 <h1 id="s6" class="s-h1">6. 프로젝트 범위</h1>
 <h2 id="s6-1" class="s-h2">6.1 PoC 범위</h2>
 <p class="doc-p">PoC는 P1 구현을 핵심 범위로 한다. P2와 P3는 설계 산출물을 우선 만들고, 일정 여유가 있을 경우 일부 구현한다.</p>
-<div class="table-wrap wide extra-wide"><table class="info-tbl">
+<div class="table-wrap wide extra-wide scroll-table"><table class="info-tbl">
 <thead><tr><th>우선순위</th><th>기능 범위</th><th>PoC</th><th>Production</th><th>상태</th></tr></thead><tbody>
 <tr><td>P1</td><td>혼잡 회피 대체 여행지 추천, 한일 축제 기반 여정 추천, 일주일 이내 여행의 날씨 기반 추천</td><td>구현</td><td>고도화</td><td>핵심</td></tr>
 <tr><td>P2</td><td>미디어 촬영지·성지순례 추천</td><td>설계</td><td>구현</td><td>선택 구현</td></tr>
@@ -283,7 +283,7 @@
 <li>PoC에서는 빠른 검증을 위해 핵심 흐름을 우선 구현한다.</li>
 </ul>
 <h1 id="s10" class="s-h1">10. 추진 일정</h1>
-<div class="table-wrap wide"><table class="info-tbl">
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
 <thead><tr><th>단계</th><th>기간</th><th>주요 산출물</th></tr></thead><tbody>
 <tr><td>기획 정리</td><td>2026-05-27 ~ 2026-05-31</td><td>프로젝트 기획서, 요구사항 명세서</td></tr>
 <tr><td>PoC 설계</td><td>2026-06-01 ~ 2026-06-05</td><td>화면 흐름, 데이터 구조, 추천 파이프라인 설계</td></tr>
@@ -297,7 +297,7 @@
 <p class="doc-p">서비스 운영자는 RAG 기반 추천 근거, 사용자 피드백, 데이터 검증 상태를 바탕으로 추천 정책을 점진적으로 개선할 수 있다. PoC 단계에서는 핵심 추천 흐름의 가능성을 검증하고, Production 단계에서는 데이터 승인, 운영 지표, 권한 관리까지 확장해 지속 가능한 운영 체계를 마련할 수 있다.</p>
 <p class="doc-p">데이터 제공 기관은 관광지, 축제, 날씨, 교통 등 공공·외부 데이터가 실제 사용자 추천 경험 안에서 활용되는 경로를 확보한다. 또한 출처, 갱신 시점, 검증 상태를 함께 관리함으로써 제공 데이터의 신뢰성과 활용 성과를 추적할 수 있다.</p>
 <h1 id="s12" class="s-h1">12. 리스크 및 대응</h1>
-<div class="table-wrap wide"><table class="info-tbl">
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
 <thead><tr><th>리스크</th><th>영향</th><th>대응</th></tr></thead><tbody>
 <tr><td>외부 API 제약</td><td>지도·날씨·장소 데이터 제공 제한</td><td>딥링크, 캐시, 백엔드 프록시 검토</td></tr>
 <tr><td>데이터 최신성 부족</td><td>축제·날씨·운영 정보 오류 가능</td><td>갱신 시각, 출처, 검증 상태 표시</td></tr>
@@ -317,7 +317,7 @@
 <tr><td>테스트 계획서</td><td>기능, 권한, API 장애, 추천 품질 검증 기준 정의</td></tr>
 </tbody></table></div>
 <h1 id="s14" class="s-h1">14. 변경 이력</h1>
-<div class="table-wrap wide"><table class="info-tbl change-log-tbl">
+<div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
 <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
 <tr><td>v0.1</td><td>2026-05-28</td><td>조동휘</td><td>프로젝트 기획서 초안 작성</td></tr>
 <tr><td>v0.2</td><td>2026-05-28</td><td>조동휘</td><td>국가와 여행 시기 선입력, 자연어 취향 반영, 관광지 방문객 수 기준의 소도시 판단, 00 프로젝트 기획서 HTML 산출물 생성 계획 반영</td></tr>

@@ -46,7 +46,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \lhead{\hbox{\makebox[42pt][c]{\includegraphics[width=38pt,height=13pt,keepaspectratio]{../assets/images/SK-Networks-logo.png}}\hspace{0.7em}\makebox[42pt][c]{\includegraphics[width=44pt,height=15pt,keepaspectratio]{../assets/images/en-core-logo.png}}\hspace{0.7em}\makebox[42pt][c]{\includegraphics[width=38pt,height=13pt,keepaspectratio]{../assets/images/playdata-logo.png}}}}
-\rhead{\scriptsize v0.4 | 초안 (Draft)}
+\rhead{\scriptsize v0.5 | 초안 (Draft)}
 \cfoot{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\headrule}{\hbox to\headwidth{\color{LovvGreen}\leaders\hrule height \headrulewidth\hfill}}
@@ -67,7 +67,7 @@
 
 \vfill
 {\Large\bfseries 조라에몽의 만능 도구들\par}\vspace{0.8em}
-{\Large 이창우, 전승권, 전종혁, 조동휘, 최수아\\[0.8em]{\large 멘토 최민수}\par}
+{\Large LLM 파트\\[0.8em]{\large 멘토 최민수}\par}
 \vspace{2em}
 {\large 2026-05-30\par}
 \end{titlepage}
@@ -85,7 +85,7 @@
 \addcontentsline{toc}{section}{1. 문서 개요}
 
 
-\DocNeedspace{24\baselineskip}
+\DocNeedspace{8\baselineskip}
 \subsection*{1.1 목적}
 \addcontentsline{toc}{subsection}{1.1 목적}
 
@@ -95,7 +95,7 @@
 
 
 \DocNeedspace{3\baselineskip}
-수집 계획서는 City, Attraction, Festival 데이터를 먼저 폭넓게 취득하고 이후 검증·보정하는 방향을 가진다.\newline 본 전처리 계획서는 그 다음 단계에서 원본 데이터의 표현 차이와 누락·중복·최신성 문제를 정리하여 서비스 사용 가능한 데이터셋으로 변환하는 데 초점을 둔다.
+수집 계획서는 City, Attraction, Festival, VisitorStatistics 데이터를 먼저 폭넓게 취득하고 이후 검증·보정하는 방향을 가진다.\newline 본 전처리 계획서는 그 다음 단계에서 원본 데이터의 표현 차이와 누락·중복·최신성 문제를 정리하여 서비스 사용 가능한 데이터셋으로 변환하는 데 초점을 둔다.
 
 
 \DocNeedspace{24\baselineskip}
@@ -121,7 +121,7 @@
 \addcontentsline{toc}{section}{2. 입력 데이터 범위}
 
 
-\DocNeedspace{24\baselineskip}
+\DocNeedspace{8\baselineskip}
 \subsection*{2.1 입력 데이터셋}
 \addcontentsline{toc}{subsection}{2.1 입력 데이터셋}
 
@@ -163,20 +163,22 @@ Korea Local Validation & \texttt{data/\allowbreak{}KR/\allowbreak{}prefectures.\
 \textcolor{LovvGreen}{\textbf{text}}\\[0.2em]
 City\\
 \hspace*{0.55em}├── Attraction\\
-\hspace*{0.55em}└── Festival\\
+\hspace*{0.55em}├── Festival\\
+\hspace*{0.55em}└── VisitorStatistics\\
 \end{scriptsize}
 \end{quote}
 
 
-\DocNeedspace{10\baselineskip}
+\DocNeedspace{12\baselineskip}
 \begin{small}
-\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.279\linewidth}>{\RaggedRight\arraybackslash}m{0.661\linewidth}@{}}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.327\linewidth}>{\RaggedRight\arraybackslash}m{0.613\linewidth}@{}}
 \toprule
-\multicolumn{1}{>{\centering\arraybackslash}m{0.279\linewidth}}{\textbf{관계}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.661\linewidth}}{\textbf{전처리 기준}} \\
+\multicolumn{1}{>{\centering\arraybackslash}m{0.327\linewidth}}{\textbf{관계}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.613\linewidth}}{\textbf{전처리 기준}} \\
 \midrule
 \endhead
 \texttt{City 1:\allowbreak{}N Attraction} & 모든 관광지는 하나의 대표 City에 연결한다. 경계 지역은 주소와 좌표를 기준으로 대표 City를 결정하고 예외 메모를 남긴다. \\
 \texttt{City 1:\allowbreak{}N Festival} & 모든 축제는 개최 장소 기준 City에 연결한다. 광역 개최 축제는 주 개최지와 보조 개최지를 분리한다. \\
+\texttt{City 1:\allowbreak{}N VisitorStatistics} & 방문·관광 통계는 월별 또는 지역별 기준으로 City에 연결한다. 출처별 집계 단위가 다른 경우 원본 단위와 정규화 단위를 모두 남긴다. \\
 \bottomrule
 \end{longtable}
 \end{small}
@@ -189,7 +191,7 @@ City\\
 \addcontentsline{toc}{section}{3. 전처리 아키텍처}
 
 
-\DocNeedspace{24\baselineskip}
+\DocNeedspace{8\baselineskip}
 \subsection*{3.1 구성 방향}
 \addcontentsline{toc}{subsection}{3.1 구성 방향}
 
@@ -227,15 +229,15 @@ Search Index /\allowbreak{} RAG Dataset /\allowbreak{} Admin Review\\
 
 \DocNeedspace{18\baselineskip}
 \begin{small}
-\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.242\linewidth}>{\RaggedRight\arraybackslash}m{0.363\linewidth}>{\RaggedRight\arraybackslash}m{0.315\linewidth}@{}}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.239\linewidth}>{\RaggedRight\arraybackslash}m{0.369\linewidth}>{\RaggedRight\arraybackslash}m{0.311\linewidth}@{}}
 \toprule
-\multicolumn{1}{>{\centering\arraybackslash}m{0.242\linewidth}}{\textbf{구성 요소}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.363\linewidth}}{\textbf{역할}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.315\linewidth}}{\textbf{저장/처리 단위}} \\
+\multicolumn{1}{>{\centering\arraybackslash}m{0.239\linewidth}}{\textbf{구성 요소}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.369\linewidth}}{\textbf{역할}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.311\linewidth}}{\textbf{저장/처리 단위}} \\
 \midrule
 \endhead
 S3 Raw Bucket & 수집 원본 누적 보존 & 국가, 출처, 엔티티 유형, 수집일 기준 객체 \\
 S3 Processed Prefix & Lambda 처리 결과와 품질 리포트 보존 & 정규화 JSON, 실패 리포트, 검수 대상 목록 \\
 Lambda Preprocessor & 일정 기간 누적된 Raw JSON 묶음의 스키마 검증, 필드 정제, 정규화, 중복 후보 탐지, DynamoDB 적재 & S3 Prefix 또는 배치 묶음 \\
-{\scriptsize DynamoDB} & City, Attraction, Festival, 검수 상태, 품질 메타데이터 저장 & 엔티티 단위 Item \\
+{\scriptsize DynamoDB} & City, Attraction, Festival, VisitorStatistics, 검수 상태, 품질 메타데이터 저장 & 엔티티 단위 Item \\
 CloudWatch Logs & Lambda 실행 로그와 실패 원인 기록 & 실행 요청 단위 \\
 DLQ 또는 실패 Prefix & 처리 실패 이벤트 격리 & 실패 S3 객체 또는 이벤트 \\
 \bottomrule
@@ -272,8 +274,7 @@ Failed & \texttt{failed/\allowbreak{}\{country\}/\allowbreak{}\{source\}/\allowb
 \addcontentsline{toc}{section}{4. 전처리 파이프라인}
 
 
-\newpage
-\DocNeedspace{24\baselineskip}
+\DocNeedspace{8\baselineskip}
 \subsection*{4.1 처리 흐름}
 \addcontentsline{toc}{subsection}{4.1 처리 흐름}
 
@@ -328,12 +329,12 @@ Raw 보관 기간 / 배치 기준 확인 & 일정 기간 또는 처리 기준만
 Lambda 배치 실행 & 확정된 S3 Prefix 또는 Manifest를 입력으로 전처리 함수 실행 & Lambda Invocation \\
 스키마 검증 & 필수 필드 존재 여부, 타입, 인코딩, 날짜 포맷 점검 & {\footnotesize schema\_\allowbreak{}validation\_\allowbreak{}result} \\
 필드 정제 & 공백, HTML 태그, 제어문자, 중복 문장, 깨진 URL 제거 & {\footnotesize cleaned\_\allowbreak{}fields} \\
-엔티티 정규화 & 도시·관광지·축제명, 행정구역, 좌표, 날짜를 공통 포맷으로 변환 & {\footnotesize normalized\_\allowbreak{}entities} \\
+엔티티 정규화 & 도시·관광지·축제명, 방문·관광 통계, 행정구역, 좌표, 날짜를 공통 포맷으로 변환 & {\footnotesize normalized\_\allowbreak{}entities} \\
 중복 제거 및 병합 & 동일 대상의 다중 출처 데이터를 하나의 대표 엔티티로 병합 & {\footnotesize merged\_\allowbreak{}entities} \\
 품질 점수 산정 & 출처 신뢰도, 최신성, 필드 충족률, 검수 여부를 점수화 & {\footnotesize data\_\allowbreak{}confidence} \\
 파생 필드 생성 & 테마 태그, 월별 추천 태그, 검색 인덱스 텍스트 생성 & {\footnotesize feature\_\allowbreak{}dataset} \\
 검수 대상 분류 & 누락·충돌·저작권 위험 항목을 검수 큐로 이동 & {\footnotesize review\_\allowbreak{}queue} \\
-DynamoDB 적재 & City, Attraction, Festival, 품질 메타데이터를 Item 단위로 저장 & DynamoDB Item \\
+DynamoDB 적재 & City, Attraction, Festival, VisitorStatistics, 품질 메타데이터를 Item 단위로 저장 & DynamoDB Item \\
 \bottomrule
 \end{longtable}
 \end{small}
@@ -346,23 +347,25 @@ DynamoDB 적재 & City, Attraction, Festival, 품질 메타데이터를 Item 단
 \addcontentsline{toc}{section}{5. 공통 정규화 규칙}
 
 
-\DocNeedspace{24\baselineskip}
+\DocNeedspace{8\baselineskip}
 \subsection*{5.1 식별자 규칙}
 \addcontentsline{toc}{subsection}{5.1 식별자 규칙}
 
 
-\DocNeedspace{16\baselineskip}
+\DocNeedspace{20\baselineskip}
 \begin{small}
-\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.203\linewidth}>{\RaggedRight\arraybackslash}m{0.422\linewidth}>{\RaggedRight\arraybackslash}m{0.295\linewidth}@{}}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.207\linewidth}>{\RaggedRight\arraybackslash}m{0.421\linewidth}>{\RaggedRight\arraybackslash}m{0.291\linewidth}@{}}
 \toprule
-\multicolumn{1}{>{\centering\arraybackslash}m{0.203\linewidth}}{\textbf{대상}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.422\linewidth}}{\textbf{ID 형식}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.295\linewidth}}{\textbf{예시}} \\
+\multicolumn{1}{>{\centering\arraybackslash}m{0.207\linewidth}}{\textbf{대상}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.421\linewidth}}{\textbf{ID 형식}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.291\linewidth}}{\textbf{예시}} \\
 \midrule
 \endhead
 한국 City & \texttt{KR-\allowbreak{}\{도\_\allowbreak{}코드\}-\allowbreak{}\{CITY\_\allowbreak{}EN\}} & \texttt{KR-\allowbreak{}42-\allowbreak{}GANGNEUNG} \\
 일본 City & \texttt{JP-\allowbreak{}\{도도부현\}-\allowbreak{}\{도시명\}} & \texttt{JP-\allowbreak{}ISHIKAWA-\allowbreak{}KANAZAWA} \\
 한국 Attraction & \texttt{KR-\allowbreak{}\{도\_\allowbreak{}코드\}-\allowbreak{}\{CITY\_\allowbreak{}EN\}-\allowbreak{}ATT-\allowbreak{}\{content\allowbreak{}id\}} & \texttt{KR-\allowbreak{}42-\allowbreak{}GANGNEUNG-\allowbreak{}ATT-\allowbreak{}126508} \\
 한국 Festival & \texttt{KR-\allowbreak{}\{도\_\allowbreak{}코드\}-\allowbreak{}\{CITY\_\allowbreak{}EN\}-\allowbreak{}FES-\allowbreak{}\{content\allowbreak{}id\}} & \texttt{KR-\allowbreak{}42-\allowbreak{}GANGNEUNG-\allowbreak{}FES-\allowbreak{}2762975} \\
+한국 VisitorStatistics & \texttt{KR-\allowbreak{}\{도\_\allowbreak{}코드\}-\allowbreak{}\{CITY\_\allowbreak{}EN\}-\allowbreak{}STAT-\allowbreak{}\{yyyyMM\}} & \texttt{KR-\allowbreak{}42-\allowbreak{}GANGNEUNG-\allowbreak{}STAT-\allowbreak{}202501} \\
 일본 Attraction/Festival & \texttt{\{country\_\allowbreak{}code\}-\allowbreak{}\{entity\_\allowbreak{}type\}-\allowbreak{}\{source\_\allowbreak{}or\_\allowbreak{}hash\}} & \texttt{JP-\allowbreak{}FEST-\allowbreak{}HASH-\allowbreak{}001} \\
+일본 VisitorStatistics & \texttt{JP-\allowbreak{}\{prefecture\_\allowbreak{}or\_\allowbreak{}city\}-\allowbreak{}STAT-\allowbreak{}\{period\_\allowbreak{}or\_\allowbreak{}hash\}} & \texttt{JP-\allowbreak{}TOKYO-\allowbreak{}STAT-\allowbreak{}202501} \\
 \bottomrule
 \end{longtable}
 \end{small}
@@ -455,7 +458,7 @@ ID는 재처리 시에도 바뀌지 않아야 한다.\newline 원본 ID가 없�
 \addcontentsline{toc}{section}{6. 데이터 유형별 전처리}
 
 
-\DocNeedspace{24\baselineskip}
+\DocNeedspace{8\baselineskip}
 \subsection*{6.1 City 전처리}
 \addcontentsline{toc}{subsection}{6.1 City 전처리}
 
@@ -533,20 +536,21 @@ ID는 재처리 시에도 바뀌지 않아야 한다.\newline 원본 ID가 없�
 \addcontentsline{toc}{section}{7. 품질 검증 및 검수 큐}
 
 
-\DocNeedspace{24\baselineskip}
+\DocNeedspace{8\baselineskip}
 \subsection*{7.1 자동 검증 기준}
 \addcontentsline{toc}{subsection}{7.1 자동 검증 기준}
 
 
-\DocNeedspace{20\baselineskip}
+\DocNeedspace{22\baselineskip}
 \begin{small}
-\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.096\linewidth}>{\RaggedRight\arraybackslash}m{0.572\linewidth}>{\RaggedRight\arraybackslash}m{0.252\linewidth}@{}}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.085\linewidth}>{\RaggedRight\arraybackslash}m{0.612\linewidth}>{\RaggedRight\arraybackslash}m{0.223\linewidth}@{}}
 \toprule
-\multicolumn{1}{>{\centering\arraybackslash}m{0.096\linewidth}}{\textbf{검증 항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.572\linewidth}}{\textbf{기준}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.252\linewidth}}{\textbf{실패 시 상태}} \\
+\multicolumn{1}{>{\centering\arraybackslash}m{0.085\linewidth}}{\textbf{검증 항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.612\linewidth}}{\textbf{기준}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.223\linewidth}}{\textbf{실패 시 상태}} \\
 \midrule
 \endhead
 필수 필드 & ID, 이름, City 매핑, 출처 URL 존재 & \texttt{missing} 또는 \texttt{needs\_\allowbreak{}review} \\
-City 매핑 & Attraction/Festival이 하나의 City와 연결됨 & \texttt{needs\_\allowbreak{}review} \\
+City 매핑 & Attraction/Festival/VisitorStatistics가 하나의 City와 연결됨 & \texttt{needs\_\allowbreak{}review} \\
+통계 기간 & 방문·관광 통계의 집계 기간과 지표명이 존재함 & \texttt{needs\_\allowbreak{}review} \\
 URL 유효성 & HTTP 접근 가능 또는 공식 딥링크 보존 가능 & \texttt{needs\_\allowbreak{}review} \\
 좌표 범위 & 국가별 좌표 범위 안에 존재 & \texttt{needs\_\allowbreak{}review} \\
 날짜 포맷 & ISO 날짜 또는 반복 규칙으로 변환 가능 & \texttt{needs\_\allowbreak{}review} \\
@@ -612,7 +616,7 @@ URL 유효성 & HTTP 접근 가능 또는 공식 딥링크 보존 가능 & \text
 \addcontentsline{toc}{section}{8. 파생 데이터 생성}
 
 
-\DocNeedspace{24\baselineskip}
+\DocNeedspace{8\baselineskip}
 \subsection*{8.1 추천용 파생 필드}
 \addcontentsline{toc}{subsection}{8.1 추천용 파생 필드}
 
@@ -667,20 +671,20 @@ RAG 문서는 외부 원문을 그대로 복제하지 않고 내부 요약문과
 \addcontentsline{toc}{section}{9. DynamoDB 저장 및 적재 기준}
 
 
-\DocNeedspace{24\baselineskip}
+\DocNeedspace{8\baselineskip}
 \subsection*{9.1 저장 계층}
 \addcontentsline{toc}{subsection}{9.1 저장 계층}
 
 
 \DocNeedspace{14\baselineskip}
 \begin{small}
-\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.300\linewidth}>{\RaggedRight\arraybackslash}m{0.486\linewidth}>{\RaggedRight\arraybackslash}m{0.134\linewidth}@{}}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.265\linewidth}>{\RaggedRight\arraybackslash}m{0.537\linewidth}>{\RaggedRight\arraybackslash}m{0.118\linewidth}@{}}
 \toprule
-\multicolumn{1}{>{\centering\arraybackslash}m{0.300\linewidth}}{\textbf{계층}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.486\linewidth}}{\textbf{저장 내용}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.134\linewidth}}{\textbf{용도}} \\
+\multicolumn{1}{>{\centering\arraybackslash}m{0.265\linewidth}}{\textbf{계층}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.537\linewidth}}{\textbf{저장 내용}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.118\linewidth}}{\textbf{용도}} \\
 \midrule
 \endhead
 S3 Raw Bucket & 원본 응답, 추출 원문, 수집 메타데이터 & 재처리·감사·오류 추적 \\
-DynamoDB Normalized Tables & City, Attraction, Festival, 검수 상태 & 서비스 조회 \\
+DynamoDB Normalized Tables & City, Attraction, Festival, VisitorStatistics, 검수 상태 & 서비스 조회 \\
 Search Index & 검색 문서, 임베딩 대상 텍스트, 키워드 & RAG·검색 \\
 DynamoDB Review Table & 검수 큐, 검수 결과, 승인·반려 이력 & 운영 관리 \\
 \bottomrule
@@ -693,16 +697,17 @@ DynamoDB Review Table & 검수 큐, 검수 결과, 승인·반려 이력 & 운�
 \addcontentsline{toc}{subsection}{9.2 DynamoDB 테이블 후보}
 
 
-\DocNeedspace{16\baselineskip}
+\DocNeedspace{18\baselineskip}
 \begin{footnotesize}
-\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.190\linewidth}>{\RaggedRight\arraybackslash}m{0.183\linewidth}>{\RaggedRight\arraybackslash}m{0.164\linewidth}>{\RaggedRight\arraybackslash}m{0.363\linewidth}@{}}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.194\linewidth}>{\RaggedRight\arraybackslash}m{0.178\linewidth}>{\RaggedRight\arraybackslash}m{0.160\linewidth}>{\RaggedRight\arraybackslash}m{0.368\linewidth}@{}}
 \toprule
-\multicolumn{1}{>{\centering\arraybackslash}m{0.190\linewidth}}{\textbf{테이블}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.183\linewidth}}{\textbf{Partition Key}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.164\linewidth}}{\textbf{Sort Key}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.363\linewidth}}{\textbf{저장 내용}} \\
+\multicolumn{1}{>{\centering\arraybackslash}m{0.194\linewidth}}{\textbf{테이블}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.178\linewidth}}{\textbf{Partition Key}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.160\linewidth}}{\textbf{Sort Key}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.368\linewidth}}{\textbf{저장 내용}} \\
 \midrule
 \endhead
 \texttt{LovvCity} & \texttt{country\_\allowbreak{}code} & \texttt{city\_\allowbreak{}id} & 국가별 City 정규화 데이터 \\
 \texttt{LovvAttraction} & \texttt{city\_\allowbreak{}id} & \texttt{attraction\_\allowbreak{}id} & City에 속한 Attraction 정규화 데이터 \\
 \texttt{LovvFestival} & \texttt{city\_\allowbreak{}id} & \texttt{festival\_\allowbreak{}id} & City에 속한 Festival 정규화 데이터 \\
+\texttt{LovvVisitorStats} & \texttt{city\_\allowbreak{}id} & \texttt{stat\_\allowbreak{}period} & City에 연결된 월별 또는 지역별 방문·관광 통계 \\
 \texttt{LovvDataQuality} & \texttt{entity\_\allowbreak{}id} & \texttt{checked\_\allowbreak{}at} & 품질 검증 결과, 신뢰도, 실패 사유 \\
 \texttt{LovvReviewQueue} & \texttt{queue\_\allowbreak{}name} & \texttt{entity\_\allowbreak{}id} & 수동 검수 대상과 처리 상태 \\
 \bottomrule
@@ -717,13 +722,13 @@ DynamoDB Review Table & 검수 큐, 검수 결과, 승인·반려 이력 & 운�
 
 \DocNeedspace{30\baselineskip}
 \begin{small}
-\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.277\linewidth}>{\RaggedRight\arraybackslash}m{0.663\linewidth}@{}}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.270\linewidth}>{\RaggedRight\arraybackslash}m{0.670\linewidth}@{}}
 \toprule
-\multicolumn{1}{>{\centering\arraybackslash}m{0.277\linewidth}}{\textbf{속성}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.663\linewidth}}{\textbf{설명}} \\
+\multicolumn{1}{>{\centering\arraybackslash}m{0.270\linewidth}}{\textbf{속성}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.670\linewidth}}{\textbf{설명}} \\
 \midrule
 \endhead
-\texttt{entity\_\allowbreak{}id} & City, Attraction, Festival의 안정 식별자 \\
-\texttt{entity\_\allowbreak{}type} & \texttt{city}, \texttt{attraction}, \texttt{festival} \\
+\texttt{entity\_\allowbreak{}id} & City, Attraction, Festival, VisitorStatistics의 안정 식별자 \\
+\texttt{entity\_\allowbreak{}type} & \texttt{city}, \texttt{attraction}, \texttt{festival}, \texttt{visitor\_\allowbreak{}statistics} \\
 \texttt{country\_\allowbreak{}code} & \texttt{KR} 또는 \texttt{JP} \\
 \texttt{source\_\allowbreak{}name} & 원본 출처명 \\
 \texttt{source\_\allowbreak{}url} & 원본 또는 공식 확인 URL \\
@@ -744,16 +749,17 @@ DynamoDB Review Table & 검수 큐, 검수 결과, 승인·반려 이력 & 운�
 \addcontentsline{toc}{subsection}{9.4 적재 조건}
 
 
-\DocNeedspace{16\baselineskip}
+\DocNeedspace{18\baselineskip}
 \begin{small}
-\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.178\linewidth}>{\RaggedRight\arraybackslash}m{0.762\linewidth}@{}}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.252\linewidth}>{\RaggedRight\arraybackslash}m{0.688\linewidth}@{}}
 \toprule
-\multicolumn{1}{>{\centering\arraybackslash}m{0.178\linewidth}}{\textbf{대상}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.762\linewidth}}{\textbf{최소 적재 조건}} \\
+\multicolumn{1}{>{\centering\arraybackslash}m{0.252\linewidth}}{\textbf{대상}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.688\linewidth}}{\textbf{최소 적재 조건}} \\
 \midrule
 \endhead
 City & 표준 ID, 도시명, 국가, 행정구역, 출처 URL \\
 {\scriptsize Attraction} & 표준 ID, 이름, City 매핑, 출처 URL, 주소 또는 좌표 \\
 {\scriptsize Festival} & 표준 ID, 이름, City 매핑, 기간 원문 또는 개최 월, 출처 URL \\
+{\scriptsize VisitorStatistics} & 표준 ID, City 매핑, 집계 기간, 지표명, 수치, 출처 URL \\
 검색 문서 & 내부 요약문, 출처 링크, 최신성 상태 \\
 서비스 노출 & 필수 필드 충족, 저작권 위험 없음, \texttt{blocked} 아님 \\
 \bottomrule
@@ -832,16 +838,17 @@ Raw 보관 기간 & 원본 JSON은 재사용 가능한 기간 동안 S3 Raw Buck
 \addcontentsline{toc}{section}{12. 산출물}
 
 
-\DocNeedspace{24\baselineskip}
+\DocNeedspace{26\baselineskip}
 \begin{small}
-\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.405\linewidth}>{\RaggedRight\arraybackslash}m{0.535\linewidth}@{}}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.458\linewidth}>{\RaggedRight\arraybackslash}m{0.482\linewidth}@{}}
 \toprule
-\multicolumn{1}{>{\centering\arraybackslash}m{0.405\linewidth}}{\textbf{산출물}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.535\linewidth}}{\textbf{설명}} \\
+\multicolumn{1}{>{\centering\arraybackslash}m{0.458\linewidth}}{\textbf{산출물}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.482\linewidth}}{\textbf{설명}} \\
 \midrule
 \endhead
 \texttt{city\_\allowbreak{}normalized} & 국가별 도시 표준 엔티티 \\
 \texttt{attraction\_\allowbreak{}normalized} & City와 연결된 관광지 표준 엔티티 \\
 \texttt{festival\_\allowbreak{}normalized} & City와 연결된 축제 표준 엔티티 \\
+\texttt{visitor\_\allowbreak{}statistics\_\allowbreak{}normalized} & City와 연결된 방문·관광 통계 보조 지표 \\
 \texttt{data\_\allowbreak{}quality\_\allowbreak{}report} & 누락, 충돌, 최신성, 저작권 위험 리포트 \\
 \texttt{review\_\allowbreak{}queue} & 수동 검수 대상 목록 \\
 \texttt{rag\_\allowbreak{}documents} & 추천 Agent와 검색용 내부 요약 문서 \\
@@ -860,7 +867,7 @@ Raw 보관 기간 & 원본 JSON은 재사용 가능한 기간 동안 S3 Raw Buck
 \addcontentsline{toc}{section}{13. 본 문서 반영 이력}
 
 
-\DocNeedspace{14\baselineskip}
+\DocNeedspace{16\baselineskip}
 \begin{footnotesize}
 \begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.125\linewidth}>{\RaggedRight\arraybackslash}m{0.125\linewidth}>{\RaggedRight\arraybackslash}m{0.080\linewidth}>{\RaggedRight\arraybackslash}m{0.570\linewidth}@{}}
 \toprule
@@ -871,6 +878,7 @@ v0.1 & {\footnotesize 2026-\allowbreak{}06-\allowbreak{}03} & LLM 파트 & 데�
 v0.2 & {\footnotesize 2026-\allowbreak{}06-\allowbreak{}03} & LLM 파트 & S3 Raw 적재, Lambda 전처리, DynamoDB 적재 아키텍처 반영 \\
 v0.3 & {\footnotesize 2026-\allowbreak{}06-\allowbreak{}06} & LLM 파트 & S3 Raw 누적 보관 후 Lambda 배치 전처리 및 DynamoDB 적재 흐름 반영 \\
 v0.4 & {\footnotesize 2026-\allowbreak{}06-\allowbreak{}06} & LLM 파트 & 한국 강원·경북 실제 수집 산출물, \texttt{KR-\allowbreak{}\{도\_\allowbreak{}코드\}-\allowbreak{}\{CITY\_\allowbreak{}EN\}} ID 형식, \texttt{climate\_\allowbreak{}table} 전처리 기준 반영 \\
+v0.5 & {\footnotesize 2026-\allowbreak{}06-\allowbreak{}07} & LLM 파트 & VisitorStatistics 관계, 정규화 산출물, DynamoDB 후보 테이블, 적재 조건 보완 \\
 \bottomrule
 \end{longtable}
 \end{footnotesize}

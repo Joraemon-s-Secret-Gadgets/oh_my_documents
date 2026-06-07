@@ -1,9 +1,9 @@
 # 로브 (Lovv) 데이터 수집 계획서
 
-> 문서 버전: v0.5
+> 문서 버전: v0.6
 > 문서 상태: 검토 중 (Review)
 > 기준 문서: `docs/01_requirements/01_requirements.md` v1.7
-> 상세 초안: `docs/04_data_collect_plan/korea_data_acquisition_plan.md`, `docs/04_data_collect_plan/japan_data_acquisition_plan.md`
+> 상세 문서: `docs/04_data_collect_plan/korea_data_acquisition_plan.md`, `docs/04_data_collect_plan/japan_data_acquisition_plan.md`
 
 # 1. 문서 개요
 
@@ -16,13 +16,14 @@
 | 국가 | 상세 문서 | 역할 |
 | --- | --- | --- |
 | 한국 | `korea_data_acquisition_plan.md` | 강원·경북 40개 City와 TourAPI 4.0 기반 Attraction·Festival·DataLab 통계 취득 필드, 검수 기준 정의 |
-| 일본 | `japan_data_acquisition_plan.md` | 일본 도도부현·산하 City·Attraction·Festival 취득 필드, Wikipedia·JNTO·JTA 중심 출처, 검수 기준 정의 |
+| 일본 | `japan_data_acquisition_plan.md` | 일본 관동 지역 지자체 우선 수집, 도도부현·산하 City·Attraction·Festival·관광 통계 취득 필드, Wikipedia·JNTO·JTA 중심 출처, 검수 기준 정의 |
 
 ## 1.2 수집 원칙
 
-- **전체 취득**: City, Attraction, Festival의 정의된 필드는 최초 수집 대상에 모두 포함한다.
+- **전체 취득**: City, Attraction, Festival의 정의된 필드와 국가별 방문·관광 통계 보조 데이터는 최초 수집 대상에 포함한다.
 - **우선 취득 범위**: 한국은 강원과 경북의 40개 도시를 우선적으로 취득한 뒤 일본의 관동 지역 지자체를 수집한다.
 - **한국 실제 검증 범위**: 한국은 `data/KR/cities.json`, `data/KR/attractions.json`, `data/KR/festivals.json`, `data/KR/visitor_statistics.json` 형태의 로컬 검증 산출물을 기준으로 S3 Raw 적재 전 품질을 확인한다.
+- **일본 검증 산출물**: 일본은 관동 지역 지자체 우선 수집 결과를 `data/JP/*.json` 형태의 로컬 검증 산출물로 확인한 뒤 S3 Raw 적재 대상으로 확정한다.
 - **공식 출처 우선**: 관광지 및 축제 정보는 양국 공식 관광 데이터, 공공데이터, 지자체 공식 사이트, 공식 관광 포털을 우선한다.
 - **최신성 관리**: 운영시간, 운영기간, 입장료, 축제 기간처럼 변경 가능성이 높은 데이터는 확인일과 출처를 함께 저장한다.
 - **일관성 유지**: 서로 다른 출처의 데이터를 통합할 때 명칭, 행정구역 코드, 좌표, 날짜 포맷의 매핑 기준을 통일한다.
@@ -43,13 +44,15 @@
 ```text
 City
  ├── Attraction
- └── Festival
+ ├── Festival
+ └── VisitorStatistics
 ```
 
 | 관계 | 설명 |
 | --- | --- |
 | `City 1:N Attraction` | 하나의 도시는 여러 관광지를 가진다. |
 | `City 1:N Festival` | 하나의 도시는 여러 축제·행사를 가진다. |
+| `City 1:N VisitorStatistics` | 하나의 도시는 월별 또는 지역별 방문·관광 통계 보조 지표를 가진다. |
 
 ## 2.3 City 수집 항목
 
@@ -160,7 +163,7 @@ Lambda 배치 전처리
 정규화 DB 적재
 ```
 
-정의된 모든 필드가 JSON 원본으로 저장되도록 시도한다. 한국은 실제 수집 검증 단계에서 `data/KR/*.json` 로컬 산출물로 City, Attraction, Festival, 방문객 통계의 구조와 수량을 먼저 확인한다. 이후 수집 결과는 엔티티 유형과 출처별 JSON 문서로 직렬화한 뒤 S3 Raw Bucket에 적재한다. Raw 데이터는 재사용과 재처리를 위해 일정 기간 누적 보관하고, 보관 기간 또는 배치 기준이 충족되면 Lambda가 해당 Prefix의 JSON 원본을 읽어 전처리한 뒤 DynamoDB에 적재한다. 운영시간, 운영기간, 입장료, 사진, 축제 기간처럼 출처별 표현 차이가 큰 값도 최초 수집 대상에 포함하며, 자동 수집 실패 시 같은 파이프라인 안에서 공식 확인 또는 수동 검수로 채운다.
+정의된 모든 필드가 JSON 원본으로 저장되도록 시도한다. 한국은 실제 수집 검증 단계에서 `data/KR/*.json` 로컬 산출물로 City, Attraction, Festival, 방문객 통계의 구조와 수량을 먼저 확인한다. 일본은 관동 지역 지자체 우선 수집 결과를 `data/JP/*.json` 로컬 산출물로 확인하고 City, Attraction, Festival, 관광 통계의 구조를 검증한다. 이후 수집 결과는 엔티티 유형과 출처별 JSON 문서로 직렬화한 뒤 S3 Raw Bucket에 적재한다. Raw 데이터는 재사용과 재처리를 위해 일정 기간 누적 보관하고, 보관 기간 또는 배치 기준이 충족되면 Lambda가 해당 Prefix의 JSON 원본을 읽어 전처리한 뒤 DynamoDB에 적재한다. 운영시간, 운영기간, 입장료, 사진, 축제 기간처럼 출처별 표현 차이가 큰 값도 최초 수집 대상에 포함하며, 자동 수집 실패 시 같은 파이프라인 안에서 공식 확인 또는 수동 검수로 채운다.
 
 ## 3.2 취득 상태 관리
 
@@ -176,10 +179,10 @@ Lambda 배치 전처리
 | 구분 | 저장 내용 |
 | --- | --- |
 | Raw 데이터 | API 응답, Wikipedia HTML 수집 원본, 공식 사이트 확인 결과, 이미지 메타데이터를 JSON 문서로 저장한 S3 객체 |
-| 로컬 검증 산출물 | 한국 `data/KR/*.json`처럼 S3 Raw 적재 전 수집 구조와 수량을 검증하는 JSON 파일 |
+| 로컬 검증 산출물 | 한국 `data/KR/*.json`, 일본 `data/JP/*.json`처럼 S3 Raw 적재 전 수집 구조와 수량을 검증하는 JSON 파일 |
 | S3 Raw 객체 | `raw/{country}/{source}/{entity_type}/{yyyy}/{mm}/{dd}/` Prefix에 저장되는 원본 JSON |
 | Raw 보관 및 배치 처리 | 일정 기간 Raw Prefix에 누적한 뒤 Lambda 배치 전처리 대상으로 사용 |
-| 정규화 데이터 | City, Attraction, Festival, 기후, 통계, 검색 링크 |
+| 정규화 데이터 | City, Attraction, Festival, VisitorStatistics, 기후, 검색 링크 |
 | 검수 메타데이터 | `verified_at`, `verified_source_url`, `verification_note`, `data_confidence` |
 | 출처 메타데이터 | `source_name`, `source_url`, `collected_at`, `license_type` |
 
@@ -189,9 +192,10 @@ Lambda 배치 전처리
 
 | 검증 항목 | 기준 |
 | --- | --- |
-| City 매핑 | 모든 Attraction과 Festival은 하나의 City에 연결되어야 한다. |
+| City 매핑 | 모든 Attraction, Festival, VisitorStatistics는 하나의 City에 연결되어야 한다. |
 | 행정구역 정합성 | 한국 시·군·구 코드와 일본 시·정·촌·구 코드가 내부 City ID와 일치해야 한다. |
 | 한국 실제 수집 수량 | 한국 강원·경북 기준 City 40개, Attraction 3,709건, Festival 106건, 방문객 통계 12개월 범위를 확인한다. |
+| 일본 우선 수집 범위 | 일본 관동 지역 지자체의 City 목록, 관광지, 축제, 관광 통계 로컬 검증 산출물을 확인한다. |
 | 출처 기록 | 모든 자동 수집 데이터는 출처명, 출처 URL, 수집 시각을 가진다. |
 | 전체 필드 상태 | 정의된 모든 필드는 `collected`, `needs_review`, `missing`, `blocked` 중 하나의 상태를 가진다. |
 | 최신성 | 운영시간, 운영기간, 입장료, 축제 기간은 확인일을 기록한다. |
@@ -228,7 +232,10 @@ Lambda 배치 전처리
 | v0.3 | 2026-06-02 | LLM 파트 | 한국·일본 데이터 취득 초안을 main 문서에 반영하고 전체 필드 일괄 취득 전략으로 재정리 |
 | v0.4 | 2026-06-06 | LLM 파트 | 도·도도부현 간략 정보와 산하 도시 목록 기반 City 크롤링, JSON 원본의 S3 저장, 기후 데이터 비교 검증 방식 구체화 |
 | v0.5 | 2026-06-06 | LLM 파트 | 한국 강원·경북 40개 도시 실제 수집 결과, TourAPI 4.0, DataLabService, `data/KR/*.json` 로컬 검증 산출물과 S3 Raw 적재 관계 반영 |
+| v0.6 | 2026-06-07 | LLM 파트 | VisitorStatistics 관계, 일본 관동 우선 수집, `data/JP/*.json` 로컬 검증 산출물, S3 Raw 연계 기준 보완 |
 
 v0.4에서는 City 취득 범위와 원본 저장 방식을 정리했다. 한국은 도의 간략 정보와 산하 도시 목록, 일본은 도도부현의 간략 정보와 산하 도시 목록을 먼저 확보하고, 실제 Wikipedia 크롤링은 해당 산하 도시 목록에 포함된 City만 대상으로 수행한다. 취득 결과는 JSON 문서로 저장한 뒤 S3 Raw Bucket에 일정 기간 누적 보관하고, Lambda 배치 전처리 후 DynamoDB에 정규화 결과를 적재한다. 기후 정보는 양국 모두 Wikipedia 취득값을 기준으로 하되 한국은 기상청, 일본은 일본기상청(JMA) 자료와 비교해 정합성을 확인한다.
 
 v0.5에서는 한국 실제 수집 결과를 반영했다. 강원과 경북의 40개 City는 `KR-{도_코드}-{CITY_EN}` 형식으로 관리하며, 관광지는 TourAPI 4.0 기준 3,709건, 축제는 106건을 실제 수집 및 명세 확인 범위로 둔다. DataLabService 기반 월별 방문객 통계는 City 보조 지표와 월별 추천 근거로 활용한다. `data/KR/*.json`은 최종 DB가 아니라 S3 Raw Bucket 적재 전 로컬 검증 산출물로 정의한다.
+
+v0.6에서는 방문·관광 통계를 `VisitorStatistics` 보조 데이터로 명시하고, 데이터 모델과 전처리 연계 기준에 반영했다. 일본은 관동 지역 지자체를 우선 수집 범위로 두고 `data/JP/*.json` 로컬 검증 산출물을 S3 Raw Bucket 적재 전 검증 기준으로 사용한다.

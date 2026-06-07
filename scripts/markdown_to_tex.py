@@ -449,7 +449,20 @@ def markdown_to_latex(
     code_language: str | None = None
     code_lines: list[str] = []
     current_heading = ""
+    last_block_was_level1_heading = False
     preface_skipped = not skip_preface
+
+    def heading_has_level2_child(start_index: int) -> bool:
+        for next_line in lines[start_index + 1 :]:
+            next_heading = re.match(r"^(#{1,6})\s+(.+)$", next_line.strip())
+            if not next_heading:
+                continue
+            next_level = len(next_heading.group(1))
+            if next_level <= 1:
+                return False
+            if next_level == 2:
+                return True
+        return False
 
     while i < len(lines):
         line = lines[i].rstrip()
@@ -473,6 +486,7 @@ def markdown_to_latex(
                     output.extend(acquisition_pipeline_flow_to_latex(code_lines))
                 else:
                     output.extend(code_block_to_latex(code_lines, code_language))
+                last_block_was_level1_heading = False
                 in_code = False
                 code_language = None
                 code_lines = []
@@ -550,6 +564,7 @@ def markdown_to_latex(
                 output.extend(table_to_latex(table_lines, [0.11, 0.18, 0.16, 0.53], {0, 1, 2}))
             else:
                 output.extend(table_to_latex(table_lines))
+            last_block_was_level1_heading = False
             continue
 
         heading = re.match(r"^(#{1,6})\s+(.+)$", line)
@@ -562,6 +577,7 @@ def markdown_to_latex(
                 section_pagebreak
                 and ((level == 2 and re.match(r"^4\.\d+\s", raw_text)) or raw_text == "우선순위 기능 요구사항")
                 and output
+                and not last_block_was_level1_heading
             ):
                 output.append(r"\newpage")
             if section_pagebreak and level == 1 and not output and not re.match(r"^\d+\.", raw_text):
@@ -583,18 +599,25 @@ def markdown_to_latex(
                 if toc_pagebreak_before and raw_text in toc_pagebreak_before:
                     output.append(r"\addtocontents{toc}{\protect\clearpage}")
                 output.append(r"\addcontentsline{toc}{section}{" + text + "}")
+                if not heading_has_level2_child(i):
+                    output.append(r"\addtocontents{toc}{\protect\TocNoChildTight}")
+                last_block_was_level1_heading = True
             elif level == 2:
-                output.append(r"\DocNeedspace{24\baselineskip}")
+                subsection_needspace = 8 if last_block_was_level1_heading else 24
+                output.append(rf"\DocNeedspace{{{subsection_needspace}\baselineskip}}")
                 output.append(r"\subsection*{" + text + "}")
                 if toc_pagebreak_before and raw_text in toc_pagebreak_before:
                     output.append(r"\addtocontents{toc}{\protect\clearpage}")
                 output.append(r"\addcontentsline{toc}{subsection}{" + text + "}")
+                last_block_was_level1_heading = False
             elif level == 3:
                 output.append(r"\DocNeedspace{5\baselineskip}")
                 output.append(r"\subsubsection*{" + text + "}")
+                last_block_was_level1_heading = False
             else:
                 output.append(r"\DocNeedspace{4\baselineskip}")
                 output.append(r"\paragraph{" + text + "}")
+                last_block_was_level1_heading = False
             output.append("")
             i += 1
             continue
@@ -607,6 +630,7 @@ def markdown_to_latex(
                 i += 1
             output.append(r"\end{quote}")
             output.append("")
+            last_block_was_level1_heading = False
             continue
 
         bullet = re.match(r"^\s*[-*]\s+(.+)$", line)
@@ -616,6 +640,7 @@ def markdown_to_latex(
                 output.append(r"\begin{itemize}")
                 in_list = True
             output.append(r"\item " + format_body_text((bullet or ordered).group(1).strip()))
+            last_block_was_level1_heading = False
             i += 1
             continue
 
@@ -629,6 +654,7 @@ def markdown_to_latex(
         output.append(r"\DocNeedspace{3\baselineskip}")
         output.append(format_body_text(line.strip(), split_sentences=True))
         output.append("")
+        last_block_was_level1_heading = False
         i += 1
 
     close_list(output, in_list)
@@ -729,6 +755,7 @@ def markdown_to_latex(
 \setstretch{{1.08}}
 \setlength{{\headheight}}{{30pt}}
 \setcounter{{tocdepth}}{{2}}
+\newcommand{{\TocNoChildTight}}{{\vspace{{-0.28em}}}}
 \pagestyle{{fancy}}
 \fancyhf{{}}
 \lhead{{{header_logo}}}
