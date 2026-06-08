@@ -30,17 +30,18 @@
 → 판별 agent가 의미 분석
 → 정형 조건 추출
 → required / soft_preferences / unsupported로 분류
+→ unsupported 조건을 제거한 cleaned_raw_query 생성
 → required는 DB/그래프DB 필터링
-→ soft_preferences는 장소별 임베딩 유사도 조회와 랭킹에 반영
-→ unsupported는 예외 안내 또는 대체 처리
-→ 장소 검색 결과를 city_id 기준으로 도시 단위 집계
+→ 필수 테마 충족 여부는 theme 컬럼 기반 count로 확인
+→ soft_query와 cleaned_raw_query는 장소별 임베딩 유사도 조회와 랭킹에 반영
+→ theme count와 유사도 결과를 city_id 기준으로 도시 단위 집계
 → 도시 랭킹
 → 소도시 추천
 → 일정 생성
 → 숙박 검색 링크 제공
 ```
 
-핵심은 **자연어를 우리 데이터에서 검색 가능한 조건으로 번역한 뒤 RAG와 랭킹에 넘기는 것**이다.
+핵심은 자연어를 우리 데이터에서 검색 가능한 조건으로 번역하되, 필수 테마는 구조화 데이터로 확인하고, 자연어의 세부 취향과 맥락은 soft_query와 cleaned_raw_query를 통해 랭킹에 반영하는 것이다.
 
 ---
 
@@ -335,28 +336,47 @@ RAG 검색 조건으로 넘기지 않고, 사용자에게 짧게 안내하거나
 
 `soft_preferences`는 DB 필터가 아니라 벡터 유사도 조회와 랭킹에 사용한다.
 
+다만 soft preference만 사용하면 사용자의 원래 표현과 맥락이 일부 사라질 수 있으므로, `cleaned_raw_query`도 함께 사용한다.
+
 ```
 soft_preferences
-→ 검색 쿼리 생성
+→ soft_query 생성
 → 쿼리 임베딩
 → 장소별 임베딩 벡터와 비교
 → 유사도 점수 산출
 → 도시 랭킹에 반영
+
+cleaned_raw_query
+→ unsupported 조건 제거
+→ 사용자 원문 맥락 보존
+→ 쿼리 임베딩
+→ 장소별 임베딩 벡터와 비교
+→ 유사도 점수 산출
+→ 도시 랭킹에 보조 반영
 ```
 
 예:
 
 ```json
 {
-  "soft_preferences": ["quiet", "walkable", "scenic_view"]
+  "soft_preferences": ["quiet", "walkable", "scenic_view"],
+  "cleaned_raw_query": "자연이 좋고 맛집도 있었으면 좋겠어요. 조용한 분위기면 더 좋아요."
 }
 ```
 
-검색 쿼리:
+soft query 예:
 
 ```
 조용한 한적한 여유로운 산책하기 좋은 전망 좋은 자연 여행지
 ```
+
+cleaned raw query 예:
+
+```
+자연이 좋고 맛집도 있었으면 좋겠어요. 조용한 분위기면 더 좋아요.
+```
+
+`soft_query`는 설명 가능한 정형 랭킹 조건이고, `cleaned_raw_query`는 사용자의 원래 표현과 뉘앙스를 보존하는 보조 검색 조건이다.
 
 ---
 
@@ -375,9 +395,18 @@ soft_preferences
 최종 비교 구조:
 
 ```
-사용자 테마별 쿼리 벡터 ↔ 장소별 임베딩 벡터
-사용자 soft preference 쿼리 벡터 ↔ 장소별 임베딩 벡터
+필수 테마 충족 여부
+= active_required_themes ↔ 장소 데이터의 theme 컬럼 기반 count
+
+자연어 세부 취향 반영
+= soft_query 벡터 ↔ 장소별 임베딩 벡터
+= cleaned_raw_query 벡터 ↔ 장소별 임베딩 벡터
 ```
+
+즉, 필수 테마 충족 여부는 벡터 검색으로 판단하지 않고 `theme` 컬럼 기반 집계로 판단한다.
+
+테마별 쿼리 벡터는 기본 추천 흐름에는 포함하지 않는다.
+다만 같은 테마 안에서 장소의 세부 성격을 더 나누고 싶을 때, 예를 들어 `자연·트레킹` 안에서 숲길, 계곡, 해안 산책, 전망 등을 구분해야 할 때는 장소 재랭킹용 보조 기능으로 사용할 수 있다.
 
 ---
 
@@ -417,32 +446,72 @@ soft_preferences
 
 ---
 
-## **13. 사용자 쿼리는 테마별로 여러 개 생성**
+## **13. 사용자 쿼리는 목적별로 분리**
 
-사용자 테마가 여러 개인 경우 하나의 쿼리로 합치면 특정 테마에 치우칠 수 있다.
+사용자 입력에서 나온 조건은 모두 같은 방식으로 검색하지 않는다.
 
-따라서 테마별 쿼리와 soft preference 쿼리를 따로 만든다.
+최종 기준은 다음과 같다.
+
+```
+필수 테마
+→ theme 컬럼 기반 count로 충족 여부 확인
+
+soft_preferences
+→ soft_query로 변환해 장소별 임베딩과 비교
+
+cleaned_raw_query
+→ unsupported 조건만 제거한 원문 기반 쿼리로 장소별 임베딩과 비교
+```
 
 예:
 
 > 자연이 좋고 맛집도 있었으면 좋겠어요. 조용한 분위기면 더 좋아요.
 >
 
+판별 결과:
+
 ```
-쿼리 1: 자연·트레킹 숲 산책 트레킹 계곡 한적한 자연
-쿼리 2: 미식·노포 지역 맛집 로컬 음식 오래된 식당
-쿼리 3: 조용한 한적한 여유로운 휴식 분위기
+{
+  "active_required_themes": ["자연·트레킹", "미식·노포"],
+  "soft_preferences": ["quiet"],
+  "cleaned_raw_query": "자연이 좋고 맛집도 있었으면 좋겠어요. 조용한 분위기면 더 좋아요."
+}
+```
+
+필수 테마 충족 확인:
+
+```
+자연·트레킹 장소가 city_id 안에 1개 이상 있는가
+미식·노포 장소가 city_id 안에 1개 이상 있는가
+```
+
+임베딩 유사도 검색:
+
+```
+soft_query:
+조용한 한적한 여유로운 휴식 분위기
+
+cleaned_raw_query:
+자연이 좋고 맛집도 있었으면 좋겠어요. 조용한 분위기면 더 좋아요.
 ```
 
 비교:
 
 ```
-자연·트레킹 쿼리 벡터 ↔ 장소별 임베딩 벡터
-미식·노포 쿼리 벡터 ↔ 장소별 임베딩 벡터
-soft preference 쿼리 벡터 ↔ 장소별 임베딩 벡터
+soft_query 벡터 ↔ 장소별 임베딩 벡터
+cleaned_raw_query 벡터 ↔ 장소별 임베딩 벡터
 ```
 
-이후 `city_id` 기준으로 검색 결과를 집계한다.
+테마별 쿼리 예시는 기본 검색 흐름에서는 사용하지 않는다.
+
+다만 장소 재랭킹을 더 세밀하게 하고 싶을 경우 보조적으로 사용할 수 있다.
+
+보조 테마 쿼리 예:
+
+```
+자연·트레킹 보조 쿼리: 숲 산책 트레킹 계곡 한적한 자연
+미식·노포 보조 쿼리: 지역 맛집 로컬 음식 오래된 식당
+```
 
 ---
 
@@ -467,6 +536,7 @@ soft preference 쿼리 벡터 ↔ 장소별 임베딩 벡터
   "supported_conditions": ["쇼핑 가능한 장소", "전망 좋은 관광지"],
   "unsupported_conditions": ["숙박 추천", "숙소 전망 검증"],
   "ranking_preferences": ["shopping_nearby", "scenic_view"],
+  "accommodation_link_required": true
 }
 ```
 
@@ -504,8 +574,8 @@ soft preference 쿼리 벡터 ↔ 장소별 임베딩 벡터
 - 우선순위 표현 인식
 - required / soft_preferences / unsupported 분류
 - 온보딩 테마와 자연어 조건을 합쳐 active theme 생성
-- RAG 검색용 쿼리 생성
-- 예외 안내 문장 생성
+- soft_query와 cleaned_raw_query 생성
+- optional_theme_queries는 필요 시 보조 생성
 
 출력 예시:
 
@@ -520,18 +590,21 @@ soft preference 쿼리 벡터 ↔ 장소별 임베딩 벡터
     "미식·노포": "normal"
   },
   "soft_preferences": ["quiet"],
+  "cleaned_raw_query": "자연이 좋고 맛집도 있었으면 좋겠어요. 조용한 분위기면 더 좋아요.",
   "unsupported_conditions": [],
   "excluded_themes": [],
   "backup_themes": [],
-  "theme_queries": {
+  "soft_query": "조용한 한적한 여유로운 휴식 분위기",
+  "optional_theme_queries": {
     "자연·트레킹": "숲 산책 트레킹 계곡 자연 한적한",
     "미식·노포": "지역 맛집 로컬 음식 오래된 식당 노포"
   },
-  "soft_preference_query": "조용한 한적한 여유로운 휴식 분위기",
   "accommodation_link_required": false,
   "user_notice": null
 }
 ```
+
+`optional_theme_queries`는 필수 테마 충족 여부를 판단하기 위한 값이 아니라, 같은 테마 안에서 장소를 더 세밀하게 재랭킹할 때만 선택적으로 사용한다. 기본 필수 테마 충족 여부는 `theme` 컬럼 기반 count로 판단한다.
 
 ---
 
@@ -582,38 +655,47 @@ LLM이 판단하는 것:
 3. 판별 agent 정형화
    - required / soft_preferences / unsupported 분류
    - active_required_themes 생성
-   - 테마별 검색 쿼리 생성
+   - cleaned_raw_query 생성
+   - soft_query 생성
+   - optional_theme_queries는 필요 시 보조 생성
 
 4. 후보 도시 필터링
-   - 국가, 거리, 선택 테마 전체 충족, 일정 구성 가능성
+   - 국가, 거리, 일정 구성 가능성
 
-5. 장소별 임베딩 유사도 검색
-   - 테마별 쿼리와 장소 임베딩 비교
-   - soft preference 쿼리와 장소 임베딩 비교
+5. 필수 테마 충족 여부 확인
+   - active_required_themes를 기준으로 city_id + theme count 계산
+   - 선택한 모든 테마를 충족하는 도시만 후보화
 
-6. 도시 단위 집계
+6. 장소별 임베딩 유사도 검색
+   - soft_query와 장소 임베딩 비교
+   - cleaned_raw_query와 장소 임베딩 비교
+   - optional_theme_queries는 필요 시 장소 재랭킹 보조로만 사용
+
+7. 도시 단위 집계
    - city_id 기준으로 장소 검색 결과 집계
-   - 테마별 매칭 장소 수
-   - 테마별 최고 유사도
+   - 테마별 장소 수
    - soft preference 적합도 계산
+   - cleaned raw query 적합도 계산
 
-7. 랭킹 보정
+8. 랭킹 보정
    - 희소 테마 보정
+   - 전체 평균 대비 테마 특화도
    - 도시 규모/데이터 과다 보정
    - 콘텐츠 타입 균형
    - 접근성
    - 축제 포함 선택 시 조건부 반영
 
-8. 소도시 추천
+9. 소도시 추천
    - 추천 근거와 함께 제공
 
-9. 일정 생성
+10. 일정 생성
    - 선택 테마 전체 반영
    - 장소 유형 균형
    - 동선 고려
    - 운영정보 참고
+   - 자연어 입력이 있는 경우 soft/raw query에 맞는 장소 우선 배치
 
-10. 숙박 검색 링크 제공
+11. 숙박 검색 링크 제공
    - 추천된 소도시 기준으로 마지막에 연결
 ```
 
@@ -637,4 +719,4 @@ LLM이 판단하는 것:
 
 ## **최종 한 문장 정리**
 
-챗봇 자연어 입력은 판별 agent가 우리 데이터에서 검색 가능한 정형 조건으로 변환하고, 온보딩 테마는 기본 취향, 자연어는 현재 여행 의도로 해석한다. `required`는 필터링에, `soft_preferences`는 장소별 임베딩 유사도 검색과 랭킹에, `unsupported`는 예외 안내나 대체 처리에 사용한다. 최종적으로 장소 검색 결과를 도시 단위로 집계해 소도시 추천과 일정 생성으로 연결하고, 숙박은 일정 추천 이후 검색 링크 제공으로 분리한다.
+챗봇 자연어 입력은 판별 agent가 우리 데이터에서 검색 가능한 정형 조건으로 변환하고, 온보딩 테마는 기본 취향, 자연어는 현재 여행 의도로 해석한다. `required`는 필터링에, 필수 테마 충족 여부는 `theme` 컬럼 기반 count에, `soft_preferences`와 `cleaned_raw_query`는 장소별 임베딩 유사도 검색과 랭킹에 사용한다. 최종적으로 장소 검색 결과를 도시 단위로 집계해 소도시 추천과 일정 생성으로 연결하고, 숙박은 일정 추천 이후 검색 링크 제공으로 분리한다.
