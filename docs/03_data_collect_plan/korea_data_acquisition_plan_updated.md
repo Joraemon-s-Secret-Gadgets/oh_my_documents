@@ -268,7 +268,7 @@ Festival은 도시와 1:N 관계를 가지며, 월별 추천과 계절성 추천
 | 취득 대상 | 월별 평균 기온, 강수량, 폭염·한파·강설 등 계절성 메모 |
 | 장점 | 공식 기상기후 데이터로 월별 추천 근거를 만들 수 있다. |
 | 한계 | 시·군·구와 관측 지점 매핑 기준을 별도로 정의해야 한다. Wikipedia 기후 표 자동 취득이 실패한 도시의 보완 소스로 사용한다. |
-| 적용 방식 | City의 `climate_table` 보완 및 계절 추천 지표 산출에 사용한다. |
+| 적용 방식 | City의 `climate_table` 보완 및 계절 추천 지표 산출에 사용한다. 정합성은 `03_data_collect_plan.md` 4.1절의 정량 지표(`MAE_T`, `MAPE_P`, `ConsistencyScore`)로 판정하고, 월별 추천 근거는 `ComfortScore_m` 산식으로 산출한다(세부: `weather_consistency_quant_review.md`). |
 
 ## 3.6 관광 통계 및 보조 공공데이터
 

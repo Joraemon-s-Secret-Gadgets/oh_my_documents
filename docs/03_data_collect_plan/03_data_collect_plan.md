@@ -1,9 +1,9 @@
 # 로브 (Lovv) 데이터 수집 계획서
 
-> 문서 버전: v0.6
+> 문서 버전: v0.7
 > 문서 상태: 검토 중 (Review)
 > 기준 문서: `docs/01_requirements/01_requirements.md` v1.7
-> 상세 문서: `docs/03_data_collect_plan/korea_data_acquisition_plan.md`, `docs/03_data_collect_plan/japan_data_acquisition_plan.md`
+> 상세 문서: `docs/03_data_collect_plan/korea_data_acquisition_plan.md`, `docs/03_data_collect_plan/japan_data_acquisition_plan.md`, `docs/03_data_collect_plan/weather_consistency_quant_review.md`
 
 # 1. 문서 개요
 
@@ -199,10 +199,53 @@ Lambda 배치 전처리
 | 출처 기록 | 모든 자동 수집 데이터는 출처명, 출처 URL, 수집 시각을 가진다. |
 | 전체 필드 상태 | 정의된 모든 필드는 `collected`, `needs_review`, `missing`, `blocked` 중 하나의 상태를 가진다. |
 | 최신성 | 운영시간, 운영기간, 입장료, 축제 기간은 확인일을 기록한다. |
-| 기후 정합성 | City `climate`는 Wikipedia 취득값을 기준으로 하되 한국은 기상청, 일본은 일본기상청(JMA) 자료와 비교해 불일치 여부를 기록한다. |
+| 기후 정합성 | City `climate`는 Wikipedia 취득값을 기준으로 하되 한국은 기상청, 일본은 일본기상청(JMA) 자료와 비교한다. 불일치는 정성 기록이 아니라 4.1의 정량 지표(`MAE_T`, `MAPE_P`, `ConsistencyScore`)와 판정 규칙으로 관리한다. |
 | 링크 유효성 | 공식 URL과 딥링크는 HTTP 상태와 리다이렉션을 주기적으로 점검한다. |
 | 저작권 | 사진과 설명문은 사용 가능 조건을 확인한다. 설명문은 내부 요약문으로 저장한다. |
 | 다국어 매핑 | 일본 지역명·축제명은 일본어 원문과 한국어 표기가 같은 대상을 가리키는지 대조한다. |
+
+## 4.1 기후 데이터 정량 정합성·활용 지표
+
+날씨(기후) 데이터는 Wikipedia 기후 표를 기준값으로 취득하고, 한국 기상청·일본 JMA와
+**정량 지표**로 정합성을 맞춘 뒤, **월별 여행 적합도 점수**로 추천에 활용한다.
+아래 파라미터는 권고 기본값이며 표본 데이터로 보정해 확정한다(신뢰도: 중).
+세부 산식과 검수 스키마는 `weather_consistency_quant_review.md`를 따른다.
+
+### 4.1.1 정규화 기준 (한·일 공통)
+
+| 항목 | 기준 |
+| --- | --- |
+| 기온 단위 | °C, 월평균 기온 `t_avg_m` |
+| 강수 단위 | mm/월, 월 강수량 `precip_m` |
+| 기준 기간 | 평년값 동일 기간 권고: 1991–2020 (출처별 상이 시 메모) |
+| 관측소 매핑 | `city_id` ↔ 대표 관측소 1개(최근접/대표), 거리 `d_station_km` 기록 |
+
+`m in {1..12}`, Wikipedia 취득값 `*_wiki`, 공식(기상청/JMA) 값 `*_off`.
+
+### 4.1.2 정합성 지표 및 판정
+
+- 월별 오차: `eT_m = |t_avg_wiki,m − t_avg_off,m|`(°C), `eP_m = |precip_wiki,m − precip_off,m| / max(precip_off,m, 5mm)`
+- 연간 집계: `MAE_T = (1/12)Σ eT_m`, `MAPE_P = (1/12)Σ eP_m`
+- 정합성 점수: `ConsistencyScore = 100 × (1 − (0.6·min(MAE_T/3.0, 1) + 0.4·min(MAPE_P/0.40, 1)))`
+
+| 조건 | 상태 | 처리 |
+| --- | --- | --- |
+| `MAE_T ≤ 1.5℃` 그리고 `MAPE_P ≤ 0.20` | `verified` | Wikipedia 값 채택 |
+| 위 미달이나 `ConsistencyScore ≥ 60` | `needs_review` | 검수 후 채택/보정 |
+| `ConsistencyScore < 60` 또는 표 취득 실패 | `rejected` | 공식 자료를 기준값으로 대체 |
+
+검수 메타데이터에 `MAE_T`, `MAPE_P`, `ConsistencyScore`, `status`, `d_station_km`, `base_source`를 추가한다.
+
+### 4.1.3 월별 여행 적합도(활용)
+
+- 기온 쾌적도: `T_score_m = max(0, 1 − |t_avg_m − 20| / 15)`
+- 강수 패널티: `P_score_m = max(0, 1 − precip_m / 300)`
+- 월별 적합도: `ComfortScore_m = 100 × (0.6·T_score_m + 0.4·P_score_m)`
+- (선택) 폭염·한파·강설일수 `extreme_days_m` 패널티: `× (1 − 0.3·min(extreme_days_m/10, 1))`
+
+`recommended_months`는 `ComfortScore_m ≥ 70`인 월(없으면 상위 3개월)로 산출하며,
+한·일 동일 단위·동일 산식이므로 국가 무관 비교가 가능하다.
+이 점수는 DB 설계의 `SEASONAL_FIT`/`recommended_months` 근거와 연결된다.
 
 # 5. 법적 요소 검토
 
@@ -233,6 +276,7 @@ Lambda 배치 전처리
 | v0.4 | 2026-06-06 | LLM 파트 | 도·도도부현 간략 정보와 산하 도시 목록 기반 City 크롤링, JSON 원본의 S3 저장, 기후 데이터 비교 검증 방식 구체화 |
 | v0.5 | 2026-06-06 | LLM 파트 | 한국 강원·경북 40개 도시 실제 수집 결과, TourAPI 4.0, DataLabService, `data/KR/*.json` 로컬 검증 산출물과 S3 Raw 적재 관계 반영 |
 | v0.6 | 2026-06-07 | LLM 파트 | VisitorStatistics 관계, 일본 관동 우선 수집, `data/JP/*.json` 로컬 검증 산출물, S3 Raw 연계 기준 보완 |
+| v0.7 | 2026-06-08 | LLM 파트 | 기후 데이터 정합성·활용을 정량화(4.1절): 정규화 기준, `MAE_T`/`MAPE_P`/`ConsistencyScore` 판정 규칙, 월별 `ComfortScore` 산식 반영 |
 
 v0.4에서는 City 취득 범위와 원본 저장 방식을 정리했다. 한국은 도의 간략 정보와 산하 도시 목록, 일본은 도도부현의 간략 정보와 산하 도시 목록을 먼저 확보하고, 실제 Wikipedia 크롤링은 해당 산하 도시 목록에 포함된 City만 대상으로 수행한다. 취득 결과는 JSON 문서로 저장한 뒤 S3 Raw Bucket에 일정 기간 누적 보관하고, Lambda 배치 전처리 후 DynamoDB에 정규화 결과를 적재한다. 기후 정보는 양국 모두 Wikipedia 취득값을 기준으로 하되 한국은 기상청, 일본은 일본기상청(JMA) 자료와 비교해 정합성을 확인한다.
 
