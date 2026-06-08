@@ -3,7 +3,7 @@
 > 문서 버전: v0.7
 > 문서 상태: 검토 중 (Review)
 > 기준 문서: 요구사항 명세서 v1.7
-> 상세 문서: 한국 데이터 수집 계획서, 일본 데이터 수집 계획서, 기후 데이터 정량 정합성 검토
+> 상세 문서: 한국 데이터 취득 상세 계획서.pdf, 일본 데이터 취득 상세 계획서.pdf, 기후 데이터 정량 정합성 검토
 
 # 1. 문서 개요
 
@@ -15,8 +15,8 @@
 
 | 국가 | 상세 문서 | 역할 |
 | --- | --- | --- |
-| 한국 | `korea_data_acquisition_plan.md` | 강원·경북 40개 City와 TourAPI 4.0 기반 Attraction·Festival·DataLab 통계 취득 필드, 검수 기준 정의 |
-| 일본 | `japan_data_acquisition_plan.md` | 일본 관동 지역 지자체 우선 수집, 도도부현·산하 City·Attraction·Festival·관광 통계 취득 필드, Wikipedia·JNTO·JTA 중심 출처, 검수 기준 정의 |
+| 한국 | `한국 데이터 취득 상세 계획서.pdf` | 강원·경북 40개 City와 TourAPI 4.0 기반 Attraction·Festival·DataLab 통계 취득 필드, 검수 기준 정의 |
+| 일본 | `일본 데이터 취득 상세 계획서.pdf` | 일본 관동 지역 지자체 우선 수집, 도도부현·산하 City·Attraction·Festival·관광 통계 취득 필드, Wikipedia·JNTO·JTA 중심 출처, 검수 기준 정의 |
 
 ## 1.2 수집 원칙
 
@@ -39,20 +39,37 @@
 
 ## 2.2 데이터 모델
 
-추천 DB는 다음 관계를 기준으로 구축한다.
+추천 DB는 한국·일본 상세 취득 문서의 목표 모델을 합쳐 다음 관계를 기준으로 구축한다.
 
-```text
-City
- ├── Attraction
- ├── Festival
- └── VisitorStatistics
+```mermaid
+flowchart TB
+    administrativeArea["AdministrativeArea<br/>상위 행정 단위"]
+    city["City<br/>추천 기준 지역"]
+    attraction["Attraction<br/>관광지"]
+    festival["Festival<br/>축제·행사"]
+    visitorStatistics["VisitorStatistics<br/>방문·관광 통계"]
+
+    administrativeArea --> city
+    city --> attraction
+    city --> festival
+    city --> visitorStatistics
 ```
 
 | 관계 | 설명 |
 | --- | --- |
+| `AdministrativeArea 1:N City` | 한국의 도, 일본의 도도부현 같은 상위 행정 단위는 여러 City를 가진다. |
 | `City 1:N Attraction` | 하나의 도시는 여러 관광지를 가진다. |
 | `City 1:N Festival` | 하나의 도시는 여러 축제·행사를 가진다. |
 | `City 1:N VisitorStatistics` | 하나의 도시는 월별 또는 지역별 방문·관광 통계 보조 지표를 가진다. |
+
+### 2.2.1 국가별 데이터 모델 적용
+
+이 공통 관계는 한국과 일본 수집 결과에 동일하게 적용한다. 국가별 차이는 상위 행정 단위의 명칭, `City` 식별자 체계, 관광지·축제의 1차 출처, 방문·관광 통계의 집계 단위만 다르게 매핑한다.
+
+| 국가 | 상위 행정 단위 | City 적용 | Attraction·Festival 적용 | VisitorStatistics 적용 |
+| --- | --- | --- | --- | --- |
+| 한국 | `Prefecture`로 강원 `KR-42`, 경북 `KR-47`을 관리한다. | 강원·경북 40개 시·군·구를 `KR-{도_코드}-{CITY_EN}` 형식의 `city_id`로 관리한다. | `contentid` 기반 `KR-{도_코드}-{CITY_EN}-ATT-{contentid}` / `KR-{도_코드}-{CITY_EN}-FES-{contentid}` 식별자를 만들고 TourAPI 4.0(KorService2) 기준 관광지 3,709건과 축제 106건을 City에 연결한다. | DataLabService `/stayAnalysisVisitorList`를 월 단위로 조회해 40개 도시 × 12개월 방문객 통계를 City 보조 지표로 연결한다. |
+| 일본 | 도도부현 간략 정보와 산하 도시 목록을 먼저 확보한다. | 관동 지역 도도부현 산하 시·정·촌·구를 City 후보로 수집하고 `JP-TOKYO-TAITO`처럼 국가·도도부현·도시 단위가 드러나는 `city_id`로 관리한다. | JNTO/JTA 및 지자체 공식 관광 데이터를 기반으로 관광지·축제를 City에 연결한다. | JNTO Statistics, RESAS, e-Stat/Statistical LOD의 제공 가능한 월별·연도별·지역별 집계 단위를 City 보조 지표로 연결하고 매핑 불확실성은 `needs_review`로 둔다. |
 
 ## 2.3 City 수집 항목
 

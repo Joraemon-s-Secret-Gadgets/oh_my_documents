@@ -1,6 +1,6 @@
 # 한국 데이터 취득 계획서
 
-> 문서 버전: v0.4.1
+> 문서 버전: v0.4.3
 > 문서 상태: 실제 수집 데이터 구조 및 API 명세 분석 결과 반영
 > 작성일: 2026-06-06
 > 기준 문서: `docs/03_data_collect_plan/korea_data_acquisition_plan_updated.md` v0.3
@@ -29,20 +29,40 @@
 
 ## 2.1 관계 구조
 
-```text
-Prefecture
- └── City
-      ├── Attraction
-      ├── Festival
-      └── VisitorStatistics
+대표 데이터 수집 계획서의 공통 모델은 `AdministrativeArea 1:N City`를 기준으로 한다.
+한국 데이터에서는 이 상위 행정 단위를 `Prefecture`로 구체화하고, 강원(`KR-42`)과 경북(`KR-47`) 아래의 40개 시·군·구를 추천 기준 지역인 `City`로 관리한다.
+
+`City`는 추천 결과를 묶는 중심 엔티티다.
+관광지(`Attraction`)와 축제·행사(`Festival`)는 사용자가 실제로 방문하거나 일정에 넣을 수 있는 추천 소재이며, 방문객 통계(`VisitorStatistics`)는 월별 수요와 계절성을 판단하는 보조 지표로 City에 연결한다.
+
+```mermaid
+flowchart TB
+    administrativeArea["<b>AdministrativeArea</b> &nbsp; 상위 행정 단위"]
+    city["<b>City</b> &nbsp; 추천 기준 지역"]
+    attraction["<b>Attraction</b><br/>관광지"]
+    festival["<b>Festival</b><br/>축제·행사"]
+    visitorStatistics["<b>VisitorStatistics</b><br/>방문·관광 통계"]
+
+    administrativeArea --> city
+    city --> attraction
+    city --> festival
+    city --> visitorStatistics
+    attraction ~~~ festival
+    festival ~~~ visitorStatistics
+
+    classDef entity fill:#f8fbfb,stroke:#9aa7a7,stroke-width:1px,color:#111;
+    class administrativeArea,city,attraction,festival,visitorStatistics entity;
 ```
 
-| 관계 | 설명 |
+| 관계 | 한국 적용 방식 | 서비스 의미 |
 | --- | --- |
-| `Prefecture 1:N City` | 강원과 경북 같은 광역 단위는 여러 City를 가진다. |
-| `City 1:N Attraction` | 하나의 한국 도시는 여러 관광지를 가진다. |
-| `City 1:N Festival` | 하나의 한국 도시는 여러 축제·행사를 가진다. |
-| `City 1:N VisitorStatistics` | 하나의 한국 도시는 월별 방문객 통계를 가진다. |
+| `Prefecture 1:N City` | 강원과 경북을 `Prefecture`로 두고, 산하 40개 시·군·구를 `City`로 연결한다. | 국가별 수집 범위와 행정구역 필터를 관리한다. |
+| `City 1:N Attraction` | TourAPI 4.0(KorService2)의 `contentid` 기반 관광지 3,709건을 City에 매핑한다. | 일정 카드와 추천 상세 화면의 방문 후보가 된다. |
+| `City 1:N Festival` | TourAPI 4.0(KorService2)의 행사·축제 106건을 City에 매핑한다. | 월별·계절별 추천과 지역 이벤트 추천의 근거가 된다. |
+| `City 1:N VisitorStatistics` | DataLabService `/stayAnalysisVisitorList`를 월 단위로 조회해 City별 방문객 통계를 연결한다. | 인기·혼잡도·계절성 판단에 쓰는 보조 지표가 된다. |
+
+따라서 한국 데이터 취득 결과는 `data/KR/cities.json`을 중심으로 `attractions.json`, `festivals.json`, `visitor_statistics.json`이 같은 `city_id`를 공유하는 구조가 된다.
+이 구조를 유지해야 S3 Raw 적재 후 Lambda 전처리와 DynamoDB 정규화 단계에서도 City 기준 추천 데이터셋을 일관되게 만들 수 있다.
 
 ## 2.2 City 데이터
 
@@ -416,3 +436,5 @@ S3 적재 이후의 전처리, 정규화 DB 적재, 운영 중 보완 처리는 
 | v0.3 | 2026-06-06 | LLM 파트 | 강원·경북 40개 도시 실제 수집 결과, TourAPI 4.0, DataLabService, `data/KR/*.json` 검증 산출물과 S3 Raw 적재 흐름 반영 |
 | v0.4 | 2026-06-07 | LLM 파트 | 대표 문서와 공유 산출물 동기화 상태에 맞춰 문서 메타 표현 정리 |
 | v0.4.1 | 2026-06-08 | LLM 파트 | 기존 문서 기준 6대 테마(온천·휴양, 바다·해안, 역사·전통, 미식·노포, 자연·트레킹, 예술·감성)와 `lclsSystm` 기반 자동 분류 기준 반영 |
+| v0.4.2 | 2026-06-08 | LLM 파트 | 대표 데이터 수집 계획서의 공통 모델을 참조해 2.1 관계 구조 설명을 가독성 중심으로 정리 |
+| v0.4.3 | 2026-06-08 | LLM 파트 | 2.1 관계 구조 다이어그램을 AdministrativeArea, City, 하위 엔티티 3열 구조로 조정 |

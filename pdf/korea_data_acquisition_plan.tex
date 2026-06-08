@@ -15,6 +15,8 @@
 \usepackage{fancyhdr}
 \usepackage{titlesec}
 \usepackage{setspace}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta}
 \setmainfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
 \setsansfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
 \setmonofont{Consolas}
@@ -49,7 +51,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \lhead{\hbox{\makebox[42pt][c]{\includegraphics[width=38pt,height=13pt,keepaspectratio]{../assets/images/SK-Networks-logo.png}}\hspace{0.7em}\makebox[42pt][c]{\includegraphics[width=44pt,height=15pt,keepaspectratio]{../assets/images/en-core-logo.png}}\hspace{0.7em}\makebox[42pt][c]{\includegraphics[width=38pt,height=13pt,keepaspectratio]{../assets/images/playdata-logo.png}}}}
-\rhead{\scriptsize v0.4.1 | 실제 수집 데이터 구조 및 API 명세 분석 결과 반영}
+\rhead{\scriptsize v0.4.3 | 실제 수집 데이터 구조 및 API 명세 분석 결과 반영}
 \cfoot{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\headrule}{\hbox to\headwidth{\color{LovvGreen}\leaders\hrule height \headrulewidth\hfill}}
@@ -130,39 +132,73 @@
 \addcontentsline{toc}{subsection}{2.1 관계 구조}
 
 
-\DocNeedspace{7\baselineskip}
-\begin{quote}
-\begin{scriptsize}
-\ttfamily
-\RaggedRight
-\setlength{\parskip}{1pt}
-\textcolor{LovvGreen}{\textbf{text}}\\[0.2em]
-Prefecture\\
-\hspace*{0.55em}└── City\\
-\hspace*{3.30em}├── Attraction\\
-\hspace*{3.30em}├── Festival\\
-\hspace*{3.30em}└── Visitor\allowbreak{}Statistics\\
-\end{scriptsize}
-\end{quote}
+\DocNeedspace{3\baselineskip}
+대표 데이터 수집 계획서의 공통 모델은 \texttt{Administrative\allowbreak{}Area 1:\allowbreak{}N City}를 기준으로 한다.
+
+\DocNeedspace{3\baselineskip}
+한국 데이터에서는 이 상위 행정 단위를 \texttt{Prefecture}로 구체화하고, 강원(\texttt{KR-\allowbreak{}42})과 경북(\texttt{KR-\allowbreak{}47}) 아래의 40개 시·군·구를 추천 기준 지역인 \texttt{City}로 관리한다.
+
+
+\DocNeedspace{3\baselineskip}
+\texttt{City}는 추천 결과를 묶는 중심 엔티티다.
+
+\DocNeedspace{3\baselineskip}
+관광지(\texttt{Attraction})와 축제·행사(\texttt{Festival})는 사용자가 실제로 방문하거나 일정에 넣을 수 있는 추천 소재이며, 방문객 통계(\texttt{Visitor\allowbreak{}Statistics})는 월별 수요와 계절성을 판단하는 보조 지표로 City에 연결한다.
+
+
+\DocNeedspace{12\baselineskip}
+\begin{center}
+\resizebox{0.94\linewidth}{!}{%
+\begin{tikzpicture}[
+    entity/.style={
+        draw=LovvGreen,
+        line width=0.4pt,
+        fill=LovvPaper,
+        minimum height=1.05cm,
+        align=center,
+        font=\small
+    },
+    topentity/.style={entity, minimum width=8.2cm},
+    childentity/.style={entity, minimum width=4.2cm},
+    connector/.style={-{Latex[length=2.2mm]}, draw=LovvGreen, line width=0.35pt}
+]
+\node[topentity] (administrativeArea) {\textbf{AdministrativeArea}\quad 상위 행정 단위};
+\node[topentity, below=0.7cm of administrativeArea] (city) {\textbf{City}\quad 추천 기준 지역};
+\node[childentity, below left=0.9cm and 1.0cm of city] (attraction) {\textbf{Attraction}\\관광지};
+\node[childentity, below=0.9cm of city] (festival) {\textbf{Festival}\\축제·행사};
+\node[childentity, below right=0.9cm and 1.0cm of city] (visitorStatistics) {\textbf{VisitorStatistics}\\방문·관광 통계};
+
+\draw[connector] (administrativeArea) -- (city);
+\draw[connector] (city) -- (attraction);
+\draw[connector] (city) -- (festival);
+\draw[connector] (city) -- (visitorStatistics);
+\end{tikzpicture}
+}
+\end{center}
 
 
 \DocNeedspace{14\baselineskip}
 \begin{small}
-\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.396\linewidth}>{\RaggedRight\arraybackslash}m{0.544\linewidth}@{}}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.256\linewidth}>{\RaggedRight\arraybackslash}m{0.385\linewidth}>{\RaggedRight\arraybackslash}m{0.279\linewidth}@{}}
 \toprule
-\multicolumn{1}{>{\centering\arraybackslash}m{0.396\linewidth}}{\textbf{관계}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.544\linewidth}}{\textbf{설명}} \\
+\multicolumn{1}{>{\centering\arraybackslash}m{0.256\linewidth}}{\textbf{관계}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.385\linewidth}}{\textbf{한국 적용 방식}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.279\linewidth}}{\textbf{서비스 의미}} \\
 \midrule
 \endhead
-\texttt{Prefecture 1:\allowbreak{}N City} & 강원과 경북 같은 광역 단위는 여러 City를 가진다. \\
-\texttt{City 1:\allowbreak{}N Attraction} & 하나의 한국 도시는 여러 관광지를 가진다. \\
-\texttt{City 1:\allowbreak{}N Festival} & 하나의 한국 도시는 여러 축제·행사를 가진다. \\
-\texttt{City 1:\allowbreak{}N Visitor\allowbreak{}Statistics} & 하나의 한국 도시는 월별 방문객 통계를 가진다. \\
+\texttt{Prefecture 1:\allowbreak{}N City} & 강원과 경북을 \texttt{Prefecture}로 두고, 산하 40개 시·군·구를 \texttt{City}로 연결한다. & 국가별 수집 범위와 행정구역 필터를 관리한다. \\
+\texttt{City 1:\allowbreak{}N Attraction} & TourAPI 4.0(KorService2)의 \texttt{content\allowbreak{}id} 기반 관광지 3,709건을 City에 매핑한다. & 일정 카드와 추천 상세 화면의 방문 후보가 된다. \\
+\texttt{City 1:\allowbreak{}N Festival} & TourAPI 4.0(KorService2)의 행사·축제 106건을 City에 매핑한다. & 월별·계절별 추천과 지역 이벤트 추천의 근거가 된다. \\
+\texttt{City 1:\allowbreak{}N Visitor\allowbreak{}Statistics} & DataLabService \texttt{/\allowbreak{}stay\allowbreak{}Analysis\allowbreak{}Visitor\allowbreak{}List}를 월 단위로 조회해 City별 방문객 통계를 연결한다. & 인기·혼잡도·계절성 판단에 쓰는 보조 지표가 된다. \\
 \bottomrule
 \end{longtable}
 \end{small}
 
 
-\newpage
+\DocNeedspace{3\baselineskip}
+따라서 한국 데이터 취득 결과는 \texttt{data/\allowbreak{}KR/\allowbreak{}cities.\allowbreak{}json}을 중심으로 \texttt{attractions.\allowbreak{}json}, \texttt{festivals.\allowbreak{}json}, \texttt{visitor\_\allowbreak{}statistics.\allowbreak{}json}이 같은 \texttt{city\_\allowbreak{}id}를 공유하는 구조가 된다.
+
+\DocNeedspace{3\baselineskip}
+이 구조를 유지해야 S3 Raw 적재 후 Lambda 전처리와 DynamoDB 정규화 단계에서도 City 기준 추천 데이터셋을 일관되게 만들 수 있다.
+
 
 \DocNeedspace{24\baselineskip}
 \subsection*{2.2 City 데이터}
@@ -180,10 +216,10 @@ City는 추천의 기준 지역이다.
 
 
 \DocNeedspace{26\baselineskip}
-\begin{small}
-\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.150\linewidth}>{\RaggedRight\arraybackslash}m{0.210\linewidth}>{\RaggedRight\arraybackslash}m{0.124\linewidth}>{\RaggedRight\arraybackslash}m{0.416\linewidth}@{}}
+\begin{footnotesize}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.130\linewidth}>{\RaggedRight\arraybackslash}m{0.222\linewidth}>{\RaggedRight\arraybackslash}m{0.124\linewidth}>{\RaggedRight\arraybackslash}m{0.424\linewidth}@{}}
 \toprule
-\multicolumn{1}{>{\centering\arraybackslash}m{0.150\linewidth}}{\textbf{필드}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.210\linewidth}}{\textbf{수집 방식}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.124\linewidth}}{\textbf{실제 수집 및 명세 확인 상태}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.416\linewidth}}{\textbf{설명}} \\
+\multicolumn{1}{>{\centering\arraybackslash}m{0.130\linewidth}}{\textbf{필드}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.222\linewidth}}{\textbf{수집 방식}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.124\linewidth}}{\textbf{실제 수집 및 명세 확인 상태}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.424\linewidth}}{\textbf{설명}} \\
 \midrule
 \endhead
 \texttt{city\_\allowbreak{}id} & 내부 생성 & 수집 확인 & 형식: \texttt{KR-\allowbreak{}\{\allowbreak{}도\_\allowbreak{}코드\allowbreak{}\}-\allowbreak{}\{\allowbreak{}CITY\_\allowbreak{}EN\allowbreak{}\}}. 예: \texttt{KR-\allowbreak{}42-\allowbreak{}GANGNEUNG}, \texttt{KR-\allowbreak{}47-\allowbreak{}ANDONG} \\
@@ -198,10 +234,8 @@ City는 추천의 기준 지역이다.
 \texttt{field\_\allowbreak{}status} & 수집 파이프라인 & 수집 확인 & 필드별 \texttt{collected}, \texttt{needs\_\allowbreak{}review}, \texttt{missing}, \texttt{blocked} 상태 \\
 \bottomrule
 \end{longtable}
-\end{small}
+\end{footnotesize}
 
-
-\newpage
 
 \DocNeedspace{24\baselineskip}
 \subsection*{2.3 Attraction 데이터}
@@ -216,7 +250,7 @@ Attraction은 도시와 1:N 관계를 가지며 일정 카드와 추천 결과 �
 
 
 \DocNeedspace{8\baselineskip}
-\begin{small}
+\begin{footnotesize}
 \begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.145\linewidth}>{\RaggedRight\arraybackslash}m{0.225\linewidth}>{\RaggedRight\arraybackslash}m{0.134\linewidth}>{\RaggedRight\arraybackslash}m{0.396\linewidth}@{}}
 \toprule
 \multicolumn{1}{>{\centering\arraybackslash}m{0.145\linewidth}}{\textbf{필드}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.225\linewidth}}{\textbf{TourAPI 원본 필드}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.134\linewidth}}{\textbf{실제 수집 및 명세 확인 상태}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.396\linewidth}}{\textbf{설명}} \\
@@ -240,10 +274,8 @@ Attraction은 도시와 1:N 관계를 가지며 일정 카드와 추천 결과 �
 \texttt{field\_\allowbreak{}status} & 수집 파이프라인 & 수집 확인 & 필드별 취득 상태 \\
 \bottomrule
 \end{longtable}
-\end{small}
+\end{footnotesize}
 
-
-\newpage
 
 \DocNeedspace{24\baselineskip}
 \subsection*{2.4 Festival 데이터}
@@ -261,10 +293,10 @@ Festival은 월별 추천과 계절성 추천의 주요 근거로 사용한다.
 
 
 \DocNeedspace{30\baselineskip}
-\begin{small}
-\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.150\linewidth}>{\RaggedRight\arraybackslash}m{0.250\linewidth}>{\RaggedRight\arraybackslash}m{0.131\linewidth}>{\RaggedRight\arraybackslash}m{0.369\linewidth}@{}}
+\begin{footnotesize}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.132\linewidth}>{\RaggedRight\arraybackslash}m{0.259\linewidth}>{\RaggedRight\arraybackslash}m{0.131\linewidth}>{\RaggedRight\arraybackslash}m{0.378\linewidth}@{}}
 \toprule
-\multicolumn{1}{>{\centering\arraybackslash}m{0.150\linewidth}}{\textbf{필드}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.250\linewidth}}{\textbf{TourAPI 원본 필드}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.131\linewidth}}{\textbf{실제 수집 및 명세 확인 상태}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.369\linewidth}}{\textbf{설명}} \\
+\multicolumn{1}{>{\centering\arraybackslash}m{0.132\linewidth}}{\textbf{필드}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.259\linewidth}}{\textbf{TourAPI 원본 필드}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.131\linewidth}}{\textbf{실제 수집 및 명세 확인 상태}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.378\linewidth}}{\textbf{설명}} \\
 \midrule
 \endhead
 \texttt{festival\_\allowbreak{}id} & \texttt{content\allowbreak{}id} 기반 내부 생성 & 수집 확인 & 형식: \texttt{KR-\allowbreak{}\{\allowbreak{}도\_\allowbreak{}코드\allowbreak{}\}-\allowbreak{}\{\allowbreak{}CITY\_\allowbreak{}EN\allowbreak{}\}-\allowbreak{}FES-\allowbreak{}\{\allowbreak{}content\allowbreak{}id\allowbreak{}\}} \\
@@ -281,7 +313,7 @@ Festival은 월별 추천과 계절성 추천의 주요 근거로 사용한다.
 \texttt{field\_\allowbreak{}status} & 수집 파이프라인 & 수집 확인 & 필드별 취득 상태 \\
 \bottomrule
 \end{longtable}
-\end{small}
+\end{footnotesize}
 
 
 \DocNeedspace{24\baselineskip}
@@ -297,7 +329,7 @@ Festival은 월별 추천과 계절성 추천의 주요 근거로 사용한다.
 
 
 \DocNeedspace{18\baselineskip}
-\begin{small}
+\begin{footnotesize}
 \begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.254\linewidth}>{\RaggedRight\arraybackslash}m{0.230\linewidth}>{\RaggedRight\arraybackslash}m{0.180\linewidth}>{\RaggedRight\arraybackslash}m{0.236\linewidth}@{}}
 \toprule
 \multicolumn{1}{>{\centering\arraybackslash}m{0.254\linewidth}}{\textbf{필드}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.230\linewidth}}{\textbf{원본/산출 방식}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.180\linewidth}}{\textbf{실제 수집 및 명세 확인 상태}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.236\linewidth}}{\textbf{설명}} \\
@@ -311,7 +343,7 @@ Festival은 월별 추천과 계절성 추천의 주요 근거로 사용한다.
 \texttt{source\_\allowbreak{}name} & 내부 지정 & 수집 확인 & \texttt{Data\allowbreak{}Lab\allowbreak{}Service} \\
 \bottomrule
 \end{longtable}
-\end{small}
+\end{footnotesize}
 
 
 \newpage
@@ -440,7 +472,7 @@ Festival은 월별 추천과 계절성 추천의 주요 근거로 사용한다.
 
 
 \DocNeedspace{14\baselineskip}
-\begin{small}
+\begin{footnotesize}
 \begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.105\linewidth}>{\RaggedRight\arraybackslash}m{0.359\linewidth}>{\RaggedRight\arraybackslash}m{0.250\linewidth}>{\RaggedRight\arraybackslash}m{0.185\linewidth}@{}}
 \toprule
 \multicolumn{1}{>{\centering\arraybackslash}m{0.105\linewidth}}{\textbf{구분}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.359\linewidth}}{\textbf{수집 항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.250\linewidth}}{\textbf{주요 출처}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.185\linewidth}}{\textbf{실제 수집 및 명세 확인 상태}} \\
@@ -452,7 +484,7 @@ Festival은 월별 추천과 계절성 추천의 주요 근거로 사용한다.
 통계 & 현지인·외지인·외국인 일평균 방문객 & {\scriptsize Data\allowbreak{}Lab\allowbreak{}Service} & 2025년 12개월 수집 및 명세 확인 완료 \\
 \bottomrule
 \end{longtable}
-\end{small}
+\end{footnotesize}
 
 
 \DocNeedspace{3\baselineskip}
@@ -481,12 +513,12 @@ Festival은 월별 추천과 계절성 추천의 주요 근거로 사용한다.
 \end{small}
 
 
-\DocNeedspace{8\baselineskip}
+\DocNeedspace{4\baselineskip}
 \subsection*{4.3 공식 확인 우선순위}
 \addcontentsline{toc}{subsection}{4.3 공식 확인 우선순위}
 
 
-\DocNeedspace{18\baselineskip}
+\DocNeedspace{6\baselineskip}
 \begin{small}
 \begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.116\linewidth}>{\RaggedRight\arraybackslash}m{0.162\linewidth}>{\RaggedRight\arraybackslash}m{0.643\linewidth}@{}}
 \toprule
@@ -694,9 +726,9 @@ DB에 정보 없음 & 공식 사이트 검색 \\
 
 \DocNeedspace{16\baselineskip}
 \begin{small}
-\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.940\linewidth}@{}}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.830\linewidth}@{}}
 \toprule
-\multicolumn{1}{>{\centering\arraybackslash}m{0.940\linewidth}}{\textbf{저장 경로}} \\
+\multicolumn{1}{>{\centering\arraybackslash}m{0.830\linewidth}}{\textbf{저장 경로}} \\
 \midrule
 \endhead
 \texttt{data/\allowbreak{}KR/\allowbreak{}prefectures.\allowbreak{}json} \\
@@ -943,8 +975,8 @@ API 키 보안 & API Key는 문서나 산출 JSON에 직접 저장하지 않는�
 \addtocontents{toc}{\protect\TocNoChildTight}
 
 
-\DocNeedspace{16\baselineskip}
-\begin{small}
+\DocNeedspace{20\baselineskip}
+\begin{footnotesize}
 \begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.125\linewidth}>{\RaggedRight\arraybackslash}m{0.125\linewidth}>{\RaggedRight\arraybackslash}m{0.080\linewidth}>{\RaggedRight\arraybackslash}m{0.570\linewidth}@{}}
 \toprule
 \multicolumn{1}{>{\centering\arraybackslash}m{0.125\linewidth}}{\textbf{버전}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.125\linewidth}}{\textbf{날짜}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.080\linewidth}}{\textbf{작성자}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.570\linewidth}}{\textbf{변경 내용}} \\
@@ -955,8 +987,10 @@ v0.2 & {\footnotesize 2026-\allowbreak{}06-\allowbreak{}06} & LLM 파트 & 도 �
 v0.3 & {\footnotesize 2026-\allowbreak{}06-\allowbreak{}06} & LLM 파트 & 강원·경북 40개 도시 실제 수집 결과, TourAPI 4.0, DataLabService, \texttt{data/\allowbreak{}KR/\allowbreak{}*.\allowbreak{}json} 검증 산출물과 S3 Raw 적재 흐름 반영 \\
 v0.4 & {\footnotesize 2026-\allowbreak{}06-\allowbreak{}07} & LLM 파트 & 대표 문서와 공유 산출물 동기화 상태에 맞춰 문서 메타 표현 정리 \\
 v0.4.1 & {\footnotesize 2026-\allowbreak{}06-\allowbreak{}08} & LLM 파트 & 기존 문서 기준 6대 테마(온천·휴양, 바다·해안, 역사·전통, 미식·노포, 자연·트레킹, 예술·감성)와 \texttt{lcls\allowbreak{}Systm} 기반 자동 분류 기준 반영 \\
+v0.4.2 & {\footnotesize 2026-\allowbreak{}06-\allowbreak{}08} & LLM 파트 & 대표 데이터 수집 계획서의 공통 모델을 참조해 2.1 관계 구조 설명을 가독성 중심으로 정리 \\
+v0.4.3 & {\footnotesize 2026-\allowbreak{}06-\allowbreak{}08} & LLM 파트 & 2.1 관계 구조 다이어그램을 AdministrativeArea, City, 하위 엔티티 3열 구조로 조정 \\
 \bottomrule
 \end{longtable}
-\end{small}
+\end{footnotesize}
 
 \end{document}

@@ -84,7 +84,7 @@
 <p class="doc-p">문서 버전: v0.5</p>
 <p class="doc-p">문서 상태: 설계 진행중 (Designing)</p>
 <p class="doc-p">기준 문서: 요구사항 명세서 v1.7, 데이터 수집 계획서 v0.7, Agent 명세서 v0.4, 기술 명세서 v0.4, API 명세서 v0.1</p>
-<p class="doc-p">보조 문서: <code>database_<wbr>design_<wbr>retention_<wbr>neptune_<wbr>update.md</code>(보존기간·비용·대시보드), <code>neptune_<wbr>alternative.md</code>(Neptune 대체 설계)</p>
+<p class="doc-p">보조 문서: 데이터베이스 보존 기간·Neptune 비용 업데이트 초안, Neptune 대체 설계 명세서</p>
 </blockquote>
 <h1 id="s1" class="s-h1">1. 문서 개요</h1>
 <h2 id="s1-1" class="s-h2">1.1 목적</h2>
@@ -96,7 +96,7 @@
 <tr><td>RDBMS</td><td>MySQL 8 LTS</td><td>사용자, 소셜 계정, 저장 일정, 일정 항목, 일정 반응 등 핵심 트랜잭션 데이터를 저장한다.</td></tr>
 <tr><td>NoSQL</td><td>AWS DynamoDB</td><td>AgentCore/SAM 실행 상태, 비동기 작업, 사용자 이벤트 로그, API 로그처럼 TTL이 필요한 비정형 데이터를 저장한다.</td></tr>
 <tr><td>RAG Vector Index</td><td>S3 vector 기능 활용</td><td>RAG 검색용 chunk, embedding, metadata filter를 S3 vector 기능 기반 검색 인덱스로 관리한다. 별도 벡터 DB 제품 도입은 기본 전제가 아니다.</td></tr>
-<tr><td>Graph DB</td><td>AWS Neptune (고도화 단계)</td><td>추천 그래프(목적지·축제·테마·인접 도시·이동 관계)를 관리한다. PoC/Prod 1차는 비용을 고려해 <code>neptune_<wbr>alternative.md</code> 대체 아키텍처를 적용한다.</td></tr>
+<tr><td>Graph DB</td><td>AWS Neptune (고도화 단계)</td><td>추천 그래프(목적지·축제·테마·인접 도시·이동 관계)를 관리한다. PoC/Prod 1차는 비용을 고려해 Neptune 대체 설계 명세서의 대체 아키텍처를 적용한다.</td></tr>
 <tr><td>대화 전문</td><td>저장하지 않음</td><td>요구사항 <code>NFR-013</code>에 따라 사용자 대화 로그 전문은 서버나 외부 저장소에 장기 저장하지 않는다.</td></tr>
 <tr><td>보조 저장소</td><td>DynamoDB, S3 vector index, AWS Neptune</td><td>로그성 데이터, 의미 검색 인덱스, 그래프 관계 인덱스를 MySQL 원장과 분리해 관리한다.</td></tr>
 </tbody></table></div>
@@ -244,7 +244,7 @@
 <blockquote>
 <p class="doc-p">비용 주의: Neptune은 상시 가동 비용이 높아 PoC/Production 1차에서는 도입하지 않고,</p>
 <p class="doc-p">동일 그래프 용도를 기존 스택(DynamoDB 인접 리스트·사전계산·Lambda 인메모리 그래프)으로 대체한다.</p>
-<p class="doc-p">대체 설계는 <code>neptune_<wbr>alternative.md</code>를 따른다. 본 3.5절/4.6절은 고도화 단계 Neptune 도입 시의 목표 모델이다.</p>
+<p class="doc-p">대체 설계는 Neptune 대체 설계 명세서를 따른다. 본 3.5절/4.6절은 고도화 단계 Neptune 도입 시의 목표 모델이다.</p>
 </blockquote>
 <div class="table-wrap wide scroll-table"><table class="info-tbl">
 <thead><tr><th>그래프 요소</th><th>라벨/관계</th><th>주요 속성</th><th>용도</th></tr></thead><tbody>
@@ -381,13 +381,13 @@
 <tr><td>v0.2</td><td>2026-06-07</td><td>로브 기획팀</td><td>개념 설계, 논리 설계, 물리 설계 구조와 RDB/NoSQL 사용자 설계 반영</td></tr>
 <tr><td>v0.3</td><td>2026-06-07</td><td>로브 기획팀</td><td>별도 벡터 DB 전제를 S3 vector 기능 기반 RAG 인덱스로 정리하고, VisitorStatistics와 S3 Raw/Lambda/DynamoDB 정규화 흐름 반영</td></tr>
 <tr><td>v0.4</td><td>2026-06-08</td><td>로브 기획팀</td><td>AWS Neptune을 추천 관계 탐색용 그래프 인덱스로 반영</td></tr>
-<tr><td>v0.5</td><td>2026-06-08</td><td>로브 기획팀</td><td>보존 기간·TTL 권고·잠정값(5.1절) 추가, Neptune 비용 주의·대체 아키텍처(<code>neptune_<wbr>alternative.md</code>) 반영, 운영 대시보드(CloudWatch·Budgets)를 Production 운영 단계에 추가</td></tr>
+<tr><td>v0.5</td><td>2026-06-08</td><td>로브 기획팀</td><td>보존 기간·TTL 권고·잠정값(5.1절) 추가, Neptune 비용 주의·대체 설계 명세서 반영, 운영 대시보드(CloudWatch·Budgets)를 Production 운영 단계에 추가</td></tr>
 </tbody></table></div>
         <nav class="doc-nav" aria-label="이전 다음 문서">
           <a class="doc-nav-home" href="../index.html">문서 홈</a>
           <div class="doc-nav-pager">
             <a class="doc-nav-link" href="./08_data_preprocessing.html">이전 문서<br><strong>데이터 전처리 계획서</strong></a>
-            <a class="doc-nav-link" href="./05_agent_spec.html">다음 문서<br><strong>Agent 명세서</strong></a>
+            <a class="doc-nav-link" href="./04_neptune_alternative.html">다음 문서<br><strong>Neptune 대체 설계 명세서</strong></a>
           </div>
         </nav>
       </main>

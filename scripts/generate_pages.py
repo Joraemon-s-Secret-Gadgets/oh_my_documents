@@ -77,6 +77,15 @@ DOCUMENTS = [
         "설계·명세 문서",
     ),
     Document(
+        "docs/04_database_design/neptune_alternative.md",
+        "04_neptune_alternative.html",
+        "Neptune Alternative",
+        "로브 (Lovv) — Neptune 대체 설계 명세서",
+        "AWS Neptune 도입 전 기존 스택으로 추천 관계 그래프를 대체하는 설계와 승격 기준을 정의합니다.",
+        "검토 중",
+        "설계·명세 보조 문서",
+    ),
+    Document(
         "docs/05_agent_spec/05_agent_spec.md",
         "05_agent_spec.html",
         "Agent Spec",

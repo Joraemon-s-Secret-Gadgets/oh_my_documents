@@ -10,6 +10,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="../assets/css/requirements.css" />
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" defer></script>
   </head>
   <body>
     <div class="layout">
@@ -69,7 +70,7 @@
 <p class="doc-p">문서 버전: v0.7</p>
 <p class="doc-p">문서 상태: 검토 중 (Review)</p>
 <p class="doc-p">기준 문서: 요구사항 명세서 v1.7</p>
-<p class="doc-p">상세 문서: 한국 데이터 수집 계획서, 일본 데이터 수집 계획서, 기후 데이터 정량 정합성 검토</p>
+<p class="doc-p">상세 문서: 한국 데이터 취득 상세 계획서.pdf, 일본 데이터 취득 상세 계획서.pdf, 기후 데이터 정량 정합성 검토</p>
 </blockquote>
 <h1 id="s1" class="s-h1">1. 문서 개요</h1>
 <h2 id="s1-1" class="s-h2">1.1 목적</h2>
@@ -77,8 +78,8 @@
 <p class="doc-p">세부 국가별 취득 기준은 다음 문서에 분리하여 관리한다.</p>
 <div class="table-wrap wide scroll-table"><table class="info-tbl">
 <thead><tr><th>국가</th><th>상세 문서</th><th>역할</th></tr></thead><tbody>
-<tr><td>한국</td><td><code>korea_<wbr>data_<wbr>acquisition_<wbr>plan.md</code></td><td>강원·경북 40개 City와 TourAPI 4.0 기반 Attraction·Festival·DataLab 통계 취득 필드, 검수 기준 정의</td></tr>
-<tr><td>일본</td><td><code>japan_<wbr>data_<wbr>acquisition_<wbr>plan.md</code></td><td>일본 관동 지역 지자체 우선 수집, 도도부현·산하 City·Attraction·Festival·관광 통계 취득 필드, Wikipedia·JNTO·JTA 중심 출처, 검수 기준 정의</td></tr>
+<tr><td>한국</td><td><code>한국 데이터 취득 상세 계획서.pdf</code></td><td>강원·경북 40개 City와 TourAPI 4.0 기반 Attraction·Festival·DataLab 통계 취득 필드, 검수 기준 정의</td></tr>
+<tr><td>일본</td><td><code>일본 데이터 취득 상세 계획서.pdf</code></td><td>일본 관동 지역 지자체 우선 수집, 도도부현·산하 City·Attraction·Festival·관광 통계 취득 필드, Wikipedia·JNTO·JTA 중심 출처, 검수 기준 정의</td></tr>
 </tbody></table></div>
 <h2 id="s1-2" class="s-h2">1.2 수집 원칙</h2>
 <ul class="bullet-list">
@@ -96,16 +97,31 @@
 <p class="doc-p">로브(Lovv)는 대도시 편중 현상(오버투어리즘)을 완화하고 여행자에게 덜 알려진 한국(시/군/구 단위) 및 일본(시/정/촌/구 단위)의 매력적인 지역과 그에 최적화된 여행 일정 및 문화 콘텐츠를 추천하는 서비스이다.</p>
 <p class="doc-p">본 계획서는 한국과 일본의 지역 기반 추천을 위해 도시, 관광지, 축제 데이터를 공통 구조로 취득하고 국가별 출처 차이를 매핑하는 방안을 다룬다.</p>
 <h2 id="s2-2" class="s-h2">2.2 데이터 모델</h2>
-<p class="doc-p">추천 DB는 다음 관계를 기준으로 구축한다.</p>
-<pre><code>City
- ├── Attraction
- ├── Festival
- └── VisitorStatistics</code></pre>
+<p class="doc-p">추천 DB는 한국·일본 상세 취득 문서의 목표 모델을 합쳐 다음 관계를 기준으로 구축한다.</p>
+<div class="mermaid">flowchart TB
+    administrativeArea[&quot;AdministrativeArea&lt;br/&gt;상위 행정 단위&quot;]
+    city[&quot;City&lt;br/&gt;추천 기준 지역&quot;]
+    attraction[&quot;Attraction&lt;br/&gt;관광지&quot;]
+    festival[&quot;Festival&lt;br/&gt;축제·행사&quot;]
+    visitorStatistics[&quot;VisitorStatistics&lt;br/&gt;방문·관광 통계&quot;]
+
+    administrativeArea --&gt; city
+    city --&gt; attraction
+    city --&gt; festival
+    city --&gt; visitorStatistics</div>
 <div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>관계</th><th>설명</th></tr></thead><tbody>
+<tr><td><code>AdministrativeArea 1:N City</code></td><td>한국의 도, 일본의 도도부현 같은 상위 행정 단위는 여러 City를 가진다.</td></tr>
 <tr><td><code>City 1:N Attraction</code></td><td>하나의 도시는 여러 관광지를 가진다.</td></tr>
 <tr><td><code>City 1:N Festival</code></td><td>하나의 도시는 여러 축제·행사를 가진다.</td></tr>
 <tr><td><code>City 1:N VisitorStatistics</code></td><td>하나의 도시는 월별 또는 지역별 방문·관광 통계 보조 지표를 가진다.</td></tr>
+</tbody></table></div>
+<h2 id="s2-2-1" class="s-h2">2.2.1 국가별 데이터 모델 적용</h2>
+<p class="doc-p">이 공통 관계는 한국과 일본 수집 결과에 동일하게 적용한다. 국가별 차이는 상위 행정 단위의 명칭, <code>City</code> 식별자 체계, 관광지·축제의 1차 출처, 방문·관광 통계의 집계 단위만 다르게 매핑한다.</p>
+<div class="table-wrap wide extra-wide scroll-table"><table class="info-tbl">
+<thead><tr><th>국가</th><th>상위 행정 단위</th><th>City 적용</th><th>Attraction·Festival 적용</th><th>VisitorStatistics 적용</th></tr></thead><tbody>
+<tr><td>한국</td><td><code>Prefecture</code>로 강원 <code>KR-42</code>, 경북 <code>KR-47</code>을 관리한다.</td><td>강원·경북 40개 시·군·구를 <code>KR-{도_<wbr>코드}-{CITY_<wbr>EN}</code> 형식의 <code>city_<wbr>id</code>로 관리한다.</td><td><code>contentid</code> 기반 <code>KR-{도_<wbr>코드}-{CITY_<wbr>EN}-ATT-{contentid}</code> / <code>KR-{도_<wbr>코드}-{CITY_<wbr>EN}-FES-{contentid}</code> 식별자를 만들고 TourAPI 4.0(KorService2) 기준 관광지 3,709건과 축제 106건을 City에 연결한다.</td><td>DataLabService <code>/<wbr>stayAnalysisVisitorList</code>를 월 단위로 조회해 40개 도시 × 12개월 방문객 통계를 City 보조 지표로 연결한다.</td></tr>
+<tr><td>일본</td><td>도도부현 간략 정보와 산하 도시 목록을 먼저 확보한다.</td><td>관동 지역 도도부현 산하 시·정·촌·구를 City 후보로 수집하고 <code>JP-TOKYO-TAITO</code>처럼 국가·도도부현·도시 단위가 드러나는 <code>city_<wbr>id</code>로 관리한다.</td><td>JNTO/JTA 및 지자체 공식 관광 데이터를 기반으로 관광지·축제를 City에 연결한다.</td><td>JNTO Statistics, RESAS, e-Stat/Statistical LOD의 제공 가능한 월별·연도별·지역별 집계 단위를 City 보조 지표로 연결하고 매핑 불확실성은 <code>needs_<wbr>review</code>로 둔다.</td></tr>
 </tbody></table></div>
 <h2 id="s2-3" class="s-h2">2.3 City 수집 항목</h2>
 <p class="doc-p">City는 추천의 기준 지역이다. 한국은 도의 간략 정보와 산하 시·군·구 목록을 먼저 취득하고, 일본은 도도부현의 간략 정보와 산하 시·정·촌·구 목록을 먼저 취득한다. 실제 도시 상세 정보 크롤링은 이 산하 도시 목록에 포함된 City만 대상으로 한다.</p>
