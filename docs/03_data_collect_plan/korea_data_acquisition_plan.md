@@ -1,9 +1,9 @@
 # 한국 데이터 취득 계획서
 
-> 문서 버전: v0.4
+> 문서 버전: v0.4.1
 > 문서 상태: 실제 수집 데이터 구조 및 API 명세 분석 결과 반영
 > 작성일: 2026-06-06
-> 기준 문서: `docs/03_data_collect_plan/korea_data_acquisition_plan_updated.md` v0.2
+> 기준 문서: `docs/03_data_collect_plan/korea_data_acquisition_plan_updated.md` v0.3
 > 동기화 대상 문서: `docs/03_data_collect_plan/03_data_collect_plan.md`
 > 공유 산출물: `pages/03_data_collect_plan.html`, `pdf/korea_data_acquisition_plan.pdf`
 
@@ -289,14 +289,13 @@ S3 적재 이후의 전처리, 정규화 DB 적재, 운영 중 보완 처리는 
 
 ## 7.1 핵심 파일과 S3 적재 관계
 
-```
-data/KR/
-  ├── prefectures.json
-  ├── cities.json
-  ├── attractions.json
-  ├── festivals.json
-  └── visitor_statistics.json
-```
+| 저장 경로 |
+| --- |
+| `data/KR/prefectures.json` |
+| `data/KR/cities.json` |
+| `data/KR/attractions.json` |
+| `data/KR/festivals.json` |
+| `data/KR/visitor_statistics.json` |
 
 위 파일은 실제 수집 검증과 명세 확인을 위한 로컬 JSON 산출물이다.
 운영 흐름에서는 이 JSON 산출물과 원본 API 응답을 S3 Raw Bucket에 업로드하고, Lambda 전처리 결과만 DynamoDB 정규화 Item으로 적재한다.
@@ -311,71 +310,58 @@ data/KR/
 
 ## 7.2 City 예시
 
-```json
-{
-  "city_id": "KR-42-GANGNEUNG",
-  "city_name_ko": "강릉",
-  "prefecture_id": "KR-42",
-  "location": "한국 강원특별자치도",
-  "latitude": 37.7519,
-  "longitude": 128.8761,
-  "description": "강릉시는 강원특별자치도 동해안 중부에 위치한 관광 도시다.",
-  "climate_table": {
-    "caption": "수작업 필요",
-    "wikitext": "수작업 필요"
-  },
-  "field_status": {
-    "climate_table": "needs_review"
-  }
-}
-```
+| 필드 | 예시 값 | 비고 |
+| --- | --- | --- |
+| `city_id` | `KR-42-GANGNEUNG` | 내부 City ID |
+| `city_name_ko` | 강릉 | 한국어 도시명 |
+| `prefecture_id` | `KR-42` | 강원특별자치도 광역 코드 |
+| `location` | 한국 강원특별자치도 | 행정 위치 문자열 |
+| `latitude` | `37.7519` | 대표 위도 |
+| `longitude` | `128.8761` | 대표 경도 |
+| `description` | 강릉시는 강원특별자치도 동해안 중부에 위치한 관광 도시다. | 내부 요약 설명 |
+| `climate_table.caption` | 수작업 필요 | 기후 표 캡션 |
+| `climate_table.wikitext` | 수작업 필요 | 기후 표 원문 |
+| `field_status.climate_table` | `needs_review` | 기후 표 검토 상태 |
 
 ## 7.3 Attraction 예시
 
-```json
-{
-  "attraction_id": "KR-42-GANGNEUNG-ATT-126508",
-  "city_id": "KR-42-GANGNEUNG",
-  "contentid": "126508",
-  "name": "경포해변",
-  "address": "강원특별자치도 강릉시 창해로 514",
-  "source_name": "TourAPI 4.0 (KorService2)",
-  "field_status": {
-    "opening_hours": "missing",
-    "admission_fee": "missing"
-  }
-}
-```
+| 필드 | 예시 값 | 비고 |
+| --- | --- | --- |
+| `attraction_id` | `KR-42-GANGNEUNG-ATT-126508` | 내부 Attraction ID |
+| `city_id` | `KR-42-GANGNEUNG` | 연결 City ID |
+| `contentid` | `126508` | TourAPI 콘텐츠 ID |
+| `name` | 경포해변 | 관광지명 |
+| `address` | 강원특별자치도 강릉시 창해로 514 | 주소 |
+| `source_name` | `TourAPI 4.0 (KorService2)` | 취득 출처 |
+| `field_status.opening_hours` | `missing` | 운영시간 취득 상태 |
+| `field_status.admission_fee` | `missing` | 입장료 취득 상태 |
 
 ## 7.4 Festival 예시
 
-```json
-{
-  "festival_id": "KR-42-GANGNEUNG-FES-2762975",
-  "city_id": "KR-42-GANGNEUNG",
-  "contentid": "2762975",
-  "name": "강릉단오제",
-  "period": "연도별 공식 일정 확인 필요",
-  "source_name": "TourAPI 4.0 (KorService2)",
-  "field_status": {
-    "period": "needs_review"
-  }
-}
-```
+| 필드 | 예시 값 | 비고 |
+| --- | --- | --- |
+| `festival_id` | `KR-42-GANGNEUNG-FES-2762975` | 내부 Festival ID |
+| `city_id` | `KR-42-GANGNEUNG` | 연결 City ID |
+| `contentid` | `2762975` | TourAPI 행사 콘텐츠 ID |
+| `name` | 강릉단오제 | 축제명 |
+| `period` | 연도별 공식 일정 확인 필요 | 개최 기간 |
+| `source_name` | `TourAPI 4.0 (KorService2)` | 취득 출처 |
+| `field_status.period` | `needs_review` | 기간 정보 검토 상태 |
 
 # 8. 6대 테마 분류
 
-관광지와 축제는 TourAPI 카테고리 코드(`cat1`, `cat2`, `cat3`)를 기준으로 6대 핵심 테마에 매핑한다.
-축제는 자동 분류가 넓게 잡히는 경우가 있어 46건을 수동 재분류한 결과를 보존한다.
+관광지와 축제는 기존 문서 기준의 6대 핵심 테마로 분류한다.
+테마 자동 분류는 TourAPI의 행정·법정 분류 코드 `lclsSystm1`, `lclsSystm2`, `lclsSystm3`을 기준으로 매핑한다.
+축제는 자동 매핑 결과가 넓게 잡힐 수 있으므로 필요 시 수동 오버라이드를 적용한다.
 
 | 테마 | 설명 |
 | --- | --- |
-| 자연·힐링 | 해변, 산, 숲, 호수, 생태 관광 |
-| 역사·전통 | 문화재, 고택, 전통 행사 |
-| 예술·감성 | 미술관, 공연, 감성 관광지 |
-| 미식·로컬 | 음식, 전통시장, 지역 특산 |
-| 액티비티 | 레저, 스포츠, 체험형 관광 |
-| 축제·계절 | 계절 행사, 지역 축제, 월별 추천 소재 |
+| 온천·휴양 | 온천, 스파, 리조트, 힐링 |
+| 바다·해안 | 바다, 해안, 해수욕장, 해양 활동 |
+| 역사·전통 | 역사, 문화유산, 전통 문화 |
+| 미식·노포 | 맛집, 전통 음식점, 식당 |
+| 자연·트레킹 | 자연, 등산, 트레킹, 국립공원 |
+| 예술·감성 | 예술, 디자인, 감성, 문화, 행사 |
 
 # 9. 품질 검증 기준
 
@@ -429,3 +415,4 @@ data/KR/
 | v0.2 | 2026-06-06 | LLM 파트 | 도 간략 정보와 산하 도시 목록 기반 City 크롤링, JSON 원본의 S3 저장, 기후 데이터 비교 검증 방식으로 구체화 |
 | v0.3 | 2026-06-06 | LLM 파트 | 강원·경북 40개 도시 실제 수집 결과, TourAPI 4.0, DataLabService, `data/KR/*.json` 검증 산출물과 S3 Raw 적재 흐름 반영 |
 | v0.4 | 2026-06-07 | LLM 파트 | 대표 문서와 공유 산출물 동기화 상태에 맞춰 문서 메타 표현 정리 |
+| v0.4.1 | 2026-06-08 | LLM 파트 | 기존 문서 기준 6대 테마(온천·휴양, 바다·해안, 역사·전통, 미식·노포, 자연·트레킹, 예술·감성)와 `lclsSystm` 기반 자동 분류 기준 반영 |
