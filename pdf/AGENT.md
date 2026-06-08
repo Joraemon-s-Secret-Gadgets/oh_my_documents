@@ -144,7 +144,7 @@ PDF-only로 풀어쓴 내용은 `scripts/markdown_to_tex.py`의 변환 로직에
 데이터 수집 계획 PDF 묶음의 기본 검증 하네스는 다음 순서로 실행한다.
 
 ```powershell
-python scripts\markdown_to_tex.py docs\04_data_collect_plan\04_data_collect_plan.md pdf\data_collect_plan.tex --title "데이터 수집 계획서" --author "이창우, 전승권, 전종혁, 조동휘, 최수아" --mentor "멘토 최민수" --team "조라에몽의 만능 도구들" --service-label "로브 서비스 데이터 수집 계획" --section-pagebreak --body-pagebreak-before "2.3 City 수집 항목" "2.4 Attraction 수집 항목" "2.6 데이터 출처" "2.6.2 일본 데이터 출처" --ci-images "../assets/images/SK-Networks-logo.png" "../assets/images/en-core-logo.png" "../assets/images/playdata-logo.png"
+python scripts\markdown_to_tex.py docs\03_data_collect_plan\03_data_collect_plan.md pdf\data_collect_plan.tex --title "데이터 수집 계획서" --author "이창우, 전승권, 전종혁, 조동휘, 최수아" --mentor "멘토 최민수" --team "조라에몽의 만능 도구들" --service-label "로브 서비스 데이터 수집 계획" --section-pagebreak --body-pagebreak-before "2.3 City 수집 항목" "2.4 Attraction 수집 항목" "2.6 데이터 출처" "2.6.2 일본 데이터 출처" --ci-images "../assets/images/SK-Networks-logo.png" "../assets/images/en-core-logo.png" "../assets/images/playdata-logo.png"
 Push-Location pdf
 xelatex -interaction=nonstopmode -halt-on-error data_collect_plan.tex
 xelatex -interaction=nonstopmode -halt-on-error data_collect_plan.tex

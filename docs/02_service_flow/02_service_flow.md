@@ -46,7 +46,7 @@
 
 # 4. Service Flow
 
-API 경로는 `docs/05_api_spec/05_api_spec.md`의 Base URL `/api/v1`을 전제로 표기한다.
+API 경로는 `docs/07_api_spec/07_api_spec.md`의 Base URL `/api/v1`을 전제로 표기한다.
 
 | 단계 | Trigger | Frontend 처리 | 상태 / 데이터 관리 | AI & Infra 비즈니스 로직 | 결과 |
 | --- | --- | --- | --- | --- | --- |
