@@ -1,6 +1,6 @@
 # 로브 (Lovv) API 명세서
 
-> 문서 버전: v0.1
+> 문서 버전: v0.2
 > 문서 상태: 기획 단계 (Planning)
 > 기준 문서: 요구사항 명세서 v1.7, 서비스 흐름 명세서 v0.2, 데이터베이스 설계 명세서 v0.2, Agent 명세서 v0.4
 
@@ -20,6 +20,18 @@
 | 인증 | 공개 추천 조회는 선택, 운영·저장·마이페이지는 로그인 필요 |
 | 날짜 형식 | ISO 8601 |
 | ID 형식 | UUID 권장 |
+
+## 1.3 Lambda 라우팅 기준
+
+AWS SAM 기반 배포에서는 API Gateway가 단일 `/api/v1` 진입점을 제공하고, 요청 성격에 따라 Lambda를 분리해 호출한다.
+
+| 담당 Lambda | API 범위 | 책임 |
+| --- | --- | --- |
+| `Auth-Function` | `/auth/*`, 초기 `/auth/session` 세션 조회 | Google/Kakao 로그인, JWT 발급·검증, 로그인 직후 사용자 정보·저장 테마·저장 일정 요약 로드 |
+| `Map-Function` | `/destinations/*` | 지도 마커 목록, 소도시 상세 콘텐츠, DB/S3 기반 읽기 API |
+| `AgentCore-Function` | `/recommendations`, `/agent/answer` | LLM 호출, 추천 설명 생성, 대화 원문 저장 없는 순수 AI 추론 |
+
+각 Lambda는 별도 IAM Role과 배포 패키지를 가진다. 인증·지도 API에는 AI SDK와 LangChain 계열 의존성을 포함하지 않고, AgentCore API는 사용자 대면 동기 응답 기준으로 29초 내외 완료를 목표로 한다. 응답 시간이 더 길어질 수 있는 요청은 비동기 작업 또는 스트리밍 API로 별도 설계한다.
 
 # 2. 공통 오류 응답
 
@@ -47,13 +59,71 @@
 
 # 3. 인증 API
 
-| Method | Path | Auth | 설명 |
-| --- | --- | --- | --- |
-| POST | `/auth/login` | Public | 이메일/소셜 로그인 |
-| POST | `/auth/logout` | User | 로그아웃 |
-| GET | `/auth/me` | User | 현재 사용자와 역할 조회 |
+| Method | Path | Auth | 담당 Lambda | 설명 |
+| --- | --- | --- | --- | --- |
+| POST | `/auth/google` | Public | `Auth-Function` | Google 간편 로그인 토큰 검증 및 서비스 JWT 발급 |
+| POST | `/auth/kakao` | Public | `Auth-Function` | Kakao 간편 로그인 토큰 검증 및 서비스 JWT 발급 |
+| POST | `/auth/logout` | User | `Auth-Function` | 로그아웃 |
+| GET | `/auth/me` | User | `Auth-Function` | 현재 사용자와 역할 조회 |
+| GET | `/auth/session` | User | `Auth-Function` | 로그인 직후 대시보드 진입에 필요한 세션 요약 조회 |
 
-## 3.1 `GET /auth/me`
+## 3.1 `POST /auth/google`, `POST /auth/kakao`
+
+**Request**
+
+```json
+{
+  "providerAccessToken": "oauth-provider-token",
+  "redirectUri": "https://lovv.example.com/auth/callback"
+}
+```
+
+**Response 200**
+
+```json
+{
+  "accessToken": "service-jwt",
+  "tokenType": "Bearer",
+  "expiresIn": 3600,
+  "user": {
+    "userId": "uuid",
+    "displayName": "홍길동",
+    "roles": ["R-USER"]
+  }
+}
+```
+
+공급자 OAuth 토큰은 서버에서 검증하고 클라이언트 저장 대상으로 반환하지 않는다. refresh token을 사용하는 경우 HttpOnly 쿠키 또는 서버 세션 저장소로 관리한다.
+
+## 3.2 `GET /auth/session`
+
+로그인 성공 후 첫 대시보드 진입 시 호출한다. 사용자 정보, 저장 테마, 저장 일정 요약처럼 초기 화면 구성에 필요한 가벼운 세션 데이터를 한 번에 반환한다.
+
+**Response 200**
+
+```json
+{
+  "user": {
+    "userId": "uuid",
+    "displayName": "홍길동",
+    "roles": ["R-USER"]
+  },
+  "preferences": {
+    "countryTrack": "JP",
+    "mappedThemes": ["art_sense", "history_tradition"]
+  },
+  "savedItineraries": [
+    {
+      "itineraryId": "uuid",
+      "destinationName": "가나자와",
+      "country": "JP",
+      "updatedAt": "2026-06-08T09:00:00Z"
+    }
+  ]
+}
+```
+
+## 3.3 `GET /auth/me`
 
 **Response 200**
 
@@ -97,11 +167,11 @@
 
 # 5. 지도·목적지 API
 
-| Method | Path | Auth | 설명 |
-| --- | --- | --- | --- |
-| GET | `/destinations` | Public | 소도시 목록 조회 |
-| GET | `/destinations/{destinationId}` | Public | 소도시 상세 조회 |
-| GET | `/destinations/map-markers` | Public | 지도 마커 조회 |
+| Method | Path | Auth | 담당 Lambda | 설명 |
+| --- | --- | --- | --- | --- |
+| GET | `/destinations` | Public | `Map-Function` | 소도시 목록 조회 |
+| GET | `/destinations/{destinationId}` | Public | `Map-Function` | 소도시 상세 조회 |
+| GET | `/destinations/map-markers` | Public | `Map-Function` | 지도 마커 조회 |
 
 ## 5.1 `GET /destinations/map-markers`
 
@@ -131,13 +201,40 @@
 }
 ```
 
+## 5.2 `GET /destinations/{destinationId}`
+
+마커 클릭 시 해당 소도시의 상세 콘텐츠를 조회한다. API path의 `destinationId`는 DB 구현에서 `city_id`와 매핑될 수 있다.
+
+**Response 200**
+
+```json
+{
+  "destinationId": "uuid",
+  "name": "가나자와",
+  "country": "JP",
+  "latitude": 36.5613,
+  "longitude": 136.6562,
+  "summary": "전통 거리와 현대 미술관을 함께 즐길 수 있는 일본 소도시입니다.",
+  "themes": ["art_sense", "history_tradition"],
+  "contents": [
+    {
+      "contentId": "uuid",
+      "title": "히가시차야 거리",
+      "contentType": "attraction",
+      "sourceUrl": "https://example.official.jp"
+    }
+  ]
+}
+```
+
 # 6. 추천 API
 
-| Method | Path | Auth | 설명 |
-| --- | --- | --- | --- |
-| POST | `/recommendations` | Optional | 추천 생성 |
-| GET | `/recommendations/{recommendationId}` | Optional | 추천 결과 조회 |
-| POST | `/recommendations/{recommendationId}/alternatives/weather` | Optional | 기상 악화 대체 일정 조회 |
+| Method | Path | Auth | 담당 Lambda | 설명 |
+| --- | --- | --- | --- | --- |
+| POST | `/recommendations` | Optional | `AgentCore-Function` | 추천 생성 |
+| GET | `/recommendations/{recommendationId}` | Optional | `AgentCore-Function` | 짧은 수명의 추천 결과 조회 |
+| POST | `/recommendations/{recommendationId}/alternatives/weather` | Optional | `AgentCore-Function` | 기상 악화 대체 일정 조회 |
+| POST | `/agent/answer` | Optional | `AgentCore-Function` | 대화 원문 저장 없는 단일 턴 AI 답변 생성 |
 
 ## 6.1 `POST /recommendations`
 
@@ -224,6 +321,52 @@
 | `user_notice` | Response | 숙박 가격·예약 가능 여부처럼 확정 추천 근거로 쓸 수 없는 조건 안내 |
 | `festivalDateVerifications` | Response | 일정 배치 또는 후보 축제의 해당 연도 날짜 검증 결과 |
 
+AgentCore API 운영 기준:
+
+| 항목 | 기준 |
+| --- | --- |
+| 저장 정책 | 대화 원문은 저장하지 않는다. 추천 결과는 사용자가 `/me/itineraries` 저장 API를 호출할 때만 계정 데이터로 저장한다. |
+| Timeout | 사용자 대면 동기 호출은 29초 내외 완료를 목표로 한다. 장시간 추론이 필요한 경우 비동기 작업 상태 조회 또는 스트리밍 API로 분리한다. |
+| 의존성 | LangChain, OpenAI SDK, Boto3, Bedrock SDK 등 무거운 AI 의존성은 `AgentCore-Function`에만 포함한다. |
+| 실패 응답 | 모델 호출 실패, timeout, rate limit은 공통 오류 형식을 사용하되 사용자에게 재시도 가능 여부를 명확히 전달한다. |
+
+## 6.2 `POST /agent/answer`
+
+저장 없는 단일 턴 AI 응답 생성 API다. 챗봇 화면에서 사용자의 현재 질문에 답변을 생성하되, 대화 원문을 서버에 영구 저장하지 않는다.
+
+**Request**
+
+```json
+{
+  "message": "가을에 조용한 일본 소도시 추천해줘",
+  "context": {
+    "country": "JP",
+    "travelMonth": 10,
+    "themes": ["healing", "art_sense"]
+  }
+}
+```
+
+**Response 200**
+
+```json
+{
+  "answer": "10월에는 가나자와가 잘 맞습니다. 전통 거리와 미술관 콘텐츠가 함께 있고, 대도시보다 이동 동선이 단순합니다.",
+  "suggestedActions": [
+    {
+      "type": "create_recommendation",
+      "label": "가나자와 일정 만들기",
+      "payload": {
+        "destinationId": "uuid"
+      }
+    }
+  ],
+  "modelUsage": {
+    "latencyMs": 3200
+  }
+}
+```
+
 # 7. 저장·피드백 API
 
 | Method | Path | Auth | 설명 |
@@ -278,4 +421,5 @@ WeatherAPI 응답은 추천 스코어링에 사용하지 않고 목적지 상세
 
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 | --- | --- | --- | --- |
+| v0.2 | 2026-06-08 | 로브 기획팀 | AWS SAM 기반 Auth, Map, AgentCore Lambda별 API 라우팅과 Google/Kakao 인증, 세션, 지도 상세, 저장 없는 Agent 답변 API 추가 |
 | v0.1 | 2026-05-29 | 로브 기획팀 | API 명세서 초안 작성 |
