@@ -63,13 +63,13 @@ City는 추천의 기준 지역이다. 한국은 도의 간략 정보와 산하 
 | 필드 | 한국 주요 출처 | 일본 주요 출처 | 수집 상태 |
 | --- | --- | --- | --- |
 | `city_id` | 내부 생성 | 내부 생성 | 전부 수집 |
-| `city_name_ko` | 도 산하 도시 목록, Wikipedia 크롤링, 행정구역 데이터 | 도도부현 산하 도시 목록, Wikipedia 크롤링, 수동 정규화 | 전부 수집 |
+| `city_name_ko` | 도 산하 도시 목록, Wikipedia, 행정구역 데이터 | 도도부현 산하 도시 목록, Wikipedia, 수동 정규화 | 전부 수집 |
 | `city_name_local` | 한국어 명칭 | 일본어 원문 명칭 | 전부 수집 |
 | `province_or_prefecture` | 도 간략 정보, 행정구역 데이터 | 도도부현 간략 정보, e-Stat, Statistical LOD | 전부 수집 |
-| `location` | 산하 도시 Wikipedia 크롤링, TourAPI, 행정구역 데이터 | 산하 도시 Wikipedia 크롤링, Wikidata | 전부 수집 |
-| `latitude` | 산하 도시 Wikipedia 크롤링, TourAPI, Wikidata | 산하 도시 Wikipedia 크롤링, Wikidata | 전부 수집 |
-| `longitude` | 산하 도시 Wikipedia 크롤링, TourAPI, Wikidata | 산하 도시 Wikipedia 크롤링, Wikidata | 전부 수집 |
-| `description` | 산하 도시 Wikipedia 크롤링 기반 요약, 대한민국구석구석 기반 요약 | 산하 도시 Wikipedia 크롤링 기반 요약 | 전부 수집 |
+| `location` | Wikipedia, TourAPI, 행정구역 데이터 | Wikipedia, Wikidata | 전부 수집 |
+| `latitude` | Wikipedia, TourAPI, Wikidata | Wikipedia, Wikidata | 전부 수집 |
+| `longitude` | Wikipedia, TourAPI, Wikidata | Wikipedia, Wikidata | 전부 수집 |
+| `description` | Wikipedia 요약, 대한민국구석구석 요약 | Wikipedia 요약 | 전부 수집 |
 | `climate` | Wikipedia 취득 후 기상청 API허브·기후통계와 비교 | Wikipedia 취득 후 일본기상청(JMA) 자료와 비교 | 전부 수집 |
 | `site_url` | 지자체 문화관광 홈페이지, 대한민국구석구석 | Wikipedia 외부 링크, 공식 관광 사이트 | 전부 수집 |
 
@@ -128,7 +128,7 @@ Festival은 월별 추천과 계절성 추천의 주요 근거로 사용한다. 
 
 | 출처 | 취득 데이터 | 적용 방식 |
 | --- | --- | --- |
-| Wikipedia API / Wikipedia 크롤링 / Wikidata | 도도부현 간략 정보, 도도부현 산하 도시 목록, 산하 도시 설명·위치·좌표 | 일본 City 크롤링 대상 목록 확보 및 상세 정보 취득 |
+| Wikipedia API / 크롤링 / Wikidata | 도도부현 간략 정보, 산하 도시 목록, 도시 설명·위치·좌표 | 일본 City 대상 목록 확보 및 상세 정보 취득 |
 | JNTO 관광 데이터 | 관광지, 축제, 설명, 주소, 링크 | Attraction·Festival 자동 수집의 1차 소스 |
 | JTA 관광 DB | 관광지 상세 설명, 문화 정보, 지역 특산품, 축제 설명 | JNTO 데이터 설명 보강 |
 | e-Stat / Statistical LOD | 행정구역 코드, 지역 통계, 시정촌 메타데이터 | City 정규화와 통계 보강 |
@@ -199,7 +199,7 @@ Lambda 배치 전처리
 | 출처 기록 | 모든 자동 수집 데이터는 출처명, 출처 URL, 수집 시각을 가진다. |
 | 전체 필드 상태 | 정의된 모든 필드는 `collected`, `needs_review`, `missing`, `blocked` 중 하나의 상태를 가진다. |
 | 최신성 | 운영시간, 운영기간, 입장료, 축제 기간은 확인일을 기록한다. |
-| 기후 정합성 | City `climate`는 Wikipedia 취득값을 기준으로 하되 한국은 기상청, 일본은 일본기상청(JMA) 자료와 비교한다. 불일치는 정성 기록이 아니라 4.1의 정량 지표(`MAE_T`, `MAPE_P`, `ConsistencyScore`)와 판정 규칙으로 관리한다. |
+| 기후 정합성 | City `climate`는 Wikipedia 값을 기준으로 한국 기상청·일본 JMA와 비교한다. 불일치는 4.1의 `MAE_T`, `MAPE_P`, `ConsistencyScore` 판정 규칙으로 관리한다. |
 | 링크 유효성 | 공식 URL과 딥링크는 HTTP 상태와 리다이렉션을 주기적으로 점검한다. |
 | 저작권 | 사진과 설명문은 사용 가능 조건을 확인한다. 설명문은 내부 요약문으로 저장한다. |
 | 다국어 매핑 | 일본 지역명·축제명은 일본어 원문과 한국어 표기가 같은 대상을 가리키는지 대조한다. |

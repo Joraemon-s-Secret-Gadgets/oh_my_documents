@@ -870,6 +870,86 @@
         word-break: normal;
         overflow-wrap: normal;
       }
+      .data-field-tbl,
+      .data-source-tbl,
+      .data-quality-tbl,
+      .db-decision-tbl,
+      .db-storage-tbl,
+      .retention-tbl,
+      .phase-scope-tbl {
+        table-layout: fixed;
+      }
+      .table-wrap .data-field-tbl {
+        min-width: 1280px;
+      }
+      .data-field-tbl th:first-child,
+      .data-field-tbl td:first-child {
+        width: 180px;
+      }
+      .data-field-tbl th:nth-child(2),
+      .data-field-tbl td:nth-child(2),
+      .data-field-tbl th:nth-child(3),
+      .data-field-tbl td:nth-child(3) {
+        width: 390px;
+      }
+      .data-field-tbl th:last-child,
+      .data-field-tbl td:last-child {
+        width: 120px;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .table-wrap .data-source-tbl {
+        min-width: 1080px;
+      }
+      .data-source-tbl th:first-child,
+      .data-source-tbl td:first-child {
+        width: 260px;
+      }
+      .data-source-tbl th:nth-child(2),
+      .data-source-tbl td:nth-child(2) {
+        width: 330px;
+      }
+      .table-wrap .data-quality-tbl {
+        min-width: 900px;
+      }
+      .data-quality-tbl th:first-child,
+      .data-quality-tbl td:first-child {
+        width: 190px;
+      }
+      .table-wrap .db-decision-tbl,
+      .table-wrap .db-storage-tbl {
+        min-width: 1040px;
+      }
+      .db-decision-tbl th:first-child,
+      .db-decision-tbl td:first-child,
+      .db-storage-tbl th:first-child,
+      .db-storage-tbl td:first-child {
+        width: 180px;
+      }
+      .db-decision-tbl th:nth-child(2),
+      .db-decision-tbl td:nth-child(2),
+      .db-storage-tbl th:nth-child(2),
+      .db-storage-tbl td:nth-child(2) {
+        width: 250px;
+      }
+      .table-wrap .retention-tbl {
+        min-width: 900px;
+      }
+      .retention-tbl th:first-child,
+      .retention-tbl td:first-child {
+        width: 270px;
+      }
+      .retention-tbl th:nth-child(2),
+      .retention-tbl td:nth-child(2) {
+        width: 260px;
+      }
+      .table-wrap .phase-scope-tbl {
+        min-width: 860px;
+      }
+      .phase-scope-tbl th:first-child,
+      .phase-scope-tbl td:first-child {
+        width: 170px;
+      }
       .db-nosql-tbl {
         table-layout: fixed;
         font-size: 0.76rem;

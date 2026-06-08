@@ -67,7 +67,8 @@
 ## 2.7 관측성
 
 - LangSmith: redacted 메타데이터만(노드명, matrix 상태, next_node, dropped_context_categories, latency). 원문/PII 금지(멀티턴 명세 §10).
-- AgentCore Observability(CloudWatch): 노드 지연, 토큰 사용, 재시도 횟수, 폴백 비율 대시보드.
+- DynamoDB `lovv_agent_runs`: DB 설계 명세서 v0.5 기준으로 `node_name`, `tool_name`, `validation_retry_count`, `error_code`, `payload_summary` 수준의 실행 요약만 저장한다.
+- AgentCore Observability(CloudWatch): 노드 지연, 토큰 사용, 재시도 횟수, 폴백 비율, 라우팅 경로, matrix 전이 대시보드.
 
 # 3. 테스트 하네스
 
@@ -95,7 +96,7 @@
 | TC-E01 | 실패 | 의미 검증 2회 실패 | 폴백 응답 확정 종료 | `retry_count`=2에서 폴백, 무한루프 없음 |
 | TC-E02 | 실패 | 국가 혼합 시도(KR+JP) | 차단/재요청 | 단일 국가만 결과, Policy 위반 차단 |
 | TC-E03 | 실패 | 필수 조건 누락 | 추가 질문 생성 | NEED_MORE 아니오 경로 |
-| TC-E04 | 실패 | Validator `grounding_missing` | 설명 재작성으로 분기 | Retriever 미호출, Writer 재호출 |
+| TC-E04 | 실패 | Validator `grounding_missing` | 동일 선정지 기준 생성 재호출 | Retriever 미호출, `Itinerary_Writer_Agent` 재호출 |
 | TC-E05 | 실패 | Validator `hallucination` | 재탐색 또는 항목 제거 | raw 생성물 확정 노출 금지 |
 | TC-R01 | 추천 로직 | 자연어+온보딩 테마가 3개 초과 | 자연어 우선, 잔여 온보딩은 backup 처리 | `active_required_themes` 최대 3개, `backup_themes` 존재 |
 | TC-R02 | 추천 로직 | 사용자가 숙소 가격/전망을 요구 | RAG 조건 제외, 안내 문구 제공 | `unsupported_conditions`, `user_notice` 존재 |
@@ -119,12 +120,12 @@
 
 ## 3.4 fulfilled_matrix 전이 검증
 
-표준 키는 `retrieval`, `festival`, `ranking`, `itinerary`, `explanation`, `validation`으로 고정한다.
-라우팅 우선순위는 `retrieval → ranking → festival → itinerary → explanation → validation`이다.
+표준 키는 `retrieval`, `festival`, `ranking`, `generation`, `validation`으로 고정한다.
+라우팅 우선순위는 `retrieval → ranking → festival → generation → validation`이다.
 각 케이스에서 매트릭스 스냅샷을 단계별로 단언한다. 예시(TC-N01):
 
 ```text
-초기:      {retrieval:X, festival:X, ranking:X, itinerary:X, explanation:X, validation:X}
+초기:      {retrieval:X, festival:X, ranking:X, generation:X, validation:X}
 Retriever 후: {retrieval:O, ranking:X, festival:X, ...}
 Ranker 1차 후: {ranking:X, festival:X, top_k_candidates:[...]}
 Festival 후:  {festival:O, ranking:X, ...}
@@ -236,6 +237,7 @@ PR 생성
 - Skill 입출력 계약 문서(Scoring/Matrix/Validation/Link/Weather/Packaging) 작성 → L2 테스트의 골든 값 정의.
 - 추천 점수 회귀 fixture에 접근성, active theme 충족, 희소 테마 가중, 콘텐츠 타입 균형, soft/raw query 유사도, `unsupported_conditions` 안내 케이스를 추가한다.
 - 축제 포함 요청의 Top-K 검증 fixture를 만들고 Web Search 호출 수가 K를 넘지 않는지 단언한다.
+- `Itinerary_Writer_Agent`의 구조화 출력 fixture를 만들고 `itinerary`, `alternativeItinerary`, `recommendationReasons`, `itineraryFlowReason`, `externalLinks`, `confidence`, `user_notice`가 같은 후보 근거를 참조하는지 검증한다.
 - `langgraph_flow.md`가 최상위 기준이므로, 구현 시 본 하네스의 그래프 배선이 정본과 1:1 대응하는지 회귀 검증.
 - 롤링 요약 임계값(턴 수/토큰) 실측 후 확정.
 
@@ -243,6 +245,8 @@ PR 생성
 
 | 버전 | 날짜 | 변경 내용 |
 | --- | --- | --- |
+| v1.1 | 2026-06-08 | DB v0.5 기준으로 DynamoDB 실행 요약과 Observability 메트릭 경계를 분리 |
+| v1.1 | 2026-06-08 | Itinerary Planner와 Explanation Writer를 `Itinerary_Writer_Agent` 단일 생성 노드로 통합 |
 | v1.1 | 2026-06-08 | fulfilled_matrix 표준 키 확정, Top-K 축제 검증, no_candidate 폴백, Validator 실패 카테고리 테스트 케이스 추가 |
 | v1.1 | 2026-06-07 | AgentCore Evaluations 기반 CI/CD 게이트 및 정량 평가 치수(4장) 추가 |
 | v1.0 | 2026-06-07 | 실행 하네스(그래프 배선·상태·AgentCore 연결·루프/재시도)와 테스트 하네스(시나리오·멀티턴·matrix 전이·mock·메트릭) 초안 작성 |

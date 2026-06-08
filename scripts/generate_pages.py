@@ -105,21 +105,6 @@ DOCUMENTS = [
     ),
 ]
 
-
-REDIRECTS = {
-    "03_technical_spec.html": "06_technical_spec.html",
-    "04_api_spec.html": "07_api_spec.html",
-    "04_data_collect_plan.html": "03_data_collect_plan.html",
-    "05_database_design.html": "04_database_design.html",
-    "05_technical_spec.html": "06_technical_spec.html",
-    "05_api_spec.html": "07_api_spec.html",
-    "06_agent_spec.html": "05_agent_spec.html",
-    "06_api_spec.html": "07_api_spec.html",
-    "06_database_design.html": "04_database_design.html",
-    "07_agent_spec.html": "05_agent_spec.html",
-}
-
-
 def read_text(path: str) -> str:
     return (ROOT / path).read_text(encoding="utf-8")
 
@@ -194,6 +179,27 @@ def table_classes(header: list[str], body: list[list[str]]) -> tuple[str, str]:
         table_classes.append("agent-pipeline-tbl")
     if {"항목", "내용"}.issubset(normalized) or {"항목", "결정"}.issubset(normalized):
         table_classes.append("decision-tbl")
+    if {"필드", "한국-주요-출처", "일본-주요-출처", "수집-상태"}.issubset(normalized):
+        table_classes.append("data-field-tbl")
+        wrap_classes.extend(["wide", "extra-wide"])
+    if {"출처", "취득-데이터", "적용-방식"}.issubset(normalized):
+        table_classes.append("data-source-tbl")
+        wrap_classes.append("wide")
+    if {"검증-항목", "기준"}.issubset(normalized):
+        table_classes.append("data-quality-tbl")
+        wrap_classes.append("wide")
+    if {"항목", "결정", "비고"}.issubset(normalized):
+        table_classes.append("db-decision-tbl")
+        wrap_classes.append("wide")
+    if {"저장소", "책임", "주요-데이터"}.issubset(normalized):
+        table_classes.append("db-storage-tbl")
+        wrap_classes.append("wide")
+    if {"대상", "권고-잠정-보존-기간-ttl", "비고"}.issubset(normalized):
+        table_classes.append("retention-tbl")
+        wrap_classes.append("wide")
+    if {"단계", "적용-범위"}.issubset(normalized):
+        table_classes.append("phase-scope-tbl")
+        wrap_classes.append("wide")
     if {"컬럼", "타입", "제약", "설명"}.issubset(normalized):
         table_classes.append("db-schema-tbl")
     if {"테이블", "partition-key", "sort-key", "주요-속성", "ttl"}.issubset(normalized):
@@ -684,28 +690,6 @@ def render_page(doc: Document) -> str:
 """
 
 
-def render_redirect(source: str, target: str) -> str:
-    return f"""<!DOCTYPE html>
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="refresh" content="0; url=./{html.escape(target)}" />
-    <title>문서 위치 변경</title>
-    <link rel="stylesheet" href="../assets/css/site.css" />
-  </head>
-  <body>
-    <main class="site-shell">
-      <section>
-        <h1 class="site-title">문서 위치가 변경되었습니다</h1>
-        <p><code>{html.escape(source)}</code>는 최신 문서 번호 체계에 따라 <a href="./{html.escape(target)}"><code>{html.escape(target)}</code></a>로 이동했습니다.</p>
-      </section>
-    </main>
-  </body>
-</html>
-"""
-
-
 def render_index() -> str:
     grouped: dict[str, list[Document]] = {}
     for doc in DOCUMENTS:
@@ -775,8 +759,6 @@ def main() -> None:
     PAGES.mkdir(exist_ok=True)
     for doc in DOCUMENTS:
         (PAGES / doc.target).write_text(render_page(doc), encoding="utf-8", newline="\n")
-    for source, target in REDIRECTS.items():
-        (PAGES / source).write_text(render_redirect(source, target), encoding="utf-8", newline="\n")
     (ROOT / "index.html").write_text(render_index(), encoding="utf-8", newline="\n")
 
 

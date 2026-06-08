@@ -411,13 +411,13 @@ def success_criteria_table_to_latex(rows: list[str]) -> list[str]:
 
 def database_design_table_to_latex(current_heading: str, rows: list[str]) -> list[str] | None:
     database_table_rules: dict[str, tuple[list[float], set[int]]] = {
-        "1.2 설계 기준": ([0.14, 0.27, 0.57], {0}),
-        "1.3 저장소 책임": ([0.16, 0.38, 0.44], {0}),
+        "1.2 설계 기준": ([0.14, 0.24, 0.60], {0}),
+        "1.3 저장소 책임": ([0.16, 0.34, 0.48], {0}),
         "2.1 핵심 도메인": ([0.15, 0.48, 0.35], {0}),
         "2.2 사용자 데이터 개념 모델": ([0.13, 0.13, 0.39, 0.33], {0, 1}),
         "3.1 MySQL 논리 ERD": ([0.12, 0.25, 0.61], {0, 1}),
         "NoSQL 사용자 이벤트 저장 원칙": ([0.15, 0.79], {0}),
-        "3.3 DynamoDB NoSQL 사용자 설계": ([0.15, 0.22, 0.20, 0.26, 0.09], {0, 4}),
+        "3.3 DynamoDB NoSQL 사용자 설계": ([0.15, 0.21, 0.19, 0.31, 0.08], {0, 4}),
         "3.4 S3 vector index 논리 모델": ([0.12, 0.40, 0.42], {0}),
         "3.5 AWS Neptune 그래프 논리 모델": ([0.11, 0.27, 0.36, 0.18], {0, 1}),
         "3.6 API 식별자 매핑": ([0.13, 0.29, 0.32, 0.16], {0}),
@@ -428,6 +428,7 @@ def database_design_table_to_latex(current_heading: str, rows: list[str]) -> lis
         "4.5 S3 vector index 물리 설계 기준": ([0.20, 0.74], {0}),
         "4.6 AWS Neptune 물리 설계 기준": ([0.16, 0.78], {0}),
         "5. 보존 정책 및 권한": ([0.18, 0.51, 0.25], {0, 2}),
+        "5.1 보존 기간 및 TTL (권고·잠정)": ([0.27, 0.27, 0.40], {0, 1}),
         "6. PoC 적용 범위와 Production 전환": ([0.18, 0.76], {0}),
         "9. 변경 이력": ([0.11, 0.18, 0.14, 0.57], {0, 1, 2}),
     }
@@ -436,6 +437,50 @@ def database_design_table_to_latex(current_heading: str, rows: list[str]) -> lis
         return table_to_latex(rows, widths, centered)
     if re.fullmatch(r"3\.2\.\d+ `[^`]+`", current_heading):
         return table_to_latex(rows, [0.22, 0.18, 0.14, 0.44], {1, 2})
+    return None
+
+
+def data_collect_table_to_latex(current_heading: str, rows: list[str]) -> list[str] | None:
+    data_collect_table_rules: dict[str, tuple[list[float], set[int]]] = {
+        "1.2 취득 데이터 구조": ([0.24, 0.70], {0}),
+        "2.1 데이터셋 관계": ([0.26, 0.68], {0}),
+        "2.3 City 수집 항목": ([0.18, 0.35, 0.35, 0.08], {0, 3}),
+        "2.4 Attraction 수집 항목": ([0.18, 0.35, 0.35, 0.08], {0, 3}),
+        "2.5 Festival 수집 항목": ([0.18, 0.35, 0.35, 0.08], {0, 3}),
+        "2.6.1 한국 데이터 출처": ([0.28, 0.32, 0.34], {0}),
+        "2.6.2 일본 데이터 출처": ([0.28, 0.32, 0.34], {0}),
+        "3.3 원본 및 정규화 저장": ([0.24, 0.70], {0}),
+        "4. 데이터 품질 정합성 관리 방법": ([0.24, 0.70], {0}),
+        "4.1.1 정규화 기준 (한·일 공통)": ([0.24, 0.70], {0}),
+        "4.1.2 정합성 지표 및 판정": ([0.38, 0.20, 0.36], {1}),
+        "5. 법적 요소 검토": ([0.20, 0.74], {0}),
+        "7. 변경 이력": ([0.11, 0.18, 0.14, 0.57], {0, 1, 2}),
+    }
+    if current_heading in data_collect_table_rules:
+        widths, centered = data_collect_table_rules[current_heading]
+        forced_breaks = {
+            "한국관광공사 관광 빅데이터 API(DataLabService)": [
+                "한국관광공사 관광 빅데이터 API",
+                "(DataLabService)",
+            ],
+            "Wikipedia API / 크롤링 / Wikidata": [
+                "Wikipedia API / 크롤링",
+                "/ Wikidata",
+            ],
+            "`MAE_T ≤ 1.5℃` 그리고 `MAPE_P ≤ 0.20`": [
+                "`MAE_T ≤ 1.5℃`",
+                "`MAPE_P ≤ 0.20`",
+            ],
+            "위 미달이나 `ConsistencyScore ≥ 60`": [
+                "위 미달",
+                "`ConsistencyScore ≥ 60`",
+            ],
+            "`ConsistencyScore < 60` 또는 표 취득 실패": [
+                "`ConsistencyScore < 60`",
+                "또는 표 취득 실패",
+            ],
+        }
+        return table_to_latex(rows, widths, centered, forced_breaks)
     return None
 
 
@@ -564,6 +609,8 @@ def markdown_to_latex(
                 output.extend(success_criteria_table_to_latex(table_lines))
             elif (database_table := database_design_table_to_latex(current_heading, table_lines)) is not None:
                 output.extend(database_table)
+            elif (data_collect_table := data_collect_table_to_latex(current_heading, table_lines)) is not None:
+                output.extend(data_collect_table)
             elif current_heading == "3.3 원본 및 정규화 저장":
                 output.extend(
                     table_to_latex(
