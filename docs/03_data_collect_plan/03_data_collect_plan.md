@@ -2,8 +2,8 @@
 
 > 문서 버전: v0.7
 > 문서 상태: 검토 중 (Review)
-> 기준 문서: `docs/01_requirements/01_requirements.md` v1.7
-> 상세 문서: `docs/03_data_collect_plan/korea_data_acquisition_plan.md`, `docs/03_data_collect_plan/japan_data_acquisition_plan.md`, `docs/03_data_collect_plan/weather_consistency_quant_review.md`
+> 기준 문서: 요구사항 명세서 v1.7
+> 상세 문서: 한국 데이터 수집 계획서, 일본 데이터 수집 계획서, 기후 데이터 정량 정합성 검토
 
 # 1. 문서 개요
 

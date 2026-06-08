@@ -59,6 +59,15 @@ DOCUMENTS = [
         "설계·명세 문서",
     ),
     Document(
+        "docs/08_data_preprocessing/data_preprocessing_plan.md",
+        "08_data_preprocessing.html",
+        "Data Preprocessing",
+        "로브 (Lovv) — 데이터 전처리 계획서",
+        "수집된 원본 데이터를 S3에 보존하고 Lambda로 정제한 뒤 DynamoDB에 적재하는 ELT 기준을 정의합니다.",
+        "초안",
+        "설계·명세 문서",
+    ),
+    Document(
         "docs/04_database_design/04_database_design.md",
         "04_database_design.html",
         "Database Design",

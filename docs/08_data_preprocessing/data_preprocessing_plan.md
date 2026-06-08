@@ -3,8 +3,8 @@
 > 문서 버전: v0.5
 > 문서 상태: 초안 (Draft)
 > 작성일: 2026-06-03
-> 기준 문서: `docs/03_data_collect_plan/03_data_collect_plan.md` v0.6
-> 상세 기준: `docs/03_data_collect_plan/korea_data_acquisition_plan.md`, `docs/03_data_collect_plan/japan_data_acquisition_plan.md`
+> 기준 문서: 데이터 수집 계획서 v0.7
+> 상세 기준: 한국 데이터 수집 계획서, 일본 데이터 수집 계획서
 
 # 1. 문서 개요
 
