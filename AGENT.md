@@ -23,6 +23,7 @@ docs/04_database_design/   데이터베이스 설계 명세서
 docs/05_agent_spec/        Agent 명세서
 docs/06_technical_spec/    기술 명세서
 docs/07_api_spec/          API 명세서
+docs/08_data_preprocessing/ 수집된 데이터 및 전처리(ELT) 문서. 수집(03)과 DB 설계(04) 사이 단계
 index.html                 GitHub Pages 첫 화면
 pages/*.html               Markdown 원본을 바탕으로 생성된 공유용 HTML 문서
 assets/                    공통 CSS, JS, 이미지 등 정적 리소스

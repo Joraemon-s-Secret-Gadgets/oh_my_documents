@@ -5,7 +5,7 @@
 > 작성일: 2026-06-03
 > 기준 리전: AWS US East (N. Virginia), `us-east-1`
 > 기준 환율: 1 USD = 1,514 KRW
-> 관련 문서: `docs/03_data_collect_plan/data_preprocessing_plan.md`
+> 관련 문서: `docs/08_data_preprocessing/data_preprocessing_plan.md`
 
 # 1. 목적
 
