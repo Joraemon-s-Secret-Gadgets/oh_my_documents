@@ -1,0 +1,88 @@
+classDiagram
+    class BaseDocument {
+        +ObjectId _id PK
+        +String content_id
+        +Integer content_type_id
+        +String title
+        +String province
+        +String city_name_ko
+        +String city_name_en
+        +Object category
+        +Object address
+        +Object location
+        +Object contact
+        +String homepage_url
+        +Object photos
+        +String overview
+        +Date created_at
+        +Date modified_at
+        +Object metadata
+        +Object details
+    }
+    class Details_Type12 {
+        +String capacity
+        +Boolean baby_carriage_allowed
+        +Boolean credit_card_accepted
+        +Boolean pet_allowed
+        +String experience_age_range
+        +String experience_guide
+        +Object heritage
+        +String open_date
+        +String parking_info
+        +String rest_date
+        +String use_season
+        +String use_time
+    }
+    class Details_Type14 {
+        +String capacity
+        +Boolean baby_carriage_allowed
+        +Boolean credit_card_accepted
+        +Boolean pet_allowed
+        +String discount_info
+        +String parking_info
+        +String parking_fee
+        +String rest_date
+        +String scale
+        +String spend_time
+        +String admission_fee
+        +String use_time
+    }
+    class Details_Type15 {
+        +String age_limit
+        +String booking_place
+        +String discount_info
+        +Object event_period
+        +String event_homepage
+        +String event_place
+        +String festival_grade
+        +String festival_type
+        +String place_info
+        +String play_time
+        +String program_details
+        +String progress_type
+        +String spend_time
+        +Array sponsors
+        +String sub_events
+        +String admission_fee
+    }
+    class Details_Type39 {
+        +Boolean credit_card_accepted
+        +String discount_info
+        +String representative_menu
+        +Boolean kids_facility
+        +String license_number
+        +String open_date
+        +String business_hours
+        +Boolean packing_available
+        +String parking_info
+        +String reservation_info
+        +String rest_date
+        +String scale
+        +Integer seat_capacity
+        +Boolean smoking_allowed
+        +Array menus
+    }
+    BaseDocument <|-- Details_Type12 : details (content_type_id 12)
+    BaseDocument <|-- Details_Type14 : details (content_type_id 14)
+    BaseDocument <|-- Details_Type15 : details (content_type_id 15)
+    BaseDocument <|-- Details_Type39 : details (content_type_id 39)

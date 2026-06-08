@@ -1,0 +1,6 @@
+erDiagram
+    USERS ||--o{ SOCIAL_ACCOUNTS : has
+    USERS ||--o{ ITINERARIES : saves
+    ITINERARIES ||--o{ ITINERARY_ITEMS : contains
+    USERS ||--o{ PLAN_REACTIONS : reacts
+    ITINERARIES ||--o{ PLAN_REACTIONS : receives

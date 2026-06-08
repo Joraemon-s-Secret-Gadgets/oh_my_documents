@@ -201,7 +201,7 @@
 <p class="doc-p">비로그인 사용자가 관리자 기능에 접근하면 로그인 또는 접근 불가 안내를 표시한다.</p>
 <p class="doc-p">담당 지역 외 데이터 접근, 승인 권한 없는 데이터 변경, API Key 미설정·만료 상황은 각각 접근 제한, 제안 상태 저장, 기본 정보 폴백으로 처리한다. API Key 미설정·만료 조치는 개발·운영 담당자가 수행한다.</p>
 <h2 id="s2-5" class="s-h2">2.5 후속 문서 반영</h2>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>후속 문서</th><th>반영 항목</th></tr></thead><tbody>
 <tr><td>사용자 시나리오 / 유저 스토리</td><td>일반 여행 사용자, 관광 운영자, 관리자, 데이터 제공 기관의 대표 시나리오를 역할별로 분리한다.</td></tr>
 <tr><td>화면 흐름 / 정보 구조</td><td>공개 추천 화면과 운영자·관리자 화면의 접근 경로를 분리하고 권한 없는 진입 상태를 정의한다.</td></tr>
@@ -217,7 +217,7 @@
 <p class="doc-p">서비스명 로브(Lovv)는 Local(소도시)과 Vibe(분위기·감성), 또는 Voyage(항해·여행)의 의미를 결합한 이름이다. 일반적인 Love와 달리 알파벳 v를 겹쳐 사용해 감성적인 여행 서비스이면서도 트렌디한 스타트업·테크 서비스의 인상을 전달한다.</p>
 <p class="doc-p">추천 시 여행 시기(월)에 빛나는 소도시와 사용자가 포함을 선택한 축제·행사를 일정에 결합하며, 각 결과에는 Google Maps, Kakao Maps, Yahoo Japan, WeatherAPI의 4개 플랫폼 API가 역할 분담하여 지도·장소 상세·현재 날씨·링크 정보를 보완 제공한다. 지역 문화 체험, 스키 액티비티 같은 P1~P4 확장 테마와 월별 기상 경향을 기준으로 한 직접 질의형 추천도 같은 추천 엔진 안에서 처리한다. 별 관측, 치유·웰니스, 예산 역산 추천은 이번 프로젝트 대상에서 제외하고 향후 단계에서 검토한다.</p>
 <h2 id="s3-2" class="s-h2">3.2 핵심 가치 제안</h2>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>가치 항목</th><th>설명</th></tr></thead><tbody>
 <tr><td>소도시 집중 일정 추천</td><td>기본·확장 테마와 사용자 조건에 맞는 소도시 1곳을 선정하고 당일치기~4박5일 일정을 설계해 제공</td></tr>
 <tr><td>계절·축제 연동</td><td>여행 시기에 빛나는 소도시와 사용자가 포함을 선택한 축제·행사를 일정에 결합</td></tr>
@@ -230,7 +230,7 @@
 <tr><td>국내·일본 통합</td><td>한국 소도시와 일본 소도시를 단일 서비스에서 나라별 트랙으로 탐색</td></tr>
 </tbody></table></div>
 <h2 id="s3-3" class="s-h2">3.3 타겟 사용자</h2>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>구분</th><th>설명</th></tr></thead><tbody>
 <tr><td>주 타겟</td><td>국내외 여행을 즐기지만 혼잡한 인기 여행지를 피하고 싶은 20~40대 성인</td></tr>
 <tr><td>부 타겟</td><td>일본 여행 경험이 있어 도쿄·오사카 외 소도시를 탐색하는 여행자</td></tr>
@@ -400,7 +400,7 @@
 <div class="api-card"><div class="api-card-hd"><div class="api-card-ico api-ic-w">W</div><div><div class="api-card-name">WeatherAPI</div><div class="api-card-role">실시간 날씨 (전 지역 · API Key 필요)</div></div></div><div class="api-card-body"><p><strong>역할:</strong> 목적지 상세 화면의 기온, 날씨 상태, 풍속, 습도 자동 제공</p><p><strong>상태:</strong> △ API Key 설정 필요</p></div></div>
 </div>
 <h2 id="s5-1" class="s-h2">5.1 Google Maps Platform</h2>
-<div class="table-wrap"><table class="info-tbl decision-tbl">
+<div class="table-wrap"><table class="info-tbl compact-tbl decision-tbl">
 <thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
 <tr><td>역할</td><td>장소 상세 정보, 지도 표시, 주변 명소 검색 (전 지역 공통)</td></tr>
 <tr><td>사용 API</td><td>Maps JavaScript API, Places API — Text Search / Find Place / Get Details / Nearby Search</td></tr>
@@ -411,7 +411,7 @@
 <tr><td>CORS 제약</td><td>없음 — SDK 방식으로 브라우저에서 직접 사용 가능</td></tr>
 </tbody></table></div>
 <h2 id="s5-2" class="s-h2">5.2 Kakao Maps</h2>
-<div class="table-wrap"><table class="info-tbl decision-tbl">
+<div class="table-wrap"><table class="info-tbl compact-tbl decision-tbl">
 <thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
 <tr><td>역할</td><td>국내 소도시 카카오 지도 표시, 주변 맛집·카페·숙박 검색</td></tr>
 <tr><td>사용 API</td><td>Kakao Maps JavaScript SDK (지도), Kakao Local REST API (주변 검색)</td></tr>
@@ -423,7 +423,7 @@
 </tbody></table></div>
 <h2 id="s5-3" class="s-h2">5.3 Yahoo Japan</h2>
 <div class="warn-box"><p><strong>⚠ Yahoo Japan Maps JS SDK 지원 중단:</strong></p><p>Yahoo Japan Maps JavaScript SDK(Yjans)가 서비스 종료되어 일본 소도시 지도는 Google Maps API로 대체 제공한다. Yahoo Japan REST API는 CORS 제한으로 클라이언트 직접 호출이 불가하며, 딥링크 방식으로 제공한다.</p></div>
-<div class="table-wrap"><table class="info-tbl decision-tbl">
+<div class="table-wrap"><table class="info-tbl compact-tbl decision-tbl">
 <thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
 <tr><td>역할</td><td>일본 소도시 여행 정보, 숙박·음식점 플랫폼 딥링크 제공</td></tr>
 <tr><td>사용 API</td><td>Yahoo Japan Local Search REST API (향후), じゃらん/食べログ/楽天トラベル 딥링크 (현재)</td></tr>
@@ -435,7 +435,7 @@
 <tr><td>지도 대체</td><td>Yahoo Japan Maps JS SDK 지원 중단 → Google Maps 대체 제공</td></tr>
 </tbody></table></div>
 <h2 id="s5-4" class="s-h2">5.4 WeatherAPI (날씨)</h2>
-<div class="table-wrap"><table class="info-tbl decision-tbl">
+<div class="table-wrap"><table class="info-tbl compact-tbl decision-tbl">
 <thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
 <tr><td>역할</td><td>전 목적지 실시간 날씨 정보 제공 (목적지 상세 화면 표시용, API Key 필요). 추천 후보 스코어링에는 월별 기상 경향 데이터를 사용한다.</td></tr>
 <tr><td>사용 API</td><td>WeatherAPI Current Weather API 및 Forecast API</td></tr>
@@ -519,7 +519,7 @@
 <tr><td>외부 행동 링크</td><td>지도 열기, 공식 관광 정보, 예약, 교통, 숙박, 맛집, 현지 플랫폼으로 이어지는 링크</td></tr>
 </tbody></table></div>
 <h2 id="s7-2" class="s-h2">7.2 데이터 품질 기준</h2>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>품질 기준</th><th>요구사항</th></tr></thead><tbody>
 <tr><td>지역 커버리지</td><td>국내와 일본 소도시를 모두 포함하되, 국가별 추천 흐름은 독립적으로 운영할 수 있어야 한다.</td></tr>
 <tr><td>테마 커버리지</td><td>각 테마별로 추천 후보를 구성할 수 있을 만큼 충분한 목적지와 설명 데이터를 확보해야 한다.</td></tr>

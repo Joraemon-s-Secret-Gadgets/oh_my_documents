@@ -100,7 +100,7 @@
  ├── Attraction
  ├── Festival
  └── VisitorStatistics</code></pre>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>관계</th><th>설명</th></tr></thead><tbody>
 <tr><td><code>City 1:N Attraction</code></td><td>하나의 도시는 여러 관광지를 가진다.</td></tr>
 <tr><td><code>City 1:N Festival</code></td><td>하나의 도시는 여러 축제·행사를 가진다.</td></tr>
@@ -210,7 +210,7 @@ Lambda 배치 전처리
 <tr><td><code>blocked</code></td><td>약관·저작권·접근 제한으로 수집 불가</td><td>딥링크 또는 빈 값으로 대체하고 사유 기록</td></tr>
 </tbody></table></div>
 <h2 id="s3-3" class="s-h2">3.3 원본 및 정규화 저장</h2>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>구분</th><th>저장 내용</th></tr></thead><tbody>
 <tr><td>Raw 데이터</td><td>API 응답, Wikipedia HTML 수집 원본, 공식 사이트 확인 결과, 이미지 메타데이터를 JSON 문서로 저장한 S3 객체</td></tr>
 <tr><td>로컬 검증 산출물</td><td>한국 <code>data/<wbr>KR/<wbr>*.json</code>, 일본 <code>data/<wbr>JP/<wbr>*.json</code>처럼 S3 Raw 적재 전 수집 구조와 수량을 검증하는 JSON 파일</td></tr>
@@ -222,7 +222,7 @@ Lambda 배치 전처리
 </tbody></table></div>
 <h1 id="s4" class="s-h1">4. 데이터 품질 정합성 관리 방법</h1>
 <p class="doc-p">수집된 데이터의 품질 및 매핑 신뢰성을 보장하기 위해 다음 검증 기준을 적용한다.</p>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>검증 항목</th><th>기준</th></tr></thead><tbody>
 <tr><td>City 매핑</td><td>모든 Attraction, Festival, VisitorStatistics는 하나의 City에 연결되어야 한다.</td></tr>
 <tr><td>행정구역 정합성</td><td>한국 시·군·구 코드와 일본 시·정·촌·구 코드가 내부 City ID와 일치해야 한다.</td></tr>

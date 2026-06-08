@@ -26,101 +26,7 @@ Lovv는 `User → Intent_Agent → Supervisor_Router → (Workers/Skills 루프)
 
 # 3. 그래프 정의 (Mermaid)
 
-```mermaid
-graph TD
-    USER["User / UI"]
-
-    subgraph MEM["AgentCore Memory"]
-        ONBOARDING[("Onboarding Profile")]
-        FEEDBACK[("Feedback History")]
-        SESSION[("Session / messages backlog")]
-        SUMMARY[("Rolling Summary")]
-        MATRIXST[("fulfilled_matrix")]
-        FCACHE[("Festival Verify Cache")]
-    end
-
-    USER --> INTENT["Intent_Agent<br/>(entry · 조건 파싱 통합 · 컨텍스트 게이트)"]
-    ONBOARDING -.-> INTENT
-    FEEDBACK -.-> INTENT
-    SESSION -.-> INTENT
-    SUMMARY -.-> INTENT
-    INTENT -.->|"갱신"| SUMMARY
-
-    INTENT --> NEEDMORE{"필수 조건 충족?"}
-    NEEDMORE -- "아니오" --> FOLLOWUP["추가 질문 생성"]
-    FOLLOWUP --> USER
-    NEEDMORE -- "예" --> SUP["Supervisor_Router<br/>I/O · 라우팅 · 상태 · 폴백"]
-
-    SUP <-.-> MATRIXST
-
-    subgraph RUNTIME["AgentCore Runtime — Sub-Agents (LLM 추론)"]
-        RETRIEVER["Polymorphic_Retriever_Agent"]
-        FESTIVAL["Festival_Verifier_Agent"]
-        RANKER["Ranker_Agent"]
-        PLANNER["Itinerary_Planner_Agent"]
-        WRITER["Explanation_Writer_Agent"]
-        VALAGENT["Output_Validator_Agent<br/>(근거·환각 검증)"]
-    end
-
-    subgraph SKILLS["AgentCore Gateway — Skills / Tools (결정적)"]
-        DEST[["Destination Search"]]
-        FCAT[["Festival Catalog Search"]]
-        WSEARCH[["Web Search (Browser)"]]
-        SCORE[["Scoring Skill"]]
-        MATRIXSK[["Matrix Transition Skill"]]
-        VALSK[["Validation Skill"]]
-        LINK[["Link Builder Skill"]]
-        WEATHER[["Weather Trends Skill"]]
-        PACK[["Output Packaging Skill"]]
-    end
-
-    KCAT[("Knowledge Catalog / Destination DB")]
-    WEBSRC[("Official Web Sources")]
-
-    SUP -->|"검색 위임"| RETRIEVER
-    RETRIEVER --> MODE{"target_region == None?"}
-    MODE -- "예 (모드1: 전국구 앵커)" --> ANCHOR["앵커 탐색 → Lock-on"]
-    MODE -- "아니오 (모드2: 지역 제한)" --> LOCAL["지역 제한 확장 검색"]
-    RETRIEVER -.-> DEST
-    RETRIEVER -.-> WEATHER
-    DEST -.-> KCAT
-    WEATHER -.-> KCAT
-    RETRIEVER --> FESTIVAL
-    FESTIVAL -.-> FCAT
-    FESTIVAL -.-> WSEARCH
-    FESTIVAL <-.-> FCACHE
-    FCAT -.-> KCAT
-    WSEARCH -.-> WEBSRC
-    RETRIEVER -->|"후보 요약 JSON"| SUP
-
-    SUP -->|"랭킹 위임"| RANKER
-    RANKER -.-> SCORE
-    SCORE -.-> ONBOARDING
-    SCORE -.-> FEEDBACK
-    RANKER -->|"선정 1곳"| SUP
-
-    SUP -.-> MATRIXSK
-    SUP -.-> PACK
-
-    SUP -->|"순차 호출"| PLANNER
-    PLANNER -.-> LINK
-    PLANNER -.-> WEATHER
-    PLANNER --> WRITER
-    WRITER --> VALSK
-    VALSK --> VALGATE{"결정적 검증 통과?"}
-    VALGATE -- "아니오" --> RETRY
-    VALGATE -- "예" --> VALAGENT
-    VALAGENT -.-> KCAT
-    VALAGENT --> VALID{"의미 검증 통과?"}
-    VALID -- "아니오" --> RETRY{"retry_count < 2?"}
-    RETRY -- "예" --> SUP
-    RETRY -- "아니오" --> FALLBACK["안전 폴백 응답<br/>(confidence 하향 + 결측 안내)"]
-    VALID -- "예" --> SERVING["Backend_Serving / SAM"]
-    PACK -.-> SERVING
-    FALLBACK --> SERVING
-    SERVING --> RESPONSE["응답 패키지"]
-    RESPONSE --> USER
-```
+![Lovv LangGraph 전체 그래프](../../assets/images/mermaid/05-agent-spec-langgraph-flow-01.png)
 
 > 표기: 사각형 = Sub-Agent(LLM), `[[ ]]` = Skill/Tool(결정적), 원통 = Memory/저장소. 점선 = 데이터 참조, 실선 = 제어 흐름.
 
@@ -128,74 +34,13 @@ graph TD
 
 Tool/Skill·저장소를 제외하고 **에이전트 간 제어 흐름**만 표현한 뷰다. Supervisor가 허브이며, 검색·랭킹은 위임 후 복귀, 일정·설명·검증은 순차 호출, 검증 실패는 재시도 가드로 Supervisor에 복귀한다.
 
-```mermaid
-graph TD
-    USER["User / UI"] --> INTENT["Intent_Agent<br/>(entry · 판별/컨텍스트 게이트)"]
-    INTENT --> NEEDMORE{"필수 조건 충족?"}
-    NEEDMORE -- "아니오" --> USER
-    NEEDMORE -- "예" --> SUP["Supervisor_Router<br/>(I/O 허브 · 라우팅)"]
-
-    SUP -->|"검색 위임"| RETRIEVER["Polymorphic_Retriever_Agent"]
-    RETRIEVER -->|"축제 검증 위임"| FESTIVAL["Festival_Verifier_Agent"]
-    FESTIVAL --> RETRIEVER
-    RETRIEVER -->|"후보 요약"| SUP
-
-    SUP -->|"랭킹 위임"| RANKER["Ranker_Agent"]
-    RANKER -->|"선정 1곳"| SUP
-
-    SUP -->|"순차 호출"| PLANNER["Itinerary_Planner_Agent"]
-    PLANNER --> WRITER["Explanation_Writer_Agent"]
-    WRITER --> VALAGENT["Output_Validator_Agent"]
-    VALAGENT -- "통과" --> SERVING["Backend_Serving / SAM"]
-    VALAGENT -- "실패 · retry_count < 2" --> SUP
-    VALAGENT -- "실패 · retry 소진" --> FALLBACK["안전 폴백"]
-    FALLBACK --> SERVING
-    SERVING --> USER
-```
+![Agent 전용 오케스트레이션 뷰](../../assets/images/mermaid/05-agent-spec-langgraph-flow-02.png)
 
 ## 3.2 Agent–Tool 매핑 뷰 (도구/스킬 사용)
 
 각 에이전트가 호출하는 **Tool/Skill(결정적)** 만 분리한 뷰다. 에이전트는 LLM 추론을 담당하고, 계산·검색·변환·검증은 Gateway에 등록된 Skill로 위임한다.
 
-```mermaid
-graph LR
-    subgraph AGENTS["Agents (LLM 추론)"]
-        INTENT["Intent_Agent"]
-        SUP["Supervisor_Router"]
-        RETRIEVER["Polymorphic_Retriever_Agent"]
-        FESTIVAL["Festival_Verifier_Agent"]
-        RANKER["Ranker_Agent"]
-        PLANNER["Itinerary_Planner_Agent"]
-        WRITER["Explanation_Writer_Agent"]
-        VALAGENT["Output_Validator_Agent"]
-        SERVING["Backend_Serving / SAM"]
-    end
-
-    subgraph TOOLS["Tools / Skills (결정적, AgentCore Gateway)"]
-        DEST[["Destination Search"]]
-        FCAT[["Festival Catalog Search"]]
-        WSEARCH[["Web Search (Browser)"]]
-        WEATHER[["Weather Trends Skill"]]
-        SCORE[["Scoring Skill"]]
-        MATRIXSK[["Matrix Transition Skill"]]
-        LINK[["Link Builder Skill"]]
-        VALSK[["Validation Skill"]]
-        PACK[["Output Packaging Skill"]]
-        WAPI[["WeatherAPI Proxy"]]
-    end
-
-    SUP --> MATRIXSK
-    RETRIEVER --> DEST
-    RETRIEVER --> WEATHER
-    FESTIVAL --> FCAT
-    FESTIVAL --> WSEARCH
-    RANKER --> SCORE
-    PLANNER --> LINK
-    PLANNER --> WEATHER
-    VALAGENT --> VALSK
-    SERVING --> PACK
-    SERVING --> WAPI
-```
+![Agent Tool 매핑 뷰](../../assets/images/mermaid/05-agent-spec-langgraph-flow-03.png)
 
 | 에이전트 | 사용 Tool / Skill |
 | --- | --- |
@@ -363,7 +208,7 @@ class UnifiedAgentState(TypedDict):
 
 모델 계층 — **Amazon Bedrock**:
 
-- **LLM 추론**: 모든 LLM 노드는 Bedrock 모델을 Converse API로 호출. 작업별 차등 티어(파싱=경량 Nova Lite/Claude Haiku, 생성·검증=상위 Claude Sonnet 계열).
+- **LLM 추론**: 모든 LLM 노드는 Bedrock 모델을 Converse API로 호출. 작업별 차등 티어(파싱=경량 Nova Lite/OpenAI gpt-oss-20b/Claude Haiku, 검증=중급 OpenAI gpt-oss-120b/Llama 70B, 생성=상위 Claude Sonnet 계열). 2026년 OpenAI 오픈웨이트(gpt-oss)는 us-east-1 후보로 추가, 프런티어(GPT-5.5/5.4·Codex)는 us-east-1 미제공이라 리전 변경 시에만 후보. 상세 단가·리전·배정은 `agent_update.md` 6.3.
 - **임베딩**: 장소·쿼리 임베딩은 Amazon Titan Text Embeddings V2(1,024차원) 또는 Cohere Embed.
 - **관리형 RAG**: 전국구 RAG는 Bedrock Knowledge Bases(청킹·임베딩·검색)로 구현, 정형 필터는 DB와 하이브리드.
 

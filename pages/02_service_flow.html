@@ -190,7 +190,7 @@
 </tbody></table></div>
 <h1 id="s7" class="s-h1">7. 챗봇 및 AI 일정 생성 흐름</h1>
 <h2 id="s7-1" class="s-h2">7.1 자연어 입력 예시</h2>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>입력 예시</th><th>구조화 조건</th></tr></thead><tbody>
 <tr><td>&quot;6월에 비 덜 오는 일본 소도시 추천해줘&quot;</td><td>국가=일본, 월=6월, 진입점=월별 기상 경향</td></tr>
 <tr><td>&quot;혼자 조용히 쉬는 바다 여행 가고 싶어&quot;</td><td>동행=혼자, 테마=바다·해안/휴양</td></tr>
@@ -199,7 +199,7 @@
 </tbody></table></div>
 <h2 id="s7-2" class="s-h2">7.2 추천 생성 전 필수 확인</h2>
 <p class="doc-p">챗봇은 추천 생성 직전 아래 항목을 확인한다.</p>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>확인 항목</th><th>기본 처리</th></tr></thead><tbody>
 <tr><td>국가</td><td>명시되지 않으면 한국/일본 중 선택 질문</td></tr>
 <tr><td>여행 시기</td><td>월 또는 계절 입력 요청</td></tr>
@@ -220,7 +220,7 @@
 </tbody></table></div>
 <h1 id="s8" class="s-h1">8. 추천 결과 흐름</h1>
 <h2 id="s8-1" class="s-h2">8.1 결과 카드 구성</h2>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>영역</th><th>표시 내용</th></tr></thead><tbody>
 <tr><td>추천 대상</td><td>소도시명, 국가, 지역, 대표 이미지</td></tr>
 <tr><td>추천 이유</td><td>사용자 조건, 계절 적합도, 혼잡도, 월별 기상 경향 중 2개 이상</td></tr>
@@ -233,7 +233,7 @@
 <h2 id="s8-2" class="s-h2">8.2 대체 일정 토글</h2>
 <p class="doc-p">월별 기상 경향상 우천, 폭설, 장마, 태풍 가능성이 높은 목적지는 &quot;기상 악화 시 대체 일정 보기&quot; 토글을 제공한다. 토글을 활성화하면 동일 목적지 안에서 실내 중심 일정으로 전환한다. WeatherAPI 현재 날씨는 상세 화면 표시용으로만 사용하고 추천 스코어링 기준으로 사용하지 않는다.</p>
 <h2 id="s8-3" class="s-h2">8.3 실시간 피드백 반영</h2>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>피드백 유형</th><th>처리</th></tr></thead><tbody>
 <tr><td>이동 부담 감소</td><td>동선 거리와 이동 횟수를 줄이고 일정 블록을 재배치한다</td></tr>
 <tr><td>카페/맛집 추가</td><td>장소 후보를 추가하되 출처와 외부 탐색 링크를 함께 표시한다</td></tr>
@@ -259,7 +259,7 @@
 <tr><td>4</td><td>일반 사용자</td><td>업데이트된 조건으로 검색한다</td><td>RAG 검색 시 최신 데이터와 검증 뱃지 사용</td><td>&quot;관광공사/지자체 검증 완료&quot; 등 신뢰 표시</td></tr>
 </tbody></table></div>
 <h1 id="s11" class="s-h1">11. 예외 흐름</h1>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>상황</th><th>처리</th></tr></thead><tbody>
 <tr><td>필수 조건 누락</td><td>챗봇이 국가, 월, 일정 유형, 축제 포함 여부를 추가 질문한다</td></tr>
 <tr><td>추천 후보 없음</td><td>조건 완화 제안 및 다른 월/테마 안내를 제공한다</td></tr>

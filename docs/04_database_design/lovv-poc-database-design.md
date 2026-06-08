@@ -36,62 +36,7 @@ PoC에서는 사용자의 의사결정 흐름을 모두 영속화하지 않고, 
 
 ## 3. ERD
 
-```mermaid
-erDiagram
-    USERS {
-        uuid id PK
-        string email
-        string display_name
-        string avatar_url
-        datetime created_at
-    }
-
-    SOCIAL_ACCOUNTS {
-        uuid id PK
-        uuid user_id FK
-        string provider
-        string provider_user_id
-        datetime created_at
-    }
-
-    ITINERARIES {
-        uuid id PK
-        uuid user_id FK
-        string title
-        text summary
-        string duration_label
-        string festival_choice
-        string intensity_label
-        json preference_snapshot
-        text request_summary
-        datetime saved_at
-        datetime created_at
-    }
-
-    ITINERARY_ITEMS {
-        uuid id PK
-        uuid itinerary_id FK
-        int sort_order
-        string time_slot
-        string place_name
-        string move_hint
-        text recommendation_reason
-    }
-
-    PLAN_REACTIONS {
-        uuid id PK
-        uuid user_id FK
-        uuid itinerary_id FK
-        string reaction_type
-        datetime created_at
-    }
-
-    USERS ||--o{ SOCIAL_ACCOUNTS : has
-    USERS ||--o{ ITINERARIES : saves
-    ITINERARIES ||--o{ ITINERARY_ITEMS : contains
-    USERS ||--o{ PLAN_REACTIONS : reacts
-    ITINERARIES ||--o{ PLAN_REACTIONS : receives
-```
+![Lovv PoC RDB ERD](../../assets/images/mermaid/04-database-design-lovv-poc-database-design-01.png)
 
 ## 4. 테이블 설계
 

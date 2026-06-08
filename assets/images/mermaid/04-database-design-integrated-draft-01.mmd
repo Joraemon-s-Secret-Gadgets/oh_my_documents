@@ -1,0 +1,91 @@
+erDiagram
+    users ||--o{ user_social_accounts : has
+    users ||--o{ auth_sessions : logs_in
+    users ||--o{ user_roles : has
+    roles ||--o{ user_roles : assigned
+    organizations ||--o{ users : includes
+    organizations ||--o{ organization_regions : manages
+    destinations ||--o{ organization_regions : covered_by
+    users ||--o{ media_assets : owns
+
+    users ||--|| user_profiles : has
+    users ||--o{ user_preferences : owns
+    user_preferences ||--o{ user_preference_themes : maps
+    themes ||--o{ user_preference_themes : selected
+
+    destinations ||--o{ attractions : has
+    destinations ||--o{ festivals : has
+    destinations ||--o{ experiences : has
+    destinations ||--o{ destination_monthly_weather : has
+    destinations ||--o{ destination_crowd_metrics : has
+    destinations ||--o{ destination_external_links : has
+    destinations ||--o{ destination_themes : tagged
+    media_assets ||--o{ destinations : represents
+    themes ||--o{ destination_themes : classifies
+
+    attractions ||--o{ attraction_tags : tagged
+    festivals ||--o{ festival_tags : tagged
+    experiences ||--o{ experience_tags : tagged
+    tags ||--o{ attraction_tags : classifies
+    tags ||--o{ festival_tags : classifies
+    tags ||--o{ experience_tags : classifies
+
+    data_ingestion_batches ||--o{ raw_source_snapshots : includes
+    data_ingestion_batches ||--o{ staging_records : stages
+    raw_source_snapshots ||--o{ content_sources : becomes
+    destinations ||--o{ content_sources : sourced
+    attractions ||--o{ content_sources : sourced
+    festivals ||--o{ content_sources : sourced
+    experiences ||--o{ content_sources : sourced
+    content_sources ||--o{ data_verifications : verified_by
+    destination_external_links ||--o{ external_link_checks : checked
+
+    users ||--o{ chat_sessions : starts
+    chat_sessions ||--o{ chat_messages : may_log
+    chat_sessions ||--o{ search_criteria : confirms
+    users ||--o{ search_criteria : owns
+    search_criteria ||--o{ search_criteria_festivals : includes
+    festivals ||--o{ search_criteria_festivals : considered
+    search_criteria ||--o{ agent_runs : feeds
+    users ||--o{ agent_runs : requests
+    chat_sessions ||--o{ agent_runs : runs_in
+    users ||--o{ async_jobs : requests
+    async_jobs }o--o| media_assets : outputs
+
+    users ||--o{ recommendation_requests : requests
+    search_criteria ||--o{ recommendation_requests : becomes
+    agent_runs ||--o{ recommendation_results : produces
+    recommendation_requests ||--o{ recommendation_results : produces
+    destinations ||--o{ recommendation_results : selected
+    recommendation_results ||--o{ recommendation_candidate_scores : ranks
+    destinations ||--o{ recommendation_candidate_scores : candidate
+    recommendation_results ||--o{ itineraries : has
+    agent_runs ||--o{ itineraries : creates
+    itineraries ||--o{ itinerary_days : has
+    itinerary_days ||--o{ itinerary_items : has
+    attractions ||--o{ itinerary_items : may_reference
+    festivals ||--o{ itinerary_items : may_reference
+    experiences ||--o{ itinerary_items : may_reference
+
+    users ||--o{ saved_itineraries : saves
+    itineraries ||--o{ saved_itineraries : saved
+    users ||--o{ user_feedback : leaves
+    recommendation_results ||--o{ user_feedback : receives
+    destinations ||--o{ user_feedback : target
+    users ||--o{ bookmarks : creates
+    users ||--o{ visit_records : records
+    visit_records ||--o{ visit_ratings : has
+
+    users ||--o{ reviews : writes
+    reviews ||--o{ review_comments : has
+    users ||--o{ review_comments : writes
+    reviews ||--o{ review_reactions : receives
+    users ||--o{ review_reactions : leaves
+    users ||--o{ reports : submits
+    reviews ||--o{ reports : may_target
+    review_comments ||--o{ reports : may_target
+
+    users ||--o{ data_submissions : submits
+    data_submissions ||--o{ data_submission_reviews : reviewed
+    users ||--o{ data_submission_reviews : reviews
+    users ||--o{ audit_logs : acts

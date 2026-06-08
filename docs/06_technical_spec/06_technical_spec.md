@@ -96,6 +96,7 @@
 | --- | --- |
 | 통합 목적지 DB | 축제명, 장소 개요, 이미지, 위경도 좌표 등 무거운 마스터 정보를 저장하고 있는 DB로, 1차 조회 시 성능과 레이턴시 확보를 위해 사용 |
 | S3 vector 기반 RAG Index | 장소·테마·자연어 조건의 임베딩 검색과 유사도 재랭킹에 사용. 정형 필터는 DB, 의미 검색은 S3 vector 기능 기반 인덱스로 분리 |
+| AWS Neptune Graph Index | 도시·축제·테마·장소 관계의 다단계 탐색과 관계 기반 후보 확장에 사용. 의미 검색은 S3 vector, 관계 탐색은 Neptune으로 분리 |
 | 축제 검증 캐시 | `festival_id + travelYear` 기준으로 해당 연도 날짜 검증 결과를 재사용해 웹 검색 비용과 지연을 줄임 |
 | 실시간 API 교차 검증 | 당해 연도 정확한 개최 일정/기간 등 실시간 최신화가 필수적인 특정 항목에 한해, `Festival_Verifier_Agent`가 공식 웹 출처를 확인하고 정적 필드를 보완하는 하이브리드 데이터 연동 |
 | 목적지 기본 정보 | 정규화된 소도시 단위로 관리 |
@@ -143,7 +144,7 @@
 | Memory | AgentCore Memory, DynamoDB | 세션 상태, 롤링 요약, `fulfilled_matrix`, 축제 검증 캐시 저장 |
 | Gateway | Lambda/API 기반 Skill | Scoring, Matrix Transition, Validation, Link, Weather, Packaging 같은 결정적 Skill 실행 |
 | Model | Amazon Bedrock Converse API | Sub-Agent별 LLM 추론과 모델 교체 추상화 |
-| Retrieval | S3 vector 기반 RAG Index | 자연어·테마 임베딩 검색과 정형 필터 병행 |
+| Retrieval | S3 vector 기반 RAG Index, AWS Neptune | 자연어·테마 임베딩 검색은 S3 vector, 도시·축제·테마 관계 탐색은 Neptune으로 분리 |
 | Evaluation | AgentCore Evaluations 또는 동등 하네스 | trajectory, 조건 충족, 근거성, 루프 안전성 회귀 평가 |
 
 # 9. 변경 이력

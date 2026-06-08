@@ -510,10 +510,13 @@
         border: 1px solid var(--rule);
         border-radius: 8px;
         background: var(--white);
+        box-shadow: 0 8px 22px rgba(34, 34, 34, 0.05);
       }
       .table-wrap.scroll-table {
         overflow-x: auto;
         overflow-y: hidden;
+        scrollbar-color: rgba(242, 101, 24, 0.42) transparent;
+        scrollbar-width: thin;
       }
       .table-wrap.scroll-table::after {
         content: "";
@@ -702,24 +705,37 @@
       .info-tbl th {
         background: var(--navy);
         color: #fff;
-        padding: 9px 14px;
+        padding: 10px 14px;
         font-weight: 600;
         font-size: 0.78rem;
         text-align: left;
+        vertical-align: middle;
+        border-right: 1px solid rgba(255, 255, 255, 0.14);
+        line-height: 1.45;
+      }
+      .info-tbl th:last-child {
+        border-right: none;
       }
       .info-tbl td {
-        padding: 9px 14px;
+        padding: 10px 14px;
         border-bottom: 1px solid var(--rule);
+        border-right: 1px solid rgba(252, 231, 219, 0.76);
         vertical-align: top;
-        line-height: 1.65;
+        line-height: 1.62;
         word-break: keep-all;
         overflow-wrap: anywhere;
+      }
+      .info-tbl td:last-child {
+        border-right: none;
       }
       .info-tbl tr:last-child td {
         border-bottom: none;
       }
       .info-tbl tr:nth-child(even) td {
         background: var(--navy-xlt);
+      }
+      .info-tbl tbody tr:hover td {
+        background: #fff8f1;
       }
       .info-tbl .key-cell {
         background: var(--navy-lt);
@@ -728,6 +744,15 @@
         white-space: nowrap;
         width: 18%;
         min-width: 120px;
+      }
+      .compact-tbl th:first-child,
+      .compact-tbl td:first-child {
+        width: 28%;
+        font-weight: 600;
+        color: var(--dark-charcoal);
+      }
+      .compact-tbl td:first-child {
+        background: rgba(252, 231, 219, 0.42);
       }
       .info-tbl .key-cell.green-key {
         background: var(--green-lt);
@@ -809,8 +834,8 @@
         border-radius: 3px;
         border: 1px solid var(--rule);
         word-break: normal;
-        overflow-wrap: normal;
-        white-space: nowrap;
+        overflow-wrap: anywhere;
+        white-space: normal;
       }
       main#cover > blockquote code,
       p.doc-p code {
@@ -818,8 +843,8 @@
         overflow-wrap: anywhere;
       }
       .info-tbl code {
-        white-space: nowrap;
-        overflow-wrap: normal;
+        white-space: normal;
+        overflow-wrap: anywhere;
       }
       .db-schema-tbl {
         table-layout: fixed;
@@ -911,12 +936,18 @@
       .req-tbl thead th {
         background: var(--navy);
         color: #fff;
-        padding: 9px 12px;
+        padding: 10px 12px;
         font-weight: 600;
         font-size: 0.75rem;
         text-align: left;
         position: sticky;
         top: 0;
+        vertical-align: middle;
+        border-right: 1px solid rgba(255, 255, 255, 0.14);
+        line-height: 1.45;
+      }
+      .req-tbl thead th:last-child {
+        border-right: none;
       }
       .req-tbl thead th:first-child {
         width: 118px;
@@ -979,15 +1010,22 @@
         overflow-wrap: anywhere;
       }
       .req-tbl tbody td {
-        padding: 9px 12px;
+        padding: 10px 12px;
         border-bottom: 1px solid var(--rule);
+        border-right: 1px solid rgba(252, 231, 219, 0.76);
         vertical-align: top;
-        line-height: 1.65;
+        line-height: 1.62;
         word-break: keep-all;
         overflow-wrap: anywhere;
       }
+      .req-tbl tbody td:last-child {
+        border-right: none;
+      }
       .req-tbl tbody tr:nth-child(even) td {
         background: var(--navy-xlt);
+      }
+      .req-tbl tbody tr:hover td {
+        background: #fff8f1;
       }
       .req-tbl tbody tr:hover td {
         background: var(--card-peach);

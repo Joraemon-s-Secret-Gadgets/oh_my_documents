@@ -210,102 +210,7 @@ Supervisor는 어떤 콘텐츠도 직접 "추론"하거나 "가공"하지 않으
 
 반영 사항: ① `Intent_Agent`에 조건 파싱 통합(2.1), ② Retriever 단일 노드 + 모드 분기(3.3), ③ 검증 실패 시 재시도 루프 가드(2.2), ④ 축제 검증 캐시(2.3), ⑤ Supervisor를 I/O·라우팅 허브로 한정하고 Sub-Agent / Skill 위임 분리(4장).
 
-```mermaid
-graph TD
-    USER["User / UI"]
-
-    subgraph MEM["AgentCore Memory"]
-        ONBOARDING[("Onboarding Profile")]
-        FEEDBACK[("Feedback History")]
-        SESSION[("Session / Chat State")]
-        MATRIXST[("fulfilled_matrix")]
-        FCACHE[("Festival Verify Cache")]
-    end
-
-    USER --> INTENT["Intent_Agent<br/>(조건 파싱 통합)"]
-    ONBOARDING -.-> INTENT
-    FEEDBACK -.-> INTENT
-    SESSION -.-> INTENT
-
-    INTENT --> NEEDMORE{"필수 조건 충족?"}
-    NEEDMORE -- "아니오" --> FOLLOWUP["추가 질문 생성"]
-    FOLLOWUP --> USER
-    NEEDMORE -- "예" --> SUP["Supervisor_Router<br/>I/O · 라우팅 · 상태 · 폴백"]
-
-    SUP <-.-> MATRIXST
-
-    subgraph RUNTIME["AgentCore Runtime — Sub-Agents (LLM 추론)"]
-        RETRIEVER["Polymorphic_Retriever_Agent"]
-        FESTIVAL["Festival_Verifier_Agent"]
-        RANKER["Ranker_Agent"]
-        PLANNER["Itinerary_Planner_Agent"]
-        WRITER["Explanation_Writer_Agent"]
-        VALAGENT["Output_Validator_Agent<br/>(근거·환각 검증)"]
-    end
-
-    subgraph SKILLS["AgentCore Gateway — Skills / Tools (결정적)"]
-        DEST[["Destination Search"]]
-        FCAT[["Festival Catalog Search"]]
-        WSEARCH[["Web Search (Browser)"]]
-        SCORE[["Scoring Skill"]]
-        MATRIXSK[["Matrix Transition Skill"]]
-        VALSK[["Validation Skill"]]
-        LINK[["Link Builder Skill"]]
-        WEATHER[["Weather Trends Skill"]]
-        PACK[["Output Packaging Skill"]]
-    end
-
-    KCAT[("Knowledge Catalog / Destination DB")]
-    WEBSRC[("Official Web Sources")]
-
-    %% 검색 구간 (매트릭스 순환 제어)
-    SUP -->|"검색 위임"| RETRIEVER
-    RETRIEVER --> MODE{"target_region == None?"}
-    MODE -- "예 (모드1: 전국구 앵커)" --> ANCHOR["앵커 탐색 → Lock-on"]
-    MODE -- "아니오 (모드2: 지역 제한)" --> LOCAL["지역 제한 확장 검색"]
-    RETRIEVER -.-> DEST
-    RETRIEVER -.-> WEATHER
-    DEST -.-> KCAT
-    WEATHER -.-> KCAT
-    RETRIEVER --> FESTIVAL
-    FESTIVAL -.-> FCAT
-    FESTIVAL -.-> WSEARCH
-    FESTIVAL <-.-> FCACHE
-    FCAT -.-> KCAT
-    WSEARCH -.-> WEBSRC
-    RETRIEVER -->|"후보 요약 JSON"| SUP
-
-    %% 랭킹 구간
-    SUP -->|"랭킹 위임"| RANKER
-    RANKER -.-> SCORE
-    SCORE -.-> ONBOARDING
-    SCORE -.-> FEEDBACK
-    RANKER -->|"선정 1곳"| SUP
-
-    %% Supervisor 직접 보유 Skill
-    SUP -.-> MATRIXSK
-    SUP -.-> PACK
-
-    %% 순차 호출 구간 (매트릭스 재평가 없음)
-    SUP -->|"순차 호출"| PLANNER
-    PLANNER -.-> LINK
-    PLANNER -.-> WEATHER
-    PLANNER --> WRITER
-    WRITER --> VALSK
-    VALSK --> VALGATE{"결정적 검증 통과?"}
-    VALGATE -- "아니오" --> RETRY
-    VALGATE -- "예" --> VALAGENT
-    VALAGENT -.-> KCAT
-    VALAGENT --> VALID{"의미 검증 통과?"}
-    VALID -- "아니오" --> RETRY{"retry_count < 2?"}
-    RETRY -- "예" --> SUP
-    RETRY -- "아니오" --> FALLBACK["안전 폴백 응답<br/>(confidence 하향 + 결측 안내)"]
-    VALID -- "예" --> SERVING["Backend_Serving / SAM"]
-    PACK -.-> SERVING
-    FALLBACK --> SERVING
-    SERVING --> RESPONSE["응답 패키지"]
-    RESPONSE --> USER
-```
+![최신 Agent 아키텍처 구성도](../../assets/images/mermaid/05-agent-spec-agent-update-01.png)
 
 > 표기 규칙: 사각형 = Sub-Agent(LLM 추론), `[[ ]]` = Skill/Tool(결정적), 원통 = Memory/데이터 저장소. 점선(`-.->`)은 데이터 참조·조회, 실선(`-->`)은 제어 흐름.
 
@@ -327,7 +232,7 @@ AgentCore는 오픈소스 프레임워크(LangGraph, Strands Agents 등)와 MCP/
 | 본 설계 요소 | AgentCore 구성요소 | 매핑 근거 |
 | --- | --- | --- |
 | `Supervisor_Router`, 각 Sub-Agent | **AgentCore Runtime** | 서버리스로 에이전트 배포·확장. LangGraph 그래프를 그대로 호스팅 |
-| `onboardingProfile`, `feedbackHistory`, `session/chat state`, `fulfilled_matrix`, 축제 검증 캐시 | **AgentCore Memory** | 단기(세션 상태)·장기(선호/피드백) 컨텍스트 보관. 2.3 검증 캐시 TTL도 Memory로 운용 |
+| `onboardingProfile`, `feedbackHistory`, `session/chat state`, `fulfilled_matrix`, 축제 검증 캐시 | **AgentCore Memory** | 단기(세션 상태)·장기(선호/피드백) 컨텍스트 보관. 물리 영속화는 04_db 정합(6.2.1) — 피드백 원장=MySQL, 검증 캐시·trace=DynamoDB가 물리 소유, Memory는 조회 뷰 |
 | Skill / Tool (Scoring, Matrix, Validation, Link, Weather, Destination/Festival Catalog Search 등) | **AgentCore Gateway** | API·Lambda를 에이전트 도구로 자동 노출. 결정적 Skill을 Lambda로 구현해 Gateway에 등록 |
 | `Festival_Verifier_Agent`의 웹 검색 | **AgentCore Browser** + Web Search | 공식 출처 탐색·렌더링. 원문은 Agent 내부에서만 소비 |
 | Scoring / Validation 등 계산형 Skill (선택) | **AgentCore Code Interpreter** | 결정적 연산을 격리 실행. Gateway/Lambda 대안 |
@@ -341,13 +246,42 @@ AgentCore는 오픈소스 프레임워크(LangGraph, Strands Agents 등)와 MCP/
 2. 결정적 Skill은 LLM이 아닌 Lambda/Code Interpreter로 구현해 Gateway에 등록하고, Runtime의 Agent는 Skill을 도구로만 호출한다 (4장 위임 원칙과 일치).
 3. `fulfilled_matrix`와 세션 상태는 Memory에 두어 Supervisor가 raw 콘텐츠 없이 상태만으로 라우팅하도록 한다 (4.5 토큰 절감 규칙).
 
+## 6.2.1 AgentCore Memory 설계 (DB 설계 정합)
+
+> 신뢰도: 매핑은 **높음**(두 문서 직접 근거). 일부 항목은 `04_database_design.md`에 대응 테이블이 없어 후속 정의가 필요해 **중간**. 기준 문서: `04_database_design.md` v0.4 §1.3·§3.3·§5.
+
+AgentCore Memory는 런타임 관리형 메모리 **논리 계층**으로, 단기(short-term, 세션)와 장기(long-term, 사용자) 두 범주를 제공한다. 물리 영속화는 `04_database_design.md`의 저장소 책임(MySQL 원장 / DynamoDB TTL / 대화 전문 미저장)과 다음과 같이 정합한다.
+
+| 메모리 항목 | 범주 | AgentCore Memory 역할 | 물리 영속화 (04_db 기준) | 보존 |
+| --- | --- | --- | --- | --- |
+| `messages` (대화 백로그) | 단기 | 세션 컨텍스트, Supervisor 미전달 | **영속 저장 안 함** — 대화 전문 장기 저장 금지(NFR-013, 04_db §1.2·§5). 세션 종료 시 폐기 | 세션 한정 |
+| `conversation_summary` (롤링 요약) | 단기 | Intent 입력용 압축 | 파생 요약. 원장 저장 대상 아님, 세션 메모리에만 유지 | 세션 한정 |
+| `fulfilled_matrix` / `target_region` / `selected_destination` | 단기 | 라우팅·턴 간 상태 | 런타임 상태(원장 아님). **요약만** DynamoDB `lovv_agent_runs`(`fulfilled_matrix_summary`, `target_region`)에 TTL로 trace | 세션 + trace TTL |
+| onboarding 선호 테마 (`onboardingProfile`) | 장기 | 개인화 입력 | ⚠ **현재 04_db에 전용 테이블 없음** → MySQL 사용자 프로필 확장 필요(아래 갭 A) | 영구(사용자 통제) |
+| `feedbackHistory` (좋아요/싫어요) | 장기 | 개인화 가감점 | MySQL `plan_reactions`(`reaction_type` like/dislike 원장). 단 '저장/재추천' 등 광의 피드백은 매핑 보강 필요 | 영구(삭제 가능) |
+| 축제 검증 캐시 (`festival_id+travelYear`) | 단기성 캐시 | 재검증 생략 뷰 | **DynamoDB `lovv_festival_verify_cache`가 물리 소유**(TTL confirmed 30·tentative 7·unknown 1일, 04_db §3.3) | TTL |
+
+정합 원칙:
+
+1. AgentCore Memory는 **논리 계층**이며, 영구·조회·삭제가 필요한 데이터(피드백 원장)는 **MySQL**, TTL 캐시·trace는 **DynamoDB**가 물리 소유한다(04_db §1.3 저장소 책임 준수).
+2. 대화 전문(`messages`)·민감 자유 입력은 어떤 저장소에도 영속 저장하지 않는다(NFR-013, 04_db §1.2·§5·§7 체크리스트).
+3. trace에는 redacted 요약만 남기고 원문 개인정보·전문은 금지한다(04_db §4.3 Payload 원칙, 본 문서 10장 불변식).
+
+식별된 갭 (후속 정의 필요):
+
+- **갭 A — 장기 선호 테이블 부재**: `onboardingProfile`(장기 선호 테마)과 광의 `feedbackHistory`를 담을 MySQL 테이블이 04_db에 없다. `users` 확장 또는 `user_onboarding`/`user_preferences` 테이블 신설을 04_db에 제안해야 한다. Agent 입력(`onboardingProfile`, `feedbackHistory`)·개인화 랭킹의 영속 근거가 된다.
+- **갭 B — 축제 캐시 소유권 문구 불일치**: 본 문서 §6.2 매핑표의 "검증 캐시 TTL도 Memory로 운용" 표현과 04_db의 DynamoDB 테이블 소유가 충돌. "DynamoDB가 물리 소유, Memory는 조회 뷰"로 통일한다(본 절에 반영).
+- **갭 C — 세션 상태 보존 기간 미정**: `fulfilled_matrix`·`target_region`·`selected_destination` 등 단기 세션 상태의 보존 기간(Memory TTL)이 04_db에 정의돼 있지 않다. 멀티턴 지속을 위한 세션 상태 저장소(DynamoDB 세션 테이블 또는 AgentCore Memory TTL 정책)를 명시해야 한다.
+
+> 영향 범위: `04_database_design.md`(갭 A 테이블 신설·§3.3 세션 상태/갭 C·§3.6 식별자 매핑), `05_agent_spec.md` §6·§9.1, `langgraph_flow.md` §7.2·§9. 변경 영향 체크리스트(9장)에 04_db 동기화 항목 추가.
+
 ## 6.3 Bedrock 모델 계층
 
 > 신뢰도: 사실(모델·임베딩·KB 존재)은 높음 — AWS 공식 문서 근거. 단, 모델 선택·티어 배정은 비용/품질 계측 후 확정 권장(중간).
 
 ### 6.3.1 에이전트별 모델 배정 (비용·품질 티어링)
 
-**가격·리전은 AWS Bedrock(us-east-1) 기준으로 표준화한다.** AgentCore Runtime은 모델 비종속이지만, 본 프로젝트는 개발·서빙 리전을 **us-east-1**로 고정하고 후보를 **Bedrock 카탈로그에 올라온 모델**로 한정한다(따라서 OpenAI·Gemini처럼 Bedrock 미제공 모델은 제외). 단일 제공자에 고정하지 않으며, 모든 호출은 Bedrock **Converse API**로 추상화해 모델 교체를 가능하게 둔다.
+**가격·리전은 AWS Bedrock(us-east-1) 기준으로 표준화한다.** AgentCore Runtime은 모델 비종속이지만, 본 프로젝트는 개발·서빙 리전을 **us-east-1**로 고정하고 후보를 **Bedrock 카탈로그에 올라온 모델**로 한정한다. **2026년 기준 OpenAI 모델이 Bedrock에 추가되어 후보에 포함한다** — 오픈웨이트 `gpt-oss-120b`/`gpt-oss-20b`(단일 통합 API로 호출, 128K 컨텍스트, 조정 가능 추론 레벨)와 프런티어 `GPT-5.5`/`GPT-5.4`·`Codex` 계열이다. **단, 프런티어 `GPT-5.5/5.4`·`Codex`는 us-east-1에 미출시이므로(6.3.1 표 하단 주석) 본 us-east-1 고정 구성의 기본 후보에서는 제외하고, 오픈웨이트 gpt-oss만 us-east-1 후보로 채택한다.** (Gemini 등 여전히 Bedrock 미제공 모델은 제외) 단일 제공자에 고정하지 않으며, 모든 호출은 Bedrock **Converse API**로 추상화해 모델 교체를 가능하게 둔다.
 
 - us-east-1은 표준 리전이라 cross-region inference 가산(~10%)이 없다.
 - 배치(50% 할인)는 오프라인 작업에 적용하되 **DeepSeek은 배치 제외**.
@@ -359,10 +293,12 @@ AgentCore는 오픈소스 프레임워크(LangGraph, Strands Agents 등)와 MCP/
 | --- | --- | --- | --- |
 | 경량 (파싱·검색·라우팅 보조) | Amazon Nova Micro | 0.035 | 0.14 |
 | | Amazon Nova Lite | 0.06 | 0.24 |
+| | **OpenAI gpt-oss-20b** *(신규)* | **0.07** | **0.30** |
 | | Mistral 7B | 0.15 | 0.20 |
 | | Llama 3.1 8B | 0.20 | 0.25 |
 | | Mistral Small | 0.20 | 0.60 |
-| 중급 (해석·검증) | Llama 3.1 70B | 0.35 | 0.45 |
+| 중급 (해석·검증) | **OpenAI gpt-oss-120b** *(신규)* | **0.15** | **0.60** |
+| | Llama 3.1 70B | 0.35 | 0.45 |
 | | DeepSeek V3.2 | 0.62 | 1.85 |
 | | Llama 3.1 405B | 0.65 | 0.80 |
 | | Amazon Nova Pro | 0.80 | 3.20 |
@@ -371,7 +307,15 @@ AgentCore는 오픈소스 프레임워크(LangGraph, Strands Agents 등)와 MCP/
 | | DeepSeek-R1 | 1.35 | 5.40 |
 | | Mistral Large 2 | 3.00 | 9.00 |
 | | Anthropic Claude Sonnet | 3.00 | 15.00 |
+| | **OpenAI GPT-5.4 (프런티어)** *(신규, ⚠ us-east-1 미제공)* | **2.50** | **15.00** |
 | | Anthropic Claude Opus | 5.00 | 25.00 |
+| | **OpenAI GPT-5.5 (프런티어)** *(신규, ⚠ us-east-1 미제공)* | **5.00** | **30.00** |
+
+> **OpenAI 프런티어 모델 리전 확인 결과(AWS 공식 블로그 2026-06-01, GA):** `GPT-5.5`·`GPT-5.4`·`Codex`는 **us-east-1(N. Virginia)에서 제공되지 않는다.** `GPT-5.5`는 **us-east-2(Ohio)** 만, `GPT-5.4`는 **us-east-2(Ohio)·us-west-2(Oregon)** 에 출시됐다(엔드포인트 `bedrock-mantle.us-east-2.api.aws`, `Responses` API). 본 프로젝트의 **us-east-1 고정** 원칙과 충돌하므로, 프런티어 모델 채택 시 리전 변경(us-east-2/us-west-2) 또는 cross-region 구성이 필요하다(가산 비용·지연 영향 검토 요).
+>
+> **단가(신뢰도):** Bedrock은 OpenAI 1차 단가와 동일하게 과금하며 별도 Bedrock 가산료가 없다(블로그 명시). OpenAI 1차 기준 `GPT-5.4` $2.50/$15.00, `GPT-5.5` $5.00/$30.00 (per 1M, 입력/출력) — **availability·과금 방식은 높음**, 정확 단가는 OpenAI 공식 기준 **중간**(콘솔에서 최종 확인 권장). `Codex`는 `GPT-5.5` 추론을 사용하므로 동일 단가 체계를 따른다.
+>
+> gpt-oss(오픈웨이트)는 us-east-1 제공이며, 단가는 AWS 발표 기준 120b $0.15/$0.60·20b $0.07/$0.30을 채택하되 서드파티 집계(pricepertoken)는 20b를 $0.09/$0.39로 표기하는 등 출처 간 편차가 있어 **중간** — 배포 전 AWS 공식 가격 페이지로 확정한다.
 
 에이전트별 티어 배정(통합 후 기준):
 
@@ -401,6 +345,8 @@ AgentCore는 오픈소스 프레임워크(LangGraph, Strands Agents 등)와 MCP/
 - 임베딩(7.3)은 구성 공통으로 Amazon Titan Text Embeddings V2(1,024차원) 사용.
 - `Supervisor`·`Ranker`·`Backend_Serving`은 결정적 Skill이므로 모델·토큰 비용이 없다(0).
 - 구성 A 합계 ≈ $0.0593/건, 구성 B 합계 ≈ $0.0081/건 (6.4.2).
+
+**구성 C (OpenAI 오픈웨이트) — 신규 후보**: gpt-oss가 추가되면서, 경량 노드(`Intent_Agent`/`Polymorphic_Retriever_Agent`)는 `gpt-oss-20b`(0.07/0.30), 중급 노드(`Festival_Verifier_Agent`/`Output_Validator_Agent`)는 `gpt-oss-120b`(0.15/0.60), 생성 노드(`Itinerary+Explanation` 통합)는 `gpt-oss-120b`로 구성하는 안이다(프런티어 `GPT-5.4`는 us-east-1 미제공이라 리전 변경을 감수할 때만 대안). gpt-oss-120b는 동급 추론 모델 대비 가격·성능이 우수하다고 AWS가 제시하므로(예: DeepSeek-R1 대비 큰 단가 이점), 오픈모델 구성 B의 중급 티어를 Llama 3.1 70B → `gpt-oss-120b`로 교체하면 품질·비용 균형이 개선될 수 있다. 단, 채택 전 Evaluations(하네스 4장)로 품질을 검증한다(신뢰도: 중간 — 품질·단가 계측 필요).
 
 ### 6.3.2 임베딩 및 벡터 검색
 
@@ -599,7 +545,126 @@ AgentCore는 오픈소스 프레임워크(LangGraph, Strands Agents 등)와 MCP/
 - [ ] `agent_build_target.md` Retriever/Ranker 책임·구현 우선순위 동기화
 - [ ] `agent_harness_design.md` 추천 흐름 테스트·Eval·임계치 회귀 추가
 - [ ] `04_database_design.md` 임베딩 벡터·theme·좌표·content_type·검증 캐시 검토
+- [ ] `04_database_design.md` AgentCore Memory 정합(6.2.1): 장기 선호 테이블 신설(갭 A), 축제 캐시 소유권 문구(갭 B), 세션 상태 보존 기간(갭 C)
 - [ ] `07_api_spec.md` 요청(`user_location`/`naturalLanguageQuery`)·응답(`recommendationReasons`/`confidence`/`user_notice`) 반영
 - [ ] `02_service_flow.md` §7.3 Agent 처리 단계 갱신
 - [ ] Skill 모듈 입출력 계약 문서 신규 작성 (Scoring/Matrix/Validation/Link/Weather/Date/Packaging)
 - [ ] 변경 이력에 `v0.4` 항목 추가
+
+# 10. 병합·통합 대상 현황 정리
+
+> 작성일: 2026-06-08. 본 장은 문서 전반에 흩어진 노드 병합/통합 결정을 한 곳에서 색인하기 위한 요약이며, 각 항목의 상세 근거는 참조 절을 따른다.
+
+본 명세에서 다루는 노드 병합·통합 대상은 4건이다. 2건은 이미 정본(v0.4)에 반영됐고, 1건은 제안 상태로 미반영, 1건은 명시적 **병합 금지** 대상이다.
+
+| 대상 | 분류 | 상태 | 근거 절 | 핵심 사유 |
+| --- | --- | --- | --- | --- |
+| `Intent_Agent` ← `Condition_Parser_Agent` | 노드 병합 | **적용 완료** (v0.4) | 2.1, `05_agent_spec.md` 7.1·5.2 | Intent가 이미 `extracted_inputs`/`fulfilled_matrix`를 출력 → 파싱 역할 중복. 별도 노드 시 LLM 호출 1회 + handoff 1회 추가로 지연·토큰만 증가 |
+| `Polymorphic_Retriever_Agent` ← 전국구/지역제한 두 경로 | 노드 단일화 | **적용 완료** (v0.4) | 3.3, `05_agent_spec.md` 7.3 | `NATIONAL_RAG`/`RAG_SEARCH`의 거의 동일한 흐름을 단일 노드 + `target_region == None?` 모드 분기로 통합. 그래프 노드 수 감소 |
+| `Itinerary_Planner_Agent` + `Explanation_Writer_Agent` | 출력 생성 통합 | **제안 (미적용)** | 6.5 | 공유 컨텍스트(약 3K 토큰) 1회 전달로 입력 토큰 절감(추정 ~$0.009/건, 생성비 ~16%), 호출 1회 감소, "이유–일정" 불일치 방지 |
+| `Output_Validator_Agent` | **병합 금지** | 분리 유지 결정 | 4.4, 6.5 | 생성기가 자기 출력을 검증하면 환각·근거 검증이 무력화. 결정적 `Validation Skill` → 독립 의미 Validator 구조 유지 |
+
+> 미적용 1건(`Planner`+`Writer`)을 적용하려면 제안 절(6.5)뿐 아니라 정본 `langgraph_flow.md`(5장 노드표·6.3 순차 구간·3.2 매핑표)와 `05_agent_spec.md`(5.2·7.6·7.7·4장 출력)까지 동시 갱신해야 흐름 정합이 유지된다(11.4 참조).
+
+# 11. 전체 흐름 검토 보완 항목 (신규)
+
+> 작성일: 2026-06-08. 본 장은 `langgraph_flow.md`(v1.0) 기준 end-to-end 흐름 검토에서 도출된 보완 5건이다. 모두 **구조 변경이 아니라 분기·계약을 더 명시하는 수준**의 항목이며, 정본의 뼈대는 유지한다.
+
+## 11.1 축제 검증·랭킹 순서 및 비용 (Top-K 검증)
+
+| 항목 | 내용 |
+| --- | --- |
+| 신뢰도 | 중간 (실제 후보 중 축제 보유 비율에 따라 효과 변동, 계측 필요) |
+| 현황 | 파이프라인이 `Retriever(3) → Festival_Verifier(4) → Ranker(5)` 순서로, 랭킹 **전에** 후보 도시 축제를 검증한다 |
+| 문제 | 축제 검증(웹 검색 + LLM 해석)이 가장 비싼 단계인데, 후보가 여럿이고 각자 축제를 가지면 최종 1곳 선정 전에 다수를 검증한다. `festival_id+travelYear` 캐시는 **요청 간** 중복만 막고 **한 요청 내 다수 후보**는 막지 못한다 |
+
+**수정안 (전후 비교)**
+
+- 변경 전: 후보 전체의 축제를 검증한 뒤 랭킹
+- 변경 후: 구조화 점수로 1차 랭킹 → 상위 **K곳(예: 2~3)** 만 축제 검증 → 검증 결과를 반영해 최종 확정
+
+구체 조치:
+
+1. Ranker를 2단계로 분리하거나, Supervisor 루프에서 "구조화 1차 점수 상위 K곳"만 `Festival_Verifier`에 전달하도록 라우팅을 명시한다.
+2. 축제가 필수 조건이 아닌 요청(`includeFestivals=false`)은 검증 단계를 건너뛴다(현행 6.4.1 "축제 미포함이면 Festival_Verifier 제외"와 정합).
+
+> 영향 범위: `05_agent_spec.md` 5.2·7.4·7.5, `langgraph_flow.md` 6.2. `agent_harness_design.md`에 Top-K 검증 케이스 추가.
+
+## 11.2 후보 0건 폴백 경로 명시
+
+| 항목 | 내용 |
+| --- | --- |
+| 신뢰도 | 중간 |
+| 현황 | Ranker의 필수 테마 충족이 결정적 탈락 조건(7.4)이나, 모든 후보가 임계 미달일 때의 명시 라우팅이 없다 |
+| 문제 | "검색 결과 없음"이 검증 실패 재시도 루프(상한 2회)와 뒤섞여 처리될 수 있다. 두 실패는 원인이 달라 동일 폴백으로 묶으면 무의미한 재탐색을 반복할 수 있다 |
+
+**수정안 (전후 비교)**
+
+- 변경 전: 후보 0건 시 일반 폴백에 흡수(명시 경로 없음)
+- 변경 후: `no_candidate` 전용 분기 신설 → 재탐색 대신 **조건 완화 안내 또는 검색 링크 폴백**으로 즉시 종료
+
+구체 조치:
+
+1. Retriever/Ranker가 "필수 테마 충족 후보 0건"을 명시 신호로 반환한다.
+2. Supervisor는 이 신호를 검증 실패와 구분해, 재시도 카운터를 소모하지 않고 `confidence` 하향 + `user_notice`(조건 완화 제안)로 종료한다.
+
+> 영향 범위: `05_agent_spec.md` 7.5·11장, `langgraph_flow.md` 6.2·6.4.
+
+## 11.3 Output_Validator 실패 사유 구조화 → Supervisor 분기 매핑
+
+| 항목 | 내용 |
+| --- | --- |
+| 신뢰도 | 높음 |
+| 현황 | 검증 실패 시 Supervisor가 "재탐색 / 재작성 / 폴백 중 택1"한다고만 명시(2.2, `langgraph_flow.md` 6.4) |
+| 문제 | **어떤 실패 신호로 무엇을 고를지** 매핑이 없다. 매핑이 없으면 재시도 분기 선택이 사실상 LLM 임의 판단이 되어 결정성이 깨진다 |
+
+**수정안**
+
+`Output_Validator_Agent`가 실패를 구조화 카테고리로 반환하고, Supervisor는 결정적 매핑 표로 분기한다.
+
+| 실패 카테고리 | 의미 | Supervisor 분기 |
+| --- | --- | --- |
+| `grounding_missing` | 추천 이유가 DB/검색 근거와 미연결 | 재작성(Writer 재호출) |
+| `hallucination` | 존재하지 않는 장소·축제·운영 정보 | 재탐색(Retriever 복귀) 또는 해당 항목 제거 |
+| `condition_unmet` | `active_required_themes` 미반영 | 재탐색/재랭킹 |
+| `explanation_weak` | 설명 가능성 부족(근거 2개 미만) | 재작성 |
+
+> 영향 범위: `05_agent_spec.md` 7.9·2.2, `langgraph_flow.md` 6.4. `Validation Skill`/Validator 출력 계약에 카테고리 enum 추가.
+
+## 11.4 정본 토폴로지에 출력 통합(6.5) 미반영 정합
+
+| 항목 | 내용 |
+| --- | --- |
+| 신뢰도 | 높음 |
+| 현황 | 출력 통합안(6.5)은 제안 상태이고, 정본 `langgraph_flow.md`(v1.0)는 여전히 `Itinerary_Planner`/`Explanation_Writer`를 별도 순차 노드로 둔다(5장·6.3·3.2) |
+| 문제 | 병합 적용 시 제안 절만 고치고 정본·하네스를 누락하면 토폴로지 정의가 문서 간 충돌한다 |
+
+**수정안**: 6.5 승인 시 동시 반영 대상 — `langgraph_flow.md` 5장 노드표·6.3 순차 구간·3.2 Agent–Tool 매핑표, `05_agent_spec.md` 5.2·7.6·7.7·4장, `agent_harness_design.md` 노드 단위 테스트·토큰 회귀. (9장 체크리스트와 연동)
+
+> 영향 범위: 위 4개 문서. 병합 미적용을 유지하기로 하면 6.5를 "보류"로 명시.
+
+## 11.5 fulfilled_matrix 키 집합 확정
+
+| 항목 | 내용 |
+| --- | --- |
+| 신뢰도 | 높음 |
+| 현황 | 라우팅의 핵심 메커니즘인 `fulfilled_matrix`의 세부 키 표준이 "하네스 픽스처와 함께 확정"으로 열려 있다(`langgraph_flow.md` 8장) |
+| 문제 | 라우팅 정확성이 키 집합에 직접 의존하므로 미확정 상태로는 Supervisor 분기·종료 조건을 결정적으로 검증하기 어렵다. X 항목 간 우선순위 규칙("최상위")도 미구체화 |
+
+**수정안**
+
+1. 키 집합을 `retrieval`, `festival`, `ranking`, `itinerary`, `explanation`, `validation`으로 우선 고정한다(`langgraph_flow.md` 8장 예시 채택).
+2. 동시에 `X` 항목 간 라우팅 우선순위(예: retrieval → festival → ranking → 생성 구간)를 명시한다.
+3. `agent_harness_design.md` 테스트 픽스처를 같은 키로 동기화한다.
+
+> 영향 범위: `langgraph_flow.md` 4장·8장, `05_agent_spec.md` 8.2, `agent_harness_design.md`.
+
+## 11.6 보완 적용 우선순위
+
+| 순서 | 항목 | 이유 |
+| --- | --- | --- |
+| 1 | 11.3 Validator 실패 매핑 | 라우팅 결정성 직결 |
+| 2 | 11.5 matrix 키 확정 | 라우팅·검증의 전제 |
+| 3 | 11.2 후보 0건 폴백 | 실패 안전성 |
+| 4 | 11.1 축제 검증 Top-K | 비용 최적화 |
+| 5 | 11.4 정본 정합 | 6.5 병합 적용 시 동반 |

@@ -409,6 +409,36 @@ def success_criteria_table_to_latex(rows: list[str]) -> list[str]:
     return result
 
 
+def database_design_table_to_latex(current_heading: str, rows: list[str]) -> list[str] | None:
+    database_table_rules: dict[str, tuple[list[float], set[int]]] = {
+        "1.2 설계 기준": ([0.14, 0.27, 0.57], {0}),
+        "1.3 저장소 책임": ([0.16, 0.38, 0.44], {0}),
+        "2.1 핵심 도메인": ([0.15, 0.48, 0.35], {0}),
+        "2.2 사용자 데이터 개념 모델": ([0.13, 0.13, 0.39, 0.33], {0, 1}),
+        "3.1 MySQL 논리 ERD": ([0.12, 0.25, 0.61], {0, 1}),
+        "NoSQL 사용자 이벤트 저장 원칙": ([0.15, 0.79], {0}),
+        "3.3 DynamoDB NoSQL 사용자 설계": ([0.15, 0.22, 0.20, 0.26, 0.09], {0, 4}),
+        "3.4 S3 vector index 논리 모델": ([0.12, 0.40, 0.42], {0}),
+        "3.5 AWS Neptune 그래프 논리 모델": ([0.11, 0.27, 0.36, 0.18], {0, 1}),
+        "3.6 API 식별자 매핑": ([0.13, 0.29, 0.32, 0.16], {0}),
+        "4.1 MySQL 물리 설계 기준": ([0.16, 0.78], {0}),
+        "4.2 주요 인덱스": ([0.22, 0.72], {0}),
+        "4.3 DynamoDB 물리 설계 기준": ([0.16, 0.78], {0}),
+        "4.4 DynamoDB GSI 후보": ([0.26, 0.27, 0.14, 0.23], {0, 1, 2}),
+        "4.5 S3 vector index 물리 설계 기준": ([0.20, 0.74], {0}),
+        "4.6 AWS Neptune 물리 설계 기준": ([0.16, 0.78], {0}),
+        "5. 보존 정책 및 권한": ([0.18, 0.51, 0.25], {0, 2}),
+        "6. PoC 적용 범위와 Production 전환": ([0.18, 0.76], {0}),
+        "9. 변경 이력": ([0.11, 0.18, 0.14, 0.57], {0, 1, 2}),
+    }
+    if current_heading in database_table_rules:
+        widths, centered = database_table_rules[current_heading]
+        return table_to_latex(rows, widths, centered)
+    if re.fullmatch(r"3\.2\.\d+ `[^`]+`", current_heading):
+        return table_to_latex(rows, [0.22, 0.18, 0.14, 0.44], {1, 2})
+    return None
+
+
 def close_list(output: list[str], in_list: bool) -> bool:
     if in_list:
         output.append(r"\end{itemize}")
@@ -532,6 +562,8 @@ def markdown_to_latex(
                 output.extend(issue_table_to_paragraphs(table_lines))
             elif current_heading == "3.2 성공 기준":
                 output.extend(success_criteria_table_to_latex(table_lines))
+            elif (database_table := database_design_table_to_latex(current_heading, table_lines)) is not None:
+                output.extend(database_table)
             elif current_heading == "3.3 원본 및 정규화 저장":
                 output.extend(
                     table_to_latex(
@@ -781,6 +813,8 @@ def markdown_to_latex(
 \definecolor{{LovvPaper}}{{HTML}}{{F7F3EA}}
 \renewcommand{{\arraystretch}}{{1.35}}
 \setlength{{\tabcolsep}}{{2pt}}
+\setlength{{\LTpre}}{{6pt}}
+\setlength{{\LTpost}}{{10pt}}
 \setlength{{\LTleft}}{{\fill}}
 \setlength{{\LTright}}{{\fill}}
 \setlist[itemize]{{leftmargin=*, itemsep=2pt, topsep=2pt}}

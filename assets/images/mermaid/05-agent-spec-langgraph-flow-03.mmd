@@ -1,0 +1,37 @@
+graph LR
+    subgraph AGENTS["Agents (LLM 추론)"]
+        INTENT["Intent_Agent"]
+        SUP["Supervisor_Router"]
+        RETRIEVER["Polymorphic_Retriever_Agent"]
+        FESTIVAL["Festival_Verifier_Agent"]
+        RANKER["Ranker_Agent"]
+        PLANNER["Itinerary_Planner_Agent"]
+        WRITER["Explanation_Writer_Agent"]
+        VALAGENT["Output_Validator_Agent"]
+        SERVING["Backend_Serving / SAM"]
+    end
+
+    subgraph TOOLS["Tools / Skills (결정적, AgentCore Gateway)"]
+        DEST[["Destination Search"]]
+        FCAT[["Festival Catalog Search"]]
+        WSEARCH[["Web Search (Browser)"]]
+        WEATHER[["Weather Trends Skill"]]
+        SCORE[["Scoring Skill"]]
+        MATRIXSK[["Matrix Transition Skill"]]
+        LINK[["Link Builder Skill"]]
+        VALSK[["Validation Skill"]]
+        PACK[["Output Packaging Skill"]]
+        WAPI[["WeatherAPI Proxy"]]
+    end
+
+    SUP --> MATRIXSK
+    RETRIEVER --> DEST
+    RETRIEVER --> WEATHER
+    FESTIVAL --> FCAT
+    FESTIVAL --> WSEARCH
+    RANKER --> SCORE
+    PLANNER --> LINK
+    PLANNER --> WEATHER
+    VALAGENT --> VALSK
+    SERVING --> PACK
+    SERVING --> WAPI

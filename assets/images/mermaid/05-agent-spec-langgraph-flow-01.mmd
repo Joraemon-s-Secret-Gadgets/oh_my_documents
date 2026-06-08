@@ -1,0 +1,93 @@
+graph TD
+    USER["User / UI"]
+
+    subgraph MEM["AgentCore Memory"]
+        ONBOARDING[("Onboarding Profile")]
+        FEEDBACK[("Feedback History")]
+        SESSION[("Session / messages backlog")]
+        SUMMARY[("Rolling Summary")]
+        MATRIXST[("fulfilled_matrix")]
+        FCACHE[("Festival Verify Cache")]
+    end
+
+    USER --> INTENT["Intent_Agent<br/>(entry · 조건 파싱 통합 · 컨텍스트 게이트)"]
+    ONBOARDING -.-> INTENT
+    FEEDBACK -.-> INTENT
+    SESSION -.-> INTENT
+    SUMMARY -.-> INTENT
+    INTENT -.->|"갱신"| SUMMARY
+
+    INTENT --> NEEDMORE{"필수 조건 충족?"}
+    NEEDMORE -- "아니오" --> FOLLOWUP["추가 질문 생성"]
+    FOLLOWUP --> USER
+    NEEDMORE -- "예" --> SUP["Supervisor_Router<br/>I/O · 라우팅 · 상태 · 폴백"]
+
+    SUP <-.-> MATRIXST
+
+    subgraph RUNTIME["AgentCore Runtime — Sub-Agents (LLM 추론)"]
+        RETRIEVER["Polymorphic_Retriever_Agent"]
+        FESTIVAL["Festival_Verifier_Agent"]
+        RANKER["Ranker_Agent"]
+        PLANNER["Itinerary_Planner_Agent"]
+        WRITER["Explanation_Writer_Agent"]
+        VALAGENT["Output_Validator_Agent<br/>(근거·환각 검증)"]
+    end
+
+    subgraph SKILLS["AgentCore Gateway — Skills / Tools (결정적)"]
+        DEST[["Destination Search"]]
+        FCAT[["Festival Catalog Search"]]
+        WSEARCH[["Web Search (Browser)"]]
+        SCORE[["Scoring Skill"]]
+        MATRIXSK[["Matrix Transition Skill"]]
+        VALSK[["Validation Skill"]]
+        LINK[["Link Builder Skill"]]
+        WEATHER[["Weather Trends Skill"]]
+        PACK[["Output Packaging Skill"]]
+    end
+
+    KCAT[("Knowledge Catalog / Destination DB")]
+    WEBSRC[("Official Web Sources")]
+
+    SUP -->|"검색 위임"| RETRIEVER
+    RETRIEVER --> MODE{"target_region == None?"}
+    MODE -- "예 (모드1: 전국구 앵커)" --> ANCHOR["앵커 탐색 → Lock-on"]
+    MODE -- "아니오 (모드2: 지역 제한)" --> LOCAL["지역 제한 확장 검색"]
+    RETRIEVER -.-> DEST
+    RETRIEVER -.-> WEATHER
+    DEST -.-> KCAT
+    WEATHER -.-> KCAT
+    RETRIEVER --> FESTIVAL
+    FESTIVAL -.-> FCAT
+    FESTIVAL -.-> WSEARCH
+    FESTIVAL <-.-> FCACHE
+    FCAT -.-> KCAT
+    WSEARCH -.-> WEBSRC
+    RETRIEVER -->|"후보 요약 JSON"| SUP
+
+    SUP -->|"랭킹 위임"| RANKER
+    RANKER -.-> SCORE
+    SCORE -.-> ONBOARDING
+    SCORE -.-> FEEDBACK
+    RANKER -->|"선정 1곳"| SUP
+
+    SUP -.-> MATRIXSK
+    SUP -.-> PACK
+
+    SUP -->|"순차 호출"| PLANNER
+    PLANNER -.-> LINK
+    PLANNER -.-> WEATHER
+    PLANNER --> WRITER
+    WRITER --> VALSK
+    VALSK --> VALGATE{"결정적 검증 통과?"}
+    VALGATE -- "아니오" --> RETRY
+    VALGATE -- "예" --> VALAGENT
+    VALAGENT -.-> KCAT
+    VALAGENT --> VALID{"의미 검증 통과?"}
+    VALID -- "아니오" --> RETRY{"retry_count < 2?"}
+    RETRY -- "예" --> SUP
+    RETRY -- "아니오" --> FALLBACK["안전 폴백 응답<br/>(confidence 하향 + 결측 안내)"]
+    VALID -- "예" --> SERVING["Backend_Serving / SAM"]
+    PACK -.-> SERVING
+    FALLBACK --> SERVING
+    SERVING --> RESPONSE["응답 패키지"]
+    RESPONSE --> USER

@@ -29,77 +29,7 @@
 
 ## 2.1 Agent 구성도
 
-```mermaid
-graph TD
-    USER["User / UI"] --> INTENT["Intent_Agent"]
-    ONBOARDING_STORE[("Onboarding Profile Store")]
-    FEEDBACK_STORE[("Feedback History Store")]
-    CHAT_STATE[("Session / Chat State")]
-    ONBOARDING_STORE -.-> INTENT
-    FEEDBACK_STORE -.-> INTENT
-    CHAT_STATE -.-> INTENT
-
-    INTENT --> NEED_MORE{"필수 조건 충족?"}
-    NEED_MORE -- "아니오" --> FOLLOW_UP["추가 질문 생성"]
-    FOLLOW_UP --> USER
-    NEED_MORE -- "예" --> SUPERVISOR["Supervisor_Router"]
-    SUPERVISOR --> MATRIX{"fulfilled_matrix 확인"}
-
-    MATRIX --> RETRIEVER["Polymorphic_Retriever_Agent"]
-    RETRIEVER --> ENTRY_MODE{"진입 방식"}
-    ENTRY_MODE -- "챗봇 진입" --> NATIONAL_RAG["전국구 RAG / 정적 DB 조회"]
-    NATIONAL_RAG --> ANCHOR["전국구 앵커 탐색"]
-    ENTRY_MODE -- "지도 마커 진입" --> LOCK_REGION["target_region 고정"]
-    ANCHOR --> LOCK_REGION
-    LOCK_REGION --> RAG_SEARCH["RAG / 정적 DB 조회"]
-    DEST_SEARCH[["Destination Search Tool"]]
-    FESTIVAL_CATALOG[["Festival Catalog Search Tool"]]
-    FESTIVAL_AGENT["Festival_Verifier_Agent"]
-    WEB_SEARCH[["Web Search Tool"]]
-    WEATHER_TRENDS[["Weather Monthly Trends Tool"]]
-    KNOWLEDGE_CATALOG[("Knowledge Catalog / Destination DB")]
-    WEB_SOURCES[("Official Web Sources")]
-    DEST_SEARCH -.-> KNOWLEDGE_CATALOG
-    FESTIVAL_CATALOG -.-> KNOWLEDGE_CATALOG
-    FESTIVAL_AGENT -.-> FESTIVAL_CATALOG
-    FESTIVAL_AGENT -.-> WEB_SEARCH
-    WEB_SEARCH -.-> WEB_SOURCES
-    WEATHER_TRENDS -.-> KNOWLEDGE_CATALOG
-    NATIONAL_RAG -.-> DEST_SEARCH
-    NATIONAL_RAG -.-> WEATHER_TRENDS
-    NATIONAL_RAG --> FESTIVAL_AGENT
-    FESTIVAL_AGENT --> NATIONAL_RAG
-    RAG_SEARCH -.-> DEST_SEARCH
-    RAG_SEARCH --> FESTIVAL_AGENT
-    RAG_SEARCH -.-> WEATHER_TRENDS
-    FESTIVAL_AGENT --> RAG_SEARCH
-    RAG_SEARCH --> LOCAL_SEARCH["지역 제한 확장 검색"]
-    LOCAL_SEARCH --> SUPERVISOR
-
-    MATRIX --> RANKER["Ranker_Agent"]
-    SCORING_TOOL[["Scoring Tool"]]
-    RANKER -.-> SCORING_TOOL
-    SCORING_TOOL -.-> ONBOARDING_STORE
-    SCORING_TOOL -.-> FEEDBACK_STORE
-    RANKER --> SUPERVISOR
-
-    SUPERVISOR --> PLANNER["Itinerary_Planner_Agent"]
-    MAP_LINK[["Map Link Builder"]]
-    STAY_LINK[["Stay Link Builder"]]
-    PLANNER -.-> MAP_LINK
-    PLANNER -.-> STAY_LINK
-    PLANNER --> WRITER["Explanation_Writer_Agent"]
-    WRITER --> VALIDATOR["Output_Validator_Agent"]
-    VALIDATOR -.-> KNOWLEDGE_CATALOG
-    VALIDATOR -.-> WEB_SOURCES
-    VALIDATOR --> VALID{"검증 통과?"}
-    VALID -- "아니오" --> SUPERVISOR
-    VALID -- "예" --> SERVING["Backend_Serving / SAM"]
-    WEATHER_API[["WeatherAPI Proxy"]]
-    SERVING -.-> WEATHER_API
-    SERVING --> RESPONSE["검증 완료 추천 응답"]
-    RESPONSE --> USER
-```
+![Agent 구축 대상 구성도](../../assets/images/mermaid/05-agent-spec-agent-build-target-01.png)
 
 # 3. Agent별 구현 목적
 

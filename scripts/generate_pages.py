@@ -172,6 +172,8 @@ def table_classes(header: list[str], body: list[list[str]]) -> tuple[str, str]:
         wrap_classes.append("wide")
     if column_count >= 5 or max_cell_length >= 180:
         wrap_classes.append("extra-wide")
+    if column_count <= 2 and max_cell_length <= 90:
+        table_classes.append("compact-tbl")
     if {"method", "path", "auth", "설명"}.issubset(normalized):
         wrap_classes.append("wide")
         table_classes.append("api-contract-tbl")
@@ -188,7 +190,11 @@ def table_classes(header: list[str], body: list[list[str]]) -> tuple[str, str]:
     if {"테이블", "partition-key", "sort-key", "주요-속성", "ttl"}.issubset(normalized):
         table_classes.append("db-nosql-tbl")
         wrap_classes.extend(["wide", "extra-wide"])
-    if {"테이블", "주요-컬럼", "책임"}.issubset(normalized):
+    if (
+        {"테이블", "주요-컬럼", "책임"}.issubset(normalized)
+        or {"영역", "테이블", "책임"}.issubset(normalized)
+        or {"저장소", "저장-책임", "대표-데이터"}.issubset(normalized)
+    ):
         table_classes.append("db-summary-tbl")
     if "wide" in wrap_classes or "extra-wide" in wrap_classes:
         wrap_classes.append("scroll-table")

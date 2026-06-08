@@ -87,7 +87,7 @@
 <li>추천 로직은 실시간 예보가 아닌 월별 기상 경향 통계 데이터를 기반으로 Supervisor 노드가 폴백 상태를 판단한다.</li>
 </ul>
 <h1 id="s2" class="s-h1">2. 시스템 개요</h1>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>계층</th><th>책임</th></tr></thead><tbody>
 <tr><td>Client Web</td><td>온보딩, 지도, 챗봇 UI, 추천 결과, 마이페이지, 로컬 스토리지</td></tr>
 <tr><td>Backend API</td><td>인증·인가, 데이터 조회, 추천 요청, 저장/피드백, 운영 데이터 검토</td></tr>
@@ -106,7 +106,7 @@
 </tbody></table></div>
 <h1 id="s4" class="s-h1">4. 프론트엔드 명세</h1>
 <h2 id="s4-1" class="s-h2">4.1 주요 화면</h2>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>화면</th><th>책임</th></tr></thead><tbody>
 <tr><td>온보딩</td><td>대도시 스타일 선택, 기본 테마 매핑, 선호 저장</td></tr>
 <tr><td>메인 지도</td><td>국가·월·테마 필터, 소도시 마커 표시, 마커 클릭 진입</td></tr>
@@ -125,7 +125,7 @@
 </tbody></table></div>
 <h1 id="s5" class="s-h1">5. 백엔드 명세</h1>
 <h2 id="s5-1" class="s-h2">5.1 모듈 구성</h2>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>모듈</th><th>책임</th></tr></thead><tbody>
 <tr><td>Auth Module</td><td>로그인, 역할 기반 인가, 세션/토큰 관리</td></tr>
 <tr><td>User Preference Module</td><td>온보딩 선호, 피드백, 저장 일정 관리</td></tr>
@@ -149,6 +149,7 @@
 <thead><tr><th>데이터</th><th>처리 방식</th></tr></thead><tbody>
 <tr><td>통합 목적지 DB</td><td>축제명, 장소 개요, 이미지, 위경도 좌표 등 무거운 마스터 정보를 저장하고 있는 DB로, 1차 조회 시 성능과 레이턴시 확보를 위해 사용</td></tr>
 <tr><td>S3 vector 기반 RAG Index</td><td>장소·테마·자연어 조건의 임베딩 검색과 유사도 재랭킹에 사용. 정형 필터는 DB, 의미 검색은 S3 vector 기능 기반 인덱스로 분리</td></tr>
+<tr><td>AWS Neptune Graph Index</td><td>도시·축제·테마·장소 관계의 다단계 탐색과 관계 기반 후보 확장에 사용. 의미 검색은 S3 vector, 관계 탐색은 Neptune으로 분리</td></tr>
 <tr><td>축제 검증 캐시</td><td><code>festival_<wbr>id + travelYear</code> 기준으로 해당 연도 날짜 검증 결과를 재사용해 웹 검색 비용과 지연을 줄임</td></tr>
 <tr><td>실시간 API 교차 검증</td><td>당해 연도 정확한 개최 일정/기간 등 실시간 최신화가 필수적인 특정 항목에 한해, <code>Festival_<wbr>Verifier_<wbr>Agent</code>가 공식 웹 출처를 확인하고 정적 필드를 보완하는 하이브리드 데이터 연동</td></tr>
 <tr><td>목적지 기본 정보</td><td>정규화된 소도시 단위로 관리</td></tr>
@@ -158,14 +159,14 @@
 <tr><td>혼잡도</td><td>방문객 수 또는 대체 지표 기반 점수화</td></tr>
 </tbody></table></div>
 <h2 id="s6-2" class="s-h2">6.2 표시용 데이터</h2>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>데이터</th><th>처리 방식</th></tr></thead><tbody>
 <tr><td>현재 날씨</td><td>WeatherAPI를 통해 상세 화면에 표시</td></tr>
 <tr><td>지도/장소 상세</td><td>Google Maps/Kakao Maps 링크와 API 결과 사용</td></tr>
 <tr><td>숙소 검색 링크</td><td>직접 추천 없이 플랫폼 검색 URL 생성</td></tr>
 </tbody></table></div>
 <h1 id="s7" class="s-h1">7. 보안 및 개인정보</h1>
-<div class="table-wrap"><table class="info-tbl">
+<div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>항목</th><th>정책</th></tr></thead><tbody>
 <tr><td>대화 로그</td><td>전문 저장 금지</td></tr>
 <tr><td>일정·선호·피드백</td><td>PoC 로컬, Production 계정 기반 저장</td></tr>
@@ -192,7 +193,7 @@
 <tr><td>Memory</td><td>AgentCore Memory, DynamoDB</td><td>세션 상태, 롤링 요약, <code>fulfilled_<wbr>matrix</code>, 축제 검증 캐시 저장</td></tr>
 <tr><td>Gateway</td><td>Lambda/API 기반 Skill</td><td>Scoring, Matrix Transition, Validation, Link, Weather, Packaging 같은 결정적 Skill 실행</td></tr>
 <tr><td>Model</td><td>Amazon Bedrock Converse API</td><td>Sub-Agent별 LLM 추론과 모델 교체 추상화</td></tr>
-<tr><td>Retrieval</td><td>S3 vector 기반 RAG Index</td><td>자연어·테마 임베딩 검색과 정형 필터 병행</td></tr>
+<tr><td>Retrieval</td><td>S3 vector 기반 RAG Index, AWS Neptune</td><td>자연어·테마 임베딩 검색은 S3 vector, 도시·축제·테마 관계 탐색은 Neptune으로 분리</td></tr>
 <tr><td>Evaluation</td><td>AgentCore Evaluations 또는 동등 하네스</td><td>trajectory, 조건 충족, 근거성, 루프 안전성 회귀 평가</td></tr>
 </tbody></table></div>
 <h1 id="s9" class="s-h1">9. 변경 이력</h1>
