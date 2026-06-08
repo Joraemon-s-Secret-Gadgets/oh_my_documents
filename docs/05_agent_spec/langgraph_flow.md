@@ -20,7 +20,7 @@
 Lovv는 `User → Intent_Agent → Supervisor_Router → (Workers/Skills 루프) → Backend_Serving` 토폴로지를 따른다.
 
 - **Entry**: 자연어/UI 입력은 항상 `Intent_Agent`로 진입한다. Intent_Agent가 멀티턴 백로그를 정리해 의도 중심 handoff payload를 만든다.
-- **Loop**: Supervisor_Router가 `fulfilled_matrix`를 스캔해 검색·후보 선정 구간을 순환 제어한다.
+- **Loop**: Supervisor_Router가 `fulfilled_matrix`를 스캔해 검색·후보 선정 구간을 순환 제어한다. 축제 포함 요청은 구조화 1차 랭킹 상위 K곳만 웹 검증한다.
 - **Sequential**: 목적지 선정 후 `Itinerary_Planner → Explanation_Writer → Output_Validator`는 매트릭스 재평가 없이 순차 호출한다.
 - **Exit**: 검증 통과 또는 폴백 확정 시 `Backend_Serving / SAM`으로 전이한다.
 
@@ -118,11 +118,11 @@ class UnifiedAgentState(TypedDict):
 | `Intent_Agent` | Sub-Agent (entry) | `messages`, `conversation_summary`, UI 조건, 온보딩, 피드백 | handoff payload(`extracted_inputs`/`user_preferences`/`excluded_themes`), 초기 `fulfilled_matrix` | Condition_Parser 통합. 턴당 1회 |
 | `Supervisor_Router` | Orchestrator | handoff payload, `fulfilled_matrix` | `next_node`, 흐름 분기 | raw 미보유. Matrix Transition Skill 사용 |
 | `Polymorphic_Retriever_Agent` | Sub-Agent | 국가/월/테마, `target_region` | 후보 요약 JSON, 기상 경향, `target_region` 고정 | 모드1 앵커 / 모드2 지역제한 |
-| `Festival_Verifier_Agent` | Sub-Agent | 축제 후보, `target_region`, `travelYear/Month` | 검증 JSON(`date_status` 등) | 캐시 키 `festival_id+travelYear` |
-| `Ranker_Agent` | Sub-Agent | 후보 목록, 온보딩/피드백, 기상 경향 | 선정 소도시 1곳, 점수 근거 | Scoring Skill 사용 |
+| `Ranker_Agent` | Sub-Agent | 후보 목록, 온보딩/피드백, 기상 경향 | 구조화 1차 Top-K, 최종 소도시 1곳, 점수 근거 | Scoring Skill 사용. 후보 0건 시 `no_candidate` 반환 |
+| `Festival_Verifier_Agent` | Sub-Agent | Top-K 축제 후보, `target_region`, `travelYear/Month` | 검증 JSON(`date_status` 등) | 캐시 키 `festival_id+travelYear` |
 | `Itinerary_Planner_Agent` | Sub-Agent | 선정지, `tripType`, 축제 검증 | 일별 일정, 대체 일정, 링크 | Link/Weather Skill 사용 |
 | `Explanation_Writer_Agent` | Sub-Agent | 조건, 점수, 일정 | 추천 이유, 동선 이유 | 근거 2개 이상 포함 |
-| `Output_Validator_Agent` | Sub-Agent | 최종 생성물 | 의미 검증 판정(근거·환각·설명 가능성) | 결정적 검증(Validation Skill) 선행 |
+| `Output_Validator_Agent` | Sub-Agent | 최종 생성물 | 의미 검증 판정, 실패 카테고리 | 결정적 검증(Validation Skill) 선행 |
 | `Backend_Serving / SAM` | Serving | 검증 완료 패키지 | UI 응답 | PII 마스킹(Output Packaging Skill) |
 
 # 6. 엣지 및 라우팅 규칙
@@ -135,10 +135,13 @@ class UnifiedAgentState(TypedDict):
 
 ## 6.2 검색·후보 선정 루프 (매트릭스 제어)
 
-- Supervisor는 `fulfilled_matrix`에서 `X` 항목 중 우선순위 최상위를 골라 `Retriever` 또는 `Ranker`로 라우팅.
+- Supervisor는 `fulfilled_matrix`에서 `X` 항목 중 우선순위 최상위를 골라 라우팅한다. 우선순위는 `retrieval → ranking → festival → itinerary → explanation → validation`이다.
 - 1회차: `target_region == None` → Retriever 모드1(전국구 앵커) → `target_region` Lock-on → 복귀.
 - 지도 마커 진입(`destinationId` 존재): 앵커 탐색 생략, `target_region` 즉시 고정 → 모드2.
-- 2회차 이후: 모드2(지역 제한 확장) 검색. 필요 시 `Festival_Verifier` 위임.
+- 2회차 이후: 모드2(지역 제한 확장) 검색 후 Ranker가 구조화 1차 점수 상위 K곳(기본 2~3곳)을 선별한다.
+- `includeFestivals=true`이면 Top-K 후보만 `Festival_Verifier`에 위임하고, 검증 결과를 반영해 최종 Ranker를 다시 호출한다.
+- `includeFestivals=false`이면 `festival=N/A`로 두고 축제 웹 검증을 건너뛴다.
+- 필수 테마 충족 후보가 0건이면 Ranker가 `no_candidate`를 반환하고, Supervisor는 재시도 카운터를 소모하지 않고 조건 완화 안내 또는 검색 링크 폴백으로 종료한다.
 - `X`가 더 없으면 순차 구간으로 전이.
 
 ## 6.3 순차 생성 구간 (매트릭스 재평가 없음)
@@ -148,9 +151,17 @@ class UnifiedAgentState(TypedDict):
 ## 6.4 검증·루프 가드
 
 - `Validation Skill`(결정적: 필드 누락, 국가 혼합, 단일 목적지, 축제 `confirmed` 여부) 실패 → 재시도 분기.
-- `Output_Validator`(의미) 실패 → 재시도 분기.
-- 재시도 분기: `validation_retry_count < 2` 이면 `Supervisor` 재진입(재탐색/재작성/폴백 중 택1), 아니면 **안전 폴백 응답 확정**(`confidence` 하향 + 결측 안내).
+- `Output_Validator`(의미) 실패 → 실패 카테고리별 재시도 분기.
+- 재시도 분기: `validation_retry_count < 2`이면 아래 결정 규칙으로 재진입하고, 아니면 **안전 폴백 응답 확정**(`confidence` 하향 + 결측 안내).
 - 통과 시 `Backend_Serving`.
+
+| 실패 카테고리 | Supervisor 분기 |
+| --- | --- |
+| `grounding_missing` | `Explanation_Writer_Agent` 재호출 |
+| `hallucination` | `Polymorphic_Retriever_Agent` 재탐색 또는 해당 항목 제거 |
+| `condition_unmet` | Retriever 재탐색 또는 Ranker 재랭킹 |
+| `explanation_weak` | `Explanation_Writer_Agent` 재호출 |
+| `fallback_unsafe` | 안전 폴백 템플릿으로 즉시 전환 |
 
 # 7. 자연어 멀티턴 생명주기
 
@@ -200,7 +211,7 @@ class UnifiedAgentState(TypedDict):
 | `Media_Worker` | (선택) Retriever 서브검색 또는 향후 별도 노드 | 현 단계 미구현 시 `N/A` 처리 |
 | `Route_Critic` | `Output_Validator_Agent` + Supervisor 재시도 | 검증 실패 테마 `X` 되돌림 = 재시도 분기 |
 
-> `fulfilled_matrix` 키도 본 정본 기준으로 통일한다(예: `retrieval`, `festival`, `ranking`, `itinerary`, `explanation`, `validation`). 세부 키 표준은 `agent_harness_design.md` 테스트 픽스처와 함께 확정한다.
+`fulfilled_matrix` 표준 키는 `retrieval`, `festival`, `ranking`, `itinerary`, `explanation`, `validation`으로 고정한다. 모든 테스트 픽스처와 trace 요약은 이 키 집합을 사용한다.
 
 # 9. Bedrock + AgentCore 매핑 (요약)
 
@@ -226,6 +237,8 @@ class UnifiedAgentState(TypedDict):
 - Supervisor는 `messages` 원문을 보유·전달하지 않는다.
 - Intent_Agent는 턴당 1회만 실행한다.
 - `fulfilled_matrix`의 `X`만 라우팅 대상이다.
+- `fulfilled_matrix` 표준 키와 라우팅 우선순위는 `retrieval → ranking → festival → itinerary → explanation → validation`이다.
+- `no_candidate`는 검증 실패가 아니므로 `validation_retry_count`를 증가시키지 않는다.
 - 검증 재시도는 최대 2회, 초과 시 폴백 확정.
 - 한국/일본 데이터는 한 응답에서 혼합하지 않는다.
 - 미검증(`tentative`/`unknown`) 축제는 일정에 확정 배치하지 않는다.
@@ -235,4 +248,5 @@ class UnifiedAgentState(TypedDict):
 
 | 버전 | 날짜 | 변경 내용 |
 | --- | --- | --- |
+| v1.1 | 2026-06-08 | Top-K 축제 검증, 후보 0건 폴백, Validator 실패 카테고리, fulfilled_matrix 표준 키와 라우팅 우선순위 반영 |
 | v1.0 | 2026-06-07 | A안 기준 LangGraph 정본 작성. 멀티턴 생명주기·N/A→X 재활성·백로그 bound·토폴로지 정합화 포함 |

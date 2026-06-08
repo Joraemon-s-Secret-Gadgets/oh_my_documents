@@ -165,13 +165,14 @@
 <tr><td>1</td><td><code>Intent_<wbr>Agent</code></td><td>멀티턴 컨텍스트 정리, 조건 파싱, 필수 조건 확인</td><td>handoff payload, 초기 <code>fulfilled_<wbr>matrix</code></td></tr>
 <tr><td>2</td><td><code>Supervisor_<wbr>Router</code></td><td>상태 기반 라우팅, 재시도·폴백 제어, Skill 호출</td><td><code>next_<wbr>node</code>, 라우팅 결정</td></tr>
 <tr><td>3</td><td><code>Polymorphic_<wbr>Retriever_<wbr>Agent</code></td><td>전국구 앵커 또는 지역 제한 검색</td><td>후보 요약, <code>target_<wbr>region</code></td></tr>
-<tr><td>4</td><td><code>Festival_<wbr>Verifier_<wbr>Agent</code></td><td>축제 해당 연도 개최일 검증</td><td>검증 JSON, 캐시</td></tr>
-<tr><td>5</td><td><code>Ranker_<wbr>Agent</code></td><td>후보 점수화와 최종 소도시 1곳 선정</td><td>선정지, 점수 근거</td></tr>
-<tr><td>6</td><td><code>Itinerary_<wbr>Planner_<wbr>Agent</code></td><td>일정·대체 일정 구성</td><td><code>itinerary</code>, <code>alternativeItinerary</code></td></tr>
-<tr><td>7</td><td><code>Explanation_<wbr>Writer_<wbr>Agent</code></td><td>추천 이유와 동선 설명 작성</td><td><code>recommendationReasons</code>, <code>itineraryFlowReason</code>, <code>user_<wbr>notice</code></td></tr>
-<tr><td>8</td><td><code>Validation Skill</code></td><td>결정적 검증</td><td>필드·정책 검증 결과</td></tr>
-<tr><td>9</td><td><code>Output_<wbr>Validator_<wbr>Agent</code></td><td>근거성·환각·설명 가능성 의미 검증</td><td>검증 판정, 수정 필요 항목</td></tr>
-<tr><td>10</td><td><code>Backend_<wbr>Serving /<wbr> SAM</code></td><td>응답 패키징, 저장, UI 서빙</td><td>최종 추천 응답</td></tr>
+<tr><td>4</td><td><code>Ranker_<wbr>Agent</code></td><td>구조화 조건 기반 1차 점수화, 축제 검증 대상 Top-K 선별</td><td>상위 후보 K곳, 점수 근거</td></tr>
+<tr><td>5</td><td><code>Festival_<wbr>Verifier_<wbr>Agent</code></td><td>Top-K 후보의 축제 해당 연도 개최일 검증</td><td>검증 JSON, 캐시</td></tr>
+<tr><td>6</td><td><code>Ranker_<wbr>Agent</code></td><td>축제 검증 결과를 반영한 최종 소도시 1곳 선정</td><td>선정지, 최종 점수 근거</td></tr>
+<tr><td>7</td><td><code>Itinerary_<wbr>Planner_<wbr>Agent</code></td><td>일정·대체 일정 구성</td><td><code>itinerary</code>, <code>alternativeItinerary</code></td></tr>
+<tr><td>8</td><td><code>Explanation_<wbr>Writer_<wbr>Agent</code></td><td>추천 이유와 동선 설명 작성</td><td><code>recommendationReasons</code>, <code>itineraryFlowReason</code>, <code>user_<wbr>notice</code></td></tr>
+<tr><td>9</td><td><code>Validation Skill</code></td><td>결정적 검증</td><td>필드·정책 검증 결과</td></tr>
+<tr><td>10</td><td><code>Output_<wbr>Validator_<wbr>Agent</code></td><td>근거성·환각·설명 가능성 의미 검증</td><td>검증 판정, 실패 카테고리</td></tr>
+<tr><td>11</td><td><code>Backend_<wbr>Serving /<wbr> SAM</code></td><td>응답 패키징, 저장, UI 서빙</td><td>최종 추천 응답</td></tr>
 </tbody></table></div>
 <h1 id="s6" class="s-h1">6. UnifiedAgentState</h1>
 <p class="doc-p">LangGraph 그래프 전역 상태다. 구현 기준은 Python 3.12 <code>TypedDict</code>이며 상세 정본은 <code>langgraph_<wbr>flow.md</code>를 따른다.</p>
@@ -283,7 +284,7 @@
 <tr><td><code>tentative</code></td><td>7일</td><td>짧은 주기로 재검증</td></tr>
 <tr><td><code>unknown</code> / <code>outdated</code></td><td>1일</td><td>다음 요청에서 재검색 유도</td></tr>
 </tbody></table></div>
-<p class="doc-p"><code>confirmed</code> 축제만 일정에 직접 배치한다. <code>tentative</code>는 안내 문구 또는 후보 정보로만 사용한다.</p>
+<p class="doc-p"><code>confirmed</code> 축제만 일정에 직접 배치한다. <code>tentative</code>는 안내 문구 또는 후보 정보로만 사용한다. 축제 포함 요청에서는 모든 후보를 웹 검증하지 않고, Ranker의 구조화 1차 점수 상위 K곳(기본 2~3곳)만 검증한다. <code>includeFestivals=false</code>이면 Festival Verifier를 건너뛰고 <code>festival</code> 매트릭스 항목을 <code>N/<wbr>A</code>로 둔다.</p>
 <h2 id="s7-5" class="s-h2">7.5 <code>Ranker_<wbr>Agent</code></h2>
 <p class="doc-p">Ranker는 후보 소도시를 최종 1곳으로 줄인다. 점수 계산 자체는 <code>Scoring Skill</code>이 수행하고, Agent는 점수 근거를 요약한다.</p>
 <div class="table-wrap"><table class="info-tbl compact-tbl">
@@ -298,7 +299,7 @@
 <tr><td>cleaned raw query</td><td>반영 가능한 자연어 조건의 유사도 가점</td></tr>
 <tr><td>축제 조건</td><td>사용자가 원하고 <code>confirmed</code> 축제가 있으면 가점</td></tr>
 </tbody></table></div>
-<p class="doc-p">자연어 입력이 없으면 soft/raw 유사도 항목은 제외하고 구조화 조건으로만 점수화한다.</p>
+<p class="doc-p">자연어 입력이 없으면 soft/raw 유사도 항목은 제외하고 구조화 조건으로만 점수화한다. 필수 테마를 충족하는 후보가 0건이면 Ranker는 <code>no_<wbr>candidate</code> 신호를 반환한다. Supervisor는 이를 검증 실패와 구분해 <code>validation_<wbr>retry_<wbr>count</code>를 소모하지 않고 <code>confidence</code>를 낮춘 뒤 조건 완화 안내 또는 외부 검색 링크 폴백으로 종료한다.</p>
 <h2 id="s7-6" class="s-h2">7.6 <code>Itinerary_<wbr>Planner_<wbr>Agent</code></h2>
 <div class="table-wrap"><table class="info-tbl compact-tbl decision-tbl">
 <thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
@@ -327,14 +328,23 @@
 <tr><td>active theme</td><td><code>active_<wbr>required_<wbr>themes</code>가 결과에 반영됐는가</td></tr>
 </tbody></table></div>
 <h2 id="s7-9" class="s-h2">7.9 <code>Output_<wbr>Validator_<wbr>Agent</code></h2>
-<div class="table-wrap"><table class="info-tbl compact-tbl">
-<thead><tr><th>항목</th><th>기준</th></tr></thead><tbody>
-<tr><td>근거성</td><td>추천 이유가 DB/검색 근거와 연결되는가</td></tr>
-<tr><td>환각 방지</td><td>존재하지 않는 장소·축제·운영 정보를 만들지 않았는가</td></tr>
-<tr><td>설명 가능성</td><td>추천 이유와 일정 흐름 이유가 자연어로 충분한가</td></tr>
-<tr><td>폴백 안전성</td><td>결측과 실패 상황이 <code>confidence</code>, <code>user_<wbr>notice</code>로 안내되는가</td></tr>
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
+<thead><tr><th>항목</th><th>기준</th><th>실패 카테고리</th></tr></thead><tbody>
+<tr><td>근거성</td><td>추천 이유가 DB/검색 근거와 연결되는가</td><td><code>grounding_<wbr>missing</code></td></tr>
+<tr><td>환각 방지</td><td>존재하지 않는 장소·축제·운영 정보를 만들지 않았는가</td><td><code>hallucination</code></td></tr>
+<tr><td>조건 충족</td><td><code>active_<wbr>required_<wbr>themes</code>가 최종 결과에 반영됐는가</td><td><code>condition_<wbr>unmet</code></td></tr>
+<tr><td>설명 가능성</td><td>추천 이유와 일정 흐름 이유가 자연어로 충분한가</td><td><code>explanation_<wbr>weak</code></td></tr>
+<tr><td>폴백 안전성</td><td>결측과 실패 상황이 <code>confidence</code>, <code>user_<wbr>notice</code>로 안내되는가</td><td><code>fallback_<wbr>unsafe</code></td></tr>
 </tbody></table></div>
-<p class="doc-p">검증 실패 시 <code>validation_<wbr>retry_<wbr>count</code>를 증가시킨다. 2회 미만이면 Supervisor가 재탐색, 재작성, 폴백 확정 중 하나를 선택한다. 2회에 도달하면 안전 폴백 응답으로 종료한다.</p>
+<p class="doc-p">검증 실패 시 <code>validation_<wbr>retry_<wbr>count</code>를 증가시킨다. 2회 미만이면 Supervisor가 실패 카테고리별 결정 규칙으로 분기한다. 2회에 도달하면 안전 폴백 응답으로 종료한다.</p>
+<div class="table-wrap"><table class="info-tbl compact-tbl">
+<thead><tr><th>실패 카테고리</th><th>Supervisor 분기</th></tr></thead><tbody>
+<tr><td><code>grounding_<wbr>missing</code></td><td><code>Explanation_<wbr>Writer_<wbr>Agent</code> 재호출</td></tr>
+<tr><td><code>hallucination</code></td><td><code>Polymorphic_<wbr>Retriever_<wbr>Agent</code> 재탐색 또는 해당 항목 제거</td></tr>
+<tr><td><code>condition_<wbr>unmet</code></td><td>Retriever 재탐색 또는 Ranker 재랭킹</td></tr>
+<tr><td><code>explanation_<wbr>weak</code></td><td><code>Explanation_<wbr>Writer_<wbr>Agent</code> 재호출</td></tr>
+<tr><td><code>fallback_<wbr>unsafe</code></td><td>안전 폴백 템플릿으로 즉시 전환</td></tr>
+</tbody></table></div>
 <h1 id="s8" class="s-h1">8. 도구 및 Skill</h1>
 <h2 id="s8-1" class="s-h2">8.1 사용 도구/Skill</h2>
 <div class="table-wrap wide scroll-table"><table class="info-tbl">
@@ -351,6 +361,16 @@
 <tr><td><code>WeatherAPI Proxy</code></td><td>상세 화면 표시용 실시간 날씨 조회</td><td>Backend Serving</td></tr>
 </tbody></table></div>
 <h2 id="s8-2" class="s-h2">8.2 <code>fulfilled_<wbr>matrix</code> 규격</h2>
+<p class="doc-p">표준 키는 <code>retrieval</code>, <code>festival</code>, <code>ranking</code>, <code>itinerary</code>, <code>explanation</code>, <code>validation</code>으로 고정한다. Supervisor는 <code>X</code> 항목을 아래 우선순위로 처리한다. <code>ranking</code>은 구조화 1차 점수화와 축제 검증 후 최종 선정을 모두 포함하며, 축제 포함 요청에서는 Top-K 산출 후 <code>festival</code> 검증을 거쳐 최종 선정까지 완료되어야 <code>O</code>로 전이한다.</p>
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
+<thead><tr><th>우선순위</th><th>키</th><th>담당</th></tr></thead><tbody>
+<tr><td>1</td><td><code>retrieval</code></td><td>Retriever</td></tr>
+<tr><td>2</td><td><code>ranking</code></td><td>Ranker</td></tr>
+<tr><td>3</td><td><code>festival</code></td><td>Festival Verifier</td></tr>
+<tr><td>4</td><td><code>itinerary</code></td><td>Itinerary Planner</td></tr>
+<tr><td>5</td><td><code>explanation</code></td><td>Explanation Writer</td></tr>
+<tr><td>6</td><td><code>validation</code></td><td>Validation Skill, Output Validator</td></tr>
+</tbody></table></div>
 <div class="table-wrap wide scroll-table"><table class="info-tbl">
 <thead><tr><th>기호</th><th>의미</th><th>라우팅</th></tr></thead><tbody>
 <tr><td><code>X</code></td><td>Pending / 탐색 또는 처리 필요</td><td>Supervisor 라우팅 대상</td></tr>
@@ -385,7 +405,7 @@
 </tbody></table></div>
 <p class="doc-p">Agent는 저장소별 책임을 넘지 않는다. MySQL 원장은 사용자에게 조회·저장·피드백으로 노출되는 최종 상태를 담당하고, DynamoDB는 TTL 기반 실행 상태와 로그성 데이터를 담당한다. S3 vector index는 검색 성능과 의미 재랭킹을 위한 파생 인덱스이며, 재색인과 복구는 MySQL, DynamoDB 정규화 문서, S3 Raw 원본을 기준으로 수행한다. AWS Neptune은 관계 탐색과 그래프 기반 후보 확장을 위한 파생 인덱스이며, 재적재와 복구는 DynamoDB 정규화 문서와 S3 Raw 원본을 기준으로 수행한다.</p>
 <h1 id="s10" class="s-h1">10. 품질 검증 기준</h1>
-<div class="table-wrap"><table class="info-tbl compact-tbl">
+<div class="table-wrap wide scroll-table"><table class="info-tbl compact-tbl data-quality-tbl">
 <thead><tr><th>검증 항목</th><th>기준</th></tr></thead><tbody>
 <tr><td>조건 충족</td><td>국가, 월, 일정 유형, active theme 반영 100%</td></tr>
 <tr><td>단일 목적지</td><td>최종 추천은 소도시 1곳 중심</td></tr>
@@ -394,6 +414,8 @@
 <tr><td>루프 안전성</td><td><code>validation_<wbr>retry_<wbr>count &lt;= 2</code></td></tr>
 <tr><td>근거성</td><td>추천 이유가 DB/검색 근거와 연결</td></tr>
 <tr><td>폴백 안전성</td><td>결측·실패 시 <code>confidence</code> 하향과 <code>user_<wbr>notice</code> 포함</td></tr>
+<tr><td>후보 없음 분기</td><td><code>no_<wbr>candidate</code>는 검증 재시도와 분리해 즉시 안전 폴백</td></tr>
+<tr><td>축제 검증 비용</td><td>축제 포함 요청은 구조화 1차 랭킹 Top-K만 웹 검증</td></tr>
 </tbody></table></div>
 <p class="doc-p">테스트 하네스는 <code>agent_<wbr>harness_<wbr>design.md</code>를 따른다. PR 단계는 결정적 L1/L2/L4 핵심 케이스를 우선하고, LLM 평가와 전체 trajectory 평가는 nightly 또는 릴리즈 게이트로 분리한다.</p>
 <h1 id="s11" class="s-h1">11. 금지 사항</h1>
@@ -410,6 +432,7 @@
 <h1 id="s12" class="s-h1">12. 변경 이력</h1>
 <div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
 <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+<tr><td>v0.4</td><td>2026-06-08</td><td>Codex</td><td>Top-K 축제 검증, 후보 0건 폴백, Validator 실패 카테고리, <code>fulfilled_<wbr>matrix</code> 표준 키와 라우팅 우선순위 반영</td></tr>
 <tr><td>v0.4</td><td>2026-06-08</td><td>Codex</td><td>버전 상향 없이 API <code>themes</code>/<code>links</code> 매핑, Agent trace 식별자, DynamoDB/S3 vector 저장소 계약을 대표 문서에 보강</td></tr>
 <tr><td>v0.4</td><td>2026-06-07</td><td>Codex</td><td>Agent 05 번호 체계 반영, Intent/Condition 통합, Supervisor I/O 허브, LangGraph 상태, Skill 분리, 추천 흐름, AgentCore/Bedrock 매핑, 검증 루프 가드 반영</td></tr>
 <tr><td>v0.3</td><td>2026-06-01</td><td>로브 기획팀</td><td>Intent Agent 도입, Festival Verifier Agent 승격, Agent 구성도 및 전국구 RAG 조회 흐름 반영</td></tr>

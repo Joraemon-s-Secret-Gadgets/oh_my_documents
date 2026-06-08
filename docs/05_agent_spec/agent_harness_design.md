@@ -91,13 +91,17 @@
 | TC-F01 | 폴백 | Web Search 실패 | 축제 안내만, 직접 배치 안 함 | `date_status=unknown`, 일정 미배치 |
 | TC-F02 | 폴백 | 기상 악화(장마) 지역 | 실내 중심 대체 일정 | `alternativeItinerary` 존재, matrix `△` |
 | TC-F03 | 폴백 | 후보 데이터 결측 | 결측 안내 + confidence 하향 | `confidence` 하향, 안내 메시지 포함 |
+| TC-F04 | 폴백 | 필수 테마 충족 후보 0건 | 조건 완화 안내 또는 검색 링크 폴백 | `no_candidate`, `retry_count` 미증가 |
 | TC-E01 | 실패 | 의미 검증 2회 실패 | 폴백 응답 확정 종료 | `retry_count`=2에서 폴백, 무한루프 없음 |
 | TC-E02 | 실패 | 국가 혼합 시도(KR+JP) | 차단/재요청 | 단일 국가만 결과, Policy 위반 차단 |
 | TC-E03 | 실패 | 필수 조건 누락 | 추가 질문 생성 | NEED_MORE 아니오 경로 |
+| TC-E04 | 실패 | Validator `grounding_missing` | 설명 재작성으로 분기 | Retriever 미호출, Writer 재호출 |
+| TC-E05 | 실패 | Validator `hallucination` | 재탐색 또는 항목 제거 | raw 생성물 확정 노출 금지 |
 | TC-R01 | 추천 로직 | 자연어+온보딩 테마가 3개 초과 | 자연어 우선, 잔여 온보딩은 backup 처리 | `active_required_themes` 최대 3개, `backup_themes` 존재 |
 | TC-R02 | 추천 로직 | 사용자가 숙소 가격/전망을 요구 | RAG 조건 제외, 안내 문구 제공 | `unsupported_conditions`, `user_notice` 존재 |
 | TC-R03 | 추천 로직 | `user_location`이 있는 당일치기 요청 | 거리 기반 후보 필터 적용 | 후보 도시가 `tripType` 반경 내 |
 | TC-R04 | 추천 로직 | 희소 테마 포함 요청 | 희소 테마 완화 기준과 가중 적용 | 희소 테마 1개+ 충족, 가중치 반영 |
+| TC-R05 | 추천 로직 | 축제 포함 후보 다수 | 구조화 1차 Top-K만 축제 검증 | Web Search 호출 후보 수 `<= K` |
 
 ## 3.3 멀티턴 시퀀스 케이스 (L4)
 
@@ -115,16 +119,22 @@
 
 ## 3.4 fulfilled_matrix 전이 검증
 
+표준 키는 `retrieval`, `festival`, `ranking`, `itinerary`, `explanation`, `validation`으로 고정한다.
+라우팅 우선순위는 `retrieval → ranking → festival → itinerary → explanation → validation`이다.
 각 케이스에서 매트릭스 스냅샷을 단계별로 단언한다. 예시(TC-N01):
 
 ```text
 초기:      {retrieval:X, festival:X, ranking:X, itinerary:X, explanation:X, validation:X}
-Retriever 후: {retrieval:O, festival:O, ranking:X, ...}
-Ranker 후:    {ranking:O, ...}
+Retriever 후: {retrieval:O, ranking:X, festival:X, ...}
+Ranker 1차 후: {ranking:X, festival:X, top_k_candidates:[...]}
+Festival 후:  {festival:O, ranking:X, ...}
+Ranker 최종 후:{ranking:O, ...}
 순차 완료:    전부 O → Backend_Serving 전이
 ```
 
 전이 불변식: `X`만 라우팅 / Worker 완료 시 `O|△` / `N/A`는 스케줄링 제외 / 재시도 시 해당 항목만 `X` 복귀.
+`includeFestivals=false` 케이스는 `festival=N/A`를 기대값으로 둔다.
+`no_candidate` 케이스는 `validation_retry_count` 증가 없이 `ranking=△`와 폴백 종료를 기대값으로 둔다.
 
 ## 3.5 Mock / Fixture
 
@@ -222,9 +232,10 @@ PR 생성
 
 # 5. 미해결·후속 작업
 
-- `fulfilled_matrix` 표준 키 확정(`langgraph_flow.md` 8장과 동기화).
+- Validator 실패 카테고리별 expected trajectory를 `grounding_missing`, `hallucination`, `condition_unmet`, `explanation_weak`, `fallback_unsafe`로 추가한다.
 - Skill 입출력 계약 문서(Scoring/Matrix/Validation/Link/Weather/Packaging) 작성 → L2 테스트의 골든 값 정의.
 - 추천 점수 회귀 fixture에 접근성, active theme 충족, 희소 테마 가중, 콘텐츠 타입 균형, soft/raw query 유사도, `unsupported_conditions` 안내 케이스를 추가한다.
+- 축제 포함 요청의 Top-K 검증 fixture를 만들고 Web Search 호출 수가 K를 넘지 않는지 단언한다.
 - `langgraph_flow.md`가 최상위 기준이므로, 구현 시 본 하네스의 그래프 배선이 정본과 1:1 대응하는지 회귀 검증.
 - 롤링 요약 임계값(턴 수/토큰) 실측 후 확정.
 
@@ -232,5 +243,6 @@ PR 생성
 
 | 버전 | 날짜 | 변경 내용 |
 | --- | --- | --- |
+| v1.1 | 2026-06-08 | fulfilled_matrix 표준 키 확정, Top-K 축제 검증, no_candidate 폴백, Validator 실패 카테고리 테스트 케이스 추가 |
 | v1.1 | 2026-06-07 | AgentCore Evaluations 기반 CI/CD 게이트 및 정량 평가 치수(4장) 추가 |
 | v1.0 | 2026-06-07 | 실행 하네스(그래프 배선·상태·AgentCore 연결·루프/재시도)와 테스트 하네스(시나리오·멀티턴·matrix 전이·mock·메트릭) 초안 작성 |
