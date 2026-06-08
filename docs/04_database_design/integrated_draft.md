@@ -1073,6 +1073,6 @@ Agent는 `confirmed` 결과만 일정에 직접 배치한다.
 
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 | --- | --- | --- | --- |
-| v0.3 | 2026-06-08 | Codex | AWS Neptune Graph Index를 추천 관계 탐색용 파생 인덱스로 반영 |
+| v0.3 | 2026-06-08 | 로브 기획팀 | AWS Neptune Graph Index를 추천 관계 탐색용 파생 인덱스로 반영 |
 | v0.2 | 2026-06-04 | 로브 기획팀 | 첨부 ERD 초안, 04 데이터 수집 계획, MySQL 8 LTS, S3 vector 기반 RAG Index, DynamoDB NoSQL 로그 구조를 통합한 DB 설계 초안 작성 |
 | v0.1 | 2026-05-29 | 로브 기획팀 | 데이터베이스 설계 명세서 초안 작성 |

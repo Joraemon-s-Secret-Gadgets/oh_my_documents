@@ -336,6 +336,6 @@ API 명세의 camelCase 식별자는 DB 내부에서는 snake_case 컬럼, Dynam
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 | --- | --- | --- | --- |
 | v0.1 | 2026-06-04 | 로브 기획팀 | DBMS 방향 초안 작성 |
-| v0.2 | 2026-06-07 | Codex | 개념 설계, 논리 설계, 물리 설계 구조와 RDB/NoSQL 사용자 설계 반영 |
-| v0.3 | 2026-06-07 | Codex | 별도 벡터 DB 전제를 S3 vector 기능 기반 RAG 인덱스로 정리하고, VisitorStatistics와 S3 Raw/Lambda/DynamoDB 정규화 흐름 반영 |
-| v0.4 | 2026-06-08 | Codex | AWS Neptune을 추천 관계 탐색용 그래프 인덱스로 반영 |
+| v0.2 | 2026-06-07 | 로브 기획팀 | 개념 설계, 논리 설계, 물리 설계 구조와 RDB/NoSQL 사용자 설계 반영 |
+| v0.3 | 2026-06-07 | 로브 기획팀 | 별도 벡터 DB 전제를 S3 vector 기능 기반 RAG 인덱스로 정리하고, VisitorStatistics와 S3 Raw/Lambda/DynamoDB 정규화 흐름 반영 |
+| v0.4 | 2026-06-08 | 로브 기획팀 | AWS Neptune을 추천 관계 탐색용 그래프 인덱스로 반영 |
