@@ -26,6 +26,7 @@ docs/05_agent_spec/        Agent 명세서
 docs/06_technical_spec/    기술 명세서
 docs/07_api_spec/          API 명세서
 docs/08_data_preprocessing/ 수집된 데이터 및 전처리(ELT) 문서. 수집(03)과 DB 설계(04) 사이 단계
+docs/98_prd/            실행 단위별 PRD 문서 모음
 index.html                 GitHub Pages 첫 화면
 pages/*.html               Markdown 원본을 바탕으로 생성된 공유용 HTML 문서
 assets/                    공통 CSS, JS, 이미지 등 정적 리소스
