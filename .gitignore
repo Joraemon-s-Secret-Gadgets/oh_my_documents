@@ -8,3 +8,6 @@ pdf/*.toc
 
 # Requirements PDFs generated outside the committed package
 pdf/01_*.pdf
+
+# Presentation artifacts
+*.pptx
