@@ -1,6 +1,6 @@
 # 로브 (Lovv) 데이터 전처리 계획서 초안
 
-> 문서 버전: v0.5
+> 문서 버전: v0.7
 > 문서 상태: 초안 (Draft)
 > 작성일: 2026-06-03
 > 기준 문서: 데이터 수집 계획서 v0.7
@@ -146,11 +146,11 @@ DynamoDB 적재
 
 | 대상 | ID 형식 | 예시 |
 | --- | --- | --- |
-| 한국 City | `KR-{도_코드}-{CITY_EN}` | `KR-42-GANGNEUNG` |
+| 한국 City | `KR-{GW 또는 GB}-{CITY_EN}` | `KR-GW-GANGNEUNG` |
 | 일본 City | `JP-{도도부현}-{도시명}` | `JP-ISHIKAWA-KANAZAWA` |
-| 한국 Attraction | `KR-{도_코드}-{CITY_EN}-ATT-{contentid}` | `KR-42-GANGNEUNG-ATT-126508` |
-| 한국 Festival | `KR-{도_코드}-{CITY_EN}-FES-{contentid}` | `KR-42-GANGNEUNG-FES-2762975` |
-| 한국 VisitorStatistics | `KR-{도_코드}-{CITY_EN}-STAT-{yyyyMM}` | `KR-42-GANGNEUNG-STAT-202501` |
+| 한국 Attraction | `ATT-{contentid}` (City는 `city_id`로 연결) | `ATT-126508` |
+| 한국 Festival | `FEST-{contentid}` | `FEST-2762975` |
+| 한국 VisitorStatistics | `{city_id}-STAT-{yyyyMM}` (전처리 파생) | `KR-GW-GANGNEUNG-STAT-202501` |
 | 일본 Attraction/Festival | `{country_code}-{entity_type}-{source_or_hash}` | `JP-FEST-HASH-001` |
 | 일본 VisitorStatistics | `JP-{prefecture_or_city}-STAT-{period_or_hash}` | `JP-TOKYO-STAT-202501` |
 
@@ -338,7 +338,24 @@ RAG 문서는 외부 원문을 그대로 복제하지 않고 내부 요약문과
 | 검색 문서 | 내부 요약문, 출처 링크, 최신성 상태 |
 | 서비스 노출 | 필수 필드 충족, 저작권 위험 없음, `blocked` 아님 |
 
-## 9.5 Lambda 적재 실패 처리
+## 9.5 S3 vector index 생성 기준
+
+Search Index는 DynamoDB 정규화 결과에서 파생되는 S3 vector index를 기준으로 한다. S3 vector index는 원본 저장소가 아니며, S3 Raw와 DynamoDB 정규화 문서를 기준으로 언제든 재생성할 수 있어야 한다.
+
+KR 상세 데이터의 현재 운영 기준은 `TourKoreaDomainData`이며, `raw/KR/details/20260609/` 40개 도시 전처리 완료 결과를 S3 vector 생성 입력으로 사용한다. 생성 대상은 `city_metadata`, `attraction`, `restaurant`, `festival`이며, `visitor_statistics`는 도시별 월간 방문 패턴 요약에 제한적으로 반영한다. `review`와 `failed` 항목은 검색 노출 대상에서 제외한다.
+
+| 항목 | 기준 |
+| --- | --- |
+| Vector bucket | `lovv-vector-dev` |
+| Vector index | `kr-tour-domain-v1` |
+| Vector ID | `{entity_type}#{source_id}#chunk#{chunk_no}` |
+| Metadata filter | `country`, `city_id`, `entity_type`, `content_type`, `theme_tags`, `season_tags`, `recommended_months`, `quality_status`, `source_type`, `index_version` |
+| 원본 재조회 | S3 vector 결과의 `ddb_pk`, `ddb_sk`, `raw_s3_uri`로 DynamoDB와 S3 Raw를 역추적 |
+| 재생성 조건 | embedding model, chunk template, metadata schema, 품질 기준 변경 |
+
+상세 chunk template, metadata allowlist, PutVectors 배치 기준, 샘플 질의 검증 기준은 `s3_vector_index_plan.md`를 따른다.
+
+## 9.6 Lambda 적재 실패 처리
 
 | 실패 유형 | 처리 |
 | --- | --- |
@@ -382,6 +399,7 @@ RAG 문서는 외부 원문을 그대로 복제하지 않고 내부 요약문과
 | `feature_dataset` | 테마, 계절성, 혼잡도, 일정 적합도 파생 필드 |
 | `s3_raw_manifest` | DynamoDB Item과 연결되는 S3 Raw 객체 목록 |
 | `lambda_processing_log` | Lambda 실행 결과, 실패 사유, 재처리 대상 기록 |
+| `s3_vector_index_manifest` | S3 vector index 버전, chunk 수, vector 수, 원천 DynamoDB/S3 Raw 참조 |
 
 # 13. 본 문서 반영 이력
 
@@ -392,3 +410,5 @@ RAG 문서는 외부 원문을 그대로 복제하지 않고 내부 요약문과
 | v0.3 | 2026-06-06 | LLM 파트 | S3 Raw 누적 보관 후 Lambda 배치 전처리 및 DynamoDB 적재 흐름 반영 |
 | v0.4 | 2026-06-06 | LLM 파트 | 한국 강원·경북 실제 수집 산출물, `KR-{도_코드}-{CITY_EN}` ID 형식, `climate_table` 전처리 기준 반영 |
 | v0.5 | 2026-06-07 | LLM 파트 | VisitorStatistics 관계, 정규화 산출물, DynamoDB 후보 테이블, 적재 조건 보완 |
+| v0.6 | 2026-06-09 | 조동휘 | `tour-api-korea` 코드 대조로 한국 식별자 규칙 정정: City `KR-{GW 또는 GB}-*`, Attraction `ATT-{contentid}`, Festival `FEST-{contentid}`. 상세는 `kr_preprocessing_detail_design.md` v0.3·`kr_preprocessing_code_based_design.md` 참조 |
+| v0.7 | 2026-06-10 | 조동휘 | KR 전처리 완료 보고서 기준 S3 vector index 생성 기준(`TourKoreaDomainData` 입력, `kr-tour-domain-v1`, metadata filter, 재생성 조건) 반영. 상세는 `s3_vector_index_plan.md` 참조 |

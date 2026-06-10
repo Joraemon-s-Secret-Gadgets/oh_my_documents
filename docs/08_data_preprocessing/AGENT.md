@@ -9,9 +9,12 @@
 ## Documents
 
 ```text
-data_preprocessing_plan.md          전처리 대표 계획서 (공통 원칙·아키텍처)
-preprocessing_budget_estimate.md    전처리 PoC 예산 산정
-kr_preprocessing_detail_design.md   한국(KR) ELT 전처리 상세 설계
+data_preprocessing_plan.md             전처리 대표 계획서 (공통 원칙·아키텍처)
+preprocessing_budget_estimate.md       전처리 PoC 예산 산정
+kr_preprocessing_detail_design.md      한국(KR) ELT 전처리 상세 설계 (설계 의도 기준)
+kr_preprocessing_code_based_design.md  한국(KR) 전처리 설계 (tour-api-korea 샘플 코드 산출물 기준)
+preprocessing_report.md                KR 상세 데이터 전처리 완료 보고서
+s3_vector_index_plan.md                KR 전처리 산출물 기반 S3 vector index 구축안
 ```
 
 향후 수집된 데이터 산출물 정리 문서, 일본(JP) 상세 설계, Lambda 변환 구현 설계 등을 같은 폴더에 추가한다. 새 보조 문서를 추가할 때 대표 문서(`data_preprocessing_plan.md`)와 모순되지 않도록 동기화한다.
