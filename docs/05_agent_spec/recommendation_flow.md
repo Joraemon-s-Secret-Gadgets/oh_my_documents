@@ -1,5 +1,7 @@
 # 추천 근거 및 흐름
 
+> 업데이트 메모: 기존 문서의 “검색 후 랭킹” 구간은 `Candidate_Evidence_Agent`가 장소 evidence를 검색하고, 도시/장소 후보를 scoring하여 Planner가 사용할 evidence package를 구성하는 흐름으로 해석한다. 본 문서는 추천 근거 논리를 보존하며, 일정 생성 세부 흐름은 별도 확정 전까지 변경하지 않는다.
+
 ## **전체 추천 흐름 근거 논리**
 
 ### **1. 사용자 입력 수집**
@@ -517,7 +519,9 @@ cleaned raw query:
 
 자연어 입력이 있는 경우에는 필수 테마 충족은 `theme` 컬럼으로 확인하고, 자연어의 세부 취향은 soft query와 cleaned raw query 유사도 점수로 랭킹에 반영한다.
 
-최종 추천은 단순히 점수가 높은 도시를 보여주는 것이 아니라, 추천 근거도 함께 제공한다.
+현행 Agent 구조에서는 이 점수화와 후보 구성 책임을 `Candidate_Evidence_Agent`가 담당한다.
+Candidate Evidence Agent는 장소 evidence를 검색하고 도시/장소 후보를 scoring하여 Planner가 사용할 `selected_city`, `recommended_places`, `reserve_places`, `city_rankings` 기반 evidence package를 구성한다.
+최종 사용자용 일정과 추천 설명은 Planner Agent가 이 evidence package를 받아 생성한다.
 
 ---
 
@@ -702,5 +706,5 @@ cleaned raw query:
 
 ## **한 문장 정리**
 
-> 본 서비스는 사용자가 선택한 1-3개의 여행 테마를 모두 충족할 수 있는 소도시를 우선 후보로 선정하고, 테마별 데이터 불균형을 보정한 뒤, 접근성·테마 특화도·도시 규모 보정·콘텐츠 타입 균형·일정 구성 가능성을 종합적으로 판단해 최종 소도시와 여행 일정을 추천한다. 자연어 입력이 있는 경우에는 판별 agent가 온보딩 테마와 현재 여행 의도를 병합하고, 필수 테마는 `theme` 컬럼 기반으로 확인하며, soft preference와 cleaned raw query는 장소별 임베딩 유사도 검색을 통해 랭킹과 일정 장소 선정에 반영한다.
+> 본 서비스는 사용자가 선택한 1-3개의 여행 테마를 모두 충족할 수 있는 소도시를 우선 후보로 선정하고, 테마별 데이터 불균형을 보정한 뒤, 접근성·테마 특화도·도시 규모 보정·콘텐츠 타입 균형·일정 구성 가능성을 종합적으로 판단한다. 자연어 입력이 있는 경우에는 판별 agent가 온보딩 테마와 현재 여행 의도를 병합하고, 필수 테마는 `theme` 컬럼 기반으로 확인하며, soft preference와 cleaned raw query는 장소별 임베딩 유사도 검색을 통해 Candidate Evidence Agent의 도시/장소 scoring과 Planner 입력 후보 구성에 반영한다.
 >
