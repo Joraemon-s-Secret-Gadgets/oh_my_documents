@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — Agent 명세서 v0.4</title>
+    <title>로브 (Lovv) — Agent 명세서 v0.5</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -16,7 +16,7 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">로브</div>
-          <div class="aside-ver">Agent Spec · v0.4</div>
+          <div class="aside-ver">Agent Spec · v0.5</div>
           <div class="aside-status"><div class="status-dot"></div><span>검토 중</span></div>
         </div>
         <nav class="toc">
@@ -54,12 +54,11 @@
 <a class="toc-link" href="#s7">7. 단계별 명세</a>
 <a class="toc-link" href="#s7-1">7.1 <code>Intent_<wbr>Agent</code></a>
 <a class="toc-link" href="#s7-2">7.2 <code>Supervisor_<wbr>Router</code></a>
-<a class="toc-link" href="#s7-3">7.3 <code>Polymorphic_<wbr>Retriever_<wbr>Agent</code></a>
+<a class="toc-link" href="#s7-3">7.3 <code>Candidate_<wbr>Evidence_<wbr>Agent</code></a>
 <a class="toc-link" href="#s7-4">7.4 <code>Festival_<wbr>Verifier_<wbr>Agent</code></a>
-<a class="toc-link" href="#s7-5">7.5 <code>Ranker_<wbr>Agent</code></a>
-<a class="toc-link" href="#s7-6">7.6 <code>Itinerary_<wbr>Writer_<wbr>Agent</code></a>
-<a class="toc-link" href="#s7-7">7.7 <code>Validation Skill</code></a>
-<a class="toc-link" href="#s7-8">7.8 <code>Output_<wbr>Validator_<wbr>Agent</code></a>
+<a class="toc-link" href="#s7-5">7.5 <code>Planner_<wbr>Agent</code></a>
+<a class="toc-link" href="#s7-6">7.6 <code>Validation Skill</code></a>
+<a class="toc-link" href="#s7-7">7.7 Planner 의미 검증</a>
 </div>
 <div class="toc-section">
 <div class="toc-section-hd">8. 도구 및 Skill</div>
@@ -89,10 +88,10 @@
       <main id="cover">
         <h1 id="cover-title" class="s-h1">로브 (Lovv) Agent 명세서</h1>
 <blockquote>
-<p class="doc-p">문서 버전: v0.4</p>
+<p class="doc-p">문서 버전: v0.5</p>
 <p class="doc-p">문서 상태: 검토 중 (Review)</p>
 <p class="doc-p">기준 문서: 요구사항 명세서 v1.7, 서비스 흐름 명세서 v0.2, 데이터 수집 계획서 v0.7, 데이터베이스 설계 명세서 v0.5, 기술 명세서 v0.3, API 명세서 v0.2</p>
-<p class="doc-p">상세 정본: <code>langgraph_<wbr>flow.md</code>, <code>agent_<wbr>harness_<wbr>design.md</code></p>
+<p class="doc-p">상세 정본: <code>langgraph_<wbr>flow.md</code>, <code>candidate_<wbr>evidence_<wbr>agent.md</code>, <code>agent_<wbr>harness_<wbr>design.md</code></p>
 </blockquote>
 <h1 id="s1" class="s-h1">1. 문서 개요</h1>
 <h2 id="s1-1" class="s-h2">1.1 목적</h2>
@@ -100,8 +99,8 @@
 <p class="doc-p">정본의 범위는 다음과 같다.</p>
 <ul class="bullet-list">
 <li>사용자 자연어, 온보딩 선호, 지도 진입 조건을 추천 가능한 상태로 구조화한다.</li>
-<li>한국/일본 소도시 후보를 검색하고 추천 소도시 1곳을 선정한다.</li>
-<li>축제 날짜, 추천 근거, 일정 구성, 최종 응답의 안전성을 검증한다.</li>
+<li>한국/일본 소도시와 장소 evidence 후보를 검색·점수화하고 Planner가 사용할 후보 패키지를 구성한다.</li>
+<li>축제 날짜, 일정 구성, 추천 근거, 최종 응답의 안전성을 검증한다.</li>
 <li>AgentCore Runtime, Memory, Gateway, Policy, Observability에 연결 가능한 상태·노드·도구 계약을 정의한다.</li>
 </ul>
 <h2 id="s1-2" class="s-h2">1.2 설계 원칙</h2>
@@ -117,7 +116,7 @@
 <div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>목표</th><th>설명</th></tr></thead><tbody>
 <tr><td>조건 구조화</td><td>자연어와 UI 조건을 <code>UnifiedAgentState</code>의 구조화 필드로 변환</td></tr>
-<tr><td>근거 기반 추천</td><td>목적지 DB, Knowledge Catalog, 임베딩 검색, 월별 기상 경향을 근거로 소도시 1곳 선정</td></tr>
+<tr><td>근거 기반 추천</td><td>목적지 DB, Knowledge Catalog, 임베딩 검색, 월별 기상 경향을 근거로 Candidate Evidence Package 구성</td></tr>
 <tr><td>개인화 반영</td><td>온보딩 테마, 현재 자연어 의도, 좋아요/싫어요 피드백을 분리해 반영</td></tr>
 <tr><td>일정 구성</td><td>일정 유형과 콘텐츠 타입 균형에 맞는 일별 일정 생성</td></tr>
 <tr><td>설명 가능성</td><td>추천 이유, 일정 흐름 이유, 반영 불가 조건 안내를 구조화해 제공</td></tr>
@@ -155,7 +154,7 @@
 </tbody></table></div>
 <p class="doc-p">API 응답에서는 <code>externalLinks</code>를 <code>links</code> 객체로 직렬화한다. Agent 내부 상태와 문서 본문은 링크 생성 책임을 명확히 하기 위해 <code>externalLinks</code>라는 논리명을 사용하되, <code>/<wbr>recommendations</code> 응답 계약은 API 명세의 <code>links.map</code>, <code>links.staySearch</code>를 따른다. <code>recommendationReasons</code>, <code>itineraryFlowReason</code>, <code>confidence</code>, <code>user_<wbr>notice</code>, <code>festivalDateVerifications</code>는 API 명세의 <code>explainability</code>와 최상위 검증 필드로 매핑한다.</p>
 <h1 id="s5" class="s-h1">5. 파이프라인</h1>
-<p class="doc-p"><code>Intent_<wbr>Agent</code>는 조건 파싱을 내장한 entry node다. <code>Condition_<wbr>Parser_<wbr>Agent</code>는 별도 물리 노드로 두지 않고 <code>Intent_<wbr>Agent</code>의 논리 책임으로 통합한다. 이후 <code>Supervisor_<wbr>Router</code>가 <code>fulfilled_<wbr>matrix</code>와 <code>target_<wbr>region</code>을 기준으로 검색·랭킹 루프를 제어하고, 목적지 선정 뒤에는 일정·설명·검증 구간을 순차 호출한다.</p>
+<p class="doc-p"><code>Intent_<wbr>Agent</code>는 조건 파싱을 내장한 entry node다. <code>Condition_<wbr>Parser_<wbr>Agent</code>는 별도 물리 노드로 두지 않고 <code>Intent_<wbr>Agent</code>의 논리 책임으로 통합한다. 이후 <code>Supervisor_<wbr>Router</code>가 <code>fulfilled_<wbr>matrix</code>와 구조화 조건을 기준으로 <code>Candidate_<wbr>Evidence_<wbr>Agent</code>를 호출한다. <code>Candidate_<wbr>Evidence_<wbr>Agent</code>는 기존 <code>Polymorphic_<wbr>Retriever_<wbr>Agent</code>와 <code>Ranker_<wbr>Agent</code>의 책임을 통합해 장소 evidence 검색, 도시/장소 점수화, Planner 입력 후보 패키지 구성을 수행한다. 목적지와 후보 장소 패키지가 구성된 뒤에는 <code>Planner_<wbr>Agent</code>가 일정 생성, 설명 생성, 최종 출력 검증을 통합 담당한다.</p>
 <h2 id="s5-1" class="s-h2">5.1 Agent 구성도</h2>
 <figure class="doc-figure"><img src="../assets/images/mermaid/05-agent-spec-05-agent-spec-01.png" alt="Lovv Agent 구성도" loading="lazy" /><figcaption>Lovv Agent 구성도</figcaption></figure>
 <h2 id="s5-2" class="s-h2">5.2 파이프라인 단계</h2>
@@ -163,51 +162,55 @@
 <thead><tr><th>단계</th><th>노드/모듈</th><th>역할</th><th>출력</th></tr></thead><tbody>
 <tr><td>1</td><td><code>Intent_<wbr>Agent</code></td><td>멀티턴 컨텍스트 정리, 조건 파싱, 필수 조건 확인</td><td>handoff payload, 초기 <code>fulfilled_<wbr>matrix</code></td></tr>
 <tr><td>2</td><td><code>Supervisor_<wbr>Router</code></td><td>상태 기반 라우팅, 재시도·폴백 제어, Skill 호출</td><td><code>next_<wbr>node</code>, 라우팅 결정</td></tr>
-<tr><td>3</td><td><code>Polymorphic_<wbr>Retriever_<wbr>Agent</code></td><td>전국구 앵커 또는 지역 제한 검색</td><td>후보 요약, <code>target_<wbr>region</code></td></tr>
-<tr><td>4</td><td><code>Ranker_<wbr>Agent</code></td><td>구조화 조건 기반 1차 점수화, 축제 검증 대상 Top-K 선별</td><td>상위 후보 K곳, 점수 근거</td></tr>
-<tr><td>5</td><td><code>Festival_<wbr>Verifier_<wbr>Agent</code></td><td>Top-K 후보의 축제 해당 연도 개최일 검증</td><td>검증 JSON, 캐시</td></tr>
-<tr><td>6</td><td><code>Ranker_<wbr>Agent</code></td><td>축제 검증 결과를 반영한 최종 소도시 1곳 선정</td><td>선정지, 최종 점수 근거</td></tr>
-<tr><td>7</td><td><code>Itinerary_<wbr>Writer_<wbr>Agent</code></td><td>일정·대체 일정·추천 이유·동선 설명을 하나의 구조화 출력으로 생성</td><td><code>itinerary</code>, <code>alternativeItinerary</code>, <code>recommendationReasons</code>, <code>itineraryFlowReason</code>, <code>user_<wbr>notice</code></td></tr>
-<tr><td>8</td><td><code>Validation Skill</code></td><td>결정적 검증</td><td>필드·정책 검증 결과</td></tr>
-<tr><td>9</td><td><code>Output_<wbr>Validator_<wbr>Agent</code></td><td>근거성·환각·설명 가능성 의미 검증</td><td>검증 판정, 실패 카테고리</td></tr>
-<tr><td>10</td><td><code>Backend_<wbr>Serving /<wbr> SAM</code></td><td>응답 패키징, 저장, UI 서빙</td><td>최종 추천 응답</td></tr>
+<tr><td>3</td><td><code>Candidate_<wbr>Evidence_<wbr>Agent</code></td><td>장소 evidence 검색, 도시/장소 scoring, primary/reserve 후보 패키징</td><td><code>selected_<wbr>city</code>, <code>recommended_<wbr>places</code>, <code>reserve_<wbr>places</code>, <code>city_<wbr>rankings</code>, audit</td></tr>
+<tr><td>4</td><td><code>Festival_<wbr>Verifier_<wbr>Agent</code></td><td>축제 후보의 해당 연도 개최일 검증</td><td>검증 JSON, 캐시</td></tr>
+<tr><td>5</td><td><code>Planner_<wbr>Agent</code></td><td>일정 생성, 추천 설명 생성, 최종 출력 검증을 통합 수행</td><td><code>itinerary</code>, <code>alternativeItinerary</code>, <code>recommendationReasons</code>, <code>itineraryFlowReason</code>, <code>user_<wbr>notice</code></td></tr>
+<tr><td>6</td><td><code>Backend_<wbr>Serving /<wbr> SAM</code></td><td>응답 패키징, 저장, UI 서빙</td><td>최종 추천 응답</td></tr>
 </tbody></table></div>
 <h1 id="s6" class="s-h1">6. UnifiedAgentState</h1>
 <p class="doc-p">LangGraph 그래프 전역 상태다. 구현 기준은 Python 3.12 <code>TypedDict</code>이며 상세 정본은 <code>langgraph_<wbr>flow.md</code>를 따른다.</p>
-<pre><code>class UnifiedAgentState(TypedDict):
-    messages: list[dict[str, str]]
-    conversation_summary: str
-    turn_index: int
-    session_id: str
-    recommendation_request_id: str | None
-    agent_run_id: str | None
+<pre><code>from typing import TypedDict, List, Dict, Any, Optional
 
-    extracted_inputs: dict[str, object]
-    onboarding_themes: list[str]
-    chat_extracted_themes: list[str]
-    active_required_themes: list[str]
-    theme_priority: dict[str, str]
-    soft_preferences: list[str]
-    cleaned_raw_query: str
-    theme_queries: dict[str, str]
-    soft_preference_query: str
-    unsupported_conditions: list[str]
-    backup_themes: list[str]
-    excluded_themes: list[str]
-    user_location: dict[str, float] | None
-    user_notice: str | None
+class UnifiedAgentState(TypedDict):
+    # --- 대화/컨텍스트 (Intent_Agent 소유) ---
+    messages: List[Dict[str, str]]            # 전체 멀티턴 백로그 (Supervisor에 미전달)
+    conversation_summary: str                 # 롤링 요약 (백로그 토큰 bound)
+    turn_index: int                           # 현재 사용자 턴 번호
+    session_id: str                           # 세션 식별자
+    recommendation_request_id: Optional[str]  # MySQL 추천 요청/결과 원장 연결 키
+    agent_run_id: Optional[str]               # DynamoDB Agent 실행 trace 연결 키
 
+    # --- Intent → Supervisor handoff payload ---
+    extracted_inputs: Dict[str, Any]          # country, travelMonth, travelYear, tripType, theme, entryType, includeFestivals
+    user_preferences: List[str]               # RAG/검색용 선호 문장 (의도 관련성 명확분만)
+    onboarding_themes: List[str]              # 장기 선호 (온보딩 1~3개)
+    chat_extracted_themes: List[str]          # 자연어에서 추출된 테마
+    active_required_themes: List[str]         # 필수 충족 대상 (온보딩+자연어 병합, 최대 3)
+    theme_priority: Dict[str, str]            # 테마별 high|normal|low
+    soft_preferences: List[str]               # quiet, scenic_view 등 랭킹 가산 조건
+    cleaned_raw_query: str                    # 반영 가능 조건만 남긴 원문
+    theme_queries: Dict[str, str]             # 테마별 벡터 검색 쿼리
+    soft_preference_query: str                # 분위기 통합 쿼리
+    unsupported_conditions: List[str]         # RAG 미전달, user_notice 대상
+    backup_themes: List[str]                  # active 3개 초과 시 밀려난 온보딩 테마
+    user_location: Optional[Dict[str, float]] # 거리 기반 1차 필터 기준 좌표
+    user_notice: Optional[str]                # 예외 안내 문구
+    excluded_themes: List[str]                # 명시적 거부 테마
+
+    # --- 라우팅 제어 (Supervisor 소유) ---
     next_node: str
-    fulfilled_matrix: dict[str, str]
-    target_region: str | None
-    validation_retry_count: int
+    fulfilled_matrix: Dict[str, str]          # 테마/단계별 X|O|△|N/A
+    target_region: Optional[str]              # 하위 호환용 지역 상태. 신규 흐름은 selected_city/candidate_evidence_package를 우선 사용
+    validation_retry_count: int               # 검증 실패 재시도 카운터 (상한 2)
 
-    raw_collected_data: list[dict[str, object]]
-    festival_verifications: list[dict[str, object]]
-    selected_destination: dict[str, object] | None
-    itinerary: dict[str, object] | None
-    recommendation_reasons: list[str] | None
-    confidence: float | None</code></pre>
+    # --- 수집/생성물 (Worker/Skill 누적) ---
+    candidate_evidence_package: Optional[Dict[str, Any]]  # Candidate_Evidence_Agent 출력
+    raw_collected_data: List[Dict[str, Any]]  # 하위 호환용 수집 데이터, 기상 경향 등
+    festival_verifications: List[Dict[str, Any]]  # Festival_Verifier 결과 JSON
+    selected_destination: Optional[Dict[str, Any]]
+    itinerary: Optional[Dict[str, Any]]
+    recommendation_reasons: Optional[List[str]]
+    confidence: Optional[float]</code></pre>
 <p class="doc-p">상태 정책:</p>
 <ul class="bullet-list">
 <li><code>messages</code> 원문은 Memory에만 두고 Supervisor에 통째 전달하지 않는다.</li>
@@ -239,20 +242,26 @@
 <tr><td>raw 정책</td><td>raw 대화, raw RAG 결과, raw 웹 검색 결과를 보유하지 않는다.</td></tr>
 </tbody></table></div>
 <p class="doc-p"><code>fulfilled_<wbr>matrix</code> 기호 규격은 8.2를 단일 출처로 사용한다.</p>
-<h2 id="s7-3" class="s-h2">7.3 <code>Polymorphic_<wbr>Retriever_<wbr>Agent</code></h2>
-<div class="table-wrap"><table class="info-tbl compact-tbl decision-tbl">
+<h2 id="s7-3" class="s-h2">7.3 <code>Candidate_<wbr>Evidence_<wbr>Agent</code></h2>
+<div class="table-wrap wide scroll-table"><table class="info-tbl decision-tbl">
 <thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
-<tr><td>책임</td><td>RAG/정적 DB 기반 소도시, 관광지, 축제, 기상 경향 후보 인출</td></tr>
-<tr><td>모드 1</td><td><code>target_<wbr>region == None</code>이면 전국구 앵커 탐색 후 소도시를 고정한다.</td></tr>
-<tr><td>모드 2</td><td><code>target_<wbr>region</code>이 있으면 해당 소도시 내부로 검색 범위를 제한한다.</td></tr>
-<tr><td>지도 진입</td><td><code>destinationId</code>가 있으면 앵커 탐색을 생략하고 지역 제한 검색으로 진입한다.</td></tr>
+<tr><td>책임</td><td>장소 evidence 검색, 도시/장소 scoring, Planner 입력용 primary/reserve 후보 패키징</td></tr>
+<tr><td>통합 책임</td><td>기존 <code>Polymorphic_<wbr>Retriever_<wbr>Agent</code>와 <code>Ranker_<wbr>Agent</code>의 물리 노드를 통합한다.</td></tr>
+<tr><td>도구</td><td><code>Destination Search Tool</code>, <code>Scoring Tool</code>, <code>Weather Trends Skill</code></td></tr>
+<tr><td>출력</td><td><code>selected_<wbr>city</code>, <code>city_<wbr>rankings</code>, <code>recommended_<wbr>places</code>, <code>reserve_<wbr>places</code>, <code>coverage_<wbr>audit</code>, <code>retrieval_<wbr>audit</code></td></tr>
+<tr><td>하지 않음</td><td>일정 생성, 추천 설명 생성, 최종 API 응답 생성</td></tr>
+<tr><td>city discovery</td><td><code>destinationId</code>가 없으면 여러 도시의 장소 evidence를 검색하고 scoring으로 <code>selected_<wbr>city</code>를 고른다.</td></tr>
+<tr><td>anchored search</td><td><code>destinationId</code>가 있으면 해당 도시 내부의 장소 evidence와 예비 후보를 구성한다.</td></tr>
 <tr><td>제약</td><td>한국 요청에는 한국 데이터만, 일본 요청에는 일본 데이터만 검색한다.</td></tr>
 </tbody></table></div>
-<p class="doc-p">지역 제한 추천 로직:</p>
+<p class="doc-p">Candidate Evidence Agent의 기본 로직:</p>
 <ul class="bullet-list">
-<li><code>user_<wbr>location</code>이 있으면 거리 기반 1차 필터를 적용한다.</li>
-<li><code>active_<wbr>required_<wbr>themes</code> 전체 충족 여부를 <code>city_<wbr>id + theme</code> 집계로 확인한다.</li>
-<li><code>theme_<wbr>queries</code>, <code>soft_<wbr>preference_<wbr>query</code>, <code>cleaned_<wbr>raw_<wbr>query</code>는 임베딩 유사도 재랭킹에 사용한다.</li>
+<li><code>Intent_<wbr>Agent</code>가 구조화한 <code>active_<wbr>required_<wbr>themes</code>, <code>cleaned_<wbr>raw_<wbr>query</code>, <code>soft_<wbr>preference_<wbr>query</code>, <code>user_<wbr>location</code>, <code>destinationId</code>를 입력으로 받는다.</li>
+<li><code>active_<wbr>required_<wbr>themes</code>는 deterministic metadata gate와 theme coverage 계산에 사용한다.</li>
+<li><code>cleaned_<wbr>raw_<wbr>query</code>와 <code>soft_<wbr>preference_<wbr>query</code>는 장소 evidence 검색의 별도 query channel로 사용한다.</li>
+<li><code>Scoring Tool</code>은 도시/장소 점수, 테마 커버리지, 테마 균형, 거리/일수 가능성, 후보 충분성을 계산한다.</li>
+<li>Planner fallback 지연을 줄이기 위해 최종 일정 필요 수보다 넉넉한 <code>recommended_<wbr>places</code>와 <code>reserve_<wbr>places</code>를 반환한다.</li>
+<li>복수 테마 선택 시 theme quota와 balance audit을 적용해 특정 테마 후보로 쏠리지 않게 한다.</li>
 <li><code>unsupported_<wbr>conditions</code>는 검색 조건으로 전달하지 않는다.</li>
 </ul>
 <p class="doc-p">검색 인덱스 계약:</p>
@@ -265,7 +274,7 @@
 <tr><td>필수 metadata</td><td><code>country</code>, <code>destination_<wbr>id</code>, <code>city_<wbr>id</code>, <code>content_<wbr>type</code>, <code>theme_<wbr>tags</code>, <code>recommended_<wbr>months</code>, <code>source_<wbr>type</code></td></tr>
 <tr><td>금지 metadata</td><td>사용자 ID 원문, 대화 전문, 비공개 운영 메모</td></tr>
 </tbody></table></div>
-<p class="doc-p">Retriever는 S3 vector metadata filter로 국가·도시·테마·월·콘텐츠 유형을 1차 제한하고, AWS Neptune으로 도시·축제·테마·장소 관계를 확장한 뒤 MySQL 원장 또는 DynamoDB 정규화 문서의 확정 필드로 후보를 재검증한다. S3 vector 결과만으로 장소 존재, 축제 일정, 운영 여부를 확정하지 않는다.</p>
+<p class="doc-p">Candidate Evidence Agent는 S3 vector metadata filter로 국가·도시·테마·월·콘텐츠 유형을 1차 제한하고, AWS Neptune으로 도시·축제·테마·장소 관계를 확장한 뒤 MySQL 원장 또는 DynamoDB 정규화 문서의 확정 필드로 후보를 재검증한다. S3 vector 결과만으로 장소 존재, 축제 일정, 운영 여부를 확정하지 않는다.</p>
 <h2 id="s7-4" class="s-h2">7.4 <code>Festival_<wbr>Verifier_<wbr>Agent</code></h2>
 <div class="table-wrap wide scroll-table"><table class="info-tbl decision-tbl">
 <thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
@@ -282,29 +291,14 @@
 <tr><td><code>tentative</code></td><td>7일</td><td>짧은 주기로 재검증</td></tr>
 <tr><td><code>unknown</code> / <code>outdated</code></td><td>1일</td><td>다음 요청에서 재검색 유도</td></tr>
 </tbody></table></div>
-<p class="doc-p"><code>confirmed</code> 축제만 일정에 직접 배치한다. <code>tentative</code>는 안내 문구 또는 후보 정보로만 사용한다. 축제 포함 요청에서는 모든 후보를 웹 검증하지 않고, Ranker의 구조화 1차 점수 상위 K곳(기본 2~3곳)만 검증한다. <code>includeFestivals=false</code>이면 Festival Verifier를 건너뛰고 <code>festival</code> 매트릭스 항목을 <code>N/<wbr>A</code>로 둔다.</p>
-<h2 id="s7-5" class="s-h2">7.5 <code>Ranker_<wbr>Agent</code></h2>
-<p class="doc-p">Ranker는 후보 소도시를 최종 1곳으로 줄인다. 점수 계산 자체는 <code>Scoring Skill</code>이 수행하고, Agent는 점수 근거를 요약한다.</p>
-<div class="table-wrap"><table class="info-tbl compact-tbl">
-<thead><tr><th>점수 요소</th><th>방향/규칙</th></tr></thead><tbody>
-<tr><td>접근성</td><td><code>tripType</code>과 <code>user_<wbr>location</code> 기준 접근 가능성이 높을수록 가점</td></tr>
-<tr><td>선택 테마 충족도</td><td>필수 테마 미충족 시 후보 탈락</td></tr>
-<tr><td>테마 특화도</td><td>전체 평균 대비 특정 테마 비중이 높으면 가점</td></tr>
-<tr><td>희소 테마 보정</td><td>바다·예술·온천 등 희소 테마는 가중</td></tr>
-<tr><td>도시 규모 보정</td><td>장소 수 과다 지역은 Cap을 적용해 과대평가 방지</td></tr>
-<tr><td>콘텐츠 타입 균형</td><td>관광/체험, 음식, 문화/휴식 균형이 있을수록 가점</td></tr>
-<tr><td>soft preference</td><td>분위기·감성 조건의 임베딩 유사도 가점</td></tr>
-<tr><td>cleaned raw query</td><td>반영 가능한 자연어 조건의 유사도 가점</td></tr>
-<tr><td>축제 조건</td><td>사용자가 원하고 <code>confirmed</code> 축제가 있으면 가점</td></tr>
-</tbody></table></div>
-<p class="doc-p">자연어 입력이 없으면 soft/raw 유사도 항목은 제외하고 구조화 조건으로만 점수화한다. 필수 테마를 충족하는 후보가 0건이면 Ranker는 <code>no_<wbr>candidate</code> 신호를 반환한다. Supervisor는 이를 검증 실패와 구분해 <code>validation_<wbr>retry_<wbr>count</code>를 소모하지 않고 <code>confidence</code>를 낮춘 뒤 조건 완화 안내 또는 외부 검색 링크 폴백으로 종료한다.</p>
-<h2 id="s7-6" class="s-h2">7.6 <code>Itinerary_<wbr>Writer_<wbr>Agent</code></h2>
+<p class="doc-p"><code>confirmed</code> 축제만 일정에 직접 배치한다. <code>tentative</code>는 안내 문구 또는 후보 정보로만 사용한다. 축제 포함 요청에서는 모든 후보를 웹 검증하지 않고, Candidate Evidence Agent가 구성한 상위 도시/축제 후보 K곳(기본 2~3곳)만 검증한다. <code>includeFestivals=false</code>이면 Festival Verifier를 건너뛰고 <code>festival</code> 매트릭스 항목을 <code>N/<wbr>A</code>로 둔다.</p>
+<h2 id="s7-5" class="s-h2">7.5 <code>Planner_<wbr>Agent</code></h2>
 <div class="table-wrap wide scroll-table"><table class="info-tbl decision-tbl">
 <thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
-<tr><td>책임</td><td>선정 소도시 기준 일정, 대체 일정, 추천 이유, 일정 흐름 이유, 예외 안내를 하나의 구조화 출력으로 생성</td></tr>
-<tr><td>입력</td><td>선정지, <code>tripType</code>, <code>active_<wbr>required_<wbr>themes</code>, 축제 검증, 후보 장소, 랭킹 점수 근거, soft/raw 적합도</td></tr>
+<tr><td>책임</td><td>일정 생성, 추천 설명 생성, 최종 출력 검증을 하나의 Planner 책임으로 통합</td></tr>
+<tr><td>입력</td><td>Candidate Evidence Package, <code>tripType</code>, <code>active_<wbr>required_<wbr>themes</code>, 축제 검증, 사용자 안내 대상 조건</td></tr>
 <tr><td>출력</td><td><code>itinerary</code>, <code>alternativeItinerary</code>, <code>recommendationReasons</code>, <code>itineraryFlowReason</code>, <code>externalLinks</code>, <code>confidence</code>, <code>user_<wbr>notice</code></td></tr>
-<tr><td>통합 이유</td><td>일정과 설명이 같은 후보·점수·검증 결과를 보게 해 &quot;이유-일정&quot; 불일치를 줄이고, 공유 컨텍스트 전달과 LLM 호출을 각각 1회로 줄인다.</td></tr>
+<tr><td>통합 이유</td><td>일정, 설명, 검증이 같은 후보·점수·검증 결과를 보게 해 &quot;이유-일정&quot; 불일치와 후단 재호출을 줄인다.</td></tr>
 <tr><td>규칙</td><td>필수 테마를 일정과 설명에 함께 반영하고, 과도한 이동·검증되지 않은 축제 배치·DB 근거 없는 장소 설명을 금지한다.</td></tr>
 </tbody></table></div>
 <p class="doc-p">추천 이유와 동선 설명은 다음 세 축을 중심으로 작성한다.</p>
@@ -315,8 +309,8 @@
 <tr><td>일정 가능성</td><td>콘텐츠 타입 균형, soft/raw 적합도, <code>confirmed</code> 축제 여부</td></tr>
 </tbody></table></div>
 <p class="doc-p">반영하기 어려운 조건은 <code>user_<wbr>notice</code>로 분리한다. 숙박 품질, 가격, 예약 가능 여부, 실시간 혼잡도, 실시간 운영 여부는 확정 추천 근거로 쓰지 않는다.</p>
-<h2 id="s7-7" class="s-h2">7.7 <code>Validation Skill</code></h2>
-<p class="doc-p">LLM 의미 검증 전에 결정적으로 검사한다.</p>
+<h2 id="s7-6" class="s-h2">7.6 <code>Validation Skill</code></h2>
+<p class="doc-p">Planner Agent 내부에서 LLM 의미 검증 전에 결정적으로 검사한다.</p>
 <div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>검증</th><th>기준</th></tr></thead><tbody>
 <tr><td>필드 누락</td><td>필수 출력 필드가 존재하는가</td></tr>
@@ -325,7 +319,7 @@
 <tr><td>축제 배치</td><td>일정 배치 축제는 <code>confirmed</code>인가</td></tr>
 <tr><td>active theme</td><td><code>active_<wbr>required_<wbr>themes</code>가 결과에 반영됐는가</td></tr>
 </tbody></table></div>
-<h2 id="s7-8" class="s-h2">7.8 <code>Output_<wbr>Validator_<wbr>Agent</code></h2>
+<h2 id="s7-7" class="s-h2">7.7 Planner 의미 검증</h2>
 <div class="table-wrap wide scroll-table"><table class="info-tbl">
 <thead><tr><th>항목</th><th>기준</th><th>실패 카테고리</th></tr></thead><tbody>
 <tr><td>근거성</td><td>추천 이유가 DB/검색 근거와 연결되는가</td><td><code>grounding_<wbr>missing</code></td></tr>
@@ -337,36 +331,34 @@
 <p class="doc-p">검증 실패 시 <code>validation_<wbr>retry_<wbr>count</code>를 증가시킨다. 2회 미만이면 Supervisor가 실패 카테고리별 결정 규칙으로 분기한다. 2회에 도달하면 안전 폴백 응답으로 종료한다.</p>
 <div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>실패 카테고리</th><th>Supervisor 분기</th></tr></thead><tbody>
-<tr><td><code>grounding_<wbr>missing</code></td><td><code>Itinerary_<wbr>Writer_<wbr>Agent</code> 재호출. 동일 선정지와 후보 장소를 유지하되 설명·근거 필드를 우선 재작성한다.</td></tr>
-<tr><td><code>hallucination</code></td><td><code>Polymorphic_<wbr>Retriever_<wbr>Agent</code> 재탐색 또는 해당 항목 제거</td></tr>
-<tr><td><code>condition_<wbr>unmet</code></td><td>Retriever 재탐색 또는 Ranker 재랭킹</td></tr>
-<tr><td><code>explanation_<wbr>weak</code></td><td><code>Itinerary_<wbr>Writer_<wbr>Agent</code> 재호출. 일정 골격을 유지하고 설명 필드를 보강한다.</td></tr>
+<tr><td><code>grounding_<wbr>missing</code></td><td><code>Planner_<wbr>Agent</code> 재호출. 동일 Candidate Evidence Package를 유지하되 설명·근거 필드를 우선 재작성한다.</td></tr>
+<tr><td><code>hallucination</code></td><td><code>Candidate_<wbr>Evidence_<wbr>Agent</code> 재탐색 또는 해당 항목 제거</td></tr>
+<tr><td><code>condition_<wbr>unmet</code></td><td><code>Candidate_<wbr>Evidence_<wbr>Agent</code> 재탐색 또는 Planner 재구성</td></tr>
+<tr><td><code>explanation_<wbr>weak</code></td><td><code>Planner_<wbr>Agent</code> 재호출. 일정 골격을 유지하고 설명 필드를 보강한다.</td></tr>
 <tr><td><code>fallback_<wbr>unsafe</code></td><td>안전 폴백 템플릿으로 즉시 전환</td></tr>
 </tbody></table></div>
 <h1 id="s8" class="s-h1">8. 도구 및 Skill</h1>
 <h2 id="s8-1" class="s-h2">8.1 사용 도구/Skill</h2>
 <div class="table-wrap wide scroll-table"><table class="info-tbl">
 <thead><tr><th>도구/Skill</th><th>책임</th><th>호출 주체</th></tr></thead><tbody>
-<tr><td><code>Destination Search</code></td><td>목적지·장소·테마 DB 조회</td><td>Retriever</td></tr>
+<tr><td><code>Destination Search Tool</code></td><td>S3 vector metadata filter, 목적지·장소·테마 DB 조회, 의미 검색 기반 장소 evidence 조회</td><td>Candidate Evidence Agent</td></tr>
 <tr><td><code>Festival Catalog Search</code></td><td>축제명, 지역, 대략 시기, 공식 출처 후보 조회</td><td>Festival Verifier</td></tr>
 <tr><td><code>Web Search</code></td><td>해당 연도 축제 공식 출처 검색</td><td>Festival Verifier</td></tr>
-<tr><td><code>Weather Trends Skill</code></td><td>월별 기상 경향 정형값 조회</td><td>Retriever, Itinerary Writer</td></tr>
-<tr><td><code>Scoring Skill</code></td><td>후보 점수 계산과 랭킹</td><td>Ranker</td></tr>
+<tr><td><code>Weather Trends Skill</code></td><td>월별 기상 경향 정형값 조회</td><td>Candidate Evidence Agent, Planner Agent</td></tr>
+<tr><td><code>Scoring Skill</code></td><td>도시/장소 후보 점수 계산과 primary/reserve 후보 구성</td><td>Candidate Evidence Agent</td></tr>
 <tr><td><code>Matrix Transition Skill</code></td><td><code>fulfilled_<wbr>matrix</code> 전이</td><td>Supervisor</td></tr>
-<tr><td><code>Validation Skill</code></td><td>결정적 출력 검증</td><td>Itinerary Writer/Validator 앞단</td></tr>
-<tr><td><code>Link Builder Skill</code></td><td>지도·숙소 검색 링크 생성</td><td>Itinerary Writer</td></tr>
+<tr><td><code>Validation Skill</code></td><td>결정적 출력 검증</td><td>Planner Agent</td></tr>
+<tr><td><code>Link Builder Skill</code></td><td>지도·숙소 검색 링크 생성</td><td>Planner Agent</td></tr>
 <tr><td><code>Output Packaging Skill</code></td><td>UI 응답 패키징과 민감정보 마스킹</td><td>Backend Serving</td></tr>
 <tr><td><code>WeatherAPI Proxy</code></td><td>상세 화면 표시용 실시간 날씨 조회</td><td>Backend Serving</td></tr>
 </tbody></table></div>
 <h2 id="s8-2" class="s-h2">8.2 <code>fulfilled_<wbr>matrix</code> 규격</h2>
-<p class="doc-p">표준 키는 <code>retrieval</code>, <code>festival</code>, <code>ranking</code>, <code>generation</code>, <code>validation</code>으로 고정한다. Supervisor는 <code>X</code> 항목을 아래 우선순위로 처리한다. <code>ranking</code>은 구조화 1차 점수화와 축제 검증 후 최종 선정을 모두 포함하며, 축제 포함 요청에서는 Top-K 산출 후 <code>festival</code> 검증을 거쳐 최종 선정까지 완료되어야 <code>O</code>로 전이한다. <code>generation</code>은 일정 생성과 설명 생성을 합친 단일 생성 단계다.</p>
+<p class="doc-p">표준 키는 <code>evidence</code>, <code>festival</code>, <code>planning</code>으로 고정한다. Supervisor는 <code>X</code> 항목을 아래 우선순위로 처리한다. <code>evidence</code>는 기존 retrieval/ranking을 통합한 Candidate Evidence Agent 구간이며, 장소 evidence 검색, 도시/장소 scoring, primary/reserve 후보 패키징을 포함한다. <code>planning</code>은 일정 생성, 설명 생성, 결정적/의미 검증을 포함한 Planner Agent 구간이다.</p>
 <div class="table-wrap wide scroll-table"><table class="info-tbl">
 <thead><tr><th>우선순위</th><th>키</th><th>담당</th></tr></thead><tbody>
-<tr><td>1</td><td><code>retrieval</code></td><td>Retriever</td></tr>
-<tr><td>2</td><td><code>ranking</code></td><td>Ranker</td></tr>
-<tr><td>3</td><td><code>festival</code></td><td>Festival Verifier</td></tr>
-<tr><td>4</td><td><code>generation</code></td><td>Itinerary Writer</td></tr>
-<tr><td>5</td><td><code>validation</code></td><td>Validation Skill, Output Validator</td></tr>
+<tr><td>1</td><td><code>evidence</code></td><td>Candidate Evidence Agent</td></tr>
+<tr><td>2</td><td><code>festival</code></td><td>Festival Verifier</td></tr>
+<tr><td>3</td><td><code>planning</code></td><td>Planner Agent</td></tr>
 </tbody></table></div>
 <div class="table-wrap wide scroll-table"><table class="info-tbl">
 <thead><tr><th>기호</th><th>의미</th><th>라우팅</th></tr></thead><tbody>
@@ -412,7 +404,7 @@
 <tr><td>근거성</td><td>추천 이유가 DB/검색 근거와 연결</td></tr>
 <tr><td>폴백 안전성</td><td>결측·실패 시 <code>confidence</code> 하향과 <code>user_<wbr>notice</code> 포함</td></tr>
 <tr><td>후보 없음 분기</td><td><code>no_<wbr>candidate</code>는 검증 재시도와 분리해 즉시 안전 폴백</td></tr>
-<tr><td>축제 검증 비용</td><td>축제 포함 요청은 구조화 1차 랭킹 Top-K만 웹 검증</td></tr>
+<tr><td>축제 검증 비용</td><td>축제 포함 요청은 Candidate Evidence Agent가 구성한 상위 도시/축제 후보 K건만 웹 검증</td></tr>
 </tbody></table></div>
 <p class="doc-p">테스트 하네스는 <code>agent_<wbr>harness_<wbr>design.md</code>를 따른다. PR 단계는 결정적 L1/L2/L4 핵심 케이스를 우선하고, LLM 평가와 전체 trajectory 평가는 nightly 또는 릴리즈 게이트로 분리한다.</p>
 <h1 id="s11" class="s-h1">11. 금지 사항</h1>
@@ -429,6 +421,8 @@
 <h1 id="s12" class="s-h1">12. 변경 이력</h1>
 <div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
 <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+<tr><td>v0.5</td><td>2026-06-10</td><td>llm팀</td><td>UnifiedAgentState를 <code>langgraph_<wbr>flow.md</code> 상세 정본과 정합화하고, <code>Candidate_<wbr>Evidence_<wbr>Agent</code> 검색 도구 명칭을 <code>Destination Search Tool</code>로 통일</td></tr>
+<tr><td>v0.4</td><td>2026-06-10</td><td>llm팀</td><td>Retriever/Ranker 분리 구간을 <code>Candidate_<wbr>Evidence_<wbr>Agent</code>로 통합하고 Planner가 일정·설명·검증을 구조 수준에서 통합 담당하도록 정리</td></tr>
 <tr><td>v0.4</td><td>2026-06-08</td><td>llm팀</td><td>DB v0.5 기준으로 Agent trace 저장 필드를 <code>lovv_<wbr>agent_<wbr>runs</code> 요약 필드와 Observability 메트릭으로 분리</td></tr>
 <tr><td>v0.4</td><td>2026-06-08</td><td>llm팀</td><td>Itinerary Planner와 Explanation Writer를 <code>Itinerary_<wbr>Writer_<wbr>Agent</code>로 통합하고 생성 matrix 키를 <code>generation</code>으로 정리</td></tr>
 <tr><td>v0.4</td><td>2026-06-08</td><td>llm팀</td><td>Top-K 축제 검증, 후보 0건 폴백, Validator 실패 카테고리, <code>fulfilled_<wbr>matrix</code> 표준 키와 라우팅 우선순위 반영</td></tr>
