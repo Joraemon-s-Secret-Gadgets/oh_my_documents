@@ -342,16 +342,20 @@ RAG 문서는 외부 원문을 그대로 복제하지 않고 내부 요약문과
 
 Search Index는 DynamoDB 정규화 결과에서 파생되는 S3 vector index를 기준으로 한다. S3 vector index는 원본 저장소가 아니며, S3 Raw와 DynamoDB 정규화 문서를 기준으로 언제든 재생성할 수 있어야 한다.
 
-KR 상세 데이터의 현재 운영 기준은 `TourKoreaDomainData`이며, `raw/KR/details/20260609/` 40개 도시 전처리 완료 결과를 S3 vector 생성 입력으로 사용한다. 생성 대상은 `city_metadata`, `attraction`, `restaurant`, `festival`이며, `visitor_statistics`는 도시별 월간 방문 패턴 요약에 제한적으로 반영한다. `review`와 `failed` 항목은 검색 노출 대상에서 제외한다.
+KR 상세 데이터의 현재 운영 기준은 `TourKoreaDomainData`이며, 한국 데이터 전처리 결과보고서(`korea_data_preprocessing_result_report.md`) 기준 `raw/KR/details/20260609/` 40개 도시 전처리 완료 결과를 S3 vector 생성 입력으로 사용한다. 생성 대상은 `city_metadata`, `attraction`, `restaurant`, `festival`이며, `visitor_statistics`(약 480건)는 개별 벡터화 대상에서 제외하고 city chunk의 혼잡도·계절성 보조 문맥으로만 반영한다. `quality_status = passed` 등 서비스 노출 가능한 상태만 index에 반영한다.
+
+`city_id`는 실제 적재 데이터 기준 `KR-{CityNameEn}` 형식(예: `KR-Andong`)을 사용하며, 과거 설계의 도 코드 포함 형식(`KR-GB-ANDONG`)은 사용하지 않는다. 도/광역 구분은 별도 `province` metadata(GSI2와 동일한 한글 표기)로 둔다.
 
 | 항목 | 기준 |
 | --- | --- |
 | Vector bucket | `lovv-vector-dev` |
 | Vector index | `kr-tour-domain-v1` |
-| Vector ID | `{entity_type}#{source_id}#chunk#{chunk_no}` |
-| Metadata filter | `country`, `city_id`, `entity_type`, `content_type`, `theme_tags`, `season_tags`, `recommended_months`, `quality_status`, `source_type`, `index_version` |
+| Embedding | Amazon Titan Text Embeddings V2 (`amazon.titan-embed-text-v2:0`), 1024 차원, cosine 고정 |
+| Vector ID | `{source_type}#{source_id}#{chunk_no}` 3분절. 예: `attraction#126157#001` |
+| 원천 읽기 | GSI3 entity type별 query, 부분 재색인은 `PK = CITY#{city_name_en}` query |
+| Metadata filter | `country`, `province`, `city_id`, `city_name_en`, `entity_type`, `content_type`, `content_id`, `theme_tags`, `season_tags`, `recommended_months`, `latitude`/`longitude`, `quality_status`, `source_type`, `index_version` |
 | 원본 재조회 | S3 vector 결과의 `ddb_pk`, `ddb_sk`, `raw_s3_uri`로 DynamoDB와 S3 Raw를 역추적 |
-| 재생성 조건 | embedding model, chunk template, metadata schema, 품질 기준 변경 |
+| 재생성 조건 | embedding model, chunk template, metadata schema, 품질 기준, `city_id` 형식 변경 |
 
 상세 chunk template, metadata allowlist, PutVectors 배치 기준, 샘플 질의 검증 기준은 `s3_vector_index_plan.md`를 따른다.
 
@@ -412,3 +416,4 @@ KR 상세 데이터의 현재 운영 기준은 `TourKoreaDomainData`이며, `raw
 | v0.5 | 2026-06-07 | LLM 파트 | VisitorStatistics 관계, 정규화 산출물, DynamoDB 후보 테이블, 적재 조건 보완 |
 | v0.6 | 2026-06-09 | 조동휘 | `tour-api-korea` 코드 대조로 한국 식별자 규칙 정정: City `KR-{GW 또는 GB}-*`, Attraction `ATT-{contentid}`, Festival `FEST-{contentid}`. 상세는 `kr_preprocessing_detail_design.md` v0.3·`kr_preprocessing_code_based_design.md` 참조 |
 | v0.7 | 2026-06-10 | 조동휘 | KR 전처리 완료 보고서 기준 S3 vector index 생성 기준(`TourKoreaDomainData` 입력, `kr-tour-domain-v1`, metadata filter, 재생성 조건) 반영. 상세는 `s3_vector_index_plan.md` 참조 |
+| v0.8 | 2026-06-11 | 조동휘 | `s3_vector_index_plan.md` v0.2 동기화: `city_id` 실데이터 형식(`KR-{CityNameEn}`) 확정, vector ID 3분절 통일, Titan V2 1024/cosine 고정, GSI3 기반 export, `province`·좌표 metadata 추가, `visitor_statistics` 제외 기준 명시 |
