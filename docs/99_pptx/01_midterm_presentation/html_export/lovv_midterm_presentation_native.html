@@ -1,0 +1,1112 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lovv Midterm Presentation - Native HTML</title>
+  <style>
+    :root {
+      --bg: #fff3e7;
+      --card: #fce7db;
+      --orange: #f26518;
+      --brown: #d44a14;
+      --ink: #222222;
+      --muted: #666666;
+      --line: #f2c7af;
+      --white: #fffaf5;
+      --blue: #2f5d7c;
+      --green: #2f7d5c;
+      --red: #b8442a;
+      --faint: #8f7b70;
+      --positive: #3d7b5f;
+      --place: #47738f;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Pretendard", "Noto Sans KR", "Aptos", sans-serif;
+    }
+
+    .app {
+      width: 100vw;
+      height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .deck {
+      position: relative;
+      width: 1280px;
+      height: 720px;
+      background: var(--bg);
+      box-shadow: none;
+      overflow: hidden;
+      transform: scale(var(--deck-scale, 1));
+      transform-origin: center center;
+    }
+
+    .app:fullscreen,
+    .deck:fullscreen {
+      width: 100vw;
+      height: 100vh;
+      display: grid;
+      place-items: center;
+      background: var(--bg);
+    }
+
+    .app:fullscreen .deck,
+    .deck:fullscreen {
+      width: 1280px;
+      height: 720px;
+    }
+
+    .deck:fullscreen .slide {
+      width: 100%;
+      height: 100%;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      padding: 48px 72px;
+      background: var(--bg);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(28px);
+      transition: opacity .24s ease, transform .28s ease;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .kicker {
+      margin: 0 0 14px;
+      color: var(--orange);
+      font-size: 17px;
+      font-weight: 850;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--ink);
+      font-size: 34px;
+      line-height: 1.18;
+      letter-spacing: 0;
+      font-weight: 850;
+    }
+
+    h2 {
+      margin: 0;
+      color: var(--ink);
+      font-size: 28px;
+      line-height: 1.25;
+      letter-spacing: 0;
+      font-weight: 850;
+    }
+
+    p {
+      margin: 0;
+      line-height: 1.4;
+      letter-spacing: 0;
+    }
+
+    .sub {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .footer {
+      position: absolute;
+      left: 72px;
+      right: 72px;
+      bottom: 34px;
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .title-grid {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 72px;
+      height: 100%;
+      align-items: center;
+      padding-bottom: 24px;
+    }
+
+    .brand {
+      color: var(--orange);
+      font-size: 86px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: 0;
+      margin-bottom: 30px;
+    }
+
+    .tagline {
+      font-size: 44px;
+      line-height: 1.18;
+      font-weight: 850;
+      margin-bottom: 18px;
+    }
+
+    .poem {
+      color: var(--muted);
+      font-size: 24px;
+      margin-bottom: 18px;
+    }
+
+    .definition {
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .meaning-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      padding: 34px;
+    }
+
+    .meaning-title {
+      color: var(--ink);
+      font-size: 28px;
+      font-weight: 850;
+      margin-bottom: 26px;
+    }
+
+    .meaning-row {
+      display: grid;
+      grid-template-columns: 60px 1fr;
+      gap: 18px;
+      padding: 16px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .letter {
+      color: var(--orange);
+      font-size: 38px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .meaning-row strong {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    .cloud-box {
+      position: absolute;
+      left: 72px;
+      top: 184px;
+      width: 1116px;
+      height: 392px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .32);
+    }
+
+    .problem-slide .cloud-box {
+      top: 164px;
+      height: 498px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, .38), rgba(255, 250, 245, .18));
+    }
+
+    .word {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      white-space: nowrap;
+      font-weight: 900;
+      line-height: 1;
+      transition:
+        left .42s ease,
+        top .42s ease,
+        width .42s ease,
+        height .42s ease,
+        font-size .42s ease,
+        opacity .28s ease,
+        color .28s ease;
+    }
+
+    .problem-slide .word {
+      left: var(--x0);
+      top: var(--y0);
+      width: var(--w0);
+      height: var(--h0);
+      font-size: var(--s0);
+      color: var(--c0);
+    }
+
+    .problem-slide.build-1 .core {
+      transform: scale(1.04);
+    }
+
+    .problem-slide .aux {
+      transform: scale(.78);
+      transform-origin: center;
+    }
+
+    .problem-slide.build-1 .aux {
+      opacity: .14;
+    }
+
+    .chip {
+      height: 25px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      background: var(--white);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .quad {
+      margin-top: 28px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .costs-slide .quad {
+      position: relative;
+      height: 380px;
+    }
+
+    .costs-slide .big-note {
+      transition:
+        opacity .72s ease,
+        transform .72s cubic-bezier(.2, .8, .2, 1),
+        box-shadow .72s ease;
+      opacity: 0;
+      transform: translateY(18px) scale(.985);
+      pointer-events: none;
+    }
+
+    .cost-card {
+      min-height: 176px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 184px 1fr;
+      gap: 18px;
+      align-items: center;
+      transition:
+        opacity .24s ease,
+        transform .34s ease,
+        left .34s ease,
+        top .34s ease,
+        width .34s ease,
+        height .34s ease;
+    }
+
+    .photo {
+      height: 136px;
+      background:
+        linear-gradient(135deg, rgba(242,101,24,.32), rgba(47,93,124,.22)),
+        var(--card);
+      border: 1px solid var(--line);
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      padding: 8px;
+    }
+
+    .photo.news {
+      background-size: cover;
+      background-position: center;
+      color: transparent;
+      padding: 0;
+    }
+
+    .photo.bukchon {
+      background-image: url("assets/news/image1.jpeg");
+      background-position: center 45%;
+    }
+
+    .photo.jeju {
+      background-image: url("assets/news/image2.jpeg");
+      background-position: center 55%;
+    }
+
+    .photo.kamakura {
+      background-image: url("assets/news/image3.jpeg");
+      background-position: center 58%;
+    }
+
+    .photo.kyoto {
+      background-image: url("assets/news/image4.jpeg");
+      background-position: center 50%;
+    }
+
+    .costs-slide.focus-1 .cost-card {
+      opacity: .22;
+      filter: grayscale(.25);
+      transform: scale(.985);
+      pointer-events: none;
+    }
+
+    .costs-slide.focus-1 .big-note {
+      position: absolute;
+      left: 214px;
+      top: 314px;
+      width: 852px;
+      min-height: 132px;
+      z-index: 5;
+      display: grid;
+      place-items: center;
+      padding: 26px 36px;
+      font-size: 30px;
+      line-height: 1.25;
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      box-shadow: 0 18px 42px rgba(80, 38, 12, .14);
+      pointer-events: auto;
+    }
+
+    .cost-card h3,
+    .small-card h3 {
+      margin: 0 0 8px;
+      color: var(--orange);
+      font-size: 18px;
+      font-weight: 850;
+    }
+
+    .cost-card strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 25px;
+    }
+
+    .two-col {
+      margin-top: 34px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .metric-panel {
+      background: var(--white);
+      border: 1px solid var(--line);
+      padding: 28px;
+      min-height: 310px;
+    }
+
+    .market-slide .two-col {
+      margin-top: 22px;
+    }
+
+    .market-slide .metric-panel {
+      padding: 20px;
+      min-height: 350px;
+      transition: opacity .72s ease, filter .72s ease, transform .72s ease;
+    }
+
+    .market-photo {
+      position: relative;
+      height: 136px;
+      margin-bottom: 16px;
+      border: 1px solid var(--line);
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
+    }
+
+    .market-photo::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0, 0, 0, .03), rgba(0, 0, 0, .28));
+    }
+
+    .market-photo span {
+      position: absolute;
+      left: 12px;
+      bottom: 10px;
+      z-index: 1;
+      color: #fffaf5;
+      font-size: 12px;
+      font-weight: 800;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, .45);
+    }
+
+    .market-photo.dailybrief {
+      background-image: url("https://www.dailybrief.co.kr/news/photo/202603/5149_6017_654.png");
+      background-position: center 38%;
+    }
+
+    .market-photo.hankyung {
+      background-image: url("https://img.hankyung.com/photo/202606/01.44526894.1.jpg");
+      background-position: center 58%;
+    }
+
+    .market-slide .metric {
+      margin-top: 14px;
+      grid-template-columns: 128px 1fr;
+      padding-top: 14px;
+    }
+
+    .market-slide .metric strong {
+      font-size: 35px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .market-slide .center-callout {
+      opacity: 0;
+      transform: translateY(18px) scale(.985);
+      transition: opacity .72s ease, transform .72s ease, box-shadow .72s ease;
+      pointer-events: none;
+    }
+
+    .market-slide.focus-1 .metric-panel {
+      opacity: .22;
+      filter: grayscale(.25);
+      transform: scale(.985);
+      pointer-events: none;
+    }
+
+    .market-slide.focus-1 .center-callout {
+      left: 214px;
+      top: 342px;
+      width: 852px;
+      min-height: 104px;
+      z-index: 5;
+      display: grid;
+      place-items: center;
+      padding: 24px 34px;
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      box-shadow: 0 18px 42px rgba(80, 38, 12, .14);
+      pointer-events: auto;
+    }
+
+    .metric {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      align-items: baseline;
+      gap: 18px;
+      border-top: 1px solid var(--line);
+      padding-top: 18px;
+    }
+
+    .metric strong {
+      color: var(--orange);
+      font-size: 38px;
+      font-weight: 900;
+    }
+
+    .center-callout {
+      position: absolute;
+      left: 190px;
+      top: 515px;
+      width: 900px;
+      padding: 22px 28px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      text-align: center;
+      font-size: 24px;
+      font-weight: 850;
+    }
+
+    .cards-3,
+    .cards-4,
+    .cards-5 {
+      margin-top: 34px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .cards-3 { grid-template-columns: repeat(3, 1fr); }
+    .cards-4 { grid-template-columns: repeat(4, 1fr); }
+    .cards-5 { grid-template-columns: repeat(5, 1fr); }
+
+    .small-card {
+      min-height: 164px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      padding: 22px;
+    }
+
+    .num {
+      color: var(--orange);
+      font-size: 34px;
+      font-weight: 900;
+      margin-bottom: 14px;
+    }
+
+    .pipeline {
+      margin-top: 42px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .step {
+      position: relative;
+      background: var(--white);
+      border: 1px solid var(--line);
+      padding: 22px 16px;
+      min-height: 148px;
+      text-align: center;
+    }
+
+    .step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      right: -16px;
+      top: 50%;
+      width: 18px;
+      height: 3px;
+      background: var(--orange);
+    }
+
+    .flow-split {
+      margin-top: 42px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .track {
+      background: var(--white);
+      border: 1px solid var(--line);
+      padding: 28px;
+    }
+
+    .track ol {
+      margin: 18px 0 0;
+      padding-left: 24px;
+      font-size: 22px;
+      line-height: 1.9;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 26px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      font-size: 16px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 12px 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--orange);
+      font-weight: 850;
+      background: #fff8f2;
+    }
+
+    .deep-grid {
+      margin-top: 30px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 18px;
+    }
+
+    .big-note {
+      margin-top: 28px;
+      padding: 20px 24px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      font-size: 21px;
+      font-weight: 850;
+      text-align: center;
+    }
+
+    .demo {
+      margin-top: 38px;
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 26px;
+      align-items: stretch;
+    }
+
+    .app-icons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .app-icons div {
+      height: 88px;
+      display: grid;
+      place-items: center;
+      background: var(--white);
+      border: 1px solid var(--line);
+      font-weight: 850;
+      color: var(--muted);
+    }
+
+    .lovv-screen {
+      min-height: 300px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      padding: 28px;
+    }
+
+    .timeline {
+      margin-top: 20px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .timeline div {
+      padding: 12px 14px;
+      border-left: 5px solid var(--orange);
+      background: var(--card);
+      font-weight: 750;
+    }
+
+    .hotspot {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      z-index: 10;
+      width: 50vw;
+      border: 0;
+      background: transparent;
+      cursor: default;
+    }
+
+    .hotspot:focus,
+    .hotspot:focus-visible {
+      outline: none;
+    }
+
+    .hotspot.prev {
+      left: 0;
+    }
+
+    .hotspot.next {
+      right: 0;
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="deck" id="deck">
+      <section class="slide active">
+        <div class="title-grid">
+          <div>
+            <div class="brand">Lovv</div>
+            <p class="tagline">서울·오사카 말고,<br>지금은 이곳</p>
+            <p class="poem">지도에서 흐릿한 곳, 여행에선 가장 빛나는 곳</p>
+            <p class="definition">한일 소도시를 찾아주는 대화형 여행 추천 서비스</p>
+          </div>
+          <div class="meaning-card">
+            <p class="meaning-title">What Lovv Means</p>
+            <div class="meaning-row"><div class="letter">L</div><div><strong>Local</strong><span>소도시</span></div></div>
+            <div class="meaning-row"><div class="letter">V</div><div><strong>Vibe</strong><span>분위기·감성</span></div></div>
+            <div class="meaning-row"><div class="letter">V</div><div><strong>Voyage</strong><span>여행</span></div></div>
+          </div>
+        </div>
+        <div class="footer"><span>2026.06.16</span><span>조동휘</span></div>
+      </section>
+
+      <section class="slide problem-slide">
+        <p class="kicker">PROBLEM</p>
+        <h1>오버투어리즘은 수용 한계를 넘은 관광의 압박이다</h1>
+        <div class="cloud-box">
+          <p class="word core" style="--x0:342px;--y0:46px;--w0:430px;--h0:82px;--s0:58px;--c0:var(--orange);--x1:350px;--y1:42px;--w1:430px;--h1:76px;--s1:54px">오버투어리즘</p>
+          <p class="word core" style="--x0:232px;--y0:146px;--w0:360px;--h0:64px;--s0:43px;--c0:var(--ink);--x1:108px;--y1:158px;--w1:260px;--h1:52px;--s1:32px">수용 한계 초과</p>
+          <p class="word core" style="--x0:654px;--y0:146px;--w0:160px;--h0:64px;--s0:51px;--c0:var(--red);--x1:118px;--y1:236px;--w1:160px;--h1:52px;--s1:42px">인파</p>
+          <p class="word core" style="--x0:386px;--y0:224px;--w0:210px;--h0:54px;--s0:39px;--c0:var(--brown);--x1:118px;--y1:314px;--w1:180px;--h1:48px;--s1:34px">웨이팅</p>
+          <p class="word core" style="--x0:654px;--y0:224px;--w0:210px;--h0:58px;--s0:42px;--c0:var(--red);--x1:428px;--y1:236px;--w1:190px;--h1:52px;--s1:38px">쓰레기</p>
+          <p class="word core" style="--x0:122px;--y0:232px;--w0:240px;--h0:52px;--s0:35px;--c0:var(--ink);--x1:730px;--y1:236px;--w1:210px;--h1:52px;--s1:36px">주민 불편</p>
+          <p class="word core" style="--x0:82px;--y0:88px;--w0:230px;--h0:50px;--s0:34px;--c0:var(--green);--x1:428px;--y1:158px;--w1:220px;--h1:52px;--s1:33px">환경 부담</p>
+          <p class="word core" style="--x0:818px;--y0:88px;--w0:230px;--h0:50px;--s0:34px;--c0:var(--ink);--x1:118px;--y1:392px;--w1:210px;--h1:48px;--s1:32px">교통 혼잡</p>
+          <p class="word core" style="--x0:380px;--y0:310px;--w0:340px;--h0:48px;--s0:31px;--c0:var(--blue);--x1:730px;--y1:314px;--w1:260px;--h1:48px;--s1:30px">지역 문화 훼손</p>
+          <p class="word core" style="--x0:806px;--y0:304px;--w0:130px;--h0:48px;--s0:35px;--c0:var(--blue);--x1:730px;--y1:392px;--w1:140px;--h1:48px;--s1:34px">통제</p>
+          <p class="word core" style="--x0:896px;--y0:172px;--w0:170px;--h0:44px;--s0:27px;--c0:var(--brown);--x1:730px;--y1:158px;--w1:170px;--h1:48px;--s1:29px">무단 촬영</p>
+          <p class="word core" style="--x0:954px;--y0:254px;--w0:100px;--h0:40px;--s0:28px;--c0:var(--red);--x1:730px;--y1:446px;--w1:100px;--h1:38px;--s1:26px">소음</p>
+          <p class="word core" style="--x0:132px;--y0:314px;--w0:170px;--h0:38px;--s0:25px;--c0:var(--green);--x1:428px;--y1:314px;--w1:180px;--h1:48px;--s1:30px">생활폐기물</p>
+          <p class="word aux" style="--x0:28px;--y0:42px;--w0:130px;--h0:34px;--s0:22px;--c0:var(--faint);--x1:430px;--y1:392px;--w1:130px;--h1:32px;--s1:20px">SNS 성지</p>
+          <p class="word aux" style="--x0:408px;--y0:8px;--w0:200px;--h0:34px;--s0:22px;--c0:var(--faint);--x1:430px;--y1:432px;--w1:200px;--h1:32px;--s1:19px">사유지 출입 금지</p>
+          <p class="word aux" style="--x0:736px;--y0:8px;--w0:170px;--h0:34px;--s0:22px;--c0:var(--faint);--x1:120px;--y1:446px;--w1:150px;--h1:32px;--s1:19px">성수기 쏠림</p>
+          <p class="word aux" style="--x0:24px;--y0:184px;--w0:140px;--h0:34px;--s0:22px;--c0:var(--faint);--x1:120px;--y1:80px;--w1:130px;--h1:32px;--s1:19px">핫플 집중</p>
+          <p class="word aux" style="--x0:886px;--y0:360px;--w0:160px;--h0:34px;--s0:22px;--c0:var(--faint);--x1:858px;--y1:80px;--w1:150px;--h1:32px;--s1:19px">관광객 급증</p>
+          <p class="word aux" style="--x0:30px;--y0:374px;--w0:120px;--h0:32px;--s0:21px;--c0:var(--faint);--x1:120px;--y1:118px;--w1:110px;--h1:30px;--s1:18px">관광 공해</p>
+          <p class="word aux" style="--x0:988px;--y0:304px;--w0:120px;--h0:32px;--s0:21px;--c0:var(--faint);--x1:858px;--y1:118px;--w1:110px;--h1:30px;--s1:18px">과밀</p>
+          <p class="word aux" style="--x0:620px;--y0:426px;--w0:150px;--h0:32px;--s0:21px;--c0:var(--faint);--x1:430px;--y1:472px;--w1:140px;--h1:30px;--s1:18px">인프라 압박</p>
+          <p class="word aux" style="--x0:760px;--y0:420px;--w0:140px;--h0:32px;--s0:21px;--c0:var(--faint);--x1:858px;--y1:156px;--w1:130px;--h1:30px;--s1:18px">출입 제한</p>
+          <p class="word aux" style="--x0:978px;--y0:216px;--w0:120px;--h0:32px;--s0:21px;--c0:var(--faint);--x1:858px;--y1:194px;--w1:110px;--h1:30px;--s1:18px">단속</p>
+          <p class="word aux" style="--x0:286px;--y0:378px;--w0:130px;--h0:32px;--s0:21px;--c0:var(--faint);--x1:120px;--y1:484px;--w1:120px;--h1:30px;--s1:18px">대기 줄</p>
+          <p class="word aux" style="--x0:602px;--y0:378px;--w0:120px;--h0:32px;--s0:21px;--c0:var(--faint);--x1:858px;--y1:484px;--w1:110px;--h1:30px;--s1:18px">물 부족</p>
+          <p class="word aux" style="--x0:668px;--y0:464px;--w0:160px;--h0:32px;--s0:21px;--c0:var(--faint);--x1:430px;--y1:80px;--w1:150px;--h1:30px;--s1:18px">임대료 상승</p>
+          <p class="word aux" style="--x0:198px;--y0:48px;--w0:140px;--h0:32px;--s0:21px;--c0:var(--faint);--x1:430px;--y1:118px;--w1:130px;--h1:30px;--s1:18px">주거 침해</p>
+          <p class="word aux" style="--x0:454px;--y0:424px;--w0:120px;--h0:32px;--s0:21px;--c0:var(--faint);--x1:430px;--y1:510px;--w1:110px;--h1:30px;--s1:18px">혼잡</p>
+          <p class="word aux" style="--x0:800px;--y0:198px;--w0:92px;--h0:24px;--s0:16px;--c0:var(--faint);--x1:120px;--y1:156px;--w1:110px;--h1:28px;--s1:17px">인증샷</p>
+          <p class="word aux" style="--x0:990px;--y0:140px;--w0:120px;--h0:30px;--s0:19px;--c0:var(--faint);--x1:858px;--y1:232px;--w1:110px;--h1:28px;--s1:17px">맛집 줄</p>
+          <p class="word aux" style="--x0:28px;--y0:142px;--w0:130px;--h0:30px;--s0:19px;--c0:var(--faint);--x1:120px;--y1:194px;--w1:120px;--h1:28px;--s1:17px">숙소 부족</p>
+          <p class="word aux" style="--x0:746px;--y0:356px;--w0:130px;--h0:30px;--s0:19px;--c0:var(--faint);--x1:858px;--y1:270px;--w1:120px;--h1:28px;--s1:17px">예약 매진</p>
+          <p class="word aux" style="--x0:26px;--y0:284px;--w0:130px;--h0:30px;--s0:19px;--c0:var(--faint);--x1:120px;--y1:522px;--w1:120px;--h1:28px;--s1:17px">주차난</p>
+          <p class="word aux" style="--x0:790px;--y0:390px;--w0:130px;--h0:30px;--s0:19px;--c0:var(--faint);--x1:858px;--y1:522px;--w1:120px;--h1:28px;--s1:17px">버스 대기</p>
+          <p class="word aux" style="--x0:306px;--y0:446px;--w0:130px;--h0:30px;--s0:19px;--c0:var(--faint);--x1:120px;--y1:232px;--w1:120px;--h1:28px;--s1:17px">동선 지연</p>
+          <p class="word aux" style="--x0:504px;--y0:456px;--w0:150px;--h0:30px;--s0:19px;--c0:var(--faint);--x1:858px;--y1:308px;--w1:140px;--h1:28px;--s1:17px">사진 대기</p>
+          <p class="word aux" style="--x0:536px;--y0:284px;--w0:112px;--h0:24px;--s0:16px;--c0:var(--faint);--x1:430px;--y1:156px;--w1:120px;--h1:28px;--s1:17px">관광 코스</p>
+          <p class="word aux" style="--x0:590px;--y0:126px;--w0:108px;--h0:24px;--s0:16px;--c0:var(--faint);--x1:430px;--y1:194px;--w1:120px;--h1:28px;--s1:17px">피크 시즌</p>
+          <p class="word aux" style="--x0:828px;--y0:464px;--w0:145px;--h0:30px;--s0:19px;--c0:var(--faint);--x1:858px;--y1:346px;--w1:135px;--h1:28px;--s1:17px">관광버스</p>
+          <p class="word aux" style="--x0:424px;--y0:462px;--w0:130px;--h0:30px;--s0:19px;--c0:var(--faint);--x1:430px;--y1:548px;--w1:120px;--h1:28px;--s1:17px">현지 불편</p>
+          <p class="word aux" style="--x0:720px;--y0:286px;--w0:116px;--h0:24px;--s0:16px;--c0:var(--positive);--x1:120px;--y1:270px;--w1:110px;--h1:26px;--s1:16px">숨은 여행지</p>
+          <p class="word aux" style="--x0:590px;--y0:212px;--w0:80px;--h0:22px;--s0:15px;--c0:var(--positive);--x1:430px;--y1:270px;--w1:100px;--h1:26px;--s1:16px">로컬 맛집</p>
+          <p class="word aux" style="--x0:930px;--y0:8px;--w0:110px;--h0:26px;--s0:17px;--c0:var(--positive);--x1:858px;--y1:384px;--w1:100px;--h1:26px;--s1:16px">골목 산책</p>
+          <p class="word aux" style="--x0:300px;--y0:288px;--w0:112px;--h0:24px;--s0:16px;--c0:var(--positive);--x1:120px;--y1:308px;--w1:110px;--h1:26px;--s1:16px">소도시 여행</p>
+          <p class="word aux" style="--x0:1008px;--y0:42px;--w0:100px;--h0:26px;--s0:17px;--c0:var(--positive);--x1:858px;--y1:422px;--w1:90px;--h1:26px;--s1:16px">전통시장</p>
+          <p class="word aux" style="--x0:24px;--y0:336px;--w0:110px;--h0:26px;--s0:17px;--c0:var(--positive);--x1:430px;--y1:308px;--w1:100px;--h1:26px;--s1:16px">문화 체험</p>
+          <p class="word aux" style="--x0:944px;--y0:426px;--w0:110px;--h0:26px;--s0:17px;--c0:var(--positive);--x1:430px;--y1:346px;--w1:100px;--h1:26px;--s1:16px">자연 풍경</p>
+          <p class="word aux" style="--x0:32px;--y0:434px;--w0:110px;--h0:26px;--s0:17px;--c0:var(--positive);--x1:120px;--y1:346px;--w1:100px;--h1:26px;--s1:16px">추천 코스</p>
+          <p class="word aux" style="--x0:28px;--y0:462px;--w0:70px;--h0:24px;--s0:16px;--c0:var(--place);--x1:120px;--y1:384px;--w1:70px;--h1:24px;--s1:15px">북촌</p>
+          <p class="word aux" style="--x0:112px;--y0:462px;--w0:70px;--h0:24px;--s0:16px;--c0:var(--place);--x1:120px;--y1:422px;--w1:70px;--h1:24px;--s1:15px">제주</p>
+          <p class="word aux" style="--x0:920px;--y0:438px;--w0:90px;--h0:24px;--s0:16px;--c0:var(--place);--x1:430px;--y1:384px;--w1:80px;--h1:24px;--s1:15px">가마쿠라</p>
+          <p class="word aux" style="--x0:982px;--y0:456px;--w0:70px;--h0:24px;--s0:16px;--c0:var(--place);--x1:430px;--y1:422px;--w1:70px;--h1:24px;--s1:15px">교토</p>
+          <p class="word aux" style="--x0:836px;--y0:438px;--w0:70px;--h0:24px;--s0:16px;--c0:var(--place);--x1:858px;--y1:460px;--w1:70px;--h1:24px;--s1:15px">강릉</p>
+          <p class="word aux" style="--x0:156px;--y0:388px;--w0:70px;--h0:24px;--s0:16px;--c0:var(--place);--x1:858px;--y1:498px;--w1:70px;--h1:24px;--s1:15px">전주</p>
+          <p class="word aux" style="--x0:1038px;--y0:386px;--w0:70px;--h0:24px;--s0:16px;--c0:var(--place);--x1:430px;--y1:460px;--w1:70px;--h1:24px;--s1:15px">여수</p>
+          <p class="word aux" style="--x0:1042px;--y0:430px;--w0:70px;--h0:24px;--s0:16px;--c0:var(--place);--x1:430px;--y1:498px;--w1:70px;--h1:24px;--s1:15px">경주</p>
+        </div>
+      </section>
+
+      <section class="slide costs-slide">
+        <p class="kicker">COSTS</p>
+        <h1>오버투어리즘은 4가지 비용을 남긴다</h1>
+        <div class="quad">
+          <div class="cost-card" data-cost="1"><div class="photo news bukchon"></div><div><h3>주민 생활</h3><strong>북촌</strong><p>관광객이 주거 골목으로 밀집</p></div></div>
+          <div class="cost-card" data-cost="2"><div class="photo news jeju"></div><div><h3>환경</h3><strong>제주</strong><p>생활폐기물 1일 1,330t</p></div></div>
+          <div class="cost-card" data-cost="3"><div class="photo news kamakura"></div><div><h3>도시 기능</h3><strong>가마쿠라 에노덴</strong><p>촬영 인파가 건널목 주변으로 집중</p></div></div>
+          <div class="cost-card" data-cost="4"><div class="photo news kyoto"></div><div><h3>지역 문화</h3><strong>교토 기온</strong><p>사유지 골목 통제·무단 촬영 문제</p></div></div>
+        </div>
+        <div class="big-note">여행지를 나눠 가면 부담이 줄어든다</div>
+        <div class="footer"><span>Lovv 중간발표 / PoC</span><span>03</span></div>
+      </section>
+
+      <section class="slide market-slide">
+        <p class="kicker">MARKET SIGNAL</p>
+        <h1>소도시 수요는 이미 한일 양방향으로 움직인다</h1>
+        <div class="two-col">
+          <div class="metric-panel">
+            <div class="market-photo dailybrief"><span>데일리브리프 · 국가관광전략회의</span></div>
+            <h2>일본 → 한국</h2>
+            <p class="sub">“서울 다음은 어디?”</p>
+            <div class="metric"><strong>3,000만</strong><span>외국인 관광객 2029 목표</span></div>
+            <div class="metric"><strong>90%+</strong><span>일본 개별자유여행 비중</span></div>
+          </div>
+          <div class="metric-panel">
+            <div class="market-photo hankyung"><span>한국경제 · 치치부가하마/모두투어</span></div>
+            <h2>한국 → 일본</h2>
+            <p class="sub">일본 소도시 예약 증가</p>
+            <div class="metric"><strong>+35%</strong><span>일본 소도시 예약 증가</span></div>
+            <div class="metric"><strong>+261%</strong><span>구마모토 예약 증가</span></div>
+          </div>
+        </div>
+        <div class="center-callout">수요도, 정보도 있다 — 흩어져 있어 ‘나에게 맞는 소도시’를 못 고를 뿐이다.</div>
+        <div class="footer"><span>Sources: Dailybrief · Hankyung · Rakuten/SENTV · SomeTrend</span><span>04</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">BRIDGE</p>
+        <h1>조건만 말하면 — 소도시부터 일정까지, 근거 있는 한 번의 대화로</h1>
+        <div class="cards-3">
+          <div class="small-card"><div class="num">01</div><h3>대체 소도시 발견</h3><p>“어디로?” 대신 “언제·어느 나라로?”</p></div>
+          <div class="small-card"><div class="num">02</div><h3>일정까지 짜는 Agent</h3><p>소도시 추천 + 여행 일정</p></div>
+          <div class="small-card"><div class="num">03</div><h3>Explainable RAG</h3><p>근거·출처가 보이는 추천</p></div>
+        </div>
+        <div class="big-note">남들 다 가는 곳 말고, 나에게 맞는 소도시 — 더 나은 여행이 곧 분산이 된다</div>
+        <div class="footer"><span>Lovv 중간발표 / PoC</span><span>05</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">SYSTEM</p>
+        <h1>Explainable RAG — 입력부터 근거 있는 추천·일정까지, 한 흐름으로</h1>
+        <div class="pipeline">
+          <div class="step"><h3>Client Web</h3><p>온보딩·지도·챗봇</p></div>
+          <div class="step"><h3>Backend API</h3><p>인증·검증·프록시</p></div>
+          <div class="step"><h3>Recommendation Agent</h3><p>조건분류→검색→선정→일정</p></div>
+          <div class="step"><h3>Data Store</h3><p>목적지·축제·기상경향</p></div>
+          <div class="step"><h3>External APIs</h3><p>지도·날씨·딥링크</p></div>
+        </div>
+        <div class="cards-3"><div class="small-card">이유·출처·검증 뱃지</div><div class="small-card">“덜 걷게/카페 추가” 수정</div><div class="small-card">지도·숙소 딥링크</div></div>
+        <div class="footer"><span>Lovv 중간발표 / PoC</span><span>06</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">USER FLOW</p>
+        <h1>“어디로?”가 아니라 “언제·어느 나라로?” — 묻는 순간부터 다르다</h1>
+        <div class="flow-split">
+          <div class="track"><h2>A. AI 챗봇</h2><ol><li>국가·시기·취향 입력</li><li>시스템이 소도시 선정</li><li>AI 일정 생성</li><li>저장·연동</li></ol></div>
+          <div class="track"><h2>B. 지도 마커</h2><ol><li>월·테마 필터</li><li>마커 직접 선택</li><li>AI 일정 생성</li><li>저장·연동</li></ol></div>
+        </div>
+        <div class="big-note">결과 카드: 추천 소도시 1곳 + 시간대별 타임라인 + 추천 이유·출처·검증 뱃지</div>
+        <div class="footer"><span>Lovv 중간발표 / PoC</span><span>07</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">AGENT FLOW</p>
+        <h1>Tool은 계산하고, Agent는 판단한다</h1>
+        <table>
+          <thead><tr><th>단계</th><th>노드</th><th>Tool이 하는 일</th><th>Agent가 판단하는 일</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>의도 분류</td><td>입력 스키마 검증</td><td>자연어 구조화</td></tr>
+            <tr><td>2</td><td>라우팅</td><td>완료 플래그 확인</td><td>다음 노드·재시도 선택</td></tr>
+            <tr><td>3</td><td>검색</td><td>게이트·벡터검색</td><td>후보 부족 시 fallback</td></tr>
+            <tr><td>4</td><td>선정</td><td>도시별 점수 분해</td><td>최종 소도시·근거 생성</td></tr>
+            <tr><td>5</td><td>축제 검증</td><td>개최일·출처 확인</td><td>일정 반영 여부 판단</td></tr>
+            <tr><td>6</td><td>일정 작성</td><td>동선·유형 제약 확인</td><td>읽히는 일정 생성</td></tr>
+            <tr><td>7</td><td>출력 검증</td><td>조건·근거 체크</td><td>재시도 또는 안내문</td></tr>
+          </tbody>
+        </table>
+        <div class="footer"><span>발견 · 일정 · 근거</span><span>08</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">DEEP DIVE 01</p>
+        <h1>벡터 검색만으로는 “왜 여기”를 말할 수 없다</h1>
+        <div class="deep-grid">
+          <div class="small-card"><h3>사실 원장</h3><p>장소·축제·좌표 등 확정 사실</p><strong>PoC: RDS</strong></div>
+          <div class="small-card"><h3>vector RAG Index</h3><p>자연어·soft 조건 매칭</p><strong>PoC 구현·검증</strong></div>
+          <div class="small-card"><h3>관계 탐색</h3><p>도시–테마–축제 관계</p><strong>규모 확장 시 그래프DB 검토</strong></div>
+        </div>
+        <div class="big-note">현재 PoC는 RDS와 vector 기반. Neptune은 3홉 이상 관계 순회가 필요해질 때 검토한다.</div>
+        <div class="footer"><span>Lovv 중간발표 / PoC</span><span>09</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">DEEP DIVE 02</p>
+        <h1>가장 비슷한 장소가 있는 도시 ≠ 가장 좋은 여행지</h1>
+        <div class="cards-3">
+          <div class="small-card"><h3>테마 충족도</h3><p>선택한 모든 테마를 만족하는가</p></div>
+          <div class="small-card"><h3>테마 특화도</h3><p>전체 평균 대비 강한 테마인가</p></div>
+          <div class="small-card"><h3>희소 테마 보정</h3><p>희소 테마를 과소평가하지 않는가</p></div>
+          <div class="small-card"><h3>도시 규모 보정</h3><p>큰 도시의 물량 우위를 제한하는가</p></div>
+          <div class="small-card"><h3>soft/raw 적합도</h3><p>분위기·원문 맥락 반영</p></div>
+          <div class="small-card"><h3>audit log</h3><p>선택 기여 항목 기록</p></div>
+        </div>
+        <div class="big-note">Ranker는 추천 이유를 검증·설명 가능하게 만드는 scoring framework</div>
+        <div class="footer"><span>Lovv 중간발표 / PoC</span><span>10</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">DATA</p>
+        <h1>공식·공공 데이터로 후보를 만들고, 출처를 함께 저장한다</h1>
+        <div class="cards-3">
+          <div class="small-card"><h3>한국 데이터</h3><p>TourAPI 4.0, DataLab, Wikipedia, 기상청 월별 경향</p></div>
+          <div class="small-card"><h3>일본 데이터</h3><p>JNTO/JTA, 지자체 공식, e-Stat, RESAS, JMA</p></div>
+          <div class="small-card"><h3>표시·연동용</h3><p>WeatherAPI, Google/Kakao Maps, Yahoo Japan 딥링크</p></div>
+        </div>
+        <div class="big-note">source_url · collected_at · data_confidence를 함께 저장 / 현재 날씨는 추천 점수에 미사용</div>
+        <div class="footer"><span>Lovv 중간발표 / PoC</span><span>11</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">DEMO</p>
+        <h1>흩어진 앱 비교가 — 한 번의 대화와 일정으로 끝난다</h1>
+        <div class="demo">
+          <div>
+            <h2>Before</h2>
+            <div class="app-icons"><div>축제</div><div>날씨</div><div>지도</div><div>숙소</div><div>후기</div><div>교통</div></div>
+          </div>
+          <div class="lovv-screen">
+            <h2>After · Lovv 한 화면</h2>
+            <p class="sub">소도시 추천 · 이유 · 출처 · 검증 · 일정 타임라인</p>
+            <div class="timeline"><div>입력</div><div>추천</div><div>일정</div><div>“덜 걷게/카페 추가” 수정</div><div>저장</div></div>
+          </div>
+        </div>
+        <div class="footer"><span>Lovv 중간발표 / PoC</span><span>12</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">ISSUE / TROUBLESHOOTING</p>
+        <h1>Neptune은 지금 넣는 기술이 아니라, 조건이 맞을 때 승격하는 선택지다</h1>
+        <div class="cards-4">
+          <div class="small-card"><h3>1. 이슈</h3><p>현재 PoC 관계는 대부분 1~2-hop 수준</p></div>
+          <div class="small-card"><h3>2. 비용</h3><p>Neptune Serverless 시작 용량 1 NCU, 고정비 비중 큼</p></div>
+          <div class="small-card"><h3>3. 판단</h3><p>RDS JOIN, DynamoDB 인접 리스트, 사전계산 후보로 대체</p></div>
+          <div class="small-card"><h3>4. 승격 기준</h3><p>3-hop+ 임의 경로 탐색·실시간 그래프 쓰기 필요 시 도입</p></div>
+        </div>
+        <div class="big-note">그래프를 원본 저장소가 아닌 재생성 가능한 파생 인덱스로 정의했다.</div>
+        <div class="footer"><span>내부 근거: 04_database_design.md · neptune_alternative.md</span><span>13</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">NEXT</p>
+        <h1>PoC로 핵심 가설을 좁게 검증하고, Production에서 확장한다</h1>
+        <table>
+          <thead><tr><th>영역</th><th>지금(PoC)</th><th>다음(Production)</th></tr></thead>
+          <tbody>
+            <tr><td>데이터 범위</td><td>강원·경북 40도시 + 일본 관동 일부</td><td>한국 전국·일본 전역</td></tr>
+            <tr><td>데이터 운영</td><td>1회 수집·출처·신뢰도 기록</td><td>시변 데이터 정기 갱신</td></tr>
+            <tr><td>추천 모드</td><td>Discovery 흐름 검증</td><td>지도 선택·일정 보충</td></tr>
+            <tr><td>추천 기준</td><td>도시 전체 적재</td><td>월별 방문객 기반 혼잡도 필터</td></tr>
+            <tr><td>성능·품질</td><td>핵심 흐름 동작 검증</td><td>추천 8초·RAG 1초 목표</td></tr>
+            <tr><td>비즈니스</td><td>문제·시장 근거 제시</td><td>지자체 파트너 대시보드</td></tr>
+          </tbody>
+        </table>
+        <div class="footer"><span>핵심 축은 ‘소도시냐 대도시냐’가 아니라 혼잡도</span><span>14</span></div>
+      </section>
+    </div>
+  </main>
+
+  <button type="button" class="hotspot prev" id="prev" aria-label="이전 슬라이드"></button>
+  <button type="button" class="hotspot next" id="next" aria-label="다음 슬라이드"></button>
+
+  <script>
+    const slides = [...document.querySelectorAll(".slide")];
+    const problemSlide = document.querySelector(".problem-slide");
+    const costsSlide = document.querySelector(".costs-slide");
+    const marketSlide = document.querySelector(".market-slide");
+    const deck = document.getElementById("deck");
+    let current = 0;
+    let problemBuild = 0;
+    let costsBuild = 0;
+    let marketBuild = 0;
+
+    function fitDeck() {
+      const scale = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+      deck.style.setProperty("--deck-scale", String(scale));
+    }
+
+    function applyProblemBuild() {
+      if (!problemSlide) return;
+      problemSlide.classList.toggle("build-1", problemBuild >= 1);
+    }
+
+    function applyCostsBuild() {
+      if (!costsSlide) return;
+      costsSlide.classList.remove("focus-1");
+      if (costsBuild > 0) {
+        costsSlide.classList.add("focus-1");
+      }
+    }
+
+    function applyMarketBuild() {
+      if (!marketSlide) return;
+      marketSlide.classList.remove("focus-1");
+      if (marketBuild > 0) {
+        marketSlide.classList.add("focus-1");
+      }
+    }
+
+    function go(index) {
+      current = Math.max(0, Math.min(slides.length - 1, index));
+      slides.forEach((slide, slideIndex) => slide.classList.toggle("active", slideIndex === current));
+      if (current !== 1) {
+        problemBuild = 0;
+      }
+      if (current !== 2) {
+        costsBuild = 0;
+      }
+      if (current !== 3) {
+        marketBuild = 0;
+      }
+      applyProblemBuild();
+      applyCostsBuild();
+      applyMarketBuild();
+    }
+
+    function nextStep() {
+      if (current === 1 && problemBuild < 1) {
+        problemBuild += 1;
+        applyProblemBuild();
+        return;
+      }
+      if (current === 2 && costsBuild < 1) {
+        costsBuild += 1;
+        applyCostsBuild();
+        return;
+      }
+      if (current === 3 && marketBuild < 1) {
+        marketBuild += 1;
+        applyMarketBuild();
+        return;
+      }
+      go(current + 1);
+    }
+
+    function prevStep() {
+      if (current === 3 && marketBuild > 0) {
+        marketBuild -= 1;
+        applyMarketBuild();
+        return;
+      }
+      if (current === 2 && costsBuild > 0) {
+        costsBuild -= 1;
+        applyCostsBuild();
+        return;
+      }
+      if (current === 1 && problemBuild > 0) {
+        problemBuild -= 1;
+        applyProblemBuild();
+        return;
+      }
+      go(current - 1);
+    }
+
+    document.getElementById("prev").addEventListener("click", prevStep);
+    document.getElementById("next").addEventListener("click", nextStep);
+
+    window.addEventListener("keydown", (event) => {
+      if (["ArrowRight", " ", "PageDown", "Enter", "NumpadEnter"].includes(event.key)) {
+        event.preventDefault();
+        nextStep();
+      }
+      if (["ArrowLeft", "PageUp"].includes(event.key)) {
+        event.preventDefault();
+        prevStep();
+      }
+      if (event.key === "Home") {
+        problemBuild = 0;
+        costsBuild = 0;
+        marketBuild = 0;
+        go(0);
+      }
+      if (event.key === "End") {
+        problemBuild = 0;
+        costsBuild = 0;
+        marketBuild = 0;
+        go(slides.length - 1);
+      }
+      if (event.key.toLowerCase() === "f") {
+        const app = document.querySelector(".app");
+        if (!document.fullscreenElement) app.requestFullscreen?.();
+        else document.exitFullscreen?.();
+      }
+    });
+
+    window.addEventListener("resize", fitDeck);
+    document.addEventListener("fullscreenchange", fitDeck);
+    fitDeck();
+    go(0);
+  </script>
+</body>
+</html>
