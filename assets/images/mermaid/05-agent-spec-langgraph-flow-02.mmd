@@ -1,22 +1,20 @@
 graph TD
-    USER["User / UI"] --> INTENT["Intent_Agent<br/>(entry · 판별/컨텍스트 게이트)"]
-    INTENT --> NEEDMORE{"필수 조건 충족?"}
-    NEEDMORE -- "아니오" --> USER
-    NEEDMORE -- "예" --> SUP["Supervisor_Router<br/>(I/O 허브 · 라우팅)"]
+    USER["User / UI"] --> INTENT["Intent_Agent"]
+    INTENT --> NEED{"Need more info?"}
+    NEED -- "Yes" --> ASK["Follow-up Question"]
+    ASK --> USER
+    NEED -- "No" --> SUP["Supervisor_Router"]
 
-    SUP -->|"검색 위임"| RETRIEVER["Polymorphic_Retriever_Agent"]
-    RETRIEVER -->|"축제 검증 위임"| FESTIVAL["Festival_Verifier_Agent"]
-    FESTIVAL --> RETRIEVER
-    RETRIEVER -->|"후보 요약"| SUP
+    SUP -->|"evidence"| EVIDENCE["Candidate_Evidence_Agent"]
+    EVIDENCE --> SUP
 
-    SUP -->|"랭킹 위임"| RANKER["Ranker_Agent"]
-    RANKER -->|"선정 1곳"| SUP
+    SUP -->|"festival"| FESTIVAL["Festival_Verifier_Agent"]
+    FESTIVAL --> SUP
 
-    SUP -->|"순차 호출"| PLANNER["Itinerary_Planner_Agent"]
-    PLANNER --> WRITER["Explanation_Writer_Agent"]
-    WRITER --> VALAGENT["Output_Validator_Agent"]
-    VALAGENT -- "통과" --> SERVING["Backend_Serving / SAM"]
-    VALAGENT -- "실패 · retry_count < 2" --> SUP
-    VALAGENT -- "실패 · retry 소진" --> FALLBACK["안전 폴백"]
-    FALLBACK --> SERVING
-    SERVING --> USER
+    SUP -->|"planning"| PLANNER["Planner_Agent"]
+    PLANNER --> VALID{"Pass?"}
+    VALID -- "Retry" --> SUP
+    VALID -- "Fallback" --> FALLBACK["Safe Fallback"]
+    VALID -- "Pass" --> SERVE["Backend_Serving / SAM"]
+    FALLBACK --> SERVE
+    SERVE --> USER

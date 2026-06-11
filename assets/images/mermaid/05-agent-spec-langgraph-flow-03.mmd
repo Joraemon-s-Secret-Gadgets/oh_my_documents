@@ -1,37 +1,34 @@
 graph LR
-    subgraph AGENTS["Agents (LLM 추론)"]
+    subgraph AGENTS["Agents"]
         INTENT["Intent_Agent"]
         SUP["Supervisor_Router"]
-        RETRIEVER["Polymorphic_Retriever_Agent"]
+        EVIDENCE["Candidate_Evidence_Agent"]
         FESTIVAL["Festival_Verifier_Agent"]
-        RANKER["Ranker_Agent"]
-        PLANNER["Itinerary_Planner_Agent"]
-        WRITER["Explanation_Writer_Agent"]
-        VALAGENT["Output_Validator_Agent"]
-        SERVING["Backend_Serving / SAM"]
+        PLANNER["Planner_Agent"]
+        SERVE["Backend_Serving / SAM"]
     end
 
-    subgraph TOOLS["Tools / Skills (결정적, AgentCore Gateway)"]
+    subgraph TOOLS["Tools / Skills"]
+        MATRIX[["Matrix Transition Skill"]]
         DEST[["Destination Search"]]
-        FCAT[["Festival Catalog Search"]]
-        WSEARCH[["Web Search (Browser)"]]
-        WEATHER[["Weather Trends Skill"]]
         SCORE[["Scoring Skill"]]
-        MATRIXSK[["Matrix Transition Skill"]]
+        WEATHER[["Weather Trends Skill"]]
+        FCAT[["Festival Catalog Search"]]
+        WEB[["Web Search / Browser"]]
+        VALID[["Validation Skill"]]
         LINK[["Link Builder Skill"]]
-        VALSK[["Validation Skill"]]
         PACK[["Output Packaging Skill"]]
         WAPI[["WeatherAPI Proxy"]]
     end
 
-    SUP --> MATRIXSK
-    RETRIEVER --> DEST
-    RETRIEVER --> WEATHER
-    FESTIVAL --> FCAT
-    FESTIVAL --> WSEARCH
-    RANKER --> SCORE
-    PLANNER --> LINK
-    PLANNER --> WEATHER
-    VALAGENT --> VALSK
-    SERVING --> PACK
-    SERVING --> WAPI
+    SUP -.-> MATRIX
+    EVIDENCE -.-> DEST
+    EVIDENCE -.-> SCORE
+    EVIDENCE -.-> WEATHER
+    FESTIVAL -.-> FCAT
+    FESTIVAL -.-> WEB
+    PLANNER -.-> VALID
+    PLANNER -.-> LINK
+    PLANNER -.-> WEATHER
+    SERVE -.-> PACK
+    SERVE -.-> WAPI
