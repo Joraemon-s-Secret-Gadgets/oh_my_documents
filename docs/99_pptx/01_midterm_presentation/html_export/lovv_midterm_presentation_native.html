@@ -503,6 +503,118 @@
       pointer-events: auto;
     }
 
+    .competition-slide .comp-grid {
+      display: grid;
+      grid-template-columns: 1.18fr .82fr;
+      gap: 26px;
+      margin-top: 26px;
+      align-items: stretch;
+    }
+
+    .competition-slide .compare-table,
+    .competition-slide .revenue-box {
+      background: rgba(255, 250, 245, .72);
+      border: 1px solid var(--line);
+      padding: 22px 24px;
+    }
+
+    .competition-slide .compare-table {
+      display: grid;
+      grid-template-columns: 112px 1fr 1fr;
+      grid-auto-rows: minmax(70px, auto);
+      column-gap: 16px;
+      align-items: stretch;
+    }
+
+    .competition-slide .cell {
+      border-bottom: 1px solid rgba(242, 199, 175, .85);
+      padding: 13px 0;
+      font-size: 16px;
+      line-height: 1.34;
+      display: flex;
+      align-items: center;
+    }
+
+    .competition-slide .cell.head {
+      min-height: 34px;
+      padding-top: 0;
+      color: var(--orange);
+      font-size: 15px;
+      font-weight: 850;
+      border-bottom: 2px solid var(--orange);
+    }
+
+    .competition-slide .axis {
+      color: var(--brown);
+      font-weight: 850;
+    }
+
+    .competition-slide .lovv-cell {
+      font-weight: 750;
+    }
+
+    .competition-slide .revenue-box h2 {
+      color: var(--orange);
+      font-size: 22px;
+      margin-bottom: 14px;
+    }
+
+    .competition-slide .revenue-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(242, 199, 175, .85);
+      align-items: center;
+    }
+
+    .competition-slide .revenue-row .label {
+      font-size: 16px;
+      font-weight: 760;
+    }
+
+    .competition-slide .revenue-row .formula {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .competition-slide .revenue-row .amount {
+      color: var(--ink);
+      font-size: 20px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .competition-slide .revenue-total {
+      margin-top: 18px;
+      padding: 18px;
+      background: var(--card);
+      border: 1px solid var(--line);
+    }
+
+    .competition-slide .revenue-total .value {
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--orange);
+      line-height: 1;
+    }
+
+    .competition-slide .revenue-total .note {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .competition-slide .source-note {
+      position: absolute;
+      left: 72px;
+      right: 72px;
+      bottom: 58px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
     .metric {
       margin-top: 24px;
       display: grid;
@@ -895,9 +1007,9 @@
         <div class="deep-grid">
           <div class="small-card"><h3>사실 원장</h3><p>장소·축제·좌표 등 확정 사실</p><strong>PoC: RDS</strong></div>
           <div class="small-card"><h3>vector RAG Index</h3><p>자연어·soft 조건 매칭</p><strong>PoC 구현·검증</strong></div>
-          <div class="small-card"><h3>관계 탐색</h3><p>도시–테마–축제 관계</p><strong>규모 확장 시 그래프DB 검토</strong></div>
+          <div class="small-card"><h3>관계 탐색</h3><p>도시–테마–축제 관계</p><strong>Lambda 보조 기능 구현 예정</strong></div>
         </div>
-        <div class="big-note">현재 PoC는 RDS와 vector 기반. Neptune은 3홉 이상 관계 순회가 필요해질 때 검토한다.</div>
+        <div class="big-note">현재는 Lambda로 그래프DB 유사 관계 탐색 기능을 구현하고, Neptune은 3홉 이상 관계 순회가 필요할 때 검토한다.</div>
         <div class="footer"><span>Lovv 중간발표 / PoC</span><span>09</span></div>
       </section>
 
@@ -945,17 +1057,67 @@
         <div class="footer"><span>Lovv 중간발표 / PoC</span><span>12</span></div>
       </section>
 
+      <section class="slide competition-slide">
+        <p class="kicker">COMPETITIVE EDGE</p>
+        <h1>트리플이 정한 여행을 잘 실행하게 한다면, Lovv는 어디로 갈지부터 분산시킨다</h1>
+        <p class="sub">기존 여행앱과 경쟁하기보다, 목적지 발견 단계와 지자체·소도시 파트너 영역을 선점한다.</p>
+        <div class="comp-grid">
+          <div class="compare-table" aria-label="트리플과 Lovv 비교">
+            <div class="cell head">비교 축</div>
+            <div class="cell head">트리플</div>
+            <div class="cell head">Lovv</div>
+
+            <div class="cell axis">시작점</div>
+            <div class="cell">도시·여행지를 고른 뒤 일정 생성·관리</div>
+            <div class="cell lovv-cell">국가·시기·취향만 주면 대체 소도시부터 추천</div>
+
+            <div class="cell axis">핵심 가치</div>
+            <div class="cell">일정 관리, 공동 편집, 항공·숙소·투어티켓 예약/할인</div>
+            <div class="cell lovv-cell">오버투어리즘 회피, 소도시 발견, 근거가 보이는 추천</div>
+
+            <div class="cell axis">AI 역할</div>
+            <div class="cell">취향 기반 일정 추천과 여행 상품 연결</div>
+            <div class="cell lovv-cell">RAG+Ranker로 후보를 내부 비교하고 1개 소도시와 이유 제시</div>
+
+            <div class="cell axis">수익 구조</div>
+            <div class="cell">OTA 상품 예약·프로모션·혜택 중심</div>
+            <div class="cell lovv-cell">지자체 캠페인/B2G, 송객·콘텐츠 제휴, 데이터 리포트</div>
+          </div>
+          <div class="revenue-box">
+            <h2>예상 수익 · Production 1차 가정</h2>
+            <div class="revenue-row">
+              <div><div class="label">지자체 캠페인·대시보드</div><div class="formula">5개 지역 × 월 300만원</div></div>
+              <div class="amount">1,500만원</div>
+            </div>
+            <div class="revenue-row">
+              <div><div class="label">송객·콘텐츠 제휴</div><div class="formula">제휴 GMV 월 5,000만원 × 5%</div></div>
+              <div class="amount">250만원</div>
+            </div>
+            <div class="revenue-row">
+              <div><div class="label">지역 데이터 리포트</div><div class="formula">5개 기관 × 월 50만원</div></div>
+              <div class="amount">250만원</div>
+            </div>
+            <div class="revenue-total">
+              <div class="value">월 2,000만원</div>
+              <div class="note">연 2.4억원 · 가정 기반 시나리오, PoC 이후 단가 검증 필요</div>
+            </div>
+          </div>
+        </div>
+        <div class="source-note">출처: 트리플 공식 서비스 소개(일정 생성·관리, AI 일정, 공동 일정, 항공·숙소·투어티켓 추천/할인) · NOL Universe 서비스 목록</div>
+        <div class="footer"><span>예상 수익은 확정 매출이 아니라 Production 1차 검증용 가정</span><span>13</span></div>
+      </section>
+
       <section class="slide">
         <p class="kicker">ISSUE / TROUBLESHOOTING</p>
-        <h1>Neptune은 지금 넣는 기술이 아니라, 조건이 맞을 때 승격하는 선택지다</h1>
+        <h1>그래프DB 직접 도입 대신 Lambda로 관계 탐색 기능을 구현한다</h1>
         <div class="cards-4">
           <div class="small-card"><h3>1. 이슈</h3><p>현재 PoC 관계는 대부분 1~2-hop 수준</p></div>
           <div class="small-card"><h3>2. 비용</h3><p>Neptune Serverless 시작 용량 1 NCU, 고정비 비중 큼</p></div>
-          <div class="small-card"><h3>3. 판단</h3><p>RDS JOIN, DynamoDB 인접 리스트, 사전계산 후보로 대체</p></div>
+          <div class="small-card"><h3>3. 판단</h3><p>Lambda로 그래프DB 유사 기능을 구현</p></div>
           <div class="small-card"><h3>4. 승격 기준</h3><p>3-hop+ 임의 경로 탐색·실시간 그래프 쓰기 필요 시 도입</p></div>
         </div>
-        <div class="big-note">그래프를 원본 저장소가 아닌 재생성 가능한 파생 인덱스로 정의했다.</div>
-        <div class="footer"><span>내부 근거: 04_database_design.md · neptune_alternative.md</span><span>13</span></div>
+        <div class="big-note">관계 탐색은 Lambda 기반 재생성 가능 보조 기능으로 두고, Neptune은 승격 옵션으로 남긴다.</div>
+        <div class="footer"><span>내부 근거: 04_database_design.md · neptune_alternative.md</span><span>14</span></div>
       </section>
 
       <section class="slide">
@@ -972,7 +1134,7 @@
             <tr><td>비즈니스</td><td>문제·시장 근거 제시</td><td>지자체 파트너 대시보드</td></tr>
           </tbody>
         </table>
-        <div class="footer"><span>핵심 축은 ‘소도시냐 대도시냐’가 아니라 혼잡도</span><span>14</span></div>
+        <div class="footer"><span>핵심 축은 ‘소도시냐 대도시냐’가 아니라 혼잡도</span><span>15</span></div>
       </section>
     </div>
   </main>
@@ -1106,7 +1268,8 @@
     window.addEventListener("resize", fitDeck);
     document.addEventListener("fullscreenchange", fitDeck);
     fitDeck();
-    go(0);
+    const initialSlide = Number(new URLSearchParams(window.location.search).get("slide") || "1");
+    go(Number.isFinite(initialSlide) ? initialSlide - 1 : 0);
   </script>
 </body>
 </html>
