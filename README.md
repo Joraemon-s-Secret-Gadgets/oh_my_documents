@@ -15,13 +15,24 @@ docs/04_database_design/   데이터베이스 설계 명세서
 docs/05_agent_spec/        Agent 명세서
 docs/06_technical_spec/    기술 명세서
 docs/07_api_spec/          API 명세서
+docs/08_data_preprocessing/ 수집된 데이터 및 전처리(ELT) 문서
+docs/09_ui_ux_guide/       UI/UX 가이드
+docs/10_test_plan/         테스트 계획서
+docs/11_deployment_ops/    배포·운영 가이드
+docs/98_prd/               실행 단위별 PRD 문서 모음
+docs/99_pptx/              발표 자료 원본, HTML 발표본, 캡처 검증 산출물
 index.html                 GitHub Pages 첫 화면
 pages/*.html               원본 Markdown을 바탕으로 생성된 공유용 HTML 문서
 assets/                    공통 CSS, JS, 이미지 등 정적 리소스
+pdf/                       Markdown 원본을 바탕으로 생성한 PDF/TeX 배포 산출물
 plans/                     문서 사이트 구축 및 운영 계획
 ```
 
 수정은 항상 `docs/`의 Markdown 원본에서 먼저 진행합니다. `index.html`과 `pages/*.html`은 원본 Markdown을 반영해 다시 생성하는 산출물로 취급합니다.
+
+`pdf/`의 `.tex`와 `.pdf`도 배포 산출물입니다. 본문 의미를 바꾸는 경우 대응하는 `docs/` Markdown 원본을 먼저 갱신한 뒤 TeX/PDF를 재생성합니다.
+
+`docs/99_pptx/`의 발표 자료는 Markdown 원본, HTML 발표본, 캡처 검증 산출물을 함께 관리합니다. 로컬 실행 중 생기는 브라우저 프로필(`html_export/.chrome-*`)은 커밋하지 않습니다.
 
 `docs/**/*.md`에는 `<!DOCTYPE html>`, `<html>`, `<body>`를 포함한 전체 HTML 문서를 저장하지 않습니다. HTML 형태로 작성된 문서를 원본으로 되돌릴 때는 제목, 문단, 표, 목록, 링크 같은 본문 의미만 Markdown으로 추출하고, 사이드바·스크립트·스타일·레이아웃 마크업은 제거합니다.
 
@@ -53,24 +64,33 @@ plans/                     문서 사이트 구축 및 운영 계획
 8. **API 명세서**
    엔드포인트, 요청, 응답, 에러 코드, 인증 방식을 정의합니다.
 
-9. **UI/UX 가이드**
+9. **데이터 전처리 문서**
+   수집된 Raw 데이터를 서비스 도메인 구조로 정제하고 적재하는 기준, 결과보고서, 검색 인덱스 생성 기준을 정리합니다.
+
+10. **UI/UX 가이드**
    화면 레이아웃, 컴포넌트 규칙, 입력/오류/빈 상태, 반응형 기준을 정리합니다.
 
-10. **테스트 계획서**
+11. **테스트 계획서**
     단위 테스트, 통합 테스트, E2E 테스트, 수동 검증 체크리스트를 정리합니다.
 
-11. **배포 가이드**
+12. **배포 가이드**
     로컬 실행, 빌드, 환경 변수, 배포 절차, GitHub Pages 설정 방법을 정리합니다.
 
-12. **운영 가이드**
+13. **운영 가이드**
     로그, 장애 대응, 백업, 모니터링, 정기 점검 기준을 정리합니다.
+
+14. **실행 단위 PRD**
+    기능 구현 단위의 목적, 범위, 기능 요구사항, 수용 기준을 정리합니다.
+
+15. **발표 자료**
+    중간발표와 최종발표를 위한 원본, 변환 산출물, 검증 캡처를 정리합니다.
 
 ### Agent 문서 수정 규칙
 
 이 저장소에는 루트 `AGENT.md`와 각 `docs/` 하위 폴더별 `AGENT.md`가 있습니다. Claude나 Codex 같은 Agent는 가장 가까운 `AGENT.md`의 규칙을 우선합니다.
 
 - `docs/00_project_plan/00_project_plan.md`는 상세 문서의 내용을 반영하는 상위 기획 문서입니다.
-- 프로젝트 기획서를 수정할 때 `docs/01_requirements`부터 `docs/07_api_spec`까지의 대표 문서는 읽기 전용 참조로만 확인합니다.
+- 프로젝트 기획서를 수정할 때 `docs/01_requirements`부터 `docs/08_data_preprocessing`까지의 대표 문서는 읽기 전용 참조로 먼저 확인합니다.
 - 프로젝트 기획서 동기화 작업만으로 상세 문서를 함께 수정하지 않습니다.
 - 상세 문서는 사용자가 해당 문서 수정을 요청했거나, 그 문서 자체의 내용을 업데이트하는 작업일 때만 Agent가 수정합니다.
 - `01_requirements`를 수정하는 경우 `docs/01_requirements/01_requirements.md`를 먼저 업데이트하고, 필요한 보조 Markdown을 만든 뒤, 마지막에 `pages/01_requirements.html`을 최신화합니다.
@@ -110,9 +130,20 @@ docs/
 ├── 06_technical_spec/
 │   ├── AGENT.md
 │   └── 06_technical_spec.md
-└── 07_api_spec/
-    ├── AGENT.md
-    └── 07_api_spec.md
+├── 07_api_spec/
+│   ├── AGENT.md
+│   └── 07_api_spec.md
+├── 08_data_preprocessing/
+│   ├── AGENT.md
+│   └── data_preprocessing_plan.md
+├── 09_ui_ux_guide/
+├── 10_test_plan/
+├── 11_deployment_ops/
+├── 98_prd/
+│   ├── AGENT.md
+│   └── *.md
+└── 99_pptx/
+    └── */
 ```
 
 문서 내용이 많아지면 같은 폴더 안에 보조 Markdown을 추가할 수 있습니다. 단, 각 폴더의 대표 문서는 위 경로를 유지합니다.
@@ -122,6 +153,15 @@ docs/
 ## GitHub Pages
 
 GitHub Pages는 저장소 루트의 `index.html`을 첫 화면으로 사용합니다. `docs/`는 원본 Markdown 보관 위치로 사용하고, 공유용 HTML은 `pages/`에 생성합니다.
+
+HTML 생성 또는 문서 구조 변경 후에는 다음 명령으로 공유 페이지 구조를 확인합니다.
+
+```powershell
+python scripts\generate_pages.py
+python scripts\verify_pages_structure.py
+```
+
+PDF를 생성하거나 갱신한 경우에는 `pdf/AGENT.md`의 산출물 목록과 검증 절차를 함께 확인합니다.
 
 문서 복구 및 최신화 계획은 [plans/requirements-restore-reapply-plan.md](plans/requirements-restore-reapply-plan.md)와 [plans/requirements_update_plan.md](plans/requirements_update_plan.md)를 참고합니다.
 

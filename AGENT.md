@@ -26,7 +26,11 @@ docs/05_agent_spec/        Agent 명세서
 docs/06_technical_spec/    기술 명세서
 docs/07_api_spec/          API 명세서
 docs/08_data_preprocessing/ 수집된 데이터 및 전처리(ELT) 문서. 수집(03)과 DB 설계(04) 사이 단계
-docs/98_prd/            실행 단위별 PRD 문서 모음
+docs/09_ui_ux_guide/       UI/UX 가이드
+docs/10_test_plan/         테스트 계획서
+docs/11_deployment_ops/    배포·운영 가이드
+docs/98_prd/               실행 단위별 PRD 문서 모음
+docs/99_pptx/              발표 자료 원본, HTML 발표본, 캡처 검증 산출물
 index.html                 GitHub Pages 첫 화면
 pages/*.html               Markdown 원본을 바탕으로 생성된 공유용 HTML 문서
 assets/                    공통 CSS, JS, 이미지 등 정적 리소스
@@ -64,7 +68,13 @@ docs/
 ├── 04_database_design/04_database_design.md
 ├── 05_agent_spec/05_agent_spec.md
 ├── 06_technical_spec/06_technical_spec.md
-└── 07_api_spec/07_api_spec.md
+├── 07_api_spec/07_api_spec.md
+├── 08_data_preprocessing/data_preprocessing_plan.md
+├── 09_ui_ux_guide/
+├── 10_test_plan/
+├── 11_deployment_ops/
+├── 98_prd/
+└── 99_pptx/
 ```
 
 문서 내용이 많아지면 같은 폴더 안에 보조 Markdown 문서를 추가할 수 있다. 단, 각 폴더의 대표 문서는 위 경로를 유지한다.
@@ -79,6 +89,13 @@ docs/
 - HTML 문서에는 공통 헤더, 본문, 이전/다음 문서 링크, 푸터를 포함한다.
 - 생성된 HTML 링크는 모두 상대 경로를 사용한다.
 - 문서 상태는 `Draft`, `Review`, `Complete` 중 하나를 사용한다.
+
+## Presentation Rules
+
+- `docs/99_pptx/`는 발표 원본 Markdown, PPTX/HTML 변환 산출물, 발표 검증 캡처를 보관한다.
+- 발표 내용을 바꿀 때는 가능한 한 Markdown 원본 또는 HTML 발표본의 구조화된 소스를 먼저 갱신한다.
+- `html_export/.chrome-*` 같은 로컬 브라우저 프로필은 임시 실행 산출물이므로 커밋하지 않는다.
+- 사용자가 캡처 검증을 요청한 경우 `html_export/captures/`의 캡처 이미지는 발표 산출물로 보관할 수 있다.
 
 ## PDF Generation Rules
 
