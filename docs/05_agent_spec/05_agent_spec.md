@@ -1,9 +1,9 @@
 # 로브 (Lovv) Agent 명세서
 
-> 문서 버전: v0.5
+> 문서 버전: v0.6
 > 문서 상태: 검토 중 (Review)
 > 기준 문서: 요구사항 명세서 v1.7, 서비스 흐름 명세서 v0.2, 데이터 수집 계획서 v0.7, 데이터베이스 설계 명세서 v0.5, 기술 명세서 v0.3, API 명세서 v0.2
-> 상세 정본: `langgraph_flow.md`, `candidate_evidence_agent.md`, `agent_harness_design.md`
+> 상세 정본: `langgraph_flow.md`, `candidate_evidence_agent.md`, `candidate_evidence_baseline_comparison.md`, `agent_harness_design.md`
 
 # 1. 문서 개요
 
@@ -392,6 +392,12 @@ AWS Neptune은 관계 탐색과 그래프 기반 후보 확장을 위한 파생 
 테스트 하네스는 `agent_harness_design.md`를 따른다.
 PR 단계는 결정적 L1/L2/L4 핵심 케이스를 우선하고, LLM 평가와 전체 trajectory 평가는 nightly 또는 릴리즈 게이트로 분리한다.
 
+## 10.1 Candidate Evidence Agent 비교 검증
+
+검색·후보 구성의 Baseline은 raw query similarity만 사용하는 단순 RAG로 정의한다. Ours는 동일한 hard-theme gate, 후보 예산, fallback 조건 위에 soft retrieval, 다요소 scoring, entropy balance, min quota와 soft max quota를 추가한다.
+
+설계 차이와 현재 실험 근거는 `candidate_evidence_baseline_comparison.md`를 따른다. 도시·관광지 검색 테스트 계획과 상세 결과의 정본은 `../10_test_plan/candidate_evidence_search_test_plan.md`, `../10_test_plan/candidate_evidence_evaluation_results.md`다.
+
 # 11. 금지 사항
 
 - 대화 로그 전문을 장기 저장하지 않는다.
@@ -407,6 +413,7 @@ PR 단계는 결정적 L1/L2/L4 핵심 케이스를 우선하고, LLM 평가와 
 
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 | --- | --- | --- | --- |
+| v0.6 | 2026-06-12 | llm팀 | Candidate Evidence Agent의 Baseline/Ours 비교 원칙과 `rag_test` 기반 테스트 계획·결과 문서 연결 추가 |
 | v0.5 | 2026-06-10 | llm팀 | UnifiedAgentState를 `langgraph_flow.md` 상세 정본과 정합화하고, `Candidate_Evidence_Agent` 검색 도구 명칭을 `Destination Search Tool`로 통일 |
 | v0.4 | 2026-06-10 | llm팀 | Retriever/Ranker 분리 구간을 `Candidate_Evidence_Agent`로 통합하고 Planner가 일정·설명·검증을 구조 수준에서 통합 담당하도록 정리 |
 | v0.4 | 2026-06-08 | llm팀 | DB v0.5 기준으로 Agent trace 저장 필드를 `lovv_agent_runs` 요약 필드와 Observability 메트릭으로 분리 |
