@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — Agent 명세서 v0.5</title>
+    <title>로브 (Lovv) — Agent 명세서 v0.6</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -16,7 +16,7 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">로브</div>
-          <div class="aside-ver">Agent Spec · v0.5</div>
+          <div class="aside-ver">Agent Spec · v0.6</div>
           <div class="aside-status"><div class="status-dot"></div><span>검토 중</span></div>
         </div>
         <nav class="toc">
@@ -88,9 +88,9 @@
       <main id="cover">
         <h1 id="cover-title" class="s-h1">로브 (Lovv) Agent 명세서</h1>
 <blockquote>
-<p class="doc-p">문서 버전: v0.5</p>
+<p class="doc-p">문서 버전: v0.6</p>
 <p class="doc-p">문서 상태: 검토 중 (Review)</p>
-<p class="doc-p">기준 문서: 요구사항 명세서 v1.7, 서비스 흐름 명세서 v0.2, 데이터 수집 계획서 v0.7, 데이터베이스 설계 명세서 v0.5, 기술 명세서 v0.3, API 명세서 v0.2</p>
+<p class="doc-p">기준 문서: 요구사항 명세서 v1.7, 서비스 흐름 명세서 v0.2, 데이터 수집 계획서 v0.7, 데이터베이스 설계 명세서 v0.6, 기술 명세서 v0.4, API 명세서 v0.3</p>
 <p class="doc-p">상세 정본: <code>langgraph_<wbr>flow.md</code>, <code>candidate_<wbr>evidence_<wbr>agent.md</code>, <code>agent_<wbr>harness_<wbr>design.md</code></p>
 </blockquote>
 <h1 id="s1" class="s-h1">1. 문서 개요</h1>
@@ -270,11 +270,11 @@ class UnifiedAgentState(TypedDict):
 <tr><td>정형 원장</td><td>목적지, 축제, 관광지, 일정 결과의 확정 기준은 MySQL 원장을 따른다.</td></tr>
 <tr><td>실행/이벤트 상태</td><td>Agent trace, API 로그, 사용자 이벤트, async job은 DynamoDB TTL 테이블에 요약 저장한다.</td></tr>
 <tr><td>의미 검색</td><td>S3 vector index는 재생성 가능한 검색 인덱스로만 사용하며 원본 저장소로 보지 않는다.</td></tr>
-<tr><td>관계 탐색</td><td>AWS Neptune은 도시·축제·테마·장소 관계를 탐색하는 재생성 가능한 그래프 인덱스로만 사용한다.</td></tr>
+<tr><td>관계 탐색</td><td>그래프DB 직접 도입 대신 Lambda 관계 탐색 보조 기능으로 도시·축제·테마·장소 관계를 확장한다.</td></tr>
 <tr><td>필수 metadata</td><td><code>country</code>, <code>destination_<wbr>id</code>, <code>city_<wbr>id</code>, <code>content_<wbr>type</code>, <code>theme_<wbr>tags</code>, <code>recommended_<wbr>months</code>, <code>source_<wbr>type</code></td></tr>
 <tr><td>금지 metadata</td><td>사용자 ID 원문, 대화 전문, 비공개 운영 메모</td></tr>
 </tbody></table></div>
-<p class="doc-p">Candidate Evidence Agent는 S3 vector metadata filter로 국가·도시·테마·월·콘텐츠 유형을 1차 제한하고, AWS Neptune으로 도시·축제·테마·장소 관계를 확장한 뒤 MySQL 원장 또는 DynamoDB 정규화 문서의 확정 필드로 후보를 재검증한다. S3 vector 결과만으로 장소 존재, 축제 일정, 운영 여부를 확정하지 않는다.</p>
+<p class="doc-p">Candidate Evidence Agent는 S3 vector metadata filter로 국가·도시·테마·월·콘텐츠 유형을 1차 제한하고, Lambda 관계 탐색 보조 기능으로 도시·축제·테마·장소 관계를 확장한 뒤 MySQL 원장 또는 DynamoDB 정규화 문서의 확정 필드로 후보를 재검증한다. S3 vector 결과만으로 장소 존재, 축제 일정, 운영 여부를 확정하지 않는다.</p>
 <h2 id="s7-4" class="s-h2">7.4 <code>Festival_<wbr>Verifier_<wbr>Agent</code></h2>
 <div class="table-wrap wide scroll-table"><table class="info-tbl decision-tbl">
 <thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
@@ -390,9 +390,9 @@ class UnifiedAgentState(TypedDict):
 <tr><td>비동기 작업 상태</td><td>DynamoDB <code>lovv_<wbr>async_<wbr>jobs</code></td><td>장시간 실행 또는 재시도 작업의 <code>job_<wbr>type</code>, <code>status</code>, <code>progress</code>, <code>result_<wbr>ref</code>, <code>error_<wbr>code</code>를 갱신한다.</td></tr>
 <tr><td>축제 검증 캐시</td><td>DynamoDB <code>lovv_<wbr>festival_<wbr>verify_<wbr>cache</code></td><td><code>festival_<wbr>id + travelYear</code> 단위로 <code>date_<wbr>status</code>, 날짜, 공식 출처, 신뢰도를 재사용한다.</td></tr>
 <tr><td>RAG 검색 인덱스</td><td>S3 vector index</td><td>목적지·축제·관광지 chunk와 metadata filter를 조회하되 원본 확정 근거로 단독 사용하지 않는다.</td></tr>
-<tr><td>그래프 관계 인덱스</td><td>AWS Neptune</td><td>도시·축제·테마·장소 관계를 탐색해 후보를 확장하되 원본 확정 근거로 단독 사용하지 않는다.</td></tr>
+<tr><td>관계 탐색 보조</td><td>Lambda + DynamoDB 인접 리스트</td><td>도시·축제·테마·장소 관계를 탐색해 후보를 확장하되 원본 확정 근거로 단독 사용하지 않는다.</td></tr>
 </tbody></table></div>
-<p class="doc-p">Agent는 저장소별 책임을 넘지 않는다. MySQL 원장은 사용자에게 조회·저장·피드백으로 노출되는 최종 상태를 담당하고, DynamoDB는 TTL 기반 실행 상태와 로그성 데이터를 담당한다. S3 vector index는 검색 성능과 의미 재랭킹을 위한 파생 인덱스이며, 재색인과 복구는 MySQL, DynamoDB 정규화 문서, S3 Raw 원본을 기준으로 수행한다. AWS Neptune은 관계 탐색과 그래프 기반 후보 확장을 위한 파생 인덱스이며, 재적재와 복구는 DynamoDB 정규화 문서와 S3 Raw 원본을 기준으로 수행한다.</p>
+<p class="doc-p">Agent는 저장소별 책임을 넘지 않는다. MySQL 원장은 사용자에게 조회·저장·피드백으로 노출되는 최종 상태를 담당하고, DynamoDB는 TTL 기반 실행 상태와 로그성 데이터를 담당한다. S3 vector index는 검색 성능과 의미 재랭킹을 위한 파생 인덱스이며, 재색인과 복구는 MySQL, DynamoDB 정규화 문서, S3 Raw 원본을 기준으로 수행한다. Lambda 관계 탐색 보조 기능은 관계 탐색과 그래프 기반 후보 확장을 위한 파생 기능이며, 재적재와 복구는 DynamoDB 정규화 문서와 S3 Raw 원본을 기준으로 수행한다. Neptune은 3-hop 이상 임의 경로 탐색이나 대규모 실시간 그래프 쓰기가 필요해질 때의 고도화 승격 옵션으로 둔다.</p>
 <h1 id="s10" class="s-h1">10. 품질 검증 기준</h1>
 <div class="table-wrap wide scroll-table"><table class="info-tbl compact-tbl data-quality-tbl">
 <thead><tr><th>검증 항목</th><th>기준</th></tr></thead><tbody>
@@ -421,6 +421,7 @@ class UnifiedAgentState(TypedDict):
 <h1 id="s12" class="s-h1">12. 변경 이력</h1>
 <div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
 <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+<tr><td>v0.6</td><td>2026-06-12</td><td>llm팀</td><td>그래프DB 직접 도입 대신 Lambda 관계 탐색 보조 기능으로 Candidate Evidence 검색 계약 조정</td></tr>
 <tr><td>v0.5</td><td>2026-06-10</td><td>llm팀</td><td>UnifiedAgentState를 <code>langgraph_<wbr>flow.md</code> 상세 정본과 정합화하고, <code>Candidate_<wbr>Evidence_<wbr>Agent</code> 검색 도구 명칭을 <code>Destination Search Tool</code>로 통일</td></tr>
 <tr><td>v0.4</td><td>2026-06-10</td><td>llm팀</td><td>Retriever/Ranker 분리 구간을 <code>Candidate_<wbr>Evidence_<wbr>Agent</code>로 통합하고 Planner가 일정·설명·검증을 구조 수준에서 통합 담당하도록 정리</td></tr>
 <tr><td>v0.4</td><td>2026-06-08</td><td>llm팀</td><td>DB v0.5 기준으로 Agent trace 저장 필드를 <code>lovv_<wbr>agent_<wbr>runs</code> 요약 필드와 Observability 메트릭으로 분리</td></tr>

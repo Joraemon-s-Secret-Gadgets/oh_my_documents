@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — Neptune 대체 설계 명세서 v0.1</title>
+    <title>로브 (Lovv) — Neptune 대체 설계 명세서 v0.2</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -16,7 +16,7 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">로브</div>
-          <div class="aside-ver">Neptune Alternative · v0.1</div>
+          <div class="aside-ver">Neptune Alternative · v0.2</div>
           <div class="aside-status"><div class="status-dot"></div><span>검토 중</span></div>
         </div>
         <nav class="toc">
@@ -68,14 +68,14 @@
       <main id="cover">
         <h1 id="cover-title" class="s-h1">로브 (Lovv) Neptune 대체 설계 명세서</h1>
 <blockquote>
-<p class="doc-p">문서 버전: v0.1</p>
+<p class="doc-p">문서 버전: v0.2</p>
 <p class="doc-p">문서 상태: 검토 중 (Review)</p>
-<p class="doc-p">기준 문서: 데이터베이스 설계 명세서 v0.5, 데이터 수집 계획서 v0.7, Agent 명세서 v0.4, API 명세서 v0.1</p>
+<p class="doc-p">기준 문서: 데이터베이스 설계 명세서 v0.6, 데이터 수집 계획서 v0.7, Agent 명세서 v0.6, API 명세서 v0.3</p>
 <p class="doc-p">관련 문서: 데이터베이스 설계 명세서, 데이터베이스 보존 기간·Neptune 비용 업데이트 초안</p>
 </blockquote>
 <h1 id="s1" class="s-h1">1. 배경</h1>
 <p class="doc-p">데이터베이스 설계 명세서는 다단계 관계 탐색용 그래프 인덱스로 AWS Neptune을 정의한다(1.2·3.5·4.6절). 그러나 Neptune은 <strong>상시 가동 비용</strong>(Serverless 최소 1 NCU도 0으로 축소되지 않음, 월 약 $80+)이 발생해, 월 30만원(약 $193) 예산에서는 고정비 비율이 높다.</p>
-<p class="doc-p">본 문서는 Neptune 없이 기존 스택(MySQL·DynamoDB·S3 vector·Lambda)으로 동일 그래프 용도를 대체하는 설계를 정의한다. 그래프 규모·질의 복잡도가 커지면 Neptune 도입(고도화 단계)으로 승격한다.</p>
+<p class="doc-p">본 문서는 Neptune 없이 기존 스택(MySQL·DynamoDB·S3 vector·Lambda)으로 동일 그래프 용도를 대체하는 설계를 정의한다. 현재 구현 방향은 그래프DB 직접 도입이 아니라 Lambda 기반 관계 탐색 보조 기능이다. 그래프 규모·질의 복잡도가 커지면 Neptune 도입(고도화 단계)으로 승격한다.</p>
 <h1 id="s2" class="s-h1">2. 전제</h1>
 <ul class="bullet-list">
 <li>본 서비스 그래프는 <strong>공용 콘텐츠 관계</strong>(도시·축제·테마·장소)이며 규모가 작다.</li>
@@ -90,7 +90,7 @@
 <tr><td><code>HAS_<wbr>THEME</code>, <code>SEASONAL_<wbr>FIT</code></td><td>필수·선호 테마/시즌 적합 필터</td><td><code>theme_<wbr>tags</code>, <code>recommended_<wbr>months</code> 속성 필터(기존 보유)</td><td>S3 vector metadata + DynamoDB 속성</td></tr>
 <tr><td><code>HOSTS_<wbr>FESTIVAL</code></td><td>축제 포함 추천·날짜 검증</td><td>도시별 축제 조회 + 검증 캐시</td><td>DynamoDB(<code>lovv_<wbr>festival_<wbr>verify_<wbr>cache</code>, 정규화 문서)</td></tr>
 <tr><td><code>HAS_<wbr>PLACE</code></td><td>일정 항목 후보 확장</td><td>도시별 장소 조회</td><td>DynamoDB 정규화 문서</td></tr>
-<tr><td>2-hop 확장 + 그래프 재랭킹</td><td>다단계 후보 확장·재정렬</td><td>배치 사전계산 머티리얼라이즈 또는 요청 시 인메모리 그래프 탐색</td><td>DynamoDB / Lambda 인메모리</td></tr>
+<tr><td>2-hop 확장 + 그래프 재랭킹</td><td>다단계 후보 확장·재정렬</td><td>배치 사전계산 머티리얼라이즈 또는 요청 시 Lambda 인메모리 그래프 탐색</td><td>DynamoDB / Lambda 인메모리</td></tr>
 </tbody></table></div>
 <p class="doc-p"><code>SEASONAL_<wbr>FIT</code>/<code>recommended_<wbr>months</code>는 수집 계획서 4.1절의 <code>ComfortScore</code> 산식과 연결된다.</p>
 <h1 id="s4" class="s-h1">4. 후보 기술 비교</h1>
@@ -152,19 +152,20 @@ d_km = 2R · atan2(√a, √(1−a))      # R = 6371 km</code></pre>
 </ul>
 <p class="doc-p">대규모 실시간 그래프 쓰기에는 대체 아키텍처가 부적합하다.</p>
 <ul class="bullet-list">
-<li>위 요건이 검증되면 Neptune(고도화 단계, 대표 문서 6장) 도입을 결정한다.</li>
+<li>위 요건이 검증되면 현재 Lambda 관계 탐색 보조 기능을 Neptune(고도화 단계)으로 승격할지 결정한다.</li>
 </ul>
 <h1 id="s8" class="s-h1">8. 데이터베이스 설계 명세서 연계</h1>
 <ul class="bullet-list">
-<li>1.2절 설계 기준 표 <code>Graph DB /<wbr> AWS Neptune</code> 비고: &quot;예산 제약상 보류, Neptune 대체 설계 명세서 적용, 고도화 단계 도입&quot;.</li>
-<li>1.3절 저장소 책임 표 Neptune 행: &quot;상시 비용 발생, Neptune 대체 설계 명세서 우선&quot;.</li>
-<li>3.5·4.6절: &quot;PoC/Prod 1차 대체 구현은 Neptune 대체 설계 명세서를 따른다&quot; 각주.</li>
+<li>1.2절 설계 기준 표 <code>관계 탐색 보조 /<wbr> Lambda 기반 관계 탐색</code> 비고: &quot;그래프DB 직접 도입 보류, Lambda 기반 보조 기능 구현, Neptune은 승격 옵션&quot;.</li>
+<li>1.3절 저장소 책임 표 Lambda 관계 탐색 행: &quot;DynamoDB 인접 리스트와 Lambda 인메모리 그래프 우선&quot;.</li>
+<li>3.5·4.6절: &quot;PoC/Prod 1차 관계 탐색은 Lambda 기반 보조 기능으로 구현한다&quot; 각주.</li>
 <li>6장 전환 표: Neptune은 <code>Production 고도화</code> 유지, 이전 단계는 대체 아키텍처 명시.</li>
 <li>9장 변경 이력에 항목 추가.</li>
 </ul>
 <h1 id="s9" class="s-h1">9. 변경 이력</h1>
 <div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
 <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+<tr><td>v0.2</td><td>2026-06-12</td><td>로브 기획팀</td><td>현재 구현 방향을 그래프DB 직접 도입 대신 Lambda 기반 관계 탐색 보조 기능으로 명확화</td></tr>
 <tr><td>v0.1</td><td>2026-06-08</td><td>로브 기획팀</td><td>Neptune 대체 설계 초안: 사용 패턴 매핑, 기술 비교, 권고 아키텍처, 비용 비교, 승격 기준 작성</td></tr>
 </tbody></table></div>
 <h1 id="s10" class="s-h1">10. 참고</h1>

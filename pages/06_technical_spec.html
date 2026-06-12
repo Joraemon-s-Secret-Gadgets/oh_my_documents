@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — 기술 명세서 v0.3</title>
+    <title>로브 (Lovv) — 기술 명세서 v0.4</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -16,7 +16,7 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">로브</div>
-          <div class="aside-ver">Technical Spec · v0.3</div>
+          <div class="aside-ver">Technical Spec · v0.4</div>
           <div class="aside-status"><div class="status-dot"></div><span>검토 중</span></div>
         </div>
         <nav class="toc">
@@ -72,7 +72,7 @@
       <main id="cover">
         <h1 id="cover-title" class="s-h1">로브 (Lovv) 기술 명세서</h1>
 <blockquote>
-<p class="doc-p">문서 버전: v0.3</p>
+<p class="doc-p">문서 버전: v0.4</p>
 <p class="doc-p">문서 상태: 검토 중 (Review)</p>
 <p class="doc-p">기준 문서: 요구사항 명세서 v1.7, 서비스 흐름 명세서 v0.2, 데이터 수집 계획서 v0.6, 데이터베이스 설계 명세서 v0.2, Agent 명세서 v0.4, API 명세서 v0.2</p>
 </blockquote>
@@ -177,7 +177,7 @@
 <thead><tr><th>데이터</th><th>처리 방식</th></tr></thead><tbody>
 <tr><td>통합 목적지 DB</td><td>축제명, 장소 개요, 이미지, 위경도 좌표 등 무거운 마스터 정보를 저장하고 있는 DB로, 1차 조회 시 성능과 레이턴시 확보를 위해 사용</td></tr>
 <tr><td>S3 vector 기반 RAG Index</td><td>장소·테마·자연어 조건의 임베딩 검색과 유사도 재랭킹에 사용. 정형 필터는 DB, 의미 검색은 S3 vector 기능 기반 인덱스로 분리</td></tr>
-<tr><td>AWS Neptune Graph Index</td><td>도시·축제·테마·장소 관계의 다단계 탐색과 관계 기반 후보 확장에 사용. 의미 검색은 S3 vector, 관계 탐색은 Neptune으로 분리</td></tr>
+<tr><td>Lambda 관계 탐색 보조</td><td>도시·축제·테마·장소 관계의 다단계 탐색과 관계 기반 후보 확장에 사용. 의미 검색은 S3 vector, 관계 탐색은 DynamoDB 인접 리스트·사전계산 후보·Lambda 인메모리 그래프로 처리</td></tr>
 <tr><td>축제 검증 캐시</td><td><code>festival_<wbr>id + travelYear</code> 기준으로 해당 연도 날짜 검증 결과를 재사용해 웹 검색 비용과 지연을 줄임</td></tr>
 <tr><td>실시간 API 교차 검증</td><td>당해 연도 정확한 개최 일정/기간 등 실시간 최신화가 필수적인 특정 항목에 한해, <code>Festival_<wbr>Verifier_<wbr>Agent</code>가 공식 웹 출처를 확인하고 정적 필드를 보완하는 하이브리드 데이터 연동</td></tr>
 <tr><td>목적지 기본 정보</td><td>정규화된 소도시 단위로 관리</td></tr>
@@ -221,12 +221,13 @@
 <tr><td>Memory</td><td>AgentCore Memory, DynamoDB</td><td>세션 상태, 롤링 요약, <code>fulfilled_<wbr>matrix</code>, 축제 검증 캐시 저장</td></tr>
 <tr><td>Gateway</td><td>Lambda/API 기반 Skill</td><td>Scoring, Matrix Transition, Validation, Link, Weather, Packaging 같은 결정적 Skill 실행</td></tr>
 <tr><td>Model</td><td>Amazon Bedrock Converse API</td><td>Sub-Agent별 LLM 추론과 모델 교체 추상화</td></tr>
-<tr><td>Retrieval</td><td>S3 vector 기반 RAG Index, AWS Neptune</td><td>자연어·테마 임베딩 검색은 S3 vector, 도시·축제·테마 관계 탐색은 Neptune으로 분리</td></tr>
+<tr><td>Retrieval</td><td>S3 vector 기반 RAG Index, Lambda 관계 탐색 보조</td><td>자연어·테마 임베딩 검색은 S3 vector, 도시·축제·테마 관계 탐색은 DynamoDB 인접 리스트, 사전계산 후보, Lambda 인메모리 그래프로 처리</td></tr>
 <tr><td>Evaluation</td><td>AgentCore Evaluations 또는 동등 하네스</td><td>trajectory, 조건 충족, 근거성, 루프 안전성 회귀 평가</td></tr>
 </tbody></table></div>
 <h1 id="s9" class="s-h1">9. 변경 이력</h1>
 <div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
 <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+<tr><td>v0.4</td><td>2026-06-12</td><td>로브 기획팀</td><td>그래프DB 직접 도입 대신 Lambda 기반 관계 탐색 보조 기능으로 Retrieval 계층 기준 조정</td></tr>
 <tr><td>v0.3</td><td>2026-06-08</td><td>로브 기획팀</td><td>AWS SAM 기반 Auth, Map, AgentCore Lambda 분리 전략과 timeout·패키지·권한 경계 기준 추가</td></tr>
 <tr><td>v0.2</td><td>2026-05-31</td><td>로브 기획팀</td><td>통합 목적지 DB 및 실시간 API 교차 검증 하이브리드 아키텍처 반영, Recommendation Module 내 Supervisor Router의 상태 제어 역할 추가</td></tr>
 <tr><td>v0.1</td><td>2026-05-29</td><td>로브 기획팀</td><td>기술 명세서 초안 작성</td></tr>

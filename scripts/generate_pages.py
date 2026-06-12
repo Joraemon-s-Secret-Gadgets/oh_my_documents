@@ -81,7 +81,7 @@ DOCUMENTS = [
         "04_neptune_alternative.html",
         "Neptune Alternative",
         "로브 (Lovv) — Neptune 대체 설계 명세서",
-        "AWS Neptune 도입 전 기존 스택으로 추천 관계 그래프를 대체하는 설계와 승격 기준을 정의합니다.",
+        "그래프DB 직접 도입 대신 Lambda 기반 관계 탐색 보조 기능으로 대체하는 설계와 승격 기준을 정의합니다.",
         "검토 중",
         "설계·명세 보조 문서",
     ),
@@ -111,6 +111,15 @@ DOCUMENTS = [
         "추천, 지도, 저장, 피드백, 운영 검토 API의 계약과 공통 오류 형식을 정의합니다.",
         "기획 단계",
         "설계·명세 문서",
+    ),
+    Document(
+        "docs/11_deployment_ops/troubleshooting.md",
+        "11_troubleshooting.html",
+        "Troubleshooting",
+        "로브 (Lovv) — 트러블슈팅 문서",
+        "그래프DB/Lambda 관계 탐색 판단, 데이터 전처리, S3 vector, HTML/PDF 산출물 이슈와 대응 기준을 정리합니다.",
+        "초안",
+        "운영 문서",
     ),
 ]
 
@@ -764,11 +773,17 @@ def render_index() -> str:
 """
 
 
+def write_text_if_changed(path: Path, content: str) -> None:
+    if path.exists() and path.read_text(encoding="utf-8") == content:
+        return
+    path.write_text(content, encoding="utf-8", newline="\n")
+
+
 def main() -> None:
     PAGES.mkdir(exist_ok=True)
     for doc in DOCUMENTS:
-        (PAGES / doc.target).write_text(render_page(doc), encoding="utf-8", newline="\n")
-    (ROOT / "index.html").write_text(render_index(), encoding="utf-8", newline="\n")
+        write_text_if_changed(PAGES / doc.target, render_page(doc))
+    write_text_if_changed(ROOT / "index.html", render_index())
 
 
 if __name__ == "__main__":
