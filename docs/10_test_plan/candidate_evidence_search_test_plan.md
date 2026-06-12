@@ -51,7 +51,7 @@ Baseline은 raw query similarity만 사용한다. Ours는 soft retrieval, raw/so
 | L2 Strategy intent component | 각 전략 요소가 의도한 방향으로 반응하는지 검증 | 26건 |
 | L3 Outcome quality | 외부 utility 기준으로 결과가 개선되는 통제 사례 검증 | 7건 |
 | L4 AWS search integration | 실제 S3 Vector·DynamoDB에서 도시·관광지 검색 24개 시나리오 비교 | 24건 |
-| L5 Human blind review | 장소 목록과 도시 선택을 전략명 없이 평가 | 계획 |
+| L5 Blind pairwise review | 장소 목록과 도시 선택을 전략명 없이 A/B pair로 평가 | LLM judge 48 pair 실행, human review 계획 |
 | 범위 외 연계 | Candidate Package가 실행 가능한 일정으로 이어지는지 평가 | 본 계획의 합격 기준에서 제외 |
 
 ## 4.1 Intent component와 outcome quality의 구분
@@ -67,6 +67,20 @@ Baseline은 raw query similarity만 사용한다. Ours는 soft retrieval, raw/so
 
 - `../../../rag_test/docs/report/strategy_intent_component_test_results.md`
 - `../../../rag_test/docs/report/strategy_outcome_quality_test_results.md`
+
+## 4.2 Blind pairwise review
+
+블라인드 평가는 Baseline/Ours 전략명을 judge 입력에서 제거하고 `Package A`, `Package B`로만 비교한다. 각 24개 케이스는 A/B 순서 편향을 확인하기 위해 `main`, `reverse` 두 pair로 생성하므로 총 48개 pair를 평가한다.
+
+| 항목 | 설계 |
+| --- | --- |
+| 입력 | `evaluation_testset.json`, `baseline_raw_outputs.json`, `ours_raw_outputs.json` |
+| 실행 도구 | `../../../rag_test/blind_test.py` |
+| judge 모델 | `gpt-4o-mini` |
+| 평가 차원 | hard theme validity, vibe alignment, theme balance, candidate sufficiency, spatial coherence, small-city discovery |
+| 출력 | `blind_pairs.jsonl`, `answer_key.json`, `judge_outputs.jsonl`, `final_blind_results.json`, `final_blind_report.md` |
+
+Blind review의 목적은 비블라인드 검토에서 발생할 수 있는 설계자 기대 편향을 줄이는 것이다. 단, LLM judge는 실제 사용자가 아니므로 최종 human review를 완전히 대체하지 않는다. strict blind 조건을 위해 `qualitative_expectation` 안의 `Ours`, `Baseline` 같은 전략명 텍스트는 중립 표현으로 치환한다.
 
 # 5. 데이터셋 설계
 
@@ -137,6 +151,7 @@ Outcome quality fixture의 oracle은 scorer가 직접 사용하는 city/place sc
 python -m unittest discover -s rag_test\tests -p "test_*.py" -v
 python rag_test\evaluate.py --testset-file rag_test\evaluation_testset.json --profile skn26_final
 python rag_test\generate_raw_outputs.py
+python rag_test\blind_test.py all
 ```
 
 실행 산출물은 다음과 같다.
@@ -146,6 +161,8 @@ python rag_test\generate_raw_outputs.py
 | `evaluation_report.json` | 전략별 결과, latency, memory, retrieval metric |
 | `baseline_raw_outputs.json` | Baseline Candidate Package 원본 |
 | `ours_raw_outputs.json` | Ours Candidate Package와 quota audit 원본 |
+| `blind_eval/final_blind_results.json` | 블라인드 judge 승패, 차원별 평균, disqualifier 집계 |
+| `blind_eval/final_blind_report.md` | 블라인드 judge 요약 리포트 |
 
 # 8. 현재 합격 기준
 
@@ -165,7 +182,16 @@ python rag_test\generate_raw_outputs.py
 
 ## 8.3 품질 판단 규칙
 
-현재 비블라인드 정성 평가는 참고 근거이며 배포 차단 게이트로 사용하지 않는다. 최종 품질 게이트는 최소 2인의 블라인드 pairwise 평가와 평가자 일치도 확인 후 확정한다.
+비블라인드 정성 평가는 참고 근거이며 배포 차단 게이트로 단독 사용하지 않는다. LLM judge 블라인드 평가는 전략명 노출 편향을 줄이는 보강 근거로 사용한다. 최종 품질 게이트는 LLM judge 결과와 최소 2인의 human blind pairwise 평가, 평가자 일치도 확인 후 확정한다.
+
+## 8.4 Blind review 게이트
+
+- judge 오류 0건
+- invalid case 0건
+- order-sensitive case 0건 또는 원인 분석 완료
+- Ours case wins가 Baseline case wins보다 많음
+- Ours disqualifier count가 Baseline보다 많지 않음
+- hard theme validity, theme balance, candidate sufficiency 중 2개 이상에서 Ours 평균 우세
 
 # 9. 회귀 전략
 
@@ -189,33 +215,39 @@ python rag_test\generate_raw_outputs.py
 - 평균 실행 시간: Baseline `2.28초`, Ours `7.31초`
 - 복수 테마 20건 중 soft max 준수 11건, 완화 9건
 - 비블라인드 추천 내용 예비 판정: Ours 18건, Baseline 2건, 동률 4건
+- 블라인드 LLM judge 판정: Ours 19건, Baseline 0건, 동률 5건
+- 블라인드 disqualifier: Baseline 13건, Ours 1건
 
 # 11. 한계
 
 1. 24건은 통계적 일반화를 위한 표본이 아니다.
 2. 고정 도시 정답이 없어 Hit Rate로 종합 우열을 판단할 수 없다.
 3. 비블라인드 평가는 평가자 기대와 전략 정보에 영향을 받을 수 있다.
-4. 합성 outcome-quality fixture는 인과 검증에는 유용하지만 실제 관광 품질을 증명하지 않는다.
-5. theme taxonomy 오류는 entropy와 quota 결과를 동시에 왜곡한다.
-6. AWS index와 원본 데이터가 변경되면 동일 코드의 결과도 달라질 수 있다.
-7. 장소의 휴폐업, 영업시간, 계절 운영, 실제 이동 시간은 검증하지 않았다.
-8. Candidate Evidence Package 품질과 최종 일정 품질은 동일하지 않다.
+4. LLM judge는 실제 사용자가 아니며, 설명이 풍부한 후보를 과대평가할 수 있다.
+5. 최초 블라인드 실행에는 `qualitative_expectation` 일부에 `Ours` 텍스트가 남아 있었으므로 strict blind 재실행 결과를 최종 근거로 우선 사용한다.
+6. 합성 outcome-quality fixture는 인과 검증에는 유용하지만 실제 관광 품질을 증명하지 않는다.
+7. theme taxonomy 오류는 entropy와 quota 결과를 동시에 왜곡한다.
+8. AWS index와 원본 데이터가 변경되면 동일 코드의 결과도 달라질 수 있다.
+9. 장소의 휴폐업, 영업시간, 계절 운영, 실제 이동 시간은 검증하지 않았다.
+10. Candidate Evidence Package 품질과 최종 일정 품질은 동일하지 않다.
 
 # 12. 보완 계획
 
 | 단계 | 작업 | 완료 조건 |
 | --- | --- | --- |
 | 1 | theme taxonomy 표본 감사 | 오분류 유형과 수정 기준 문서화 |
-| 2 | 2인 이상 블라인드 pairwise 평가 | 전략명 비공개, 평가자 일치도 산출 |
-| 3 | 50~100건으로 시나리오 확장 | 테마·지역·일정·출발지 분포표 확보 |
-| 4 | score·quota ablation | 각 요소 제거 전후 품질·비용 변화 기록 |
-| 5 | distance·congestion sensitivity grid | weight 변화에 따른 rank 안정성 확인 |
-| 6 | index snapshot/version 고정 | 재현 가능한 실행 식별자와 데이터 버전 기록 |
-| 7 | Planner 테스트로 handoff | 이동 거리·운영시간 검증 요구사항을 별도 Planner 계획에 전달 |
-| 8 | 운영 모니터링 | latency, fallback, shortfall, 사용자 피드백 추적 |
+| 2 | strict blind LLM judge 재실행 | `blind_eval_sanitized` 기준 전략명 텍스트 제거 결과 확보 |
+| 3 | 2인 이상 human blind pairwise 평가 | 전략명 비공개, 평가자 일치도 산출 |
+| 4 | 50~100건으로 시나리오 확장 | 테마·지역·일정·출발지 분포표 확보 |
+| 5 | score·quota ablation | 각 요소 제거 전후 품질·비용 변화 기록 |
+| 6 | distance·congestion sensitivity grid | weight 변화에 따른 rank 안정성 확인 |
+| 7 | index snapshot/version 고정 | 재현 가능한 실행 식별자와 데이터 버전 기록 |
+| 8 | Planner 테스트로 handoff | 이동 거리·운영시간 검증 요구사항을 별도 Planner 계획에 전달 |
+| 9 | 운영 모니터링 | latency, fallback, shortfall, 사용자 피드백 추적 |
 
 # 13. 변경 이력
 
 | 버전 | 날짜 | 변경 내용 |
 | --- | --- | --- |
+| v1.1 | 2026-06-12 | LLM judge 기반 블라인드 pairwise 평가 설계와 게이트 반영 |
 | v1.0 | 2026-06-12 | `rag_test` 기반 도시·관광지 검색 비교·회귀·정성 평가 계획과 현재 합격 기준 정본화 |

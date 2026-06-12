@@ -9,7 +9,7 @@
 현재 하위 문서는 다음과 같다.
 
 - `candidate_evidence_search_test_plan.md`: Candidate Evidence Agent의 도시 및 관광지 검색 테스트 계획
-- `candidate_evidence_evaluation_results.md`: 해당 검색 테스트의 실행 결과와 한계
+- `candidate_evidence_evaluation_results.md`: 해당 검색 테스트와 블라인드 정성 평가의 실행 결과와 한계
 
 ## Dependencies
 
