@@ -202,6 +202,20 @@ def table_to_latex(
     return result
 
 
+def latest_first_table_rows(rows: list[str]) -> list[str]:
+    if len(rows) <= 3:
+        return rows
+    header = rows[:2]
+    body = rows[2:]
+
+    def version_key(row: str) -> tuple[int, ...]:
+        version = split_table_row(row)[0] if split_table_row(row) else ""
+        numbers = re.findall(r"\d+", version)
+        return tuple(int(number) for number in numbers)
+
+    return header + sorted(body, key=version_key, reverse=True)
+
+
 def format_table_cell(cell: str, forced_line_breaks: dict[str, list[str]] | None = None) -> str:
     if forced_line_breaks and cell in forced_line_breaks:
         return r"\newline ".join(escape_latex(part) for part in forced_line_breaks[cell])
@@ -306,7 +320,7 @@ def acquisition_pipeline_flow_to_latex(lines: list[str]) -> list[str]:
         r"\begin{footnotesize}",
         r"\begin{tabular}{@{}>{\centering\arraybackslash}m{0.085\linewidth}>{\RaggedRight\arraybackslash}m{0.230\linewidth}>{\RaggedRight\arraybackslash}m{0.605\linewidth}@{}}",
         r"\toprule",
-        r"\rowcolor{LovvGreen!12}\textbf{순서} & \textbf{단계} & \textbf{처리 내용} \\",
+        r"\textbf{순서} & \textbf{단계} & \textbf{처리 내용} \\",
         r"\midrule",
     ]
     for index, stage in enumerate(stages, start=1):
@@ -391,7 +405,7 @@ def success_criteria_table_to_latex(rows: list[str]) -> list[str]:
         r"\renewcommand{\arraystretch}{1.55}",
         r"\begin{tabular}{@{}>{\RaggedRight\arraybackslash}m{0.230\linewidth}>{\RaggedRight\arraybackslash}m{0.690\linewidth}@{}}",
         r"\toprule",
-        r"\rowcolor{LovvGreen!12}\multicolumn{1}{c}{\textbf{구분}} & \multicolumn{1}{c}{\textbf{성공 기준}} \\",
+        r"\multicolumn{1}{c}{\textbf{구분}} & \multicolumn{1}{c}{\textbf{성공 기준}} \\",
         r"\midrule",
     ]
     for row in body:
@@ -399,9 +413,9 @@ def success_criteria_table_to_latex(rows: list[str]) -> list[str]:
             continue
         label, criterion = row[0], row[1]
         result.append(
-            r"\textcolor{LovvGreen}{\textbf{"
+            r"\textbf{"
             + escape_latex(label)
-            + r"}} & "
+            + r"} & "
             + escape_latex(criterion)
             + r" \\[0.35em]"
         )
@@ -664,7 +678,7 @@ def markdown_to_latex(
             elif current_heading == "13. 후속 문서":
                 output.extend(table_to_latex(table_lines, [0.30, 0.68], {0}))
             elif current_heading == "14. 변경 이력":
-                output.extend(table_to_latex(table_lines, [0.11, 0.18, 0.16, 0.53], {0, 1, 2}))
+                output.extend(table_to_latex(latest_first_table_rows(table_lines), [0.11, 0.18, 0.16, 0.53], {0, 1, 2}))
             else:
                 output.extend(table_to_latex(table_lines))
             last_block_was_level1_heading = False
@@ -854,10 +868,17 @@ def markdown_to_latex(
 \sloppy
 \newcommand{{\DocNeedspace}}[1]{{\par\ifdim\dimexpr\pagegoal-\pagetotal\relax<#1\newpage\fi}}
 \hypersetup{{colorlinks=true, linkcolor=black, urlcolor=blue}}
-\definecolor{{LovvGreen}}{{HTML}}{{1B3B32}}
-\definecolor{{LovvGreenDark}}{{HTML}}{{10251F}}
-\definecolor{{LovvGold}}{{HTML}}{{D4AF37}}
-\definecolor{{LovvPaper}}{{HTML}}{{F7F3EA}}
+\definecolor{{DarkCharcoal}}{{HTML}}{{222222}}
+\definecolor{{MainOrange}}{{HTML}}{{F26518}}
+\definecolor{{MutedBrown}}{{HTML}}{{D44A14}}
+\definecolor{{SoftBeige}}{{HTML}}{{FFF3E7}}
+\definecolor{{CardPeach}}{{HTML}}{{FCE7DB}}
+\definecolor{{SubTextGray}}{{HTML}}{{666666}}
+\color{{DarkCharcoal}}
+\colorlet{{LovvGreen}}{{MutedBrown}}
+\colorlet{{LovvGreenDark}}{{DarkCharcoal}}
+\colorlet{{LovvGold}}{{MainOrange}}
+\colorlet{{LovvPaper}}{{SoftBeige}}
 \renewcommand{{\arraystretch}}{{1.35}}
 \setlength{{\tabcolsep}}{{2pt}}
 \setlength{{\LTpre}}{{6pt}}

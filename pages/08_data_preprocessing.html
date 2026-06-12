@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — 데이터 전처리 계획서 v0.5</title>
+    <title>로브 (Lovv) — 데이터 전처리 계획서 v0.7</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -16,7 +16,7 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">로브</div>
-          <div class="aside-ver">Data Preprocessing · v0.5</div>
+          <div class="aside-ver">Data Preprocessing · v0.7</div>
           <div class="aside-status"><div class="status-dot"></div><span>초안</span></div>
         </div>
         <nav class="toc">
@@ -82,7 +82,8 @@
 <a class="toc-link" href="#s9-2">9.2 DynamoDB 테이블 후보</a>
 <a class="toc-link" href="#s9-3">9.3 Item 공통 속성</a>
 <a class="toc-link" href="#s9-4">9.4 적재 조건</a>
-<a class="toc-link" href="#s9-5">9.5 Lambda 적재 실패 처리</a>
+<a class="toc-link" href="#s9-5">9.5 S3 vector index 생성 기준</a>
+<a class="toc-link" href="#s9-6">9.6 Lambda 적재 실패 처리</a>
 </div>
 <div class="toc-section">
 <div class="toc-section-hd">10. 운영 및 재처리 정책</div>
@@ -105,7 +106,7 @@
       <main id="cover">
         <h1 id="cover-title" class="s-h1">로브 (Lovv) 데이터 전처리 계획서 초안</h1>
 <blockquote>
-<p class="doc-p">문서 버전: v0.5</p>
+<p class="doc-p">문서 버전: v0.7</p>
 <p class="doc-p">문서 상태: 초안 (Draft)</p>
 <p class="doc-p">작성일: 2026-06-03</p>
 <p class="doc-p">기준 문서: 데이터 수집 계획서 v0.7</p>
@@ -224,11 +225,11 @@ DynamoDB 적재</code></pre>
 <h2 id="s5-1" class="s-h2">5.1 식별자 규칙</h2>
 <div class="table-wrap wide scroll-table"><table class="info-tbl">
 <thead><tr><th>대상</th><th>ID 형식</th><th>예시</th></tr></thead><tbody>
-<tr><td>한국 City</td><td><code>KR-{도_<wbr>코드}-{CITY_<wbr>EN}</code></td><td><code>KR-42-GANGNEUNG</code></td></tr>
+<tr><td>한국 City</td><td><code>KR-{GW 또는 GB}-{CITY_<wbr>EN}</code></td><td><code>KR-GW-GANGNEUNG</code></td></tr>
 <tr><td>일본 City</td><td><code>JP-{도도부현}-{도시명}</code></td><td><code>JP-ISHIKAWA-KANAZAWA</code></td></tr>
-<tr><td>한국 Attraction</td><td><code>KR-{도_<wbr>코드}-{CITY_<wbr>EN}-ATT-{contentid}</code></td><td><code>KR-42-GANGNEUNG-ATT-126508</code></td></tr>
-<tr><td>한국 Festival</td><td><code>KR-{도_<wbr>코드}-{CITY_<wbr>EN}-FES-{contentid}</code></td><td><code>KR-42-GANGNEUNG-FES-2762975</code></td></tr>
-<tr><td>한국 VisitorStatistics</td><td><code>KR-{도_<wbr>코드}-{CITY_<wbr>EN}-STAT-{yyyyMM}</code></td><td><code>KR-42-GANGNEUNG-STAT-202501</code></td></tr>
+<tr><td>한국 Attraction</td><td><code>ATT-{contentid}</code> (City는 <code>city_<wbr>id</code>로 연결)</td><td><code>ATT-126508</code></td></tr>
+<tr><td>한국 Festival</td><td><code>FEST-{contentid}</code></td><td><code>FEST-2762975</code></td></tr>
+<tr><td>한국 VisitorStatistics</td><td><code>{city_<wbr>id}-STAT-{yyyyMM}</code> (전처리 파생)</td><td><code>KR-GW-GANGNEUNG-STAT-202501</code></td></tr>
 <tr><td>일본 Attraction/Festival</td><td><code>{country_<wbr>code}-{entity_<wbr>type}-{source_<wbr>or_<wbr>hash}</code></td><td><code>JP-FEST-HASH-001</code></td></tr>
 <tr><td>일본 VisitorStatistics</td><td><code>JP-{prefecture_<wbr>or_<wbr>city}-STAT-{period_<wbr>or_<wbr>hash}</code></td><td><code>JP-TOKYO-STAT-202501</code></td></tr>
 </tbody></table></div>
@@ -394,7 +395,23 @@ DynamoDB 적재</code></pre>
 <tr><td>검색 문서</td><td>내부 요약문, 출처 링크, 최신성 상태</td></tr>
 <tr><td>서비스 노출</td><td>필수 필드 충족, 저작권 위험 없음, <code>blocked</code> 아님</td></tr>
 </tbody></table></div>
-<h2 id="s9-5" class="s-h2">9.5 Lambda 적재 실패 처리</h2>
+<h2 id="s9-5" class="s-h2">9.5 S3 vector index 생성 기준</h2>
+<p class="doc-p">Search Index는 DynamoDB 정규화 결과에서 파생되는 S3 vector index를 기준으로 한다. S3 vector index는 원본 저장소가 아니며, S3 Raw와 DynamoDB 정규화 문서를 기준으로 언제든 재생성할 수 있어야 한다.</p>
+<p class="doc-p">KR 상세 데이터의 현재 운영 기준은 <code>TourKoreaDomainData</code>이며, 한국 데이터 전처리 결과보고서(<code>korea_<wbr>data_<wbr>preprocessing_<wbr>result_<wbr>report.md</code>) 기준 <code>raw/<wbr>KR/<wbr>details/<wbr>20260609/<wbr></code> 40개 도시 전처리 완료 결과를 S3 vector 생성 입력으로 사용한다. 생성 대상은 <code>city_<wbr>metadata</code>, <code>attraction</code>, <code>restaurant</code>, <code>festival</code>이며, <code>visitor_<wbr>statistics</code>(약 480건)는 개별 벡터화 대상에서 제외하고 city chunk의 혼잡도·계절성 보조 문맥으로만 반영한다. <code>quality_<wbr>status = passed</code> 등 서비스 노출 가능한 상태만 index에 반영한다.</p>
+<p class="doc-p"><code>city_<wbr>id</code>는 실제 적재 데이터 기준 <code>KR-{CityNameEn}</code> 형식(예: <code>KR-Andong</code>)을 사용하며, 과거 설계의 도 코드 포함 형식(<code>KR-GB-ANDONG</code>)은 사용하지 않는다. 도/광역 구분은 별도 <code>province</code> metadata(GSI2와 동일한 한글 표기)로 둔다.</p>
+<div class="table-wrap wide extra-wide scroll-table"><table class="info-tbl">
+<thead><tr><th>항목</th><th>기준</th></tr></thead><tbody>
+<tr><td>Vector bucket</td><td><code>lovv-vector-dev</code></td></tr>
+<tr><td>Vector index</td><td><code>kr-tour-domain-v1</code></td></tr>
+<tr><td>Embedding</td><td>Amazon Titan Text Embeddings V2 (<code>amazon.titan-embed-text-v2:0</code>), 1024 차원, cosine 고정</td></tr>
+<tr><td>Vector ID</td><td><code>{source_<wbr>type}#<wbr>{source_<wbr>id}#<wbr>{chunk_<wbr>no}</code> 3분절. 예: <code>attraction#<wbr>126157#<wbr>001</code></td></tr>
+<tr><td>원천 읽기</td><td>GSI3 entity type별 query, 부분 재색인은 <code>PK = CITY#<wbr>{city_<wbr>name_<wbr>en}</code> query</td></tr>
+<tr><td>Metadata filter</td><td><code>country</code>, <code>province</code>, <code>city_<wbr>id</code>, <code>city_<wbr>name_<wbr>en</code>, <code>entity_<wbr>type</code>, <code>content_<wbr>type</code>, <code>content_<wbr>id</code>, <code>theme_<wbr>tags</code>, <code>season_<wbr>tags</code>, <code>recommended_<wbr>months</code>, <code>latitude</code>/<code>longitude</code>, <code>quality_<wbr>status</code>, <code>source_<wbr>type</code>, <code>index_<wbr>version</code></td></tr>
+<tr><td>원본 재조회</td><td>S3 vector 결과의 <code>ddb_<wbr>pk</code>, <code>ddb_<wbr>sk</code>, <code>raw_<wbr>s3_<wbr>uri</code>로 DynamoDB와 S3 Raw를 역추적</td></tr>
+<tr><td>재생성 조건</td><td>embedding model, chunk template, metadata schema, 품질 기준, <code>city_<wbr>id</code> 형식 변경</td></tr>
+</tbody></table></div>
+<p class="doc-p">상세 chunk template, metadata allowlist, PutVectors 배치 기준, 샘플 질의 검증 기준은 <code>s3_<wbr>vector_<wbr>index_<wbr>plan.md</code>를 따른다.</p>
+<h2 id="s9-6" class="s-h2">9.6 Lambda 적재 실패 처리</h2>
 <div class="table-wrap"><table class="info-tbl compact-tbl">
 <thead><tr><th>실패 유형</th><th>처리</th></tr></thead><tbody>
 <tr><td>스키마 오류</td><td>DynamoDB에 적재하지 않고 S3 <code>failed/<wbr></code> Prefix와 품질 리포트에 사유 기록</td></tr>
@@ -435,15 +452,19 @@ DynamoDB 적재</code></pre>
 <tr><td><code>feature_<wbr>dataset</code></td><td>테마, 계절성, 혼잡도, 일정 적합도 파생 필드</td></tr>
 <tr><td><code>s3_<wbr>raw_<wbr>manifest</code></td><td>DynamoDB Item과 연결되는 S3 Raw 객체 목록</td></tr>
 <tr><td><code>lambda_<wbr>processing_<wbr>log</code></td><td>Lambda 실행 결과, 실패 사유, 재처리 대상 기록</td></tr>
+<tr><td><code>s3_<wbr>vector_<wbr>index_<wbr>manifest</code></td><td>S3 vector index 버전, chunk 수, vector 수, 원천 DynamoDB/S3 Raw 참조</td></tr>
 </tbody></table></div>
 <h1 id="s13" class="s-h1">13. 본 문서 반영 이력</h1>
-<div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
+<div class="table-wrap wide extra-wide scroll-table"><table class="info-tbl change-log-tbl">
 <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
 <tr><td>v0.1</td><td>2026-06-03</td><td>LLM 파트</td><td>데이터 수집 계획서를 기반으로 전처리 계획서 초안 작성</td></tr>
 <tr><td>v0.2</td><td>2026-06-03</td><td>LLM 파트</td><td>S3 Raw 적재, Lambda 전처리, DynamoDB 적재 아키텍처 반영</td></tr>
 <tr><td>v0.3</td><td>2026-06-06</td><td>LLM 파트</td><td>S3 Raw 누적 보관 후 Lambda 배치 전처리 및 DynamoDB 적재 흐름 반영</td></tr>
 <tr><td>v0.4</td><td>2026-06-06</td><td>LLM 파트</td><td>한국 강원·경북 실제 수집 산출물, <code>KR-{도_<wbr>코드}-{CITY_<wbr>EN}</code> ID 형식, <code>climate_<wbr>table</code> 전처리 기준 반영</td></tr>
 <tr><td>v0.5</td><td>2026-06-07</td><td>LLM 파트</td><td>VisitorStatistics 관계, 정규화 산출물, DynamoDB 후보 테이블, 적재 조건 보완</td></tr>
+<tr><td>v0.6</td><td>2026-06-09</td><td>조동휘</td><td><code>tour-api-korea</code> 코드 대조로 한국 식별자 규칙 정정: City <code>KR-{GW 또는 GB}-*</code>, Attraction <code>ATT-{contentid}</code>, Festival <code>FEST-{contentid}</code>. 상세는 <code>kr_<wbr>preprocessing_<wbr>detail_<wbr>design.md</code> v0.3·<code>kr_<wbr>preprocessing_<wbr>code_<wbr>based_<wbr>design.md</code> 참조</td></tr>
+<tr><td>v0.7</td><td>2026-06-10</td><td>조동휘</td><td>KR 전처리 완료 보고서 기준 S3 vector index 생성 기준(<code>TourKoreaDomainData</code> 입력, <code>kr-tour-domain-v1</code>, metadata filter, 재생성 조건) 반영. 상세는 <code>s3_<wbr>vector_<wbr>index_<wbr>plan.md</code> 참조</td></tr>
+<tr><td>v0.8</td><td>2026-06-11</td><td>조동휘</td><td><code>s3_<wbr>vector_<wbr>index_<wbr>plan.md</code> v0.2 동기화: <code>city_<wbr>id</code> 실데이터 형식(<code>KR-{CityNameEn}</code>) 확정, vector ID 3분절 통일, Titan V2 1024/cosine 고정, GSI3 기반 export, <code>province</code>·좌표 metadata 추가, <code>visitor_<wbr>statistics</code> 제외 기준 명시</td></tr>
 </tbody></table></div>
         <nav class="doc-nav" aria-label="이전 다음 문서">
           <a class="doc-nav-home" href="../index.html">문서 홈</a>

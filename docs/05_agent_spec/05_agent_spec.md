@@ -1,6 +1,7 @@
 # 로브 (Lovv) Agent 명세서
 
 > 문서 버전: v0.6
+> 문서 버전: v0.6
 > 문서 상태: 검토 중 (Review)
 > 기준 문서: 요구사항 명세서 v1.7, 서비스 흐름 명세서 v0.2, 데이터 수집 계획서 v0.7, 데이터베이스 설계 명세서 v0.5, 기술 명세서 v0.3, API 명세서 v0.2
 > 상세 정본: `langgraph_flow.md`, `candidate_evidence_agent.md`, `candidate_evidence_baseline_comparison.md`, `agent_harness_design.md`
@@ -216,11 +217,11 @@ Candidate Evidence Agent의 기본 로직:
 | 정형 원장 | 목적지, 축제, 관광지, 일정 결과의 확정 기준은 MySQL 원장을 따른다. |
 | 실행/이벤트 상태 | Agent trace, API 로그, 사용자 이벤트, async job은 DynamoDB TTL 테이블에 요약 저장한다. |
 | 의미 검색 | S3 vector index는 재생성 가능한 검색 인덱스로만 사용하며 원본 저장소로 보지 않는다. |
-| 관계 탐색 | AWS Neptune은 도시·축제·테마·장소 관계를 탐색하는 재생성 가능한 그래프 인덱스로만 사용한다. |
+| 관계 탐색 | 그래프DB 직접 도입 대신 Lambda 관계 탐색 보조 기능으로 도시·축제·테마·장소 관계를 확장한다. |
 | 필수 metadata | `country`, `destination_id`, `city_id`, `content_type`, `theme_tags`, `recommended_months`, `source_type` |
 | 금지 metadata | 사용자 ID 원문, 대화 전문, 비공개 운영 메모 |
 
-Candidate Evidence Agent는 S3 vector metadata filter로 국가·도시·테마·월·콘텐츠 유형을 1차 제한하고, AWS Neptune으로 도시·축제·테마·장소 관계를 확장한 뒤 MySQL 원장 또는 DynamoDB 정규화 문서의 확정 필드로 후보를 재검증한다.
+Candidate Evidence Agent는 S3 vector metadata filter로 국가·도시·테마·월·콘텐츠 유형을 1차 제한하고, Lambda 관계 탐색 보조 기능으로 도시·축제·테마·장소 관계를 확장한 뒤 MySQL 원장 또는 DynamoDB 정규화 문서의 확정 필드로 후보를 재검증한다.
 S3 vector 결과만으로 장소 존재, 축제 일정, 운영 여부를 확정하지 않는다.
 
 ## 7.4 `Festival_Verifier_Agent`
@@ -368,12 +369,12 @@ LLM 호출은 Bedrock Converse API로 추상화한다.
 | 비동기 작업 상태 | DynamoDB `lovv_async_jobs` | 장시간 실행 또는 재시도 작업의 `job_type`, `status`, `progress`, `result_ref`, `error_code`를 갱신한다. |
 | 축제 검증 캐시 | DynamoDB `lovv_festival_verify_cache` | `festival_id + travelYear` 단위로 `date_status`, 날짜, 공식 출처, 신뢰도를 재사용한다. |
 | RAG 검색 인덱스 | S3 vector index | 목적지·축제·관광지 chunk와 metadata filter를 조회하되 원본 확정 근거로 단독 사용하지 않는다. |
-| 그래프 관계 인덱스 | AWS Neptune | 도시·축제·테마·장소 관계를 탐색해 후보를 확장하되 원본 확정 근거로 단독 사용하지 않는다. |
+| 관계 탐색 보조 | Lambda + DynamoDB 인접 리스트 | 도시·축제·테마·장소 관계를 탐색해 후보를 확장하되 원본 확정 근거로 단독 사용하지 않는다. |
 
 Agent는 저장소별 책임을 넘지 않는다.
 MySQL 원장은 사용자에게 조회·저장·피드백으로 노출되는 최종 상태를 담당하고, DynamoDB는 TTL 기반 실행 상태와 로그성 데이터를 담당한다.
 S3 vector index는 검색 성능과 의미 재랭킹을 위한 파생 인덱스이며, 재색인과 복구는 MySQL, DynamoDB 정규화 문서, S3 Raw 원본을 기준으로 수행한다.
-AWS Neptune은 관계 탐색과 그래프 기반 후보 확장을 위한 파생 인덱스이며, 재적재와 복구는 DynamoDB 정규화 문서와 S3 Raw 원본을 기준으로 수행한다.
+Lambda 관계 탐색 보조 기능은 관계 탐색과 그래프 기반 후보 확장을 위한 파생 기능이며, 재적재와 복구는 DynamoDB 정규화 문서와 S3 Raw 원본을 기준으로 수행한다. Neptune은 3-hop 이상 임의 경로 탐색이나 대규모 실시간 그래프 쓰기가 필요해질 때의 고도화 승격 옵션으로 둔다.
 
 # 10. 품질 검증 기준
 

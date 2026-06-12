@@ -1,6 +1,6 @@
 # 로브 (Lovv) 데이터 전처리 계획서 초안
 
-> 문서 버전: v0.5
+> 문서 버전: v0.7
 > 문서 상태: 초안 (Draft)
 > 작성일: 2026-06-03
 > 기준 문서: 데이터 수집 계획서 v0.7
@@ -146,11 +146,11 @@ DynamoDB 적재
 
 | 대상 | ID 형식 | 예시 |
 | --- | --- | --- |
-| 한국 City | `KR-{도_코드}-{CITY_EN}` | `KR-42-GANGNEUNG` |
+| 한국 City | `KR-{GW 또는 GB}-{CITY_EN}` | `KR-GW-GANGNEUNG` |
 | 일본 City | `JP-{도도부현}-{도시명}` | `JP-ISHIKAWA-KANAZAWA` |
-| 한국 Attraction | `KR-{도_코드}-{CITY_EN}-ATT-{contentid}` | `KR-42-GANGNEUNG-ATT-126508` |
-| 한국 Festival | `KR-{도_코드}-{CITY_EN}-FES-{contentid}` | `KR-42-GANGNEUNG-FES-2762975` |
-| 한국 VisitorStatistics | `KR-{도_코드}-{CITY_EN}-STAT-{yyyyMM}` | `KR-42-GANGNEUNG-STAT-202501` |
+| 한국 Attraction | `ATT-{contentid}` (City는 `city_id`로 연결) | `ATT-126508` |
+| 한국 Festival | `FEST-{contentid}` | `FEST-2762975` |
+| 한국 VisitorStatistics | `{city_id}-STAT-{yyyyMM}` (전처리 파생) | `KR-GW-GANGNEUNG-STAT-202501` |
 | 일본 Attraction/Festival | `{country_code}-{entity_type}-{source_or_hash}` | `JP-FEST-HASH-001` |
 | 일본 VisitorStatistics | `JP-{prefecture_or_city}-STAT-{period_or_hash}` | `JP-TOKYO-STAT-202501` |
 
@@ -338,7 +338,28 @@ RAG 문서는 외부 원문을 그대로 복제하지 않고 내부 요약문과
 | 검색 문서 | 내부 요약문, 출처 링크, 최신성 상태 |
 | 서비스 노출 | 필수 필드 충족, 저작권 위험 없음, `blocked` 아님 |
 
-## 9.5 Lambda 적재 실패 처리
+## 9.5 S3 vector index 생성 기준
+
+Search Index는 DynamoDB 정규화 결과에서 파생되는 S3 vector index를 기준으로 한다. S3 vector index는 원본 저장소가 아니며, S3 Raw와 DynamoDB 정규화 문서를 기준으로 언제든 재생성할 수 있어야 한다.
+
+KR 상세 데이터의 현재 운영 기준은 `TourKoreaDomainData`이며, 한국 데이터 전처리 결과보고서(`korea_data_preprocessing_result_report.md`) 기준 `raw/KR/details/20260609/` 40개 도시 전처리 완료 결과를 S3 vector 생성 입력으로 사용한다. 생성 대상은 `city_metadata`, `attraction`, `restaurant`, `festival`이며, `visitor_statistics`(약 480건)는 개별 벡터화 대상에서 제외하고 city chunk의 혼잡도·계절성 보조 문맥으로만 반영한다. `quality_status = passed` 등 서비스 노출 가능한 상태만 index에 반영한다.
+
+`city_id`는 실제 적재 데이터 기준 `KR-{CityNameEn}` 형식(예: `KR-Andong`)을 사용하며, 과거 설계의 도 코드 포함 형식(`KR-GB-ANDONG`)은 사용하지 않는다. 도/광역 구분은 별도 `province` metadata(GSI2와 동일한 한글 표기)로 둔다.
+
+| 항목 | 기준 |
+| --- | --- |
+| Vector bucket | `lovv-vector-dev` |
+| Vector index | `kr-tour-domain-v1` |
+| Embedding | Amazon Titan Text Embeddings V2 (`amazon.titan-embed-text-v2:0`), 1024 차원, cosine 고정 |
+| Vector ID | `{source_type}#{source_id}#{chunk_no}` 3분절. 예: `attraction#126157#001` |
+| 원천 읽기 | GSI3 entity type별 query, 부분 재색인은 `PK = CITY#{city_name_en}` query |
+| Metadata filter | `country`, `province`, `city_id`, `city_name_en`, `entity_type`, `content_type`, `content_id`, `theme_tags`, `season_tags`, `recommended_months`, `latitude`/`longitude`, `quality_status`, `source_type`, `index_version` |
+| 원본 재조회 | S3 vector 결과의 `ddb_pk`, `ddb_sk`, `raw_s3_uri`로 DynamoDB와 S3 Raw를 역추적 |
+| 재생성 조건 | embedding model, chunk template, metadata schema, 품질 기준, `city_id` 형식 변경 |
+
+상세 chunk template, metadata allowlist, PutVectors 배치 기준, 샘플 질의 검증 기준은 `s3_vector_index_plan.md`를 따른다.
+
+## 9.6 Lambda 적재 실패 처리
 
 | 실패 유형 | 처리 |
 | --- | --- |
@@ -382,6 +403,7 @@ RAG 문서는 외부 원문을 그대로 복제하지 않고 내부 요약문과
 | `feature_dataset` | 테마, 계절성, 혼잡도, 일정 적합도 파생 필드 |
 | `s3_raw_manifest` | DynamoDB Item과 연결되는 S3 Raw 객체 목록 |
 | `lambda_processing_log` | Lambda 실행 결과, 실패 사유, 재처리 대상 기록 |
+| `s3_vector_index_manifest` | S3 vector index 버전, chunk 수, vector 수, 원천 DynamoDB/S3 Raw 참조 |
 
 # 13. 본 문서 반영 이력
 
@@ -392,3 +414,6 @@ RAG 문서는 외부 원문을 그대로 복제하지 않고 내부 요약문과
 | v0.3 | 2026-06-06 | LLM 파트 | S3 Raw 누적 보관 후 Lambda 배치 전처리 및 DynamoDB 적재 흐름 반영 |
 | v0.4 | 2026-06-06 | LLM 파트 | 한국 강원·경북 실제 수집 산출물, `KR-{도_코드}-{CITY_EN}` ID 형식, `climate_table` 전처리 기준 반영 |
 | v0.5 | 2026-06-07 | LLM 파트 | VisitorStatistics 관계, 정규화 산출물, DynamoDB 후보 테이블, 적재 조건 보완 |
+| v0.6 | 2026-06-09 | 조동휘 | `tour-api-korea` 코드 대조로 한국 식별자 규칙 정정: City `KR-{GW 또는 GB}-*`, Attraction `ATT-{contentid}`, Festival `FEST-{contentid}`. 상세는 `kr_preprocessing_detail_design.md` v0.3·`kr_preprocessing_code_based_design.md` 참조 |
+| v0.7 | 2026-06-10 | 조동휘 | KR 전처리 완료 보고서 기준 S3 vector index 생성 기준(`TourKoreaDomainData` 입력, `kr-tour-domain-v1`, metadata filter, 재생성 조건) 반영. 상세는 `s3_vector_index_plan.md` 참조 |
+| v0.8 | 2026-06-11 | 조동휘 | `s3_vector_index_plan.md` v0.2 동기화: `city_id` 실데이터 형식(`KR-{CityNameEn}`) 확정, vector ID 3분절 통일, Titan V2 1024/cosine 고정, GSI3 기반 export, `province`·좌표 metadata 추가, `visitor_statistics` 제외 기준 명시 |

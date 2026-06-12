@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — API 명세서 v0.2</title>
+    <title>로브 (Lovv) — API 명세서 v0.3</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -16,7 +16,7 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">로브</div>
-          <div class="aside-ver">API Spec · v0.2</div>
+          <div class="aside-ver">API Spec · v0.3</div>
           <div class="aside-status"><div class="status-dot"></div><span>기획 단계</span></div>
         </div>
         <nav class="toc">
@@ -35,9 +35,11 @@
 <div class="toc-section">
 <div class="toc-section-hd">3. 인증 API</div>
 <a class="toc-link" href="#s3">3. 인증 API</a>
-<a class="toc-link" href="#s3-1">3.1 <code>POST /<wbr>auth/<wbr>google</code>, <code>POST /<wbr>auth/<wbr>kakao</code></a>
-<a class="toc-link" href="#s3-2">3.2 <code>GET /<wbr>auth/<wbr>session</code></a>
-<a class="toc-link" href="#s3-3">3.3 <code>GET /<wbr>auth/<wbr>me</code></a>
+<a class="toc-link" href="#s3-1">3.1 <code>POST /<wbr>auth/<wbr>cognito/<wbr>session</code></a>
+<a class="toc-link" href="#s3-2">3.2 <code>POST /<wbr>auth/<wbr>google</code>, <code>POST /<wbr>auth/<wbr>kakao</code> (Legacy)</a>
+<a class="toc-link" href="#s3-3">3.3 <code>GET /<wbr>auth/<wbr>session</code></a>
+<a class="toc-link" href="#s3-4">3.4 <code>GET /<wbr>auth/<wbr>me</code></a>
+<a class="toc-link" href="#s3-5">3.5 <code>POST /<wbr>auth/<wbr>logout</code></a>
 </div>
 <div class="toc-section">
 <div class="toc-section-hd">4. 온보딩·선호 API</div>
@@ -78,9 +80,9 @@
       <main id="cover">
         <h1 id="cover-title" class="s-h1">로브 (Lovv) API 명세서</h1>
 <blockquote>
-<p class="doc-p">문서 버전: v0.2</p>
+<p class="doc-p">문서 버전: v0.3</p>
 <p class="doc-p">문서 상태: 기획 단계 (Planning)</p>
-<p class="doc-p">기준 문서: 요구사항 명세서 v1.7, 서비스 흐름 명세서 v0.2, 데이터베이스 설계 명세서 v0.2, Agent 명세서 v0.4</p>
+<p class="doc-p">기준 문서: 요구사항 명세서 v1.7, 서비스 흐름 명세서 v0.2, 데이터베이스 설계 명세서 v0.5, Agent 명세서 v0.4, 기술 명세서 v0.4, 배포·운영 트러블슈팅 v0.2</p>
 </blockquote>
 <h1 id="s1" class="s-h1">1. 문서 개요</h1>
 <h2 id="s1-1" class="s-h2">1.1 목적</h2>
@@ -90,15 +92,16 @@
 <thead><tr><th>항목</th><th>규칙</th></tr></thead><tbody>
 <tr><td>Base URL</td><td><code>/<wbr>api/<wbr>v1</code></td></tr>
 <tr><td>Content-Type</td><td><code>application/<wbr>json; charset=utf-8</code></td></tr>
-<tr><td>인증</td><td>공개 추천 조회는 선택, 운영·저장·마이페이지는 로그인 필요</td></tr>
+<tr><td>인증</td><td>공개 추천 조회는 선택, 운영·저장·마이페이지는 Cognito JWT 인증 필요</td></tr>
 <tr><td>날짜 형식</td><td>ISO 8601</td></tr>
 <tr><td>ID 형식</td><td>UUID 권장</td></tr>
+<tr><td>보안 스킴</td><td><code>cognitoBearerAuth</code> (<code>Authorization: Bearer &lt;Cognito JWT&gt;</code>)</td></tr>
 </tbody></table></div>
 <h2 id="s1-3" class="s-h2">1.3 Lambda 라우팅 기준</h2>
-<p class="doc-p">AWS SAM 기반 배포에서는 API Gateway가 단일 <code>/<wbr>api/<wbr>v1</code> 진입점을 제공하고, 요청 성격에 따라 Lambda를 분리해 호출한다.</p>
+<p class="doc-p">AWS SAM 기반 배포에서는 API Gateway가 단일 <code>/<wbr>api/<wbr>v1</code> 진입점을 제공하고, Cognito JWT Authorizer로 인증·인가를 검증한 뒤 요청 성격에 따라 Lambda를 분리해 호출한다.</p>
 <div class="table-wrap wide scroll-table"><table class="info-tbl">
 <thead><tr><th>담당 Lambda</th><th>API 범위</th><th>책임</th></tr></thead><tbody>
-<tr><td><code>Auth-Function</code></td><td><code>/<wbr>auth/<wbr>*</code>, 초기 <code>/<wbr>auth/<wbr>session</code> 세션 조회</td><td>Google/Kakao 로그인, JWT 발급·검증, 로그인 직후 사용자 정보·저장 테마·저장 일정 요약 로드</td></tr>
+<tr><td><code>Auth-Function</code></td><td><code>/<wbr>auth/<wbr>*</code>, 초기 <code>/<wbr>auth/<wbr>cognito/<wbr>session</code> 세션 조회</td><td>Cognito claims를 Lovv user/session shape로 변환하고, legacy social login API를 유지</td></tr>
 <tr><td><code>Map-Function</code></td><td><code>/<wbr>destinations/<wbr>*</code></td><td>지도 마커 목록, 소도시 상세 콘텐츠, DB/S3 기반 읽기 API</td></tr>
 <tr><td><code>AgentCore-Function</code></td><td><code>/<wbr>recommendations</code>, <code>/<wbr>agent/<wbr>answer</code></td><td>LLM 호출, 추천 설명 생성, 대화 원문 저장 없는 순수 AI 추론</td></tr>
 </tbody></table></div>
@@ -112,6 +115,7 @@
 <tr><td>404</td><td>NOT_FOUND</td><td>리소스 없음</td></tr>
 <tr><td>409</td><td>CONFLICT</td><td>중복 또는 상태 충돌</td></tr>
 <tr><td>422</td><td>VALIDATION_ERROR</td><td>의미상 유효하지 않은 요청</td></tr>
+<tr><td>422</td><td>AUTH_MAPPING_ERROR</td><td>Cognito 필수 claim은 있으나 Lovv 사용자/role 매핑이 불가능</td></tr>
 <tr><td>500</td><td>INTERNAL_ERROR</td><td>서버 오류</td></tr>
 </tbody></table></div>
 <pre><code>{
@@ -126,13 +130,56 @@
 <h1 id="s3" class="s-h1">3. 인증 API</h1>
 <div class="table-wrap wide extra-wide scroll-table"><table class="info-tbl api-contract-tbl">
 <thead><tr><th>Method</th><th>Path</th><th>Auth</th><th>담당 Lambda</th><th>설명</th></tr></thead><tbody>
-<tr><td>POST</td><td><code>/<wbr>auth/<wbr>google</code></td><td>Public</td><td><code>Auth-Function</code></td><td>Google 간편 로그인 토큰 검증 및 서비스 JWT 발급</td></tr>
-<tr><td>POST</td><td><code>/<wbr>auth/<wbr>kakao</code></td><td>Public</td><td><code>Auth-Function</code></td><td>Kakao 간편 로그인 토큰 검증 및 서비스 JWT 발급</td></tr>
+<tr><td>POST</td><td><code>/<wbr>auth/<wbr>cognito/<wbr>session</code></td><td>Cognito</td><td><code>Auth-Function</code></td><td>Cognito claims를 Lovv user/session 응답으로 변환</td></tr>
+<tr><td>POST</td><td><code>/<wbr>auth/<wbr>google</code></td><td>Public</td><td><code>Auth-Function</code></td><td>Legacy. Google provider token 직접 검증 방식</td></tr>
+<tr><td>POST</td><td><code>/<wbr>auth/<wbr>kakao</code></td><td>Public</td><td><code>Auth-Function</code></td><td>Legacy. Kakao provider token 직접 검증 방식</td></tr>
 <tr><td>POST</td><td><code>/<wbr>auth/<wbr>logout</code></td><td>User</td><td><code>Auth-Function</code></td><td>로그아웃</td></tr>
 <tr><td>GET</td><td><code>/<wbr>auth/<wbr>me</code></td><td>User</td><td><code>Auth-Function</code></td><td>현재 사용자와 역할 조회</td></tr>
 <tr><td>GET</td><td><code>/<wbr>auth/<wbr>session</code></td><td>User</td><td><code>Auth-Function</code></td><td>로그인 직후 대시보드 진입에 필요한 세션 요약 조회</td></tr>
 </tbody></table></div>
-<h2 id="s3-1" class="s-h2">3.1 <code>POST /<wbr>auth/<wbr>google</code>, <code>POST /<wbr>auth/<wbr>kakao</code></h2>
+<h2 id="s3-1" class="s-h2">3.1 <code>POST /<wbr>auth/<wbr>cognito/<wbr>session</code></h2>
+<p class="doc-p">Cognito Hosted UI 또는 OIDC IdP 로그인이 끝난 뒤 호출한다. API Gateway JWT Authorizer가 Cognito JWT를 먼저 검증하고, 백엔드는 검증된 claims만 사용해 Lovv 사용자와 세션 응답을 구성한다.</p>
+<p class="doc-p">이 경로에서는 Google/Kakao provider token verifier를 호출하지 않는다.</p>
+<p class="doc-p"><strong>Request</strong></p>
+<p class="doc-p">본문 없음. 인증 정보는 <code>Authorization: Bearer &lt;Cognito JWT&gt;</code> 헤더로 전달한다.</p>
+<p class="doc-p"><strong>Claims 입력 기준</strong></p>
+<div class="table-wrap"><table class="info-tbl compact-tbl">
+<thead><tr><th>Claim</th><th>용도</th></tr></thead><tbody>
+<tr><td><code>sub</code></td><td>Cognito 사용자 식별자, Lovv user 조회/생성 기준</td></tr>
+<tr><td><code>email</code></td><td>사용자 이메일</td></tr>
+<tr><td><code>name</code> 또는 <code>preferred_<wbr>username</code></td><td>표시 이름 후보</td></tr>
+<tr><td><code>cognito:groups</code></td><td>큰 권한 그룹 매핑</td></tr>
+</tbody></table></div>
+<p class="doc-p"><strong>Response 200</strong></p>
+<pre><code>{
+  &quot;authenticated&quot;: true,
+  &quot;accessToken&quot;: &quot;cognito-access-token&quot;,
+  &quot;tokenType&quot;: &quot;Bearer&quot;,
+  &quot;user&quot;: {
+    &quot;userId&quot;: &quot;uuid&quot;,
+    &quot;cognitoSub&quot;: &quot;cognito-sub&quot;,
+    &quot;email&quot;: &quot;user@example.com&quot;,
+    &quot;displayName&quot;: &quot;홍길동&quot;,
+    &quot;roles&quot;: [&quot;R-USER&quot;]
+  },
+  &quot;preferences&quot;: {
+    &quot;countryTrack&quot;: &quot;JP&quot;,
+    &quot;mappedThemes&quot;: [&quot;art_sense&quot;, &quot;history_tradition&quot;],
+    &quot;selectedThemeIds&quot;: [&quot;art_sense&quot;, &quot;history_tradition&quot;]
+  },
+  &quot;onboardingCompleted&quot;: true,
+  &quot;sessionRestored&quot;: true
+}</code></pre>
+<p class="doc-p"><strong>오류 기준</strong></p>
+<div class="table-wrap"><table class="info-tbl compact-tbl">
+<thead><tr><th>상태</th><th>조건</th></tr></thead><tbody>
+<tr><td>401</td><td>Cognito claims 없음 또는 JWT Authorizer 미검증</td></tr>
+<tr><td>422</td><td><code>sub</code>, <code>email</code> 등 필수 claim 매핑 불가</td></tr>
+<tr><td>500</td><td>DB 초기화·조회 실패 등 인증 이후 내부 오류</td></tr>
+</tbody></table></div>
+<p class="doc-p">Repository와 DB client는 claims 검증 이후 lazy init한다. 인증 정보가 없는 요청에서 DB 초기화 실패가 먼저 발생해 500으로 보이면 안 된다.</p>
+<h2 id="s3-2" class="s-h2">3.2 <code>POST /<wbr>auth/<wbr>google</code>, <code>POST /<wbr>auth/<wbr>kakao</code> (Legacy)</h2>
+<p class="doc-p">이 API는 Cognito 도입 이전의 provider token 직접 검증 방식이다. 신규 프론트 흐름은 Cognito Hosted UI/OIDC 로그인 후 <code>POST /<wbr>auth/<wbr>cognito/<wbr>session</code>을 호출한다.</p>
 <p class="doc-p"><strong>Request</strong></p>
 <pre><code>{
   &quot;providerAccessToken&quot;: &quot;oauth-provider-token&quot;,
@@ -149,9 +196,9 @@
     &quot;roles&quot;: [&quot;R-USER&quot;]
   }
 }</code></pre>
-<p class="doc-p">공급자 OAuth 토큰은 서버에서 검증하고 클라이언트 저장 대상으로 반환하지 않는다. refresh token을 사용하는 경우 HttpOnly 쿠키 또는 서버 세션 저장소로 관리한다.</p>
-<h2 id="s3-2" class="s-h2">3.2 <code>GET /<wbr>auth/<wbr>session</code></h2>
-<p class="doc-p">로그인 성공 후 첫 대시보드 진입 시 호출한다. 사용자 정보, 저장 테마, 저장 일정 요약처럼 초기 화면 구성에 필요한 가벼운 세션 데이터를 한 번에 반환한다.</p>
+<p class="doc-p">공급자 OAuth 토큰은 서버에서 검증하고 클라이언트 저장 대상으로 반환하지 않는다. refresh token을 사용하는 경우 HttpOnly 쿠키 또는 서버 세션 저장소로 관리한다. 단, Cognito 흐름과 동시에 사용하지 않는다.</p>
+<h2 id="s3-3" class="s-h2">3.3 <code>GET /<wbr>auth/<wbr>session</code></h2>
+<p class="doc-p">기존 프론트 호환용 세션 조회 API다. 신규 Cognito 흐름에서는 <code>POST /<wbr>auth/<wbr>cognito/<wbr>session</code> 또는 <code>GET /<wbr>auth/<wbr>me</code>를 우선 사용한다.</p>
 <p class="doc-p"><strong>Response 200</strong></p>
 <pre><code>{
   &quot;user&quot;: {
@@ -161,7 +208,8 @@
   },
   &quot;preferences&quot;: {
     &quot;countryTrack&quot;: &quot;JP&quot;,
-    &quot;mappedThemes&quot;: [&quot;art_sense&quot;, &quot;history_tradition&quot;]
+    &quot;mappedThemes&quot;: [&quot;art_sense&quot;, &quot;history_tradition&quot;],
+    &quot;selectedThemeIds&quot;: [&quot;art_sense&quot;, &quot;history_tradition&quot;]
   },
   &quot;savedItineraries&quot;: [
     {
@@ -172,13 +220,22 @@
     }
   ]
 }</code></pre>
-<h2 id="s3-3" class="s-h2">3.3 <code>GET /<wbr>auth/<wbr>me</code></h2>
+<h2 id="s3-4" class="s-h2">3.4 <code>GET /<wbr>auth/<wbr>me</code></h2>
 <p class="doc-p"><strong>Response 200</strong></p>
 <pre><code>{
   &quot;userId&quot;: &quot;uuid&quot;,
   &quot;displayName&quot;: &quot;홍길동&quot;,
   &quot;roles&quot;: [&quot;R-USER&quot;]
 }</code></pre>
+<p class="doc-p">역할 enum은 <code>R-USER</code>, <code>R-ADMIN</code>, <code>R-LOCAL-OPERATOR</code>, <code>R-DATA-PROVIDER</code>를 사용한다. Cognito Group은 큰 권한 구분만 담당하고, 담당 지역·provider 소유권·세부 permission은 Lovv DB와 Backend에서 다시 검증한다.</p>
+<h2 id="s3-5" class="s-h2">3.5 <code>POST /<wbr>auth/<wbr>logout</code></h2>
+<p class="doc-p">로그아웃은 Lovv logout과 Cognito logout을 분리한다.</p>
+<div class="table-wrap"><table class="info-tbl compact-tbl">
+<thead><tr><th>구분</th><th>처리</th></tr></thead><tbody>
+<tr><td>Lovv logout</td><td>backend session, cookie, local service state 정리</td></tr>
+<tr><td>Cognito logout</td><td>Cognito Hosted UI logout URL로 redirect</td></tr>
+</tbody></table></div>
+<p class="doc-p">Cognito access token은 JWT라 이미 발급된 token을 백엔드가 즉시 무효화한다고 표현하지 않는다. 프론트는 필요 시 Cognito logout URL로 이동해 Hosted UI 세션까지 종료한다.</p>
 <h1 id="s4" class="s-h1">4. 온보딩·선호 API</h1>
 <div class="table-wrap wide scroll-table"><table class="info-tbl api-contract-tbl">
 <thead><tr><th>Method</th><th>Path</th><th>Auth</th><th>설명</th></tr></thead><tbody>
@@ -406,6 +463,7 @@
 <h1 id="s10" class="s-h1">10. 변경 이력</h1>
 <div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
 <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+<tr><td>v0.3</td><td>2026-06-12</td><td>로브 기획팀</td><td>Cognito bridge 인증 흐름 추가, Google/Kakao 직접 검증 API legacy 처리, role enum과 logout 책임 경계 반영</td></tr>
 <tr><td>v0.2</td><td>2026-06-08</td><td>로브 기획팀</td><td>AWS SAM 기반 Auth, Map, AgentCore Lambda별 API 라우팅과 Google/Kakao 인증, 세션, 지도 상세, 저장 없는 Agent 답변 API 추가</td></tr>
 <tr><td>v0.1</td><td>2026-05-29</td><td>로브 기획팀</td><td>API 명세서 초안 작성</td></tr>
 </tbody></table></div>
@@ -413,7 +471,7 @@
           <a class="doc-nav-home" href="../index.html">문서 홈</a>
           <div class="doc-nav-pager">
             <a class="doc-nav-link" href="./06_technical_spec.html">이전 문서<br><strong>기술 명세서</strong></a>
-            <span class="doc-nav-link disabled">다음 문서<br><strong>없음</strong></span>
+            <a class="doc-nav-link" href="./11_troubleshooting.html">다음 문서<br><strong>트러블슈팅 문서</strong></a>
           </div>
         </nav>
       </main>

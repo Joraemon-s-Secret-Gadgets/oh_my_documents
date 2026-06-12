@@ -6,9 +6,16 @@
 
 대표 문서는 `11_deployment_ops.md`다. 배포 파이프라인, 환경 구성, 운영 절차(runbook)를 정의한다. 인프라의 "왜"는 기술 명세서(06)에 두고, 이 문서는 "어떻게 배포·운영하는가"에 집중한다.
 
+## Documents
+
+```text
+11_deployment_ops.md  배포·운영 대표 문서
+troubleshooting.md    프로젝트 진행 중 발생한 주요 이슈와 대응 기준
+```
+
 ## Scope Boundary (06 vs 11)
 
-- `../06_technical_spec/06_technical_spec.md` (설계): AWS 서비스 선택 근거, Lambda 분리 기준, 권한 경계 원칙, 데이터 계층 구조(S3 vector / Neptune / DynamoDB / Bedrock).
+- `../06_technical_spec/06_technical_spec.md` (설계): AWS 서비스 선택 근거, Lambda 분리 기준, 권한 경계 원칙, 데이터 계층 구조(S3 vector / Lambda 관계 탐색 / DynamoDB / Bedrock).
 - `11_deployment_ops.md` (운영): SAM build/deploy 절차, CI/CD 파이프라인, 환경별(dev/stg/prod) 설정, Secrets 관리 운영, 모니터링·알람 구성, 롤백, 비용 관리.
 
 ## Dependencies

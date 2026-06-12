@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lovv Midterm Presentation</title>
+  <style>
+    :root {
+      --bg: #15120f;
+      --panel: #211b17;
+      --paper: #fff3e7;
+      --accent: #f26518;
+      --text: #f8efe8;
+      --muted: #b9aaa0;
+      --line: rgba(255, 243, 231, 0.18);
+      --shadow: rgba(0, 0, 0, 0.42);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Pretendard", "Noto Sans KR", "Aptos", sans-serif;
+    }
+
+    body {
+      overflow: hidden;
+    }
+
+    .deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: grid;
+      grid-template-rows: 1fr 74px;
+      background:
+        linear-gradient(135deg, rgba(242, 101, 24, 0.10), transparent 36%),
+        radial-gradient(circle at 85% 15%, rgba(255, 243, 231, 0.10), transparent 34%),
+        var(--bg);
+    }
+
+    .stage {
+      position: relative;
+      min-height: 0;
+      display: grid;
+      place-items: center;
+      padding: 34px 34px 18px;
+    }
+
+    .slide-frame {
+      position: relative;
+      width: min(calc(100vw - 68px), calc((100vh - 126px) * 16 / 9));
+      aspect-ratio: 16 / 9;
+      background: var(--paper);
+      box-shadow: 0 30px 80px var(--shadow);
+      overflow: hidden;
+    }
+
+    .slide-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: var(--paper);
+      opacity: 0;
+      transform: translateY(10px) scale(0.992);
+      transition: opacity 180ms ease, transform 220ms ease;
+    }
+
+    .slide-image.is-active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .chrome {
+      display: grid;
+      grid-template-columns: minmax(240px, 1fr) auto minmax(240px, 1fr);
+      align-items: center;
+      gap: 20px;
+      padding: 0 34px 20px;
+    }
+
+    .meta {
+      min-width: 0;
+    }
+
+    .eyebrow {
+      margin: 0 0 5px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .title {
+      margin: 0;
+      max-width: 720px;
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 750;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      background: rgba(33, 27, 23, 0.72);
+    }
+
+    button {
+      width: 38px;
+      height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 0;
+      background: #2a221d;
+      color: var(--text);
+      font: inherit;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      border-color: rgba(242, 101, 24, 0.70);
+      color: #ffffff;
+    }
+
+    .counter {
+      min-width: 74px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .progress-wrap {
+      justify-self: end;
+      width: min(340px, 100%);
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .progress {
+      height: 4px;
+      background: rgba(255, 243, 231, 0.15);
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: var(--accent);
+      transition: width 160ms ease;
+    }
+
+    .filmstrip {
+      position: absolute;
+      right: 22px;
+      top: 50%;
+      width: 10px;
+      transform: translateY(-50%);
+      display: grid;
+      gap: 7px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border: 1px solid rgba(255, 243, 231, 0.38);
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .dot.is-active {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    @media (max-width: 820px) {
+      body {
+        overflow: auto;
+      }
+
+      .deck {
+        min-height: 100vh;
+        height: auto;
+        grid-template-rows: auto auto;
+      }
+
+      .stage {
+        padding: 18px 14px 12px;
+      }
+
+      .slide-frame {
+        width: calc(100vw - 28px);
+      }
+
+      .chrome {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        padding: 0 14px 18px;
+      }
+
+      .controls,
+      .progress-wrap {
+        justify-self: stretch;
+      }
+
+      .controls {
+        justify-content: center;
+      }
+
+      .filmstrip {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" aria-label="Lovv 중간발표 HTML 프레젠테이션">
+    <section class="stage">
+      <div class="slide-frame" id="slideFrame" aria-live="polite">
+        <img class="slide-image is-active" id="slideImage" src="assets/slide-01.png" alt="Lovv presentation slide">
+      </div>
+      <nav class="filmstrip" id="filmstrip" aria-label="슬라이드 바로가기"></nav>
+    </section>
+
+    <footer class="chrome">
+      <div class="meta">
+        <p class="eyebrow">Lovv Midterm</p>
+        <p class="title" id="slideTitle">Lovv</p>
+      </div>
+
+      <div class="controls" aria-label="슬라이드 컨트롤">
+        <button type="button" id="prev" aria-label="이전 슬라이드">‹</button>
+        <div class="counter" id="counter">01 / 14</div>
+        <button type="button" id="next" aria-label="다음 슬라이드">›</button>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span>Progress</span>
+          <span id="progressText">7%</span>
+        </div>
+        <div class="progress" aria-hidden="true">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    const slides = [
+      { src: "assets/slide-01.png", title: "Lovv" },
+      { src: "assets/slide-02.png", title: "오버투어리즘은 수용 한계를 넘은 관광의 압박이다" },
+      { src: "assets/slide-03.png", title: "오버투어리즘은 4가지 비용을 남긴다" },
+      { src: "assets/slide-04.png", title: "소도시 수요는 이미 한일 양방향으로 움직인다" },
+      { src: "assets/slide-05.png", title: "조건만 말하면 소도시부터 일정까지" },
+      { src: "assets/slide-06.png", title: "Explainable RAG 시스템 흐름" },
+      { src: "assets/slide-07.png", title: "유저 플로우" },
+      { src: "assets/slide-08.png", title: "에이전트 플로우" },
+      { src: "assets/slide-09.png", title: "구현 딥다이브 01" },
+      { src: "assets/slide-10.png", title: "구현 딥다이브 02" },
+      { src: "assets/slide-11.png", title: "활용 데이터" },
+      { src: "assets/slide-12.png", title: "데모" },
+      { src: "assets/slide-13.png", title: "Neptune 이슈/트러블슈팅" },
+      { src: "assets/slide-14.png", title: "확장 방향" }
+    ];
+
+    const image = document.getElementById("slideImage");
+    const title = document.getElementById("slideTitle");
+    const counter = document.getElementById("counter");
+    const progressBar = document.getElementById("progressBar");
+    const progressText = document.getElementById("progressText");
+    const filmstrip = document.getElementById("filmstrip");
+    let index = 0;
+
+    function pad(value) {
+      return String(value).padStart(2, "0");
+    }
+
+    function renderDots() {
+      filmstrip.innerHTML = "";
+      slides.forEach((slide, slideIndex) => {
+        const dot = document.createElement("button");
+        dot.className = `dot${slideIndex === index ? " is-active" : ""}`;
+        dot.type = "button";
+        dot.setAttribute("aria-label", `${slideIndex + 1}번 슬라이드로 이동`);
+        dot.addEventListener("click", () => goTo(slideIndex));
+        filmstrip.appendChild(dot);
+      });
+    }
+
+    function update() {
+      const slide = slides[index];
+      image.classList.remove("is-active");
+      window.setTimeout(() => {
+        image.src = slide.src;
+        image.alt = `${index + 1}번 슬라이드: ${slide.title}`;
+        title.textContent = slide.title;
+        counter.textContent = `${pad(index + 1)} / ${slides.length}`;
+        const pct = Math.round(((index + 1) / slides.length) * 100);
+        progressBar.style.width = `${pct}%`;
+        progressText.textContent = `${pct}%`;
+        renderDots();
+        image.classList.add("is-active");
+      }, 90);
+    }
+
+    function goTo(nextIndex) {
+      index = Math.max(0, Math.min(slides.length - 1, nextIndex));
+      update();
+    }
+
+    document.getElementById("prev").addEventListener("click", () => goTo(index - 1));
+    document.getElementById("next").addEventListener("click", () => goTo(index + 1));
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight" || event.key === " " || event.key === "PageDown") {
+        event.preventDefault();
+        goTo(index + 1);
+      }
+      if (event.key === "ArrowLeft" || event.key === "PageUp") {
+        event.preventDefault();
+        goTo(index - 1);
+      }
+      if (event.key === "Home") {
+        event.preventDefault();
+        goTo(0);
+      }
+      if (event.key === "End") {
+        event.preventDefault();
+        goTo(slides.length - 1);
+      }
+    });
+
+    renderDots();
+    update();
+  </script>
+</body>
+</html>

@@ -6,6 +6,7 @@
 - `docs/01_requirements/01_requirements.md`는 기능·비기능 요구사항의 기준 문서다.
 - `docs/02_service_flow/02_service_flow.md`부터 `docs/07_api_spec/07_api_spec.md`까지는 요구사항 명세서를 상세화한 설계 문서다.
 - `docs/00_project_plan/00_project_plan.md`는 상위 기획 문서이며, 상세 문서들의 최신 내용을 반영해 갱신한다.
+- `docs/98_prd/`는 특정 구축 범위나 실행 단위별 PRD를 모아 관리하는 보조 문서 영역이다.
 
 ## Project Plan Synchronization
 

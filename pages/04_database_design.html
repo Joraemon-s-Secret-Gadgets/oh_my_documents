@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — 데이터베이스 설계 명세서 v0.5</title>
+    <title>로브 (Lovv) — 데이터베이스 설계 명세서 v0.6</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -16,7 +16,7 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">로브</div>
-          <div class="aside-ver">Database Design · v0.5</div>
+          <div class="aside-ver">Database Design · v0.6</div>
           <div class="aside-status"><div class="status-dot"></div><span>설계 진행중</span></div>
         </div>
         <nav class="toc">
@@ -42,7 +42,7 @@
 <a class="toc-link" href="#s3-2">3.2 RDB 사용자 설계</a>
 <a class="toc-link" href="#s3-3">3.3 DynamoDB NoSQL 사용자 설계</a>
 <a class="toc-link" href="#s3-4">3.4 S3 vector index 논리 모델</a>
-<a class="toc-link" href="#s3-5">3.5 AWS Neptune 그래프 논리 모델</a>
+<a class="toc-link" href="#s3-5">3.5 Lambda 관계 탐색 논리 모델</a>
 <a class="toc-link" href="#s3-6">3.6 API 식별자 매핑</a>
 </div>
 <div class="toc-section">
@@ -53,7 +53,7 @@
 <a class="toc-link" href="#s4-3">4.3 DynamoDB 물리 설계 기준</a>
 <a class="toc-link" href="#s4-4">4.4 DynamoDB GSI 후보</a>
 <a class="toc-link" href="#s4-5">4.5 S3 vector index 물리 설계 기준</a>
-<a class="toc-link" href="#s4-6">4.6 AWS Neptune 물리 설계 기준</a>
+<a class="toc-link" href="#s4-6">4.6 Lambda 관계 탐색 물리 설계 기준</a>
 </div>
 <div class="toc-section">
 <div class="toc-section-hd">5. 보존 정책 및 권한</div>
@@ -81,9 +81,9 @@
       <main id="cover">
         <h1 id="cover-title" class="s-h1">로브 (Lovv) 데이터베이스 설계 명세서</h1>
 <blockquote>
-<p class="doc-p">문서 버전: v0.5</p>
+<p class="doc-p">문서 버전: v0.6</p>
 <p class="doc-p">문서 상태: 설계 진행중 (Designing)</p>
-<p class="doc-p">기준 문서: 요구사항 명세서 v1.7, 데이터 수집 계획서 v0.7, Agent 명세서 v0.4, 기술 명세서 v0.4, API 명세서 v0.1</p>
+<p class="doc-p">기준 문서: 요구사항 명세서 v1.7, 데이터 수집 계획서 v0.7, Agent 명세서 v0.6, 기술 명세서 v0.4, API 명세서 v0.3</p>
 <p class="doc-p">보조 문서: 데이터베이스 보존 기간·Neptune 비용 업데이트 초안, Neptune 대체 설계 명세서</p>
 </blockquote>
 <h1 id="s1" class="s-h1">1. 문서 개요</h1>
@@ -96,9 +96,9 @@
 <tr><td>RDBMS</td><td>MySQL 8 LTS</td><td>사용자, 소셜 계정, 저장 일정, 일정 항목, 일정 반응 등 핵심 트랜잭션 데이터를 저장한다.</td></tr>
 <tr><td>NoSQL</td><td>AWS DynamoDB</td><td>AgentCore/SAM 실행 상태, 비동기 작업, 사용자 이벤트 로그, API 로그처럼 TTL이 필요한 비정형 데이터를 저장한다.</td></tr>
 <tr><td>RAG Vector Index</td><td>S3 vector 기능 활용</td><td>RAG 검색용 chunk, embedding, metadata filter를 S3 vector 기능 기반 검색 인덱스로 관리한다. 별도 벡터 DB 제품 도입은 기본 전제가 아니다.</td></tr>
-<tr><td>Graph DB</td><td>AWS Neptune (고도화 단계)</td><td>추천 그래프(목적지·축제·테마·인접 도시·이동 관계)를 관리한다. PoC/Prod 1차는 비용을 고려해 Neptune 대체 설계 명세서의 대체 아키텍처를 적용한다.</td></tr>
+<tr><td>관계 탐색 보조</td><td>Lambda 기반 관계 탐색 (Neptune 직접 도입 보류)</td><td>목적지·축제·테마·인접 도시·이동 관계를 DynamoDB 인접 리스트, 사전계산 후보, Lambda 인메모리 그래프로 탐색한다. Neptune은 고도화 승격 옵션으로만 둔다.</td></tr>
 <tr><td>대화 전문</td><td>저장하지 않음</td><td>요구사항 <code>NFR-013</code>에 따라 사용자 대화 로그 전문은 서버나 외부 저장소에 장기 저장하지 않는다.</td></tr>
-<tr><td>보조 저장소</td><td>DynamoDB, S3 vector index, AWS Neptune</td><td>로그성 데이터, 의미 검색 인덱스, 그래프 관계 인덱스를 MySQL 원장과 분리해 관리한다.</td></tr>
+<tr><td>보조 저장소</td><td>DynamoDB, S3 vector index, Lambda 관계 탐색</td><td>로그성 데이터, 의미 검색 인덱스, 관계 탐색 보조 기능을 MySQL 원장과 분리해 관리한다.</td></tr>
 </tbody></table></div>
 <h2 id="s1-3" class="s-h2">1.3 저장소 책임</h2>
 <div class="table-wrap wide scroll-table"><table class="info-tbl db-storage-tbl">
@@ -106,7 +106,7 @@
 <tr><td>MySQL 8 LTS</td><td>서비스 원장, 트랜잭션, 조회 기준 데이터</td><td>사용자 계정, 소셜 계정, 저장 일정, 일정 항목, 일정 반응</td></tr>
 <tr><td>DynamoDB</td><td>비정형 실행 상태, 이벤트 로그, TTL 로그, 수집 정규화 결과</td><td>Agent run, async job, 사용자 행동 이벤트, API 로그, 운영 trace, City/Attraction/Festival/VisitorStatistics 정규화 문서</td></tr>
 <tr><td>S3 vector index</td><td>의미 검색 인덱스</td><td>목적지·축제·관광지 문서 chunk, embedding, source reference, metadata filter</td></tr>
-<tr><td>AWS Neptune</td><td>그래프 관계 인덱스 (고도화 단계 도입)</td><td>도시-테마, 도시-축제, 인접 도시, 일정 항목-장소 후보 관계. PoC/Prod 1차는 대체 아키텍처 적용</td></tr>
+<tr><td>Lambda 관계 탐색</td><td>그래프DB 대체 기능 (PoC/Prod 1차)</td><td>도시-테마, 도시-축제, 인접 도시, 일정 항목-장소 후보 관계를 DynamoDB 인접 리스트와 Lambda 인메모리 그래프로 탐색. Neptune은 고도화 단계 승격 옵션</td></tr>
 <tr><td>Object Storage</td><td>원본 수집 파일과 대용량 정적 산출물</td><td>S3 Raw 수집 원본, 전처리 결과, 이미지/첨부 파일</td></tr>
 </tbody></table></div>
 <h1 id="s2" class="s-h1">2. 개념 설계</h1>
@@ -117,7 +117,7 @@
 <tr><td>저장 일정</td><td>사용자가 저장한 여행 일정과 저장 당시의 조건 스냅샷</td><td>Itinerary</td></tr>
 <tr><td>일정 항목</td><td>일정에 포함된 장소, 방문 순서, 이동 힌트, 추천 이유</td><td>ItineraryItem</td></tr>
 <tr><td>일정 반응</td><td>사용자가 일정에 남긴 좋아요/싫어요 등 가벼운 반응</td><td>PlanReaction</td></tr>
-<tr><td>수집·검색 보조</td><td>RDB 원장이 아닌 DynamoDB/S3 vector/AWS Neptune 기반 검색·로그 보조 데이터</td><td>ContentDocument, S3VectorIndex, NeptuneGraph</td></tr>
+<tr><td>수집·검색 보조</td><td>RDB 원장이 아닌 DynamoDB/S3 vector/Lambda 관계 탐색 기반 검색·로그 보조 데이터</td><td>ContentDocument, S3VectorIndex, RelationGraphSnapshot</td></tr>
 <tr><td>Agent·로그</td><td>Agent 실행, 비동기 작업, API 호출, 사용자 이벤트, 운영 trace</td><td>AgentRun, AsyncJob, EventLog</td></tr>
 <tr><td>RAG 검색</td><td>검색 문서, chunk, embedding, metadata filter</td><td>RagDocument, RagChunk, S3VectorIndex</td></tr>
 </tbody></table></div>
@@ -128,7 +128,7 @@
 <tr><td>사용자 원장</td><td>MySQL</td><td>계정, 소셜 계정, 저장 일정, 일정 항목, 일정 반응</td><td>대화 전문, 민감 자유 입력 원문</td></tr>
 <tr><td>사용자 이벤트</td><td>DynamoDB</td><td>로그인/로그아웃 이벤트, 추천 실행 이벤트, 일정 반응 클릭 이벤트, 화면 이벤트, 오류 로그</td><td>사용자 상태의 최종 원장, 삭제 권한이 필요한 본문 데이터</td></tr>
 <tr><td>추천 검색 보조</td><td>S3 vector index</td><td>사용자 조건과 매칭할 콘텐츠 chunk 및 embedding</td><td>사용자 개인정보, 대화 전문, 비공개 운영 메모</td></tr>
-<tr><td>추천 관계 그래프</td><td>AWS Neptune</td><td>도시·축제·테마·인접 도시·이동 관계 그래프</td><td>사용자 개인정보, 대화 전문, 최종 원장 데이터</td></tr>
+<tr><td>추천 관계 탐색</td><td>Lambda 관계 탐색 보조</td><td>도시·축제·테마·인접 도시·이동 관계를 요청 시 또는 배치 사전계산으로 탐색</td><td>사용자 개인정보, 대화 전문, 최종 원장 데이터</td></tr>
 </tbody></table></div>
 <h2 id="s2-3" class="s-h2">2.3 개념 ERD</h2>
 <p class="doc-p">아래 ERD는 사용자 계정, 소셜 계정, 저장 일정, 일정 항목, 일정 반응의 관계를 나타낸다.</p>
@@ -229,7 +229,7 @@
 <tr><td><code>lovv_<wbr>visitor_<wbr>statistics</code></td><td><code>pk</code> = <code>CITY#<wbr>{city_<wbr>id}</code></td><td><code>sk</code> = <code>STAT#<wbr>{period}#<wbr>{source_<wbr>type}</code></td><td><code>country</code>, <code>period</code>, <code>visitor_<wbr>type</code>, <code>value</code>, <code>unit</code>, <code>source_<wbr>url</code>, <code>collected_<wbr>at</code>, <code>quality_<wbr>status</code></td><td>없음</td></tr>
 </tbody></table></div>
 <h2 id="s3-4" class="s-h2">3.4 S3 vector index 논리 모델</h2>
-<p class="doc-p">S3 vector index는 수집 원천과 일정 저장 스냅샷을 검색용으로 복제한 인덱스다. S3 vector index의 데이터는 원본이 아니며, 장애 복구나 재색인은 MySQL 일정 스냅샷, DynamoDB 정규화 문서, S3 Raw 원본을 기준으로 수행한다. 별도 벡터 DB 제품 도입은 현재 설계의 기본 범위가 아니며, 그래프 관계 탐색은 AWS Neptune으로 분리한다.</p>
+<p class="doc-p">S3 vector index는 수집 원천과 일정 저장 스냅샷을 검색용으로 복제한 인덱스다. S3 vector index의 데이터는 원본이 아니며, 장애 복구나 재색인은 MySQL 일정 스냅샷, DynamoDB 정규화 문서, S3 Raw 원본을 기준으로 수행한다. 별도 벡터 DB 제품 도입은 현재 설계의 기본 범위가 아니며, 그래프DB 직접 도입 대신 관계 탐색은 Lambda 기반 보조 기능으로 구현한다.</p>
 <div class="table-wrap wide scroll-table"><table class="info-tbl">
 <thead><tr><th>인덱스 대상</th><th>원본</th><th>S3 vector metadata</th></tr></thead><tbody>
 <tr><td>목적지</td><td>DynamoDB 정규화 문서, S3 Raw 원본</td><td><code>destination_<wbr>id</code>, <code>country</code>, <code>region</code>, <code>themes</code>, <code>recommended_<wbr>months</code></td></tr>
@@ -239,12 +239,12 @@
 <tr><td>출처 문서</td><td>object storage</td><td><code>source_<wbr>id</code>, <code>source_<wbr>url</code>, <code>collected_<wbr>at</code>, <code>license_<wbr>type</code></td></tr>
 </tbody></table></div>
 <p class="doc-p">Agent 추천 검색은 S3 vector metadata에 <code>city_<wbr>id</code>, <code>country</code>, <code>latitude</code>, <code>longitude</code>, <code>theme_<wbr>tags</code>, <code>content_<wbr>type</code>, <code>recommended_<wbr>months</code>를 포함해야 한다. <code>active_<wbr>required_<wbr>themes</code>, 거리 기반 1차 필터, 콘텐츠 타입 균형, 임베딩 유사도 재랭킹은 이 metadata와 MySQL 일정 스냅샷 필드를 함께 사용한다.</p>
-<h2 id="s3-5" class="s-h2">3.5 AWS Neptune 그래프 논리 모델</h2>
-<p class="doc-p">AWS Neptune은 S3 vector index의 의미 검색 결과를 관계 그래프로 확장·검증하는 보조 인덱스다. Neptune 데이터는 원본이 아니며, DynamoDB 정규화 문서, S3 Raw 원본, 운영 검증 결과를 기준으로 재생성할 수 있어야 한다.</p>
+<h2 id="s3-5" class="s-h2">3.5 Lambda 관계 탐색 논리 모델</h2>
+<p class="doc-p">Lambda 관계 탐색은 S3 vector index의 의미 검색 결과를 도시·축제·테마·장소 관계로 확장·검증하는 보조 기능이다. 관계 데이터는 원본이 아니며, DynamoDB 정규화 문서, S3 Raw 원본, 운영 검증 결과를 기준으로 재생성할 수 있어야 한다.</p>
 <blockquote>
-<p class="doc-p">비용 주의: Neptune은 상시 가동 비용이 높아 PoC/Production 1차에서는 도입하지 않고,</p>
-<p class="doc-p">동일 그래프 용도를 기존 스택(DynamoDB 인접 리스트·사전계산·Lambda 인메모리 그래프)으로 대체한다.</p>
-<p class="doc-p">대체 설계는 Neptune 대체 설계 명세서를 따른다. 본 3.5절/4.6절은 고도화 단계 Neptune 도입 시의 목표 모델이다.</p>
+<p class="doc-p">비용 주의: Neptune은 상시 가동 비용이 높아 PoC/Production 1차에서는 직접 도입하지 않는다.</p>
+<p class="doc-p">동일 그래프 용도는 DynamoDB 인접 리스트, 사전계산 후보 테이블, Lambda 인메모리 그래프로 구현한다.</p>
+<p class="doc-p">Neptune은 3-hop 이상 임의 경로 탐색, 대규모 실시간 그래프 쓰기, 복잡한 그래프 알고리즘이 실제 병목이 될 때의 고도화 승격 옵션이다.</p>
 </blockquote>
 <div class="table-wrap wide scroll-table"><table class="info-tbl">
 <thead><tr><th>그래프 요소</th><th>라벨/관계</th><th>주요 속성</th><th>용도</th></tr></thead><tbody>
@@ -254,16 +254,16 @@
 <tr><td>장소 노드</td><td><code>Place</code></td><td><code>content_<wbr>id</code>, <code>content_<wbr>type</code>, <code>source_<wbr>type</code></td><td>일정 항목 후보 확장</td></tr>
 <tr><td>관계</td><td><code>HAS_<wbr>THEME</code>, <code>HOSTS_<wbr>FESTIVAL</code>, <code>NEAR_<wbr>CITY</code>, <code>HAS_<wbr>PLACE</code>, <code>SEASONAL_<wbr>FIT</code></td><td><code>weight</code>, <code>confidence</code>, <code>source_<wbr>id</code>, <code>updated_<wbr>at</code></td><td>다단계 후보 확장과 그래프 기반 재랭킹</td></tr>
 </tbody></table></div>
-<p class="doc-p">Neptune에는 사용자 ID 원문, 대화 전문, 비공개 운영 메모를 저장하지 않는다. 사용자 일정 저장 결과는 MySQL에 남기고, Neptune에는 추천 후보 생성을 위한 공용 콘텐츠 관계만 적재한다.</p>
+<p class="doc-p">Lambda 관계 탐색 입력에는 사용자 ID 원문, 대화 전문, 비공개 운영 메모를 포함하지 않는다. 사용자 일정 저장 결과는 MySQL에 남기고, 관계 탐색에는 추천 후보 생성을 위한 공용 콘텐츠 관계만 사용한다.</p>
 <h2 id="s3-6" class="s-h2">3.6 API 식별자 매핑</h2>
-<p class="doc-p">API 명세의 camelCase 식별자는 DB 내부에서는 snake_case 컬럼, DynamoDB 속성, Neptune 노드 ID로 매핑한다.</p>
+<p class="doc-p">API 명세의 camelCase 식별자는 DB 내부에서는 snake_case 컬럼, DynamoDB 속성, Lambda 관계 탐색 노드 ID로 매핑한다.</p>
 <div class="table-wrap wide scroll-table"><table class="info-tbl">
-<thead><tr><th>API 필드</th><th>MySQL 기준</th><th>DynamoDB/S3 vector/Neptune 기준</th><th>비고</th></tr></thead><tbody>
+<thead><tr><th>API 필드</th><th>MySQL 기준</th><th>DynamoDB/S3 vector/Lambda 관계 탐색 기준</th><th>비고</th></tr></thead><tbody>
 <tr><td><code>userId</code></td><td><code>users.id</code></td><td>해시 처리된 <code>user_<wbr>id_<wbr>hash</code></td><td>사용자 원장과 이벤트 로그 연결</td></tr>
 <tr><td><code>itineraryId</code></td><td><code>itineraries.id</code>, <code>itinerary_<wbr>items.itinerary_<wbr>id</code>, <code>plan_<wbr>reactions.itinerary_<wbr>id</code></td><td>이벤트 로그의 <code>target_<wbr>id</code></td><td>저장 일정 조회·삭제 기준</td></tr>
 <tr><td><code>reactionType</code></td><td><code>plan_<wbr>reactions.reaction_<wbr>type</code></td><td>클릭 이벤트의 <code>action</code> 또는 <code>reaction_<wbr>type</code></td><td>일정 반응 원장은 MySQL 기준</td></tr>
-<tr><td><code>destinationId</code></td><td>없음</td><td><code>city_<wbr>id</code>, <code>destination_<wbr>id</code> metadata, Neptune <code>City.city_<wbr>id</code></td><td>추천 후보와 지도 마커는 검색·수집 보조 저장소 기준</td></tr>
-<tr><td><code>festivalId</code></td><td>없음</td><td><code>lovv_<wbr>festival_<wbr>verify_<wbr>cache.pk</code>, S3 vector metadata, Neptune <code>Festival.festival_<wbr>id</code></td><td>축제 날짜 검증 캐시와 추천 응답 연결</td></tr>
+<tr><td><code>destinationId</code></td><td>없음</td><td><code>city_<wbr>id</code>, <code>destination_<wbr>id</code> metadata, Lambda 관계 탐색 <code>City.city_<wbr>id</code></td><td>추천 후보와 지도 마커는 검색·수집 보조 저장소 기준</td></tr>
+<tr><td><code>festivalId</code></td><td>없음</td><td><code>lovv_<wbr>festival_<wbr>verify_<wbr>cache.pk</code>, S3 vector metadata, Lambda 관계 탐색 <code>Festival.festival_<wbr>id</code></td><td>축제 날짜 검증 캐시와 추천 응답 연결</td></tr>
 </tbody></table></div>
 <h1 id="s4" class="s-h1">4. 물리 설계</h1>
 <h2 id="s4-1" class="s-h2">4.1 MySQL 물리 설계 기준</h2>
@@ -310,14 +310,15 @@
 <tr><td>원본 참조</td><td>각 vector record에는 <code>raw_<wbr>s3_<wbr>uri</code>, DynamoDB 정규화 문서 ID, 또는 MySQL 일정 ID를 함께 둔다.</td></tr>
 <tr><td>개인정보</td><td>사용자 ID, 대화 전문, 비공개 운영 메모는 metadata에 저장하지 않는다.</td></tr>
 </tbody></table></div>
-<h2 id="s4-6" class="s-h2">4.6 AWS Neptune 물리 설계 기준</h2>
+<h2 id="s4-6" class="s-h2">4.6 Lambda 관계 탐색 물리 설계 기준</h2>
 <div class="table-wrap wide scroll-table"><table class="info-tbl">
 <thead><tr><th>기준</th><th>결정</th></tr></thead><tbody>
-<tr><td>그래프 ID</td><td><code>city#<wbr>{city_<wbr>id}</code>, <code>festival#<wbr>{festival_<wbr>id}</code>, <code>theme#<wbr>{theme_<wbr>id}</code>, <code>place#<wbr>{content_<wbr>id}</code> 형식을 사용한다.</td></tr>
-<tr><td>관계 가중치</td><td><code>weight</code>, <code>confidence</code>, <code>source_<wbr>id</code>, <code>updated_<wbr>at</code>을 공통 edge 속성으로 둔다.</td></tr>
-<tr><td>재생성 기준</td><td>DynamoDB 정규화 문서와 S3 Raw 원본을 기준으로 배치 재적재할 수 있게 한다.</td></tr>
-<tr><td>개인정보</td><td>사용자 ID, 대화 전문, 비공개 운영 메모는 노드·edge 속성에 저장하지 않는다.</td></tr>
+<tr><td>관계 ID</td><td><code>city#<wbr>{city_<wbr>id}</code>, <code>festival#<wbr>{festival_<wbr>id}</code>, <code>theme#<wbr>{theme_<wbr>id}</code>, <code>place#<wbr>{content_<wbr>id}</code> 형식을 사용한다.</td></tr>
+<tr><td>관계 가중치</td><td><code>weight</code>, <code>confidence</code>, <code>source_<wbr>id</code>, <code>updated_<wbr>at</code>을 DynamoDB 인접 리스트와 사전계산 후보 공통 속성으로 둔다.</td></tr>
+<tr><td>재생성 기준</td><td>DynamoDB 정규화 문서와 S3 Raw 원본을 기준으로 관계 후보를 배치 재생성할 수 있게 한다.</td></tr>
+<tr><td>개인정보</td><td>사용자 ID, 대화 전문, 비공개 운영 메모는 관계 탐색 입력과 캐시에 저장하지 않는다.</td></tr>
 <tr><td>조회 패턴</td><td>도시 기준 2-hop 이내 테마·축제·장소 확장, 인접 도시 후보 탐색, 축제 일정 관계 검증을 우선한다.</td></tr>
+<tr><td>실행 방식</td><td>Lambda가 DynamoDB 인접 리스트, 사전계산 후보 테이블, S3 vector metadata를 읽어 요청 시 후보 확장·재랭킹을 수행한다.</td></tr>
 </tbody></table></div>
 <h1 id="s5" class="s-h1">5. 보존 정책 및 권한</h1>
 <div class="table-wrap wide scroll-table"><table class="info-tbl">
@@ -330,7 +331,7 @@
 <tr><td>Agent trace</td><td>DynamoDB TTL 기반 단기 보존</td><td>원문 개인정보 저장 금지</td></tr>
 <tr><td>API/이벤트 로그</td><td>DynamoDB TTL 기반 단기 보존</td><td>해시·마스킹 저장</td></tr>
 <tr><td>S3 vector record</td><td>원본 재색인 가능성을 기준으로 운영 보존</td><td>사용자 개인정보와 대화 전문 저장 금지</td></tr>
-<tr><td>Neptune graph record</td><td>원본 재생성 가능성을 기준으로 운영 보존</td><td>공용 콘텐츠 관계만 저장</td></tr>
+<tr><td>Lambda 관계 탐색 캐시</td><td>원본 재생성 가능성을 기준으로 운영 보존</td><td>공용 콘텐츠 관계만 저장</td></tr>
 </tbody></table></div>
 <h2 id="s5-1" class="s-h2">5.1 보존 기간 및 TTL (권고·잠정)</h2>
 <p class="doc-p">아래 기간은 운영 관행 기준 <strong>권고·잠정값(신뢰도 중)</strong>이며, 법무·보안·개인정보 검토로 확정한다. <code>expires_<wbr>at</code>은 레코드 생성 시각 + 보존 기간으로 계산해 저장한다. 세부 근거는 <code>database_<wbr>design_<wbr>retention_<wbr>neptune_<wbr>update.md</code>를 따른다.</p>
@@ -344,7 +345,7 @@
 <tr><td><code>lovv_<wbr>content_<wbr>documents</code>, <code>lovv_<wbr>visitor_<wbr>statistics</code></td><td>TTL 없음</td><td>S3 Raw 기준 재생성</td></tr>
 <tr><td>사용자 계정</td><td>탈퇴 후 30일 유예 → 익명화</td><td>분쟁/오삭제 대비, 법무 확인 필요</td></tr>
 <tr><td>S3 Raw 수집 원본</td><td>운영 보존(기본 365일 후 재검토)</td><td>재색인·재생성 기준</td></tr>
-<tr><td>S3 vector / Neptune record</td><td>TTL 없음</td><td>원본 재생성 기준 운영 보존</td></tr>
+<tr><td>S3 vector / 관계 탐색 캐시</td><td>TTL 없음</td><td>원본 재생성 기준 운영 보존</td></tr>
 </tbody></table></div>
 <h1 id="s6" class="s-h1">6. PoC 적용 범위와 Production 전환</h1>
 <div class="table-wrap wide scroll-table"><table class="info-tbl phase-scope-tbl">
@@ -352,7 +353,7 @@
 <tr><td>PoC</td><td>정적 데이터, 로컬 스토리지 기반 사용자 일정·반응, 최소 MySQL 테이블 또는 샘플 DB, S3 vector 기능 기반 검색 실험</td></tr>
 <tr><td>Production 1차</td><td>계정 기반 MySQL 사용자 원장, 소셜 계정, 저장 일정, 일정 항목, 일정 반응</td></tr>
 <tr><td>Production 운영</td><td>DynamoDB Agent trace, async job, 사용자 이벤트 로그, API 로그, 운영 검수 로그, TTL 정책(5.1절), CloudWatch 기반 운영 대시보드·AWS Budgets 예산 알람</td></tr>
-<tr><td>Production 고도화</td><td>개인화 랭킹 재학습, A/B 테스트 이벤트, S3 vector 재색인 자동화, AWS Neptune 그래프 탐색(비용 검증 후 도입)</td></tr>
+<tr><td>Production 고도화</td><td>개인화 랭킹 재학습, A/B 테스트 이벤트, S3 vector 재색인 자동화, 3-hop 이상 관계 탐색 병목 확인 시 Neptune 승격 검토</td></tr>
 </tbody></table></div>
 <h1 id="s7" class="s-h1">7. 구현 체크리스트</h1>
 <ul class="bullet-list">
@@ -362,7 +363,7 @@
 <li>[ ] DynamoDB 이벤트·trace 테이블에 <code>expires_<wbr>at</code> TTL과 해시 저장 로직을 적용했는가?</li>
 <li>[ ] 사용자 대화 전문, 민감 자유 입력, 비공개 운영 메모가 장기 저장소에 남지 않도록 차단했는가?</li>
 <li>[ ] S3 vector index 재색인 배치가 DynamoDB 정규화 문서와 S3 Raw 원본 기준으로 재생성되는가?</li>
-<li>[ ] AWS Neptune 그래프 적재 배치가 공용 콘텐츠 관계만 노드·edge로 생성하는가?</li>
+<li>[ ] Lambda 관계 탐색 보조 기능이 공용 콘텐츠 관계만 읽고 사용자 개인정보를 캐시하지 않는가?</li>
 <li>[ ] PoC 로컬 스토리지 대체 코드와 Production DB 연동 코드의 전환 지점을 분리했는가?</li>
 </ul>
 <h1 id="s8" class="s-h1">8. 후속 작업</h1>
@@ -371,7 +372,7 @@
 <li>DynamoDB <code>lovv_<wbr>user_<wbr>event_<wbr>logs</code>, <code>lovv_<wbr>agent_<wbr>runs</code>, <code>lovv_<wbr>async_<wbr>jobs</code>, <code>lovv_<wbr>api_<wbr>logs</code>의 TTL 기간을 확정한다. (5.1절에 권고·잠정값 반영 완료, 법무·보안 검토로 최종 확정 예정)</li>
 <li>API 명세의 <code>/<wbr>me/<wbr>itineraries</code>, <code>/<wbr>me/<wbr>itineraries/<wbr>{itineraryId}</code>, <code>/<wbr>me/<wbr>itineraries/<wbr>{itineraryId}/<wbr>reactions</code> 응답 필드와 테이블 컬럼을 1:1로 매핑한다.</li>
 <li>S3 vector index의 prefix, vector ID, metadata filter, 재색인 배치 기준을 기술 명세와 맞춘다.</li>
-<li>AWS Neptune의 <code>City</code>, <code>Festival</code>, <code>Theme</code>, <code>Place</code> 노드와 관계 적재 배치 기준을 기술 명세와 맞춘다.</li>
+<li>Lambda 관계 탐색 보조 기능의 <code>City</code>, <code>Festival</code>, <code>Theme</code>, <code>Place</code> 관계 ID와 인접 리스트 생성 기준을 기술 명세와 맞춘다.</li>
 <li>구현 체크리스트를 기준으로 개발 완료 항목을 점검하고 미구현 항목을 백로그에 등록한다.</li>
 </ul>
 <h1 id="s9" class="s-h1">9. 변경 이력</h1>
@@ -382,6 +383,7 @@
 <tr><td>v0.3</td><td>2026-06-07</td><td>로브 기획팀</td><td>별도 벡터 DB 전제를 S3 vector 기능 기반 RAG 인덱스로 정리하고, VisitorStatistics와 S3 Raw/Lambda/DynamoDB 정규화 흐름 반영</td></tr>
 <tr><td>v0.4</td><td>2026-06-08</td><td>로브 기획팀</td><td>AWS Neptune을 추천 관계 탐색용 그래프 인덱스로 반영</td></tr>
 <tr><td>v0.5</td><td>2026-06-08</td><td>로브 기획팀</td><td>보존 기간·TTL 권고·잠정값(5.1절) 추가, Neptune 비용 주의·대체 설계 명세서 반영, 운영 대시보드(CloudWatch·Budgets)를 Production 운영 단계에 추가</td></tr>
+<tr><td>v0.6</td><td>2026-06-12</td><td>로브 기획팀</td><td>그래프DB 직접 도입 대신 Lambda 기반 관계 탐색 보조 기능 구현 예정으로 물리 설계와 운영 기준 조정</td></tr>
 </tbody></table></div>
         <nav class="doc-nav" aria-label="이전 다음 문서">
           <a class="doc-nav-home" href="../index.html">문서 홈</a>
