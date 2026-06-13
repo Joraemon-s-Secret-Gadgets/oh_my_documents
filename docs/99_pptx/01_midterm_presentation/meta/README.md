@@ -15,7 +15,7 @@
 | 보관 문서 | `../archive/` | 대표 문서에 흡수되었거나 구버전이 된 초안 |
 | 백업 문서 | `../bak/` | 특정 정리 작업 전후 스냅샷 |
 | 산출물 | `../artifacts/` | PPTX, SVG 등 발표 산출물 |
-| HTML 산출물 | `../html_export/` | JSON, 이미지, 캡처 산출물. HTML 파일은 `../bak/2026-06-13_html_transfer/`로 이관 |
+| HTML 산출물 | `../html_export/` | 로컬 미리보기·캡처용 재생성 산출물. Git 추적 대상에서 제외 |
 
 ## 운영 문서
 
@@ -65,5 +65,5 @@
 
 - `../artifacts/pptx/`: PPTX 산출물
 - `../artifacts/system_flow_b1.svg`: 시스템 흐름 SVG 산출물
-- `../html_export/`: 발표용 JSON, 이미지, 캡처 산출물
-- `../html_export/captures/`: 화면 검증 캡처. 발표 검증 목적으로 보관할 수 있다.
+- `../html_export/`: HTML 미리보기, JSON, 이미지, 캡처 산출물. 재생성 가능한 로컬 산출물이므로 `.gitignore`로 제외한다.
+- HTML 발표본을 보관해야 할 때는 `../bak/2026-06-13_html_transfer/`처럼 날짜가 있는 백업 폴더로 이관한 뒤 필요한 파일만 검토해 커밋한다.

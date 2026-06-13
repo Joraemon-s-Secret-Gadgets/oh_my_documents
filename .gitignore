@@ -11,4 +11,4 @@ pdf/01_*.pdf
 
 # Presentation artifacts
 *.pptx
-docs/99_pptx/01_midterm_presentation/html_export/.chrome-*/
+docs/99_pptx/01_midterm_presentation/html_export/
