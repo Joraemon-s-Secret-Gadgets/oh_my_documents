@@ -1,6 +1,6 @@
 # Festival Verifier Agent 명세서
 
-> 문서 버전: v0.2
+> 문서 버전: v0.4
 > 문서 상태: Draft / Festival Verifier Agent 상세 정본 초안
 > 작성일: 2026-06-13
 > 기준 문서: `05_agent_spec.md`, `langgraph_flow.md`, `candidate_evidence_agent.md`, `planner_agent.md`, `agent_build_target.md`, `agent_harness_design.md`
@@ -12,6 +12,8 @@
 축제는 일반 관광지와 다르다. 장소는 대체로 상시 존재하지만, 축제는 특정 연도와 특정 기간에만 열린다. 같은 축제라도 매년 개최일이 바뀔 수 있고, 취소, 연기, 축소, 명칭 변경이 발생할 수 있다.
 
 따라서 Lovv는 축제를 일반 장소 RAG 검색 결과와 동일하게 확정하지 않는다. `Festival_Verifier_Agent`는 Candidate Evidence 단계에서 올라온 축제 후보 중 필요한 상위 후보만 대상으로, 목표 여행 연도의 개최 기간을 공식 출처 중심으로 검증하고 Planner가 안전하게 사용할 수 있는 검증 JSON을 만든다.
+
+`includeFestivals=true`인 city discovery에서는 Candidate Evidence Agent가 먼저 `festival.month == travelMonth`와 사용자 테마 OR 조건으로 축제 도시 seed를 만들고, 그 seed 도시들 안에서 장소 evidence 검색과 scoring을 수행한다. Festival Verifier는 이 도시 seed를 새로 만들거나 도시 ranking을 다시 수행하지 않는다. Verifier의 역할은 최종 `selected_city`에 속한 `selected_festival_candidates`의 목표 연도 개최 여부와 여행 기간 적용성을 검증하는 것이다.
 
 초기 구현 단계에서는 외부 웹 검증 범위를 넓히지 않고, DynamoDB에 적재된 축제 detail의 시작일자 데이터를 먼저 확인한다. 이때 입력으로 들어온 `travelYear`와 축제 `start_date`의 연도가 일치하는지만 최소 검증 조건으로 사용하며, 공식 웹 출처 재확인은 이후 확장 단계로 둔다.
 
@@ -41,9 +43,8 @@ Intent_Agent
 | 조건 | 처리 |
 | --- | --- |
 | `includeFestivals=false` | 실행하지 않음. `fulfilled_matrix.festival=N/A` |
-| `includeFestivals=true`이고 축제 후보가 있음 | 상위 K개 후보 검증 |
-| `entryType=festival_selection` | 선택 축제 또는 선택 축제의 도시 anchor를 우선 검증 |
-| 축제 후보가 없지만 축제 포함 요청이 있음 | Web Search를 무제한 수행하지 않고 `no_candidate` 결과로 Planner에 안내 |
+| `includeFestivals=true`이고 `selected_festival_candidates`가 있음 | 최종 선택 도시의 상위 K개 후보 검증 |
+| 축제 후보가 없지만 축제 포함 요청이 있음 | Web Search를 무제한 수행하지 않고 `no_candidate` 결과로 Planner에 안내. 단, 일반 city discovery의 축제 월·테마 seed 생성 실패는 Candidate Evidence 단계에서 먼저 사용자 질문 fallback으로 처리될 수 있음 |
 | Candidate Evidence가 `no_candidate` 또는 `error` | Festival Verifier는 일반적으로 실행하지 않고 Supervisor가 안전 폴백으로 전환 |
 
 Festival Verifier의 결과는 `festival_verifications`에 저장되고 Planner는 이 결과를 사용해 축제를 일정에 배치할지 결정한다.
@@ -54,7 +55,7 @@ Festival Verifier가 담당하는 범위:
 
 | 범위 | 설명 |
 | --- | --- |
-| 축제 후보 수신 | Candidate Evidence Package 또는 festival selection 진입점에서 축제 후보를 받음 |
+| 축제 후보 수신 | Candidate Evidence Package의 `selected_festival_candidates`에서 축제 후보를 받음 |
 | Top-K 검증 제한 | 모든 축제를 검증하지 않고 상위 K개만 검증해 비용과 지연을 제어 |
 | 캐시 조회 | `festival_id + travelYear` 기준으로 기존 검증 결과 재사용 |
 | 내부 detail 검증 | DynamoDB에 적재된 축제 시작일자와 입력 `travelYear`의 연도 일치 여부 확인 |
@@ -72,6 +73,7 @@ Festival Verifier가 담당하지 않는 범위:
 | 사용자 의도 해석 | `Intent_Agent` |
 | 축제 포함 여부 결정 | `Intent_Agent`, UI 입력 |
 | 도시/장소 후보 검색과 ranking | `Candidate_Evidence_Agent` |
+| 축제 월 조건 기반 city seed 생성 | `Candidate_Evidence_Agent` |
 | 축제를 포함한 최종 일정 생성 | `Planner_Agent` |
 | 축제 홍보문 작성 | `Planner_Agent`, 단 `festival_verifications` 근거 안에서만 가능 |
 | 실시간 행사 취소 여부 보장 | 외부 공식 링크 확인 안내 |
@@ -119,6 +121,7 @@ Festival Verifier의 입력은 Candidate Evidence 이후의 구조화된 축제 
       "country": "KR",
       "city_id": "KR-...",
       "city_name": "예시시",
+      "month": 5,
       "catalog_months": [5],
       "catalog_start_date": null,
       "catalog_end_date": null,
@@ -150,6 +153,8 @@ Festival Verifier의 입력은 Candidate Evidence 이후의 구조화된 축제 
 | `festival_candidates[].festival_id` | Y | 캐시와 grounding에 사용할 축제 ID |
 | `festival_candidates[].name` | Y | 검색과 사용자 안내에 사용할 축제명 |
 | `festival_candidates[].city_id` | Y | Candidate Evidence/Planner의 단일 도시 원칙 확인용 |
+| `festival_candidates[].month` | Y | Candidate Evidence가 적용한 `festival.month == travelMonth` seed 조건의 근거 |
+| `festival_candidates[].theme_tags` 또는 `assigned_theme` | Y | Candidate Evidence가 적용한 사용자 테마 OR seed 조건의 근거 |
 | `verification_policy.top_k` | N | 기본 2-3. 미지정 시 3 |
 
 ### 5.2 입력 전제
@@ -158,10 +163,12 @@ Festival Verifier는 도시와 축제를 새로 무제한 탐색하는 Agent가 
 
 기본 전제는 다음과 같다.
 
-1. 검증할 축제 후보는 Candidate Evidence Agent 또는 명시적 festival selection에서 전달된다.
+1. 검증할 축제 후보는 Candidate Evidence Agent에서 전달된다.
 2. 모든 축제 후보를 검증하지 않고 `candidate_rank` 기준 상위 K개만 검증한다.
 3. `includeFestivals=false`이면 Verifier를 호출하지 않는다.
 4. `festival_candidates`가 비어 있으면 Web Search로 전국 축제 탐색을 시작하지 않는다.
+5. 일반 `includeFestivals=true` city discovery에서 Verifier가 받는 `festival_candidates`는 Candidate Evidence가 `festival.month == travelMonth`와 사용자 테마 OR 조건으로 선별하고 최종 `selected_city`에 속한다고 판단한 `selected_festival_candidates`다.
+6. Verifier는 이 후보 목록으로 도시 후보군을 넓히거나 city ranking을 재수행하지 않는다.
 
 초기 구현에서 DynamoDB detail의 날짜는 후보의 `catalog_start_date`/`catalog_end_date` 또는 detail 하위의 `start_date`/`end_date`로 전달될 수 있다. Verifier는 이 값을 내부적으로 `start_date`/`end_date`로 정규화한 뒤, `year(start_date) == request_context.travelYear`인지 확인한다.
 
@@ -195,8 +202,7 @@ Festival Verifier의 출력은 Planner와 Backend가 사용할 수 있는 구조
       "verified_at": "2026-06-13T00:00:00+09:00",
       "confidence": 0.82,
       "evidence_summary": "내부 정규화 detail의 시작일자가 입력 travelYear와 일치함을 확인했다.",
-      "conflict_summary": null,
-      "planner_policy": "direct_placeable"
+      "conflict_summary": null
     }
   ],
   "audit": {
@@ -228,33 +234,19 @@ Festival Verifier의 출력은 Planner와 Backend가 사용할 수 있는 구조
 | `unknown` | 목표 연도 날짜를 확인하지 못함 | 검색 실패, 날짜 미표기, 월 정보만 존재 | 확정 배치 금지, 검증 한계 안내 |
 | `outdated` | 과거 연도 날짜만 확인됨 | 최신 연도 정보 없음 | 확정 배치 금지, 재검증 필요 안내 |
 
-### 6.3 `planner_policy`
+### 6.3 Planner 소비 기준
 
-`planner_policy`는 Planner가 축제를 어떻게 소비해야 하는지 명시하는 내부 필드다.
+현재 MVP에서는 별도 Planner 소비 정책 필드를 두지 않는다.
 
-| 값 | 의미 |
-| --- | --- |
-| `direct_placeable` | `confirmed`이고 여행 월 또는 여행 날짜 범위와 겹쳐 일정 직접 배치 가능 |
-| `notice_only` | 정보는 안내할 수 있으나 일정 블록 배치 금지 |
-| `do_not_use` | 최신성 또는 근거 부족으로 Planner가 추천 근거로 사용하면 안 됨 |
+Candidate Evidence가 먼저 `festival.month == travelMonth`와 사용자 테마 OR 조건으로 후보를 선별하므로, Festival Verifier의 핵심 출력은 `date_status`다. Planner는 `date_status=confirmed`인 축제만 일정 블록으로 직접 배치할 수 있고, `tentative`, `unknown`, `outdated`는 직접 배치하지 않는다.
 
-기본 매핑은 다음과 같다.
-
-| `date_status` | `is_applicable_to_trip` | `planner_policy` |
-| --- | --- | --- |
-| `confirmed` | `true` | `direct_placeable` |
-| `confirmed` | `false` | `notice_only` |
-| `tentative` | any | `notice_only` |
-| `unknown` | any | `notice_only` |
-| `outdated` | any | `do_not_use` |
+`is_applicable_to_trip`과 `applicability_reason`은 감사·검증용 보조 필드다. 정상 입력에서는 월 조건이 이미 맞아야 하므로 `confirmed`와 `is_applicable_to_trip=true`가 함께 나와야 한다. 만약 Verifier 단계에서 월 불일치가 발견되면 해당 후보는 `confirmed`로 내보내지 않거나 후보에서 제외한다.
 
 ## 7. 날짜 적용성 판단
 
-`date_status=confirmed`라고 해서 항상 사용자의 일정에 넣을 수 있는 것은 아니다.
+현재 MVP의 정상 입력에서는 Candidate Evidence가 여행 월과 겹치는 축제만 Verifier에 전달한다. 따라서 Planner의 직접 배치 기준은 `date_status=confirmed`로 단순화한다.
 
-예를 들어 2026년 개최일은 확인됐지만 사용자가 5월 여행을 원하고 축제가 10월에 열린다면, 해당 축제는 `confirmed`이지만 이번 여행에는 직접 배치할 수 없다.
-
-따라서 Festival Verifier는 날짜 상태와 적용성을 분리한다.
+다만 방어적 검증을 위해 Festival Verifier는 날짜 상태와 적용성을 함께 계산한다. 월 불일치가 발견되면 이는 Candidate Evidence handoff 오류 또는 원천 데이터 불일치로 보고, 해당 후보를 제외하거나 `tentative`/`unknown`으로 낮춘다.
 
 | 필드 | 설명 |
 | --- | --- |
@@ -299,8 +291,12 @@ Festival Verifier의 기본 실행 흐름은 다음과 같다.
 
 초기 구현 범위에서는 아래 목표 흐름 중 Catalog source 보강과 Web Search를 바로 사용하지 않는다. 먼저 DynamoDB 축제 detail에 정규화된 시작일자가 있는지 확인하고, `start_date`의 연도가 `request_context.travelYear`와 일치하면 해당 축제를 목표 연도 후보로 검증한다.
 
+입력 후보의 `month`와 theme fields는 Candidate Evidence가 `festival.month == travelMonth` 및 사용자 테마 OR 조건으로 선별한 seed 근거다. Verifier는 이 coarse seed를 신뢰하되, detail에서 `start_date`/`end_date`를 확인한 뒤 실제 여행 월 또는 사용자 날짜 범위와 겹치는지 `is_applicable_to_trip`으로 다시 계산한다.
+
 ```text
-festival_candidate
+selected_festival_candidate
+→ candidate.month == request_context.travelMonth seed 근거 확인
+→ candidate theme intersects active_required_themes seed 근거 확인
 → DynamoDB festival detail 조회 또는 전달된 detail 확인
 → start_date 존재 여부 확인
 → year(start_date) == request_context.travelYear 확인
@@ -343,10 +339,10 @@ flowchart TD
 | 기본 Top-K | 3 |
 | 최소 | 1 |
 | 권장 범위 | 2-3 |
-| 정렬 기준 | `candidate_rank`, `candidate_score`, anchor 적합성, travelMonth 근접성 |
+| 정렬 기준 | `candidate_rank`, `candidate_score`, selected city 적합성, theme 매칭 강도 |
 | 제한 이유 | Web Search 비용, 지연 시간, 검색 결과 오염 방지 |
 
-`festival_selection` 모드에서는 사용자가 선택한 축제를 K 제한보다 우선한다. 단, 그 축제가 `confirmed`가 아니면 Planner는 일정 블록으로 배치하지 않는다.
+현재 정본에서는 별도 축제 선택 mode를 두지 않는다. Verifier는 Candidate Evidence가 넘긴 `selected_festival_candidates`를 기준으로 Top-K 제한을 적용한다.
 
 ### 9.2 캐시 조회
 
@@ -427,7 +423,7 @@ kr_example_festival#2026
 | `unknown` | 0.00-0.49 |
 | `outdated` | 0.20-0.55 |
 
-confidence는 Planner가 추천 신뢰도를 낮추거나 `user_notice`를 만드는 데 사용할 수 있다. 단, Planner가 `confidence`만 보고 미검증 축제를 확정 배치하면 안 된다. 직접 배치 가능 여부는 `date_status`와 `planner_policy`를 함께 본다.
+confidence는 Planner가 추천 신뢰도를 낮추거나 `user_notice`를 만드는 데 사용할 수 있다. 단, Planner가 `confidence`만 보고 미검증 축제를 확정 배치하면 안 된다. 직접 배치 가능 여부는 `date_status=confirmed` 여부로 판단한다.
 
 ## 11. 캐시 정책
 
@@ -480,13 +476,14 @@ Planner는 Festival Verifier 결과를 다음처럼 사용한다.
 
 | Verifier 결과 | Planner 동작 |
 | --- | --- |
-| `date_status=confirmed`, `planner_policy=direct_placeable` | 일정 블록에 직접 배치 가능 |
-| `date_status=confirmed`, `planner_policy=notice_only` | 개최 정보는 안내 가능하지만 이번 여행 일정에 배치하지 않음 |
+| `date_status=confirmed` | 일정 블록에 직접 배치 가능 |
 | `date_status=tentative` | 일정 블록 배치 금지. `user_notice` 또는 후보 안내 |
 | `date_status=unknown` | 일정 블록 배치 금지. 검증 한계 안내 |
 | `date_status=outdated` | 일정 블록 배치 금지. 최신 정보 없음 안내 |
 | Verifier `status=no_candidate` | "해당 조건에서 확정 검증된 축제가 없어 일반 장소 중심으로 구성" 안내 |
 | Verifier `status=error` | 축제 직접 배치 금지. 추천 신뢰도 하향 또는 안전 폴백 |
+
+`status=no_candidate`는 Verifier가 받은 최종 선택 도시의 검증 대상 축제 후보가 없다는 뜻이다. `includeFestivals=true` 요청에서 월·테마 seed 조건을 만족하는 도시 seed 자체가 없으면 Candidate Evidence가 먼저 `no_candidate` 또는 `no_festival_city_seed`로 처리하고 사용자에게 조건 완화 질문을 생성할 수 있다.
 
 Planner는 Festival Verifier가 제공하지 않은 축제명을 새로 만들면 안 된다.
 
@@ -502,7 +499,7 @@ Planner는 `evidence_summary`를 사용자 설명으로 바꿀 수 있지만, `s
 | `web_search_failed` | 검색 API/Browser 오류 | 후보별 `date_status=unknown`, agent `partial` 또는 `error` |
 | `date_parse_failed` | 날짜 후보는 있으나 ISO 정규화 실패 | `tentative` 또는 `unknown` |
 | `source_conflict` | 신뢰 출처끼리 날짜 충돌 | 공식/최신 출처 우선. 해결 불가 시 `tentative` |
-| `out_of_region` | 후보 도시가 `selected_city` 또는 anchor와 다름 | 해당 후보 제외 또는 `planner_policy=do_not_use` |
+| `out_of_region` | 후보 도시가 `selected_city` 또는 anchor와 다름 | 해당 후보 제외 |
 | `rate_limited` | 검색 호출 제한 | 캐시 결과 우선, 없으면 `unknown` |
 
 폴백 원칙:
@@ -522,6 +519,7 @@ Festival Verifier는 다음을 하면 안 된다.
 | 과거 연도 날짜를 목표 연도 날짜처럼 사용 | 시기성 오류 방지 |
 | 웹 검색 원문 전체를 Planner에 전달 | 토큰, 저작권, trace 오염 방지 |
 | 모든 축제 후보를 무제한 검증 | 비용과 지연 시간 폭증 방지 |
+| `festival.month == travelMonth`와 사용자 테마 OR 도시 seed를 Verifier에서 새로 생성 | 도시 검색과 ranking 책임은 Candidate Evidence에 있음 |
 | Candidate Evidence가 선택한 도시와 다른 도시 축제를 몰래 섞음 | 단일 도시 추천 원칙 유지 |
 | `tentative` 축제를 확정 일정으로 표시 | 사용자 신뢰 저하 방지 |
 | 개인 블로그 단독 근거로 `confirmed` 부여 | 출처 신뢰도 기준 위반 |
@@ -567,8 +565,8 @@ Festival Verifier 출력은 Planner handoff 전에 검증한다.
 | --- | --- | --- |
 | 출처-상태 일치 | 비공식 출처 단독인데 confirmed면 안 됨 | 상태 하향 |
 | 날짜 충돌 설명 | 충돌이 있으면 `conflict_summary` 존재 | summary 추가 |
-| 적용성 설명 | 여행 월과 겹치지 않는데 direct_placeable이면 안 됨 | `notice_only`로 변경 |
-| 지역 일치 | 축제 도시가 selected city/anchor와 일치 | 후보 제외 또는 do_not_use |
+| 적용성 설명 | `date_status=confirmed`인데 여행 월과 겹치지 않으면 안 됨 | 후보 제외 또는 상태 하향 |
+| 지역 일치 | 축제 도시가 selected city/anchor와 일치 | 후보 제외 |
 
 ## 18. 테스트 케이스 초안
 
@@ -577,16 +575,18 @@ Festival Verifier 출력은 Planner handoff 전에 검증한다.
 | FV-N01 | skip | `includeFestivals=false` | Verifier 미실행, `festival=N/A` |
 | FV-N02 | cache | confirmed 캐시 hit | Web Search 없이 캐시 결과 사용 |
 | FV-N03 | normal | DynamoDB detail의 `start_date` 연도가 입력 `travelYear`와 일치 | `date_status=confirmed`, 내부 detail 기준 evidence summary |
-| FV-N04 | normal | 공식 사이트에 목표 연도 날짜 존재 | `date_status=confirmed`, `planner_policy=direct_placeable` |
+| FV-N04 | normal | 공식 사이트에 목표 연도 날짜 존재 | `date_status=confirmed`, 직접 배치 가능 |
 | FV-N05 | normal | 지자체와 관광공사 날짜 일치 | `confirmed`, 높은 confidence |
-| FV-N06 | normal | confirmed지만 여행 월과 불일치 | `planner_policy=notice_only` |
+| FV-N06 | normal | 후보가 여행 월과 불일치 | 후보 제외 또는 `date_status` 하향 |
+| FV-N07 | normal | Candidate Evidence가 `month == travelMonth` 및 theme OR 조건으로 넘긴 selected city 축제 후보 | Verifier는 도시 ranking 없이 연도와 적용성만 검증 |
 | FV-F01 | fallback | 과거 연도 날짜만 검색됨 | `date_status=outdated`, 직접 배치 금지 |
 | FV-F02 | fallback | 뉴스/블로그만 날짜 언급 | `date_status=tentative`, 직접 배치 금지 |
 | FV-F03 | fallback | Web Search 실패 | `date_status=unknown`, `festival=△` |
 | FV-F04 | fallback | 공식 출처와 블로그 날짜 충돌 | 공식 출처 우선, 충돌 요약 |
 | FV-F05 | fallback | 후보 없음 | agent `status=no_candidate`, Planner notice |
 | FV-R01 | regression | 후보 10개, `top_k=3` | Web Search 대상 3개 이하 |
-| FV-R02 | regression | `festival_selection` 선택 축제 tentative | 도시 anchor 유지, 축제 블록 미배치 |
+| FV-R02 | regression | `includeFestivals=true`이나 selected city의 축제가 tentative | 일반 장소 일정 유지, 축제 블록 미배치 |
+| FV-R03 | regression | 후보 city가 selected city와 다름 | 후보 제외 |
 | FV-V01 | validation | 출력에 raw HTML 포함 | Validation 실패 후 raw 제거 |
 | FV-V02 | validation | confirmed인데 날짜 null | `tentative` 또는 `unknown`으로 하향 |
 
@@ -650,5 +650,7 @@ MVP 구현에서는 다음 순서로 좁게 시작한다.
 
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 | --- | --- | --- | --- |
+| v0.4 | 2026-06-13 | llm | 별도 축제 선택 mode와 Planner 소비 정책 필드 계약을 제거하고, 현재 MVP의 Planner 직접 배치 기준을 `date_status=confirmed`로 단순화 |
+| v0.3 | 2026-06-13 | llm | Candidate Evidence가 `festival.month == travelMonth`와 사용자 테마 OR 조건으로 선별한 `selected_festival_candidates`를 입력으로 받는 전제를 추가하고, Verifier는 도시 seed/ranking을 수행하지 않음을 명시 |
 | v0.2 | 2026-06-13 | llm | 초기 구현 범위를 DynamoDB festival detail의 `start_date` 연도 일치 검증으로 명시하고 Web Search 기반 공식 출처 재검증을 확장 단계로 분리 |
 | v0.1 | 2026-06-13 | llm | `Festival_Verifier_Agent` 상세 정본 초안 작성. 입력/출력 계약, 상태값, 캐시 TTL, 출처 우선순위, Planner handoff, 테스트 케이스 초안 정의 |

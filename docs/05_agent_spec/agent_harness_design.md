@@ -1,6 +1,6 @@
 # 로브 (Lovv) Agent 하네스 설계
 
-> 문서 버전: v1.0
+> 문서 버전: v1.4
 > 문서 상태: 검토 중 (Review)
 > 기준 문서: `langgraph_flow.md`(그래프 정본), `agent_update.md`(설계 결정), `../01_requirements/lovv_agent_multiturn_context_spec.md`(멀티턴 정책)
 
@@ -35,6 +35,28 @@
 | Policy Guard | 금지사항(국가 혼합, 미검증 축제 등) 런타임 강제 | Policy |
 | Observability Hook | 노드별 trace(redacted), 지연·토큰 메트릭 | Observability |
 
+### 2.2.1 AgentCore 책임 이관 기준
+
+도메인 그래프와 AgentCore 하네스는 책임을 분리한다. Agent 노드, 라우팅 규칙,
+프롬프트, 도메인 상태 전이는 Lovv 추천 workflow의 source of truth로 남기고,
+반복 실행·운영·보안·입출력 정규화에 가까운 책임은 AgentCore 하네스로 이관한다.
+
+| 항목 | AgentCore 하네스 책임 | 도메인 workflow에 남길 책임 |
+| --- | --- | --- |
+| 요청 정규화 | `payload.request`, JSON string `prompt`, plain text `prompt`를 Lovv request로 변환 | 정규화된 request를 `UnifiedAgentState`로 변환 |
+| Graph lifecycle | 프로세스당 graph compile/cache, 요청당 initial state 생성 | node, edge, routing business rule |
+| Model adapter | Bedrock Converse client, model id/tier runtime config, region, credential provider 처리 | prompt, schema, fallback behavior |
+| Identity/permission | AgentCore Identity, tool 접근 권한, credential boundary | agent별 필요한 tool 이름과 최소 scope 선언 |
+| Runtime guard | timeout, live/fallback flag, request id 주입, exception 구조화 | `status=no_candidate/insufficient/error` 같은 도메인 상태 |
+| Redacted logging | `agent_run_id`, `session_id`, node trace, latency, token metric 기록 | 원문 대화, raw RAG/web payload를 log에 넘기지 않음 |
+| Entrypoint contract test | AgentCore payload shape, local/dev/invoke 입출력 검증 | agent node 단위 regression test |
+
+초기 구현에서는 Memory, Gateway, Policy를 한 번에 모두 관리형 구성요소로 옮기지
+않는다. 먼저 in-process state와 fixture 기반 regression을 AgentCore Runtime에서
+동일하게 실행하고, 이후 Memory adapter와 Gateway adapter를 얇게 추가한다.
+본 하네스 정본은 특정 모델 ID나 Agent별 모델 tier 배정을 고정하지 않는다.
+모델 선택은 배포 환경 설정과 Evaluations 결과를 기준으로 별도 결정한다.
+
 ## 2.3 초기화 시퀀스
 
 1. `UnifiedAgentState` 초기화 (`turn_index=0`, `fulfilled_matrix` 미설정, `target_region=None`, `validation_retry_count=0`).
@@ -55,6 +77,36 @@
 - 다음 턴 진입 시 동일 키로 복원 → `Intent_Agent`가 누적 맥락으로 재증류.
 - `messages` 임계 초과 시 롤링 요약 압축(7.5 정책)을 State Manager가 트리거.
 
+### 2.5.1 Memory 저장 경계
+
+Memory는 다음 turn의 의도 해석과 재추천에 필요한 요약 상태만 저장한다. 원본
+대화·검색 결과·웹 문서는 장기 보관하지 않고, 필요한 경우 redacted summary와
+식별자 중심으로 축약한다.
+
+| 항목 | Memory 역할 | 저장 정책 |
+| --- | --- | --- |
+| `messages` recent window | 다음 턴 Intent 입력용 단기 context | 원문 장기 저장 금지, 세션 TTL 적용 |
+| `conversation_summary` | 긴 대화 압축 summary | redacted summary만 유지 |
+| `fulfilled_matrix` | 턴 간 routing 상태 | `X/O/△/N/A` 값만 저장 |
+| `execution_mode`, `fixed_city_id`, `city_anchor` | `anchored_place_search` 모드의 도시 고정 상태와 `festival_seeded_city_discovery` 실행 이력 | raw 축제/장소 payload 대신 id와 reason code 중심 |
+| `selected_destination` | 다음 턴 재추천·수정 기준 | city id/name 수준으로 축약 |
+| `unsupported_conditions`, `user_notice` 후보 | Planner 안내 문구와 후속 질문에 재사용 | 민감한 원문 표현은 요약 |
+| `validation_retry_count` | loop guard 유지 | 요청 단위 또는 턴 단위 초기화 기준 명시 |
+| `festival_verifications` summary | 같은 턴·세션 내 축제 검증 재사용 | 장기 캐시는 DynamoDB `lovv_festival_verify_cache`가 물리 소유 |
+| `PlanDraft` summary | 저장 전 임시 일정 상태 | TTL 필요, 사용자가 저장하면 MySQL 저장 API로 원장화 |
+
+Memory에 저장하지 않는 항목:
+
+- raw RAG result 전문
+- raw web search/page content
+- `candidate_evidence_package` 전체 원문
+- embeddings cache
+- API key, credential, user PII 원문
+
+`candidate_evidence_package`는 단일 실행 내부 payload로 유지한다. 멀티턴 수정이나
+재추천을 위해 필요하면 전체 패키지 대신 `selected_city`,
+`recommended_place_ids`, `reserve_place_ids`, `fallback_audit` 요약만 Memory에 둔다.
+
 ## 2.6 에러·재시도·폴백
 
 | 상황 | 처리 |
@@ -69,6 +121,19 @@
 - LangSmith: redacted 메타데이터만(노드명, matrix 상태, next_node, dropped_context_categories, latency). 원문/PII 금지(멀티턴 명세 §10).
 - DynamoDB `lovv_agent_runs`: DB 설계 명세서 v0.5 기준으로 `node_name`, `tool_name`, `validation_retry_count`, `error_code`, `payload_summary` 수준의 실행 요약만 저장한다.
 - AgentCore Observability(CloudWatch): 노드 지연, 토큰 사용, 재시도 횟수, 폴백 비율, 라우팅 경로, matrix 전이 대시보드.
+
+### 2.7.1 Gateway / Policy / Observability 분리
+
+결정적 계산과 외부 접근은 Agent 노드 안에 직접 섞지 않고, Gateway 또는 Lambda
+adapter로 분리한다. 정책 위반과 운영 지표는 별도 구성요소에서 관측·차단한다.
+
+| 항목 | 권장 AgentCore 구성요소 |
+| --- | --- |
+| Scoring, Matrix Transition, Validation, Link Builder, Weather Trends | Gateway 또는 Lambda |
+| Festival official page 탐색 | Browser 또는 Web Search |
+| 국가 혼합 금지, 미검증 축제 배치 금지, 원문 trace 금지 | Policy + Validation Skill |
+| node latency, retry, fallback, token usage | Observability |
+| trajectory, 조건 충족, 근거성 평가 | Evaluations |
 
 # 3. 테스트 하네스
 
@@ -245,6 +310,9 @@ PR 생성
 
 | 버전 | 날짜 | 변경 내용 |
 | --- | --- | --- |
+| v1.4 | 2026-06-13 | 고정 도시 mode명을 `anchored_place_search`로 통일하고 별도 축제 선택 mode 잔여 표현을 제거 |
+| v1.3 | 2026-06-12 | 정본에서 특정 LLM 모델 고정 문구를 제거하고 모델 선택을 runtime config/Evaluations 결정으로 분리 |
+| v1.2 | 2026-06-12 | AgentCore 하네스 책임 이관 기준, Memory 저장 경계, Gateway/Policy/Observability 분리 원칙 추가 |
 | v1.1 | 2026-06-08 | DB v0.5 기준으로 DynamoDB 실행 요약과 Observability 메트릭 경계를 분리 |
 | v1.1 | 2026-06-08 | Itinerary Planner와 Explanation Writer를 `Itinerary_Writer_Agent` 단일 생성 노드로 통합 |
 | v1.1 | 2026-06-08 | fulfilled_matrix 표준 키 확정, Top-K 축제 검증, no_candidate 폴백, Validator 실패 카테고리 테스트 케이스 추가 |

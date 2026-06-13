@@ -1,9 +1,8 @@
 # Candidate Evidence Agent Baseline 비교 설계
 
-> 문서 버전: v1.0  
+> 문서 버전: v1.1
 > 문서 상태: 검토 중 (Review)  
-> 기준 문서: `05_agent_spec.md`, `candidate_evidence_agent.md`, `../10_test_plan/candidate_evidence_search_test_plan.md`  
-> 구현·실험 근거: `../../../rag_test/`
+> 기준 문서: `05_agent_spec.md`, `candidate_evidence_agent.md`, `../10_test_plan/candidate_evidence_search_test_plan.md`
 
 # 1. 목적
 
@@ -89,7 +88,7 @@ theme_max_quota = ceil(primary_budget / 2)
 
 # 6. 현재 검증에서 확인된 설계 효과
 
-2026년 6월 12일 `rag_test` 실행에서 다음을 확인했다.
+2026년 6월 12일 평가에서 다음을 확인했다.
 
 | 관측 항목 | Baseline | Ours |
 | --- | ---: | ---: |

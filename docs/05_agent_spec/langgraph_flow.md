@@ -1,6 +1,6 @@
 # 로브 (Lovv) LangGraph Flow 명세 (Canonical)
 
-> 문서 버전: v1.1
+> 문서 버전: v1.4
 > 문서 상태: 검토 중 (Review)
 > 위상: 본 문서는 Lovv 에이전트의 **그래프 토폴로지·상태·라우팅 최상위 기준**이다.
 > 연관 문서: `05_agent_spec.md`(에이전트 명세), `agent_update.md`(수정 방안/A안 확정), `agent_harness_design.md`(하네스), `../01_requirements/lovv_agent_multiturn_context_spec.md`(멀티턴 컨텍스트 정책)
@@ -130,14 +130,20 @@ class UnifiedAgentState(TypedDict):
 - `Intent_Agent`는 그래프 entry. 출력 후 `NEED_MORE`(필수 조건 충족?) 조건 분기.
 - 미충족 → `추가 질문 생성` → `END(사용자 응답 대기)`. 다음 사용자 발화는 **다시 Intent_Agent로 진입**(턴 재개).
 - 충족 → `Supervisor_Router`.
+- 한 턴 내부에서 Worker가 `needs_clarification=true`와 `clarifying_question`을 반환한 경우도 동일하게 `END_WAIT_USER`로 종료한다. 다음 사용자 발화는 다시 `Intent_Agent`로 진입해 기존 상태와 새 응답을 병합한다.
 
 ## 6.2 검색·후보 선정 루프 (매트릭스 제어)
 
 - Supervisor는 `fulfilled_matrix`에서 `X` 항목 중 우선순위 최상위를 골라 `Candidate_Evidence_Agent`, `Festival_Verifier_Agent`, `Planner_Agent`로 라우팅한다.
 - `destinationId`가 없으면 `Candidate_Evidence_Agent`가 city discovery mode로 동작해 `selected_city`와 후보 장소 패키지를 구성한다.
 - 지도 마커 진입(`destinationId` 존재) 시 `Candidate_Evidence_Agent`는 anchored place search mode로 동작해 해당 도시 내부 후보를 구성한다.
-- 축제 포함 요청이면 Candidate Evidence Package의 상위 축제/도시 후보를 기준으로 `Festival_Verifier`에 위임한다.
+- 축제 포함 요청(`includeFestivals=true`)은 `destinationId` 유무와 무관하게 유지된다. `destinationId`가 없으면 월·테마 조건을 만족하는 축제 city seed 안에서만 city discovery를 수행하고, `destinationId`가 있으면 고정 도시 내부에서만 축제 후보를 조회한다.
+- `Candidate_Evidence_Agent`가 `needs_clarification=true`를 반환하면 Supervisor는 `Festival_Verifier_Agent`와 `Planner_Agent`를 호출하지 않는다. `clarifying_question`을 사용자에게 전달하고 `END_WAIT_USER`로 종료한다.
+- `Candidate_Evidence_Agent`가 `status=insufficient_candidates`를 반환하면 `evidence=△`로 표시하고 제한된 후보 패키지로 Planner를 호출할 수 있다. 단, `status=no_candidate`는 `needs_clarification` 여부와 승인된 safe fallback 정책을 먼저 확인한다.
+- 선택된 도시에 축제 포함 요청이 있으면 `Festival_Verifier_Agent`가 해당 도시의 월·테마 매칭 축제 후보만 목표 연도 기준으로 검증한다.
+- `Festival_Verifier_Agent`는 `date_status=confirmed` 축제만 Planner에 확정 배치 가능 후보로 넘긴다.
 - `X`가 더 없으면 순차 구간으로 전이.
+- 구체적인 matrix 전이 표준은 `05_agent_spec.md` 8.2를 단일 출처로 따른다.
 
 ## 6.3 순차 생성 구간 (매트릭스 재평가 없음)
 
@@ -206,7 +212,7 @@ class UnifiedAgentState(TypedDict):
 
 모델 계층 — **Amazon Bedrock**:
 
-- **LLM 추론**: 모든 LLM 노드는 Bedrock 모델을 Converse API로 호출. 작업별 차등 티어(파싱=경량 Nova Lite/OpenAI gpt-oss-20b/Claude Haiku, 검증=중급 OpenAI gpt-oss-120b/Llama 70B, 생성=상위 Claude Sonnet 계열). 2026년 OpenAI 오픈웨이트(gpt-oss)는 us-east-1 후보로 추가, 프런티어(GPT-5.5/5.4·Codex)는 us-east-1 미제공이라 리전 변경 시에만 후보. 상세 단가·리전·배정은 `agent_update.md` 6.3.
+- **LLM 추론**: LLM Agent와 LLM 기반 검증 구간은 Bedrock Converse API adapter를 통해 호출한다. 본 정본은 특정 모델 ID나 Agent별 모델 tier 배정을 고정하지 않으며, 실제 모델과 tier는 배포 환경 설정과 평가 지표에 따라 교체 가능해야 한다.
 - **임베딩**: 장소·쿼리 임베딩은 Amazon Titan Text Embeddings V2(1,024차원) 또는 Cohere Embed.
 - **관리형 RAG**: 전국구 RAG는 Bedrock Knowledge Bases(청킹·임베딩·검색)로 구현, 정형 필터는 DB와 하이브리드.
 
@@ -224,6 +230,7 @@ class UnifiedAgentState(TypedDict):
 - Supervisor는 `messages` 원문을 보유·전달하지 않는다.
 - Intent_Agent는 턴당 1회만 실행한다.
 - `fulfilled_matrix`의 `X`만 라우팅 대상이다.
+- `needs_clarification=true` 상태에서는 Planner를 호출하지 않고 사용자 응답을 기다린다.
 - 검증 재시도는 최대 2회, 초과 시 폴백 확정.
 - 한국/일본 데이터는 한 응답에서 혼합하지 않는다.
 - 미검증(`tentative`/`unknown`) 축제는 일정에 확정 배치하지 않는다.
@@ -233,5 +240,8 @@ class UnifiedAgentState(TypedDict):
 
 | 버전 | 날짜 | 변경 내용 |
 | --- | --- | --- |
+| v1.4 | 2026-06-14 | Worker 단계 `needs_clarification=true`의 사용자 응답 대기 라우팅과 Candidate Evidence 상태별 전이 원칙을 명시 |
+| v1.3 | 2026-06-12 | 정본에서 특정 LLM 모델 고정 문구를 제거하고 Bedrock Converse adapter 기반 모델 비종속 정책으로 정리 |
+| v1.2 | 2026-06-12 | LLM 호출 정책을 Bedrock Converse adapter 경계로 정리 |
 | v1.1 | 2026-06-10 | `Polymorphic_Retriever_Agent`와 `Ranker_Agent`를 `Candidate_Evidence_Agent`로 통합하고, `Planner_Agent`가 일정 생성·설명 생성·검증을 구조 수준에서 통합 담당하도록 LangGraph 노드/상태/라우팅/Tool 매핑을 정합화 |
 | v1.0 | 2026-06-07 | A안 기준 LangGraph 정본 작성. 멀티턴 생명주기·N/A→X 재활성·백로그 bound·토폴로지 정합화 포함 |
