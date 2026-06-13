@@ -1,8 +1,10 @@
 # 로브 (Lovv) 일정 생성 흐름 정본 초안
 
-> 문서 버전: v0.1
+> 문서 버전: v0.2
 > 문서 상태: 초안 (Draft)
 > 기준 문서: `05_agent_spec.md`, `langgraph_flow.md`, `../01_requirements/01_requirements.md`, `../02_service_flow/02_service_flow.md`, `../04_database_design/04_database_design.md`, `../06_technical_spec/06_technical_spec.md`, `../07_api_spec/07_api_spec.md`
+
+> 정본 우선순위: Planner Agent 구현 기준은 `planner_agent.md`를 우선한다. 본 문서는 PlanDraft, 수정 흐름, 대체 일정 아이디어를 보존하는 보조 초안이다.
 
 # 1. 문서 목적
 
@@ -43,8 +45,8 @@ Lovv 전체 추천 흐름에서 일정 생성은 다음 위치에 있다.
 → 저장/피드백/외부 링크
 ```
 
-LangGraph 기준으로는 `Supervisor_Router`가 소도시 선정 이후 `Itinerary_Planner_Agent`를 순차 호출한다.
-`Itinerary_Planner_Agent` 이후에는 `Explanation_Writer_Agent`, `Validation Skill`, `Output_Validator_Agent`가 이어진다.
+초안 작성 당시에는 `Itinerary_Planner_Agent` 이후 `Explanation_Writer_Agent`, `Validation Skill`, `Output_Validator_Agent`가 이어지는 흐름으로 표현했다.
+현재 정본에서는 이 책임을 `Planner_Agent`가 통합 수행하며, 상세 구현 기준은 `planner_agent.md`를 따른다.
 
 # 4. 입력 조건
 
@@ -369,7 +371,7 @@ POST /recommendations/{recommendationId}/revise
 
 # 16. 후속 반영 작업
 
-1. `05_agent_spec.md`의 `Itinerary_Planner_Agent` 절에 본 문서 링크를 추가한다.
+1. `05_agent_spec.md`의 `Planner_Agent` 절에 본 문서와 `planner_agent.md` 링크를 유지한다.
 2. `07_api_spec.md`에 일반 일정 수정 API 후보를 반영할지 결정한다.
 3. `04_database_design.md`에 `itinerary_days`, `itinerary_items` 상세 컬럼과 API 매핑 표를 반영한다.
 4. `agent_harness_design.md`에 일정 생성 전용 테스트 케이스를 추가한다.
@@ -380,4 +382,5 @@ POST /recommendations/{recommendationId}/revise
 
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 | --- | --- | --- | --- |
-| v0.1 | 2026-06-08 | Codex | 일정 생성 흐름 정본 초안 작성. PlanDraft, 일정 생성 규칙, 수정 흐름, API/DB/테스트 영향 정리 |
+| v0.2 | 2026-06-12 | llm | Planner Agent 상세 정본 `planner_agent.md` 우선순위 메모 추가 및 구형 Itinerary/Explanation 분리 표현 정리 |
+| v0.1 | 2026-06-08 | llm | 일정 생성 흐름 정본 초안 작성. PlanDraft, 일정 생성 규칙, 수정 흐름, API/DB/테스트 영향 정리 |
