@@ -2,9 +2,9 @@
 
 > 문서 성격: `99_pptx/01_midterm_presentation` 폴더의 **대표 문서(canonical)**. 디자인 도구(Claude/Gemini 등)에 넣어 슬라이드를 생성하기 위한 통합 내용·구성·발표자 노트.
 > 단계 표기: **중간발표 (PoC)** / 발표일: 2026.06.16 / 발표자: 조동휘
-> 본론 분량 결정(2026-06-12): B4 딥다이브는 `references/agent_deep_dive_slides_condensed.md` 확정안대로 **2장(B4-1 하이브리드 RAG, B4-2 Ranker)**. 이후 WBS/이슈 요구사항 반영을 위해 **Neptune 도입 판단 트러블슈팅 1장**을 추가한다. 기존 서비스 비교와 비즈니스 모델은 서론이 아니라 종론으로 보내고, B8(차별점)·B9(비즈니스)·B10(확장)으로 분리해 전체 16장으로 구성한다. B4-1의 그래프DB(Neptune)는 같은 문서 §7 보류 결론 및 `neptune_alternative.md`에 따라 화면에서 미래 각주 한 줄로만 표기한다.
+> 본론 분량 결정(2026-06-12): B4 딥다이브는 `agent_deep_dive_slides_condensed.md` 확정안대로 **2장(B4-1 하이브리드 RAG, B4-2 Ranker)**. 이후 WBS/이슈 요구사항 반영을 위해 **Neptune 도입 판단 트러블슈팅 1장**을 추가한다. 기존 서비스 비교와 비즈니스 모델은 서론이 아니라 종론으로 보내고, B8(차별점)·B9(비즈니스)·B10(확장)으로 분리해 전체 16장으로 구성한다. B4-1의 그래프DB(Neptune)는 같은 문서 §7 보류 결론 및 `neptune_alternative.md`에 따라 화면에서 미래 각주 한 줄로만 표기한다.
 > 스타일 원칙: AWS/테크 컨퍼런스식 — 슬라이드당 핵심 메시지 1개 + 시각자료 1개, 화면 글자 최소화. 상세는 발표자 노트로. 비즈니스 관점 약 15%.
-> 최신화 기준(우선순위): **`references/intro_revision_proposal.md`(최우선)** → `references/s3_problem_axes_revision.md`(S3 4축 상세) → `references/external_evidence_slides_2articles.md`(S4 국경 간 근거) → `../midterm_vs_final_presentation_guide.md`(§7.1 서론 4단계).
+> 최신화 기준(우선순위): **`intro_revision_proposal.md`(최우선)** → `s3_problem_axes_revision.md`(S3 4축 상세) → `external_evidence_slides_2articles.md`(S4 국경 간 근거) → `midterm_vs_final_presentation_guide.md`(§7.1 서론 4단계).
 > 이전 초안: `archive/2026-06-13_cleanup/midterm_presentation_draft_5slides.md`(보관용, 구버전).
 
 ---
@@ -190,7 +190,7 @@
 - **[일본 국내는? Q&A 대비]** 제품은 일본인→일본 국내도 지원. 근거(관광청: 지방부 숙박 90%가 일본인 / 同一현내 숙박 ~20%→35% 근거리화·마이크로투어리즘)는 *점유율·정책* 위주라 근거 슬라이드에선 뺐고, 본론 **확장 방향**에서 다룬다.
 - 동기 멘트: "찾아주는 길이 없다"가 아니라 "정보도 있는데 *흩어져* 못 고른다"로 — S2의 '앱 여러 개 비교' 장면을 떠올리게 해 즉시 납득.
 
-> 근거 세기: 아웃바운드 ★★★ / 인바운드 ★★★ / 한국 국내 ★★(보조). 상세·출처는 §출처, `references/external_evidence_slides_2articles.md`.
+> 근거 세기: 아웃바운드 ★★★ / 인바운드 ★★★ / 한국 국내 ★★(보조). 상세·출처는 §출처, `external_evidence_slides_2articles.md`.
 
 ---
 
@@ -580,7 +580,7 @@ HTML/PPT 변환 뒤 글자 수가 많거나 시선 집중에 방해될 가능성
 - 제주(환경) — 제주일보: http://www.jejunews.com/news/articleView.html?idxno=2134351
 - 가마쿠라 에노덴(도시 기능, 슬램덩크 배경지) — Guardian: https://www.theguardian.com/world/2024/feb/03/a-free-for-all-japan-divided-as-return-of-tourists-brings-instagrammers-and-litter
 - 교토 기온(지역 문화) — 뉴시스: https://www.newsis.com/view/NISX20240315_0002662388
-> 상세 검증·신뢰도: `references/s3_problem_axes_revision.md` §3·§7
+> 상세 검증·신뢰도: `s3_problem_axes_revision.md` §3·§7
 
 ### S4 — 한일 양방향 + 한국 국내
 - 인바운드 "서울 다음은 어디?"·3,000만·FIT 90%+ — 데일리브리프(5149): https://www.dailybrief.co.kr/news/articleView.html?idxno=5149
@@ -588,10 +588,10 @@ HTML/PPT 변환 뒤 글자 수가 많거나 시선 집중에 방해될 가능성
 - 아웃바운드 일본 소도시 예약 +35%·다카마쓰 — 한국경제: https://www.hankyung.com/article/202606046704g
 - 한국 국내 소도시 언급 +184% — 썸트렌드: https://some.co.kr/briefing/domestic-small-city-travel-trend-report-2026
 - (확장용·일본 국내) 관광청 숙박여행통계 2024: https://www.mlit.go.jp/kankocho/content/001905698.pdf / 근거리화·지방부 90% 일본인 — 관광경제신문 / JTB 마이크로투어리즘
-> 카드 A/B/C/D 상세·출처 표: `references/external_evidence_slides_2articles.md`
+> 카드 A/B/C/D 상세·출처 표: `external_evidence_slides_2articles.md`
 
 ### 내부 문서
-- `00_project_plan.md`, `references/intro_revision_proposal.md`, `references/s3_problem_axes_revision.md`, `references/external_evidence_slides_2articles.md`, `../midterm_vs_final_presentation_guide.md`
+- `00_project_plan.md`, `intro_revision_proposal.md`, `s3_problem_axes_revision.md`, `external_evidence_slides_2articles.md`, `midterm_vs_final_presentation_guide.md`
 
 ### B8 — 경쟁 제품 비교
 - 트리플 공식 서비스 소개(일정 생성·관리, AI 일정 추천, 공동 일정, 항공·숙소·투어티켓 추천/할인, 항공권 시세 확인): https://triple.guide/intro

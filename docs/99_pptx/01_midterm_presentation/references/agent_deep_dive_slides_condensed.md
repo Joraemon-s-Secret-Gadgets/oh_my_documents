@@ -2,15 +2,15 @@
 
 > 작성자: 로브 기획팀
 > 문서 상태: 슬라이드 적용안 (B3/B4 교체용)
-> 기반 문서: `agent_deep_dive_revision_proposal.md` (메시지·논리 원안)
-> 적용 대상: `body_revision_proposal.md`의 B3·B4
-> 정합성 원칙: 원안(`agent_deep_dive_revision_proposal`)과 원본(`body_revision_proposal`)이 충돌하면 **`agent_deep_dive_revision_proposal`를 우선**한다.
+> 기반 문서: `archive/2026-06-13_cleanup/agent_deep_dive_revision_proposal.md` (메시지·논리 원안)
+> 적용 대상: `archive/2026-06-13_cleanup/body_revision_proposal.md`의 B3·B4
+> 정합성 원칙: 원안(`archive/2026-06-13_cleanup/agent_deep_dive_revision_proposal.md`)과 원본(`archive/2026-06-13_cleanup/body_revision_proposal.md`)이 충돌하면 **`archive/2026-06-13_cleanup/agent_deep_dive_revision_proposal.md`를 우선**한다.
 
 ---
 
 ## 0. 이 문서의 사용법
 
-`agent_deep_dive_revision_proposal.md`는 메시지·논리·방어 자료가 충분하지만 발표 슬라이드로 쓰기엔 밀도가 너무 높다. 이 문서는 그 내용을 **실제 슬라이드 3장**으로 압축하고, 모든 요소를 세 곳으로 분리한다.
+`archive/2026-06-13_cleanup/agent_deep_dive_revision_proposal.md`는 메시지·논리·방어 자료가 충분하지만 발표 슬라이드로 쓰기엔 밀도가 너무 높다. 이 문서는 그 내용을 **실제 슬라이드 3장**으로 압축하고, 모든 요소를 세 곳으로 분리한다.
 
 ```text
 [화면]  슬라이드에 실제로 띄울 것 — 한글 한 줄 + 도식 1개 원칙, 영어 용어 최소화
@@ -62,7 +62,7 @@ Tool은 계산하고, Agent는 판단한다
 
 **서론 회수 띠 (파이프라인 하단에 작게, 화면 요소)**
 
-파이프라인 노드 아래에 서론 S5의 3컨셉을 색 태그로 깔아, 어느 단계가 어느 약속을 받는지 *눈으로* 묶는다. 멘트만으로는 B1·B2를 거치며 서론과 멀어져 콜백이 약해지므로, 화면에 같은 단어를 다시 띄워 시각 회수한다(원본 `body_revision_proposal.md` §0.5 "가장 강한 콜백 = 시각 회수").
+파이프라인 노드 아래에 서론 S5의 3컨셉을 색 태그로 깔아, 어느 단계가 어느 약속을 받는지 *눈으로* 묶는다. 멘트만으로는 B1·B2를 거치며 서론과 멀어져 콜백이 약해지므로, 화면에 같은 단어를 다시 띄워 시각 회수한다(원본 `archive/2026-06-13_cleanup/body_revision_proposal.md` §0.5 "가장 강한 콜백 = 시각 회수").
 
 ```text
 [3·4 검색·선정] ──▶ 🔵 발견      "못 찾던 소도시를 찾아준다"
@@ -87,14 +87,14 @@ Tool은 계산하고, Agent는 판단한다
 
 ### [원본 B3 → 이 슬라이드 변경 매핑]
 
-| 항목 | 원본 B3 (`body_revision_proposal`) | 이 슬라이드 (= `agent_deep_dive` 우선) |
+| 항목 | 원본 B3 (`archive/2026-06-13_cleanup/body_revision_proposal.md`) | 이 슬라이드 (= `agent_deep_dive` 우선) |
 | --- | --- | --- |
 | 핵심 카피 | "단일 LLM이 아니라 — 멀티스텝 Agent + 결정적 Skill" | "Tool은 계산하고, Agent는 판단한다" |
 | 노드 수 | 8단계 (Ranker 1차/최종 분리, Validation Skill→Output_Validator 별도) | **7단계로 통합** (Ranker 1개, 출력 검증 1개) |
 | Ranker | 1차 점수 → 축제검증 → 최종 선정 3단계로 분리 | **선정 1단계로 합치고**, 축제 검증을 5단계 독립 노드로 둠 |
 | 표 구성 | "한 줄 역할" 1열 | **"Tool 로직 / Agent 로직" 2열**로 교체 |
 
-> 적용 시 원본 B3의 8단계 표(`body_revision_proposal.md` 110~120행)를 위 7단계 표로 **교체**한다.
+> 적용 시 원본 B3의 8단계 표(`archive/2026-06-13_cleanup/body_revision_proposal.md` 110~120행)를 위 7단계 표로 **교체**한다.
 
 ---
 
@@ -273,7 +273,7 @@ Tool 결과
 
 ## 4. 적용 체크리스트 (제안 — 미적용 상태)
 
-- [ ] B3 표를 8단계 → **7단계 Tool/Agent 2열 표**로 교체 (`body_revision_proposal.md` 110~120행)
+- [ ] B3 표를 8단계 → **7단계 Tool/Agent 2열 표**로 교체 (`archive/2026-06-13_cleanup/body_revision_proposal.md` 110~120행)
 - [ ] B3 핵심 카피를 "Tool은 계산, Agent는 판단"으로 교체
 - [ ] B3 화면에 "발견·일정·근거" 색 태그 회수 띠 추가 (서론 S5 컨셉 카드와 색·아이콘 일치)
 - [ ] **B4를 딥다이브 2장(B4-1 하이브리드 RAG + B4-2 Ranker)으로 확정·재구성**
@@ -285,14 +285,14 @@ Tool 결과
 - [ ] 각 슬라이드에 서론 S5 3컨셉(발견/일정/근거) 회수 멘트 1줄 배치
 - [ ] Top-K·캐시 TTL 등 비용 디테일은 Q&A 백업으로만 보유
 
-> 체크박스는 **실제 `body_revision_proposal.md`에 반영하면 채운다.** 현재는 적용 전 제안 상태.
+> 체크박스는 **실제 `archive/2026-06-13_cleanup/body_revision_proposal.md`에 반영하면 채운다.** 현재는 적용 전 제안 상태.
 > ⚠️ **B4-1 그래프DB 항목은 미결(§7)** — 결론 확정 전에는 대표 문서에 반영하지 말 것.
 
 ---
 
 ## 5. Q&A 백업 부록 (슬라이드에 없음 — 질문 시에만)
 
-발표자 노트 뒤에 숨겨두고, 질문이 들어올 때만 꺼낸다. 짧은 답변만 싣는다. 전체 논리는 `agent_deep_dive_revision_proposal.md` §9 참조.
+발표자 노트 뒤에 숨겨두고, 질문이 들어올 때만 꺼낸다. 짧은 답변만 싣는다. 전체 논리는 `archive/2026-06-13_cleanup/agent_deep_dive_revision_proposal.md` §9 참조.
 
 | 예상 질문 | 짧은 답변 |
 | --- | --- |

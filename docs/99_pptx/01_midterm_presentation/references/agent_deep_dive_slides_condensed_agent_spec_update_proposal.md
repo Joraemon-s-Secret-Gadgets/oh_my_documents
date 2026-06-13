@@ -1,8 +1,8 @@
 # 에이전트 딥다이브 슬라이드 최신 Agent 설계 반영 제안
 
-> 검토 대상: `agent_deep_dive_slides_condensed.md`  
-> 반영 기준: `05_agent_spec.md`, `langgraph_flow.md`, `candidate_evidence_agent.md`, `agent_harness_design.md`, `recommendation_flow.md`  
-> 문서 성격: 원문 미수정 상태의 변경 제안서  
+> 검토 대상: `agent_deep_dive_slides_condensed.md`
+> 반영 기준: `05_agent_spec.md`, `langgraph_flow.md`, `candidate_evidence_agent.md`, `agent_harness_design.md`, `recommendation_flow.md`
+> 문서 성격: 원문 미수정 상태의 변경 제안서
 > 작성일: 2026-06-11
 
 ---

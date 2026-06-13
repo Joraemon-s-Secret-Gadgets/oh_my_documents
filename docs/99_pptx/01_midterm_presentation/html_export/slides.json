@@ -7,7 +7,7 @@
   {
     "index": 2,
     "title": "PROBLEM",
-    "subtitle": "오버투어리즘은 수용 한계를 넘은 관광의 압박이다"
+    "subtitle": "오버투어리즘"
   },
   {
     "index": 3,
@@ -61,16 +61,21 @@
   },
   {
     "index": 13,
-    "title": "COMPETITIVE EDGE",
-    "subtitle": "트리플이 정한 여행을 잘 실행하게 한다면, Lovv는 어디로 갈지부터 분산시킨다"
+    "title": "ISSUE / TROUBLESHOOTING",
+    "subtitle": "Neptune은 지금 넣는 기술이 아니라, 조건이 맞을 때 승격하는 선택지다"
   },
   {
     "index": 14,
-    "title": "ISSUE / TROUBLESHOOTING",
-    "subtitle": "그래프DB 직접 도입 대신 Lambda로 관계 탐색 기능을 구현한다"
+    "title": "COMPETITIVE EDGE",
+    "subtitle": "트리플은 '정한 도시를 잘' 짜고, Lovv는 '어디를'부터 찾는다"
   },
   {
     "index": 15,
+    "title": "BUSINESS MODEL",
+    "subtitle": "경쟁이 아니라 선점 — 발견·분산 단계와 지자체 파트너를 가져간다"
+  },
+  {
+    "index": 16,
     "title": "NEXT",
     "subtitle": "PoC로 핵심 가설을 좁게 검증하고, Production에서 확장한다"
   }
