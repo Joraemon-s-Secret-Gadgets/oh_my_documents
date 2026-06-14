@@ -1,6 +1,6 @@
 # Candidate Evidence Runtime Tool Overview
 
-> 문서 버전: v0.8
+> 문서 버전: v0.9
 > 문서 상태: Draft / 실행 도구 개요
 > 작성일: 2026-06-13
 > 기준 문서: `candidate_evidence_agent.md`, `05_agent_spec.md`
@@ -9,11 +9,12 @@
 
 본 문서는 `candidate_evidence_agent.md` 정본의 실행 세부를 도구 단위로 분리하기 위한 상위 안내 문서다.
 
-이전 v0.1에서는 S3 Vector 검색, DynamoDB detail 조회, scoring, resource metric을 한 문서에 함께 설명했다. v0.2부터는 Candidate Evidence 런타임의 책임을 다음 두 Tool 문서로 나눈다.
+이전 v0.1에서는 S3 Vector 검색, DynamoDB detail 조회, scoring, resource metric을 한 문서에 함께 설명했다. v0.9부터는 Candidate Evidence 런타임의 책임을 다음 세 Tool 문서로 나눈다.
 
 | Tool 문서 | 핵심 책임 |
 | --- | --- |
-| [destination_search_tool.md](./destination_search_tool.md) | 축제 포함 요청의 DynamoDB festival candidate 조회, S3 Vector 검색, 도시 AND gate, DynamoDB primary detail rehydrate |
+| [destination_search_tool.md](./destination_search_tool.md) | S3 Vector attraction 검색, 후보 정규화, 도시 AND gate |
+| [dynamo_lookup_tool.md](./dynamo_lookup_tool.md) | DynamoDB festival seed/fixed-city lookup, Planner 최종 배치 item detail enrichment |
 | [scoring_tool.md](./scoring_tool.md) | 장소 점수, 도시 점수, score breakdown 계산 |
 
 정본과 세부 문서가 충돌할 경우 `candidate_evidence_agent.md`를 우선한다.
@@ -29,7 +30,7 @@ Intent_Agent.candidate_evidence_input
 → Candidate Evidence runtime orchestration이 입력 schema와 clarification 필요 여부 확인
 → cleaned_raw_query / soft_preference_query 수신
 → query embedding cache 조회 또는 Embedding helper로 query vector 준비
-→ includeFestivals=true이면 DestinationSearchTool.search_festival_city_seeds(city_id optional)
+→ includeFestivals=true이면 DynamoLookupTool.search_festival_city_seeds(city_id optional)
 → destinationId 유무에 따라 festival seed city pool 또는 anchor city festival candidates 확정
 → 축제 조건 clarification failure가 있으면 구조화 실패 반환
 → 검색 가능한 관광 테마별 DestinationSearchTool.search_candidates()
@@ -40,7 +41,6 @@ Intent_Agent.candidate_evidence_input
 → ScoringTool.score_city()
 → 후보 수 sufficiency fallback
 → select_primary_with_theme_quotas()
-→ DestinationSearchTool.rehydrate_places(primary)
 → Candidate Evidence Package를 UnifiedAgentState.candidate_evidence_package에 저장
 ```
 
@@ -49,33 +49,34 @@ Intent_Agent.candidate_evidence_input
 | 단계 | 담당 |
 | --- | --- |
 | query embedding cache 조회 | Embedding helper / 실행 orchestration |
-| festival candidate 조회 | Destination Search Tool |
+| festival candidate 조회 | DynamoLookupTool |
 | S3 Vector 검색 | Destination Search Tool |
 | 도시별 AND gate | Destination Search Tool |
 | place/city scoring | Scoring Tool |
 | primary quota와 title dedup | Candidate selection helper |
-| primary detail rehydrate | Destination Search Tool |
 | 최종 package 구성 | Candidate Evidence runtime orchestration |
+| 최종 배치 item detail enrichment | Planner 단계에서 DynamoLookupTool |
 
 ## 3. 구성 책임
 
 | 구성 요소 | 역할 |
 | --- | --- |
 | Embedding helper | query vector 준비와 cache 조회 |
-| Destination Search Tool | Candidate Evidence 관점의 검색, filter, 상세 조회 facade |
+| Destination Search Tool | Candidate Evidence 관점의 S3 Vector attraction 검색, filter, city gate |
+| DynamoLookupTool | DynamoDB festival seed/fixed-city lookup, Planner 최종 배치 item detail enrichment |
 | Scoring Tool | AWS 호출 없는 deterministic place/city scoring engine |
 | Candidate selection helper | score 이후 primary 후보의 title dedup, theme quota, soft max relaxation |
 | Runtime orchestration | AgentCore/LangGraph 실행에서 입력 검증, 후보 병합, fallback, metric 산정, state 저장 |
 
 ## 4. Tool 경계 요약
 
-| 구분 | Destination Search Tool | Scoring Tool |
-| --- | --- | --- |
-| AWS 호출 | S3 Vector, DynamoDB | 없음 |
-| 입력 | query vector, searchable place theme, city anchor, includeFestivals, travelMonth, 후보 list | 검색된 관광지 후보, searchable place themes, 위치/혼잡도 신호 |
-| 출력 | festival seed city pool 또는 anchor city festival candidates, attraction candidate list, survived city groups, hydrated primary details | place score, city score, score breakdown |
-| 다루는 정보 | festival month/theme/city metadata, vector key, distance, metadata, DynamoDB details | distance, soft distance, metadata completeness, theme coverage |
-| 하지 않는 일 | 점수 계산, primary quota 선택, 일정 생성 | 검색, detail 조회, quota 선택, 일정 생성 |
+| 구분 | Destination Search Tool | DynamoLookupTool | Scoring Tool |
+| --- | --- | --- | --- |
+| AWS 호출 | S3 Vector | DynamoDB | 없음 |
+| 입력 | query vector, searchable place theme, city anchor, allowed city pool | country, travelMonth, theme pool, optional city anchor, final placed item keys | 검색된 관광지 후보, searchable place themes, 위치/혼잡도 신호 |
+| 출력 | attraction candidate list, survived city groups | festival seed city pool 또는 anchor city festival candidates, final item details/warnings | place score, city score, score breakdown |
+| 다루는 정보 | vector key, distance, metadata | festival month/theme/city metadata, DynamoDB details | distance, soft distance, metadata completeness, theme coverage |
+| 하지 않는 일 | DynamoDB 조회, 점수 계산, primary quota 선택, 일정 생성 | S3 Vector 검색, 점수 계산, quota 선택, 일정 생성 | 검색, detail 조회, quota 선택, 일정 생성 |
 
 ## 5. Runtime 통제 조건
 
@@ -97,7 +98,7 @@ Candidate Evidence runtime은 다음 통제 조건을 유지한다.
 5. 같은 `place_id` 후보는 병합한다.
 6. searchable place theme AND gate를 적용한다.
 7. 후보 수 sufficiency fallback을 수행한다.
-8. 최종 primary 관광지 후보만 DynamoDB detail을 rehydrate한다.
+8. Candidate Evidence에서는 DynamoDB detail enrichment를 수행하지 않는다. Planner가 최종 일정에 배치한 attraction item만 이후 `DynamoLookupTool`로 보강한다.
 9. `restaurant` 후보/테이블은 조회하지 않고, 미식 요청은 선택 도시 기준 `foodSearch` 링크 생성 요구로 Planner에 전달한다.
 
 ## 6. Resource Metric 위치
@@ -106,15 +107,15 @@ Candidate Evidence runtime은 다음 통제 조건을 유지한다.
 
 | metric | 주로 관련된 Tool |
 | --- | --- |
-| `festival_seed_query_count` | Destination Search Tool |
-| `festival_candidate_count` | Destination Search Tool |
-| `festival_seed_city_count` | Destination Search Tool |
+| `festival_seed_query_count` | DynamoLookupTool |
+| `festival_candidate_count` | DynamoLookupTool |
+| `festival_seed_city_count` | DynamoLookupTool |
 | `s3_query_count` | Destination Search Tool |
 | `retrieved_candidates` | Destination Search Tool |
 | `unique_candidates` | 후보 병합 orchestration |
 | `surviving_cities` | Destination Search Tool |
 | `selected_city_candidates` | fallback 이후 선택 도시 후보 수 |
-| `ddb_get_item_count` | Destination Search Tool 및 방문자 통계 조회 |
+| `ddb_get_item_count` | DynamoLookupTool 및 방문자 통계 조회 |
 | `score_breakdown` | Scoring Tool |
 | latency / peak RSS | 전체 runtime 실행 |
 
@@ -122,6 +123,7 @@ Candidate Evidence runtime은 다음 통제 조건을 유지한다.
 
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 | --- | --- | --- | --- |
+| v0.9 | 2026-06-14 | llm | `DestinationSearchTool`을 S3 Vector attraction 검색으로 한정하고 DynamoDB festival seed/detail 조회를 `DynamoLookupTool`로 분리 |
 | v0.8 | 2026-06-13 | llm | `restaurant` 조회를 runtime 범위에서 제거하고, 미식 테마는 검색 가능한 관광 테마가 아닌 선택 도시 기반 외부 맛집 링크 요구로 분리 |
 | v0.7 | 2026-06-13 | llm | `includeFestivals=true`를 city discovery seed와 anchored fixed-city festival lookup으로 분기하도록 runtime 흐름 정리 |
 | v0.6 | 2026-06-13 | llm | Candidate Evidence runtime의 시작점을 `Intent_Agent.candidate_evidence_input`으로 고정하고 비런타임 설명을 제거 |
@@ -129,4 +131,4 @@ Candidate Evidence runtime은 다음 통제 조건을 유지한다.
 | v0.4 | 2026-06-13 | llm | 축제 포함 요청에서 DynamoDB festival city seed를 S3 Vector 장소 검색보다 먼저 수행하는 runtime branch와 resource metric을 추가 |
 | v0.3 | 2026-06-13 | llm | 외부 파일 경로와 실행 명령 직접 참조를 제거하고 tool 책임 계약 중심으로 정리 |
 | v0.2 | 2026-06-13 | llm | runtime retrieval 세부를 Destination Search Tool과 Scoring Tool 문서로 분리하고 본 문서는 도구 개요로 축소 |
-| v0.1 | 2026-06-13 | llm | S3 Vector runtime search, DynamoDB primary-only detail rehydration, resource metric을 Candidate Evidence 정본 부록으로 분리 |
+| v0.1 | 2026-06-13 | llm | S3 Vector runtime search, 초기 DynamoDB detail 조회 논의, resource metric을 Candidate Evidence 정본 부록으로 분리 |

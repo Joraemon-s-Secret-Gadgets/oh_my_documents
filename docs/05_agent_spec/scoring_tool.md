@@ -39,7 +39,7 @@
 | 비범위 | 담당 |
 | --- | --- |
 | S3 Vector 검색 | Destination Search Tool |
-| DynamoDB detail rehydrate | Destination Search Tool |
+| 최종 item detail enrichment | DynamoLookupTool |
 | 월별 방문자 통계 조회 | 실행 orchestration |
 | primary theme quota | Candidate selection helper |
 | 후보 수 sufficiency fallback | 실행 orchestration |
