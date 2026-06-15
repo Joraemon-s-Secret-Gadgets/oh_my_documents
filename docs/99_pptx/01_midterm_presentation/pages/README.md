@@ -23,9 +23,11 @@
 | 13 | `13_neptune_troubleshooting.md` | Neptune 도입 판단 |
 | 14 | `14_competitive_edge.md` | 차별점 |
 | 15 | `15_business_model.md` | 비즈니스 모델 |
-| 16 | `16_collaboration.md` | 협업 |
-| 17 | `17_progress.md` | 진행 상황 |
-| 18 | `18_expansion_tasks.md` | 확장 방향 |
+| 16 | `17_progress.md` | 진행 경과 · 협업 (진행 상황 + 협업 통합) |
+| 17 | `18_expansion_tasks.md` | 확장 방향 |
+| 18 | `19_production_roadmap.md` | Production 개발 계획 (확장 방향과 출처 사이) |
+
+> `16_collaboration.md`는 `17_progress.md`로 통합되어 별도 슬라이드로 쓰지 않는다.
 
 ## 사용 규칙
 
