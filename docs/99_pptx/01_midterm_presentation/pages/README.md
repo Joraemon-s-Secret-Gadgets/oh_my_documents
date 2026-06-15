@@ -23,7 +23,9 @@
 | 13 | `13_neptune_troubleshooting.md` | Neptune 도입 판단 |
 | 14 | `14_competitive_edge.md` | 차별점 |
 | 15 | `15_business_model.md` | 비즈니스 모델 |
-| 16 | `16_expansion_tasks.md` | 확장 방향 |
+| 16 | `16_collaboration.md` | 협업 |
+| 17 | `17_progress.md` | 진행 상황 |
+| 18 | `18_expansion_tasks.md` | 확장 방향 |
 
 ## 사용 규칙
 
