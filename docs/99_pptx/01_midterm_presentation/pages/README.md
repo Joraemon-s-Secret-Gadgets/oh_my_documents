@@ -2,9 +2,15 @@
 
 > 기준 문서: `../01_midterm_presentation.md`
 > 상태: Slide Content
-> 생성 기준: 2026-06-13 슬라이드 콘텐츠 변환
+> 생성 기준: 2026-06-15 현재 PPTX 동기화
 
-`pages/`의 각 문서는 슬라이드 한 장을 제작하기 위한 작업 단위다. 화면 문구와 레이아웃을 먼저 두고, 상세 설명은 발표자 노트로 분리한다.
+`pages/`의 각 문서는 슬라이드 한 장을 제작하기 위한 작업 단위다. 현재 기준은 `../artifacts/pptx/lovv_midterm_focus_current.pptx`의 14장 흐름이며, 화면 문구는 대표 문서와 PPTX를 우선한다.
+
+## PPTX 산출물
+
+- 최종 기준 파일: `../artifacts/pptx/lovv_midterm_focus_current.pptx`
+- 2026-06-15 정리 이전에 생성된 파생 PPTX: `../bak/2026-06-15_pptx_consolidation/`
+- `artifacts/pptx/`에는 발표에 사용할 기준 PPTX 1개만 남긴다.
 
 | # | 파일 | 슬라이드 |
 | --- | --- | --- |
