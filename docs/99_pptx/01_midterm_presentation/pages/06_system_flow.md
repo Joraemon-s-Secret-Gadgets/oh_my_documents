@@ -1,4 +1,4 @@
-# 슬라이드 5 — 시스템 흐름
+# 슬라이드 6 — 시스템 흐름
 
 > 원본 위치: `../01_midterm_presentation.md`
 > 상태: Slide Content
@@ -6,20 +6,23 @@
 
 ## 화면 문구
 
-**책임 경계로 나눕니다**
+**추천과 검증을 분리합니다**
 
 | 계층 | 역할 |
 | --- | --- |
-| Client Web | 입력, 지도, 결과 표시 |
-| Backend API / SAM | 인증, 검증, 추천 실행 |
-| Agent Runtime | 검색, 검증, 일정 생성 |
-| Retrieval & Data | 근거 후보, 정규 상세, 캐시 |
-| External APIs | 지도, 날씨, 딥링크 |
+| Client Web | 입력과 결과 화면 |
+| Backend API / SAM | 인증과 실행 경계 |
+| Agent Runtime | 추천·검증·일정 |
+| Retrieval & Data | 근거 데이터 |
+| External APIs | 지도·날씨·링크 |
 
 ## 발표자 노트
 
-- Client, Backend, Agent, Data, External API의 책임을 분리한다.
-- 세부 Agent 동작은 뒤 장에서 확대한다.
+- 이 장은 사용자가 누르는 순서가 아니라 시스템 책임 경계를 보여준다.
+- Client는 사용자의 조건 입력과 결과 화면을 맡고, Backend는 인증·요청 검증·추천 실행 경계를 맡는다.
+- Agent Runtime은 후보 검색, 축제 검증, 일정 생성을 수행하지만 원본 데이터를 마음대로 만들지 않는다.
+- Retrieval & Data 계층은 목적지·축제·월별 기상 경향·캐시처럼 추천 근거가 되는 데이터를 제공한다.
+- External APIs는 지도, 현재 날씨 표시, 숙소·맛집 탐색 링크처럼 결과 화면을 보강하는 역할로 제한한다.
 
 ## 제작 체크
 

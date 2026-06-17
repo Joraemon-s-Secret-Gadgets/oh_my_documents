@@ -1,4 +1,4 @@
-# 슬라이드 4 — 핵심 문제와 Lovv 기능
+# 슬라이드 5 — 핵심 문제와 Lovv 기능
 
 > 원본 위치: `../01_midterm_presentation.md`
 > 상태: Slide Content
