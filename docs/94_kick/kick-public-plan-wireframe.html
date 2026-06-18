@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>로브 · Kick 공개 일정 와이어프레임</title>
+<style>
+  :root{
+    --cream:#FBF1E8;--cream2:#FDF6EF;--ink:#2B2723;--muted:#8A7F75;
+    --orange:#E86F2C;--orange-dark:#C9581E;--orange-soft:#FBE7D8;
+    --line:#E7D9CC;--card:#FFFFFF;--green:#3E8E7E;--green-soft:#E2F1ED;
+    --purple:#7A56A8;--purple-soft:#EDE4F5;--blue:#3E7387;--blue-soft:#E7F0F3;
+    --shadow:0 14px 40px rgba(83,58,36,.09);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;line-height:1.5}
+  button{font:inherit}
+  .page{max-width:1220px;margin:0 auto;padding:32px 24px 80px}
+  .doc-head{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:20px}
+  .doc-head h1{font-size:25px;margin:0 0 6px}
+  .doc-head p{font-size:13px;color:var(--muted);margin:0;max-width:760px}
+  .version{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--orange);background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 11px;white-space:nowrap}
+  .principle{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+  .principle div{background:var(--cream2);border:1px solid var(--line);border-radius:12px;padding:11px 13px;font-size:12px;color:#62574e}
+  .principle b{display:block;color:var(--ink);font-size:12.5px;margin-bottom:2px}
+
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+  .tab{border:1px solid var(--line);background:#fff;color:#6e635a;border-radius:999px;padding:8px 14px;font-size:12px;font-weight:800;cursor:pointer}
+  .tab[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+  .screen{display:none;background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
+  .screen.active{display:block}
+  .appbar{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--line);background:#fff}
+  .brand{font-family:Georgia,"Noto Serif KR",serif;font-size:22px;font-weight:800;letter-spacing:-.04em}
+  .nav{display:flex;gap:22px;font-size:11px;color:#6c6259}
+  .nav b{color:var(--orange)}
+  .user{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--orange-soft);color:var(--orange);font-weight:900;font-size:11px}
+  .content{padding:28px}
+  .eyebrow{font-size:10px;font-weight:900;letter-spacing:.16em;color:var(--orange);margin-bottom:5px}
+  .title-row{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:16px}
+  .title-row h2{font-size:25px;line-height:1.25;margin:0 0 4px}
+  .title-row p{font-size:12px;color:var(--muted);margin:0}
+  .source{font-size:10.5px;color:#776c63;border:1px solid var(--line);background:var(--cream2);border-radius:8px;padding:6px 9px;white-space:nowrap}
+
+  .profile-strip{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--cream2);border:1px solid var(--line);border-radius:13px;padding:11px 13px;margin-bottom:18px}
+  .profile-strip strong{font-size:11px;margin-right:2px}
+  .chip{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:4px 9px;font-size:10.5px;font-weight:700;background:#fff;border:1px solid var(--line)}
+  .chip.match{background:var(--orange-soft);border-color:#F0C5A8;color:#9D4B1E}
+  .chip.theme{background:var(--green-soft);border-color:#C6E3DB;color:#337466}
+  .chip.info{background:var(--blue-soft);border-color:#CADFE6;color:var(--blue)}
+  .privacy{margin-left:auto;font-size:10px;color:var(--muted)}
+
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .plan-card{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;display:flex;flex-direction:column;min-width:0}
+  .plan-card.hero{border-color:#F1B98F;box-shadow:0 0 0 2px #FBE7D8 inset}
+  .thumb{height:112px;padding:12px;display:flex;align-items:flex-start;justify-content:space-between;background:linear-gradient(135deg,#DED0C0,#B7A18D);position:relative}
+  .thumb.coast{background:linear-gradient(135deg,#BCD8DA,#7EA8AB)}
+  .thumb.oldtown{background:linear-gradient(135deg,#D8C9B4,#A68C72)}
+  .match-level{font-size:10px;font-weight:900;color:#fff;background:rgba(43,39,35,.78);padding:4px 8px;border-radius:999px}
+  .rank{font-size:10px;font-weight:900;color:#fff;background:var(--orange);padding:4px 8px;border-radius:999px}
+  .card-body{padding:14px;display:flex;flex-direction:column;gap:10px;flex:1}
+  .who{font-size:10.5px;color:#6f655d;margin:0}
+  .card-body h3{font-size:17px;line-height:1.3;margin:2px 0 0}
+  .itinerary{font-size:11px;color:var(--muted);margin:2px 0 0}
+  .why{background:var(--orange-soft);border-radius:10px;padding:9px 10px}
+  .why b{display:block;font-size:10px;color:var(--orange-dark);margin-bottom:4px}
+  .why-list{display:flex;gap:5px;flex-wrap:wrap}
+  .why-list span{font-size:9.5px;font-weight:800;background:#fff;color:#87431e;border-radius:6px;padding:3px 6px}
+  .proof{display:flex;gap:9px;flex-wrap:wrap;font-size:10px;color:#776c63;margin-top:auto}
+  .proof strong{color:var(--ink)}
+  .actions{display:grid;grid-template-columns:1fr 1.25fr;gap:7px}
+  .btn{border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 10px;border-radius:9px;font-size:11px;font-weight:900;cursor:pointer}
+  .btn.primary{background:var(--orange);border-color:var(--orange);color:#fff}
+  .btn.primary:hover{background:var(--orange-dark)}
+  .btn.full{width:100%}
+  .fallback{margin-top:14px;padding:11px 13px;border:1px dashed var(--line);border-radius:11px;background:var(--cream2);font-size:11px;color:#675c53}
+  .fallback b{color:var(--ink)}
+
+  .detail-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:18px}
+  .detail-hero{height:190px;border-radius:16px;background:linear-gradient(135deg,#D8C9B4,#9A7D64);padding:18px;display:flex;flex-direction:column;justify-content:flex-end;color:#fff;position:relative;overflow:hidden}
+  .detail-hero:after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,rgba(28,22,18,.72))}
+  .detail-hero>*{position:relative;z-index:1}
+  .detail-hero h2{font-size:27px;margin:4px 0}
+  .detail-hero p{font-size:11px;margin:0;color:#f7eee7}
+  .ribbon{position:absolute;top:15px;left:15px;z-index:2;background:var(--orange);font-size:10px;font-weight:900;padding:5px 9px;border-radius:999px}
+  .match-panel{margin-top:12px;background:var(--orange-soft);border:1px solid #F1C7AA;border-radius:14px;padding:14px}
+  .match-panel h3{font-size:13px;margin:0 0 9px}
+  .match-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+  .match-box{background:#fff;border-radius:9px;padding:8px;text-align:center}
+  .match-box small{display:block;font-size:9px;color:var(--muted)}
+  .match-box b{font-size:11px;color:#8F451E}
+  .timeline{margin-top:12px;border:1px solid var(--line);border-radius:14px;padding:14px}
+  .timeline h3{font-size:13px;margin:0 0 10px}
+  .stop{display:grid;grid-template-columns:22px 1fr;gap:9px;margin-bottom:10px}
+  .stop:last-child{margin-bottom:0}
+  .num{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--orange);color:#fff;font-size:10px;font-weight:900}
+  .stop b{display:block;font-size:11.5px}
+  .stop span{font-size:10px;color:var(--muted)}
+  .side-panel{border:1px solid var(--line);border-radius:15px;padding:15px;background:var(--cream2);align-self:start;position:sticky;top:14px}
+  .side-panel h3{font-size:14px;margin:0 0 4px}
+  .side-panel>p{font-size:10.5px;color:var(--muted);margin:0 0 12px}
+  .proof-box{background:#fff;border:1px solid var(--line);border-radius:11px;padding:11px;margin-bottom:10px}
+  .proof-box b{display:block;font-size:11px;margin-bottom:5px}
+  .proof-box p{font-size:10px;color:#665c54;margin:0}
+  .warning{font-size:9.5px;color:#8a7f75;margin:8px 0 0}
+
+  .clone-wrap{max-width:980px;margin:0 auto}
+  .success{display:flex;gap:12px;align-items:center;background:var(--green-soft);border:1px solid #BEDFD6;border-radius:14px;padding:13px 15px;margin-bottom:16px}
+  .check{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--green);color:#fff;font-weight:900;flex:none}
+  .success h2{font-size:17px;margin:0 0 2px}
+  .success p{font-size:10.5px;color:#4e756d;margin:0}
+  .clone-card{border:1px solid var(--line);border-radius:16px;background:#fff;padding:18px}
+  .clone-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;border-bottom:1px solid var(--line);padding-bottom:13px;margin-bottom:14px}
+  .clone-head h3{font-size:18px;margin:0 0 4px}
+  .clone-head p{font-size:10.5px;color:var(--muted);margin:0}
+  .copy-badge{font-size:10px;font-weight:900;background:var(--purple-soft);color:var(--purple);border-radius:999px;padding:5px 9px;white-space:nowrap}
+  .ai{background:var(--cream2);border:1px solid var(--line);border-radius:13px;padding:14px;margin-bottom:13px}
+  .ai h4{font-size:13px;margin:0 0 3px}
+  .ai p{font-size:10.5px;color:var(--muted);margin:0 0 10px}
+  .quick{display:flex;gap:7px;flex-wrap:wrap}
+  .quick button{border:1px solid #E3C8B3;background:#fff;border-radius:9px;padding:8px 10px;font-size:10.5px;font-weight:800;color:#75472b;cursor:pointer}
+  .quick button.selected{background:var(--orange-soft);border-color:var(--orange);color:var(--orange-dark)}
+  .diff{display:grid;grid-template-columns:1fr 28px 1fr;gap:9px;align-items:center;margin:13px 0}
+  .diff-box{border:1px solid var(--line);border-radius:11px;padding:11px}
+  .diff-box small{font-size:9px;color:var(--muted)}
+  .diff-box b{display:block;font-size:11.5px;margin-top:3px}
+  .arrow{text-align:center;color:var(--orange);font-weight:900}
+  .clone-actions{display:grid;grid-template-columns:1fr 1.5fr;gap:8px}
+  .chat-layout{display:grid;grid-template-columns:1fr 300px;gap:14px;align-items:start}
+  .chat-shell{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}
+  .context-card{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 14px;background:var(--purple-soft);border-bottom:1px solid #D8C7E9}
+  .context-card small{display:block;font-size:9px;font-weight:900;letter-spacing:.08em;color:var(--purple);margin-bottom:2px}
+  .context-card b{display:block;font-size:12px}
+  .context-card span{font-size:9.5px;color:#77658c}
+  .chat-stream{min-height:258px;padding:15px;background:#FCFAF8}
+  .message{max-width:82%;border-radius:13px;padding:10px 12px;margin-bottom:9px;font-size:11px}
+  .message.bot{background:#fff;border:1px solid var(--line);border-top-left-radius:4px}
+  .message.user-msg{margin-left:auto;background:var(--orange);color:#fff;border-top-right-radius:4px}
+  .message b{display:block;font-size:10px;margin-bottom:3px}
+  .chat-quick{display:flex;gap:6px;flex-wrap:wrap;margin:3px 0 11px}
+  .chat-quick button{border:1px solid #E3C8B3;background:#fff;border-radius:999px;padding:7px 9px;font-size:10px;font-weight:800;color:#75472b;cursor:pointer}
+  .chat-quick button.selected{background:var(--orange-soft);border-color:var(--orange);color:var(--orange-dark)}
+  .chat-input{display:grid;grid-template-columns:1fr auto;gap:7px;padding:11px;border-top:1px solid var(--line);background:#fff}
+  .chat-input input{min-width:0;border:1px solid var(--line);border-radius:10px;padding:10px 11px;font-size:11px;color:var(--ink);outline:none}
+  .chat-input input:focus{border-color:var(--orange)}
+  .chat-input button{border:0;border-radius:10px;background:var(--orange);color:#fff;font-size:11px;font-weight:900;padding:0 14px;cursor:pointer}
+  .condition-preview{border:1px solid var(--line);border-radius:15px;padding:14px;background:var(--cream2);position:sticky;top:14px}
+  .condition-preview h3{font-size:13px;margin:0 0 3px}
+  .condition-preview>p{font-size:9.5px;color:var(--muted);margin:0 0 11px}
+  .condition-row{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-bottom:7px}
+  .condition-row small{display:block;font-size:9px;color:var(--muted)}
+  .condition-values{display:flex;align-items:center;gap:6px;margin-top:3px;font-size:10.5px}
+  .condition-values s{color:#9a8f86}
+  .condition-values b{color:var(--orange-dark)}
+  .preview-note{font-size:9px;color:#7d7167;margin:8px 0 10px}
+  .preview-actions{display:grid;gap:7px}
+
+  .annotation{margin-top:15px;display:flex;gap:9px;background:var(--cream2);border:1px dashed var(--line);border-radius:12px;padding:11px 13px;font-size:11px;color:#62574e}
+  .annotation b{color:var(--ink)}
+  .legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px;padding:12px 14px;background:var(--cream2);border:1px solid var(--line);border-radius:12px;font-size:10.5px;color:#62574e}
+  .legend span{display:flex;align-items:center;gap:5px}
+  .dot{width:9px;height:9px;border-radius:3px;display:inline-block}
+  @media(max-width:900px){
+    .principle,.cards{grid-template-columns:1fr}.detail-grid,.chat-layout{grid-template-columns:1fr}.side-panel,.condition-preview{position:static}.match-grid{grid-template-columns:repeat(2,1fr)}.nav{display:none}
+  }
+  @media(max-width:560px){.page{padding:20px 12px 50px}.content{padding:18px}.doc-head{display:block}.version{display:inline-block;margin-top:10px}.title-row{align-items:flex-start;flex-direction:column}.privacy{margin-left:0}.actions,.clone-actions{grid-template-columns:1fr}.diff{grid-template-columns:1fr}.arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="doc-head">
+    <div>
+      <h1>로브 · Kick 공개 일정 와이어프레임</h1>
+      <p>현재 온보딩 값으로 유사 취향 근거를 보여주고, 공개 일정을 챗봇으로 가져와 빠른 칩·자연어로 조정하되 조건 미리보기는 계속 유지하는 흐름.</p>
+    </div>
+    <span class="version">WIREFRAME · v0.2</span>
+  </header>
+
+  <section class="principle" aria-label="와이어프레임 원칙">
+    <div><b>① 근거를 직접 표시</b>유사도 숫자 대신 실제 일치한 온보딩 조건을 보여준다.</div>
+    <div><b>② 선택을 증명</b>조회보다 저장·일정 시작 수와 일정 장소의 출처·운영 정보 확인 상태를 우선한다.</div>
+    <div><b>③ 챗봇에서 부분 수정</b>공개 일정을 컨텍스트로 유지하고 대화로 달라진 조건만 바꾼다.</div>
+  </section>
+
+  <div class="tabs" role="tablist" aria-label="화면 상태">
+    <button class="tab" role="tab" aria-selected="true" data-screen="list">1. 공개 일정 목록</button>
+    <button class="tab" role="tab" aria-selected="false" data-screen="detail">2. 일정 상세·근거</button>
+    <button class="tab" role="tab" aria-selected="false" data-screen="clone">3. 챗봇 조정·조건 미리보기</button>
+  </div>
+
+  <section id="list" class="screen active" role="tabpanel">
+    <div class="appbar"><div class="brand">Lovv</div><nav class="nav"><span>홈</span><b>공개 일정</b><span>지도</span><span>AI 채팅</span><span>마이페이지</span></nav><div class="user">수아</div></div>
+    <div class="content">
+      <div class="eyebrow">FOR YOUR TASTE</div>
+      <div class="title-row"><div><h2>수아 님과 취향이 비슷한 사람들이 고른 일정</h2><p>연령대·성별·선호 국가·선택 테마를 기준으로 찾았어요.</p></div><span class="source">온보딩 기준 · 수정 가능</span></div>
+      <div class="profile-strip">
+        <strong>내 온보딩</strong><span class="chip match">20대</span><span class="chip match">여성</span><span class="chip theme">일본 선호</span><span class="chip theme">온천·휴양</span><span class="chip theme">미식·노포</span><span class="privacy">성별·연령대는 공개 동의 범위에서만 비교</span>
+      </div>
+      <div class="cards">
+        <article class="plan-card hero">
+          <div class="thumb"><span class="match-level">A · 4개 조건 일치</span><span class="rank">가장 비슷해요</span></div>
+          <div class="card-body">
+            <div><p class="who">20대 · 여성 · 일본 선호</p><h3>유후인 온천 골목 2박 3일</h3><p class="itinerary">10월 · 온천·휴양 + 미식·노포 · 여유로운 일정</p></div>
+            <div class="why"><b>나와 맞는 이유</b><div class="why-list"><span>같은 연령대</span><span>같은 성별</span><span>같은 국가</span><span>테마 2개 일치</span></div></div>
+            <div class="proof"><span>일정 장소 9곳 중 <strong>8곳 출처·운영 정보 확인</strong></span><span><strong>42명</strong> 저장</span><span><strong>18명</strong> 일정 시작</span></div>
+            <div class="actions"><button class="btn to-detail">일정 보기</button><button class="btn primary to-clone">이 일정으로 시작</button></div>
+          </div>
+        </article>
+        <article class="plan-card">
+          <div class="thumb coast"><span class="match-level">B · 취향 유사</span></div>
+          <div class="card-body">
+            <div><p class="who">30대 · 여성 · 일본 선호</p><h3>마쓰야마 온천과 노포 2박 3일</h3><p class="itinerary">11월 · 온천·휴양 + 미식·노포</p></div>
+            <div class="why"><b>나와 맞는 이유</b><div class="why-list"><span>같은 성별</span><span>같은 국가</span><span>테마 2개 일치</span></div></div>
+            <div class="proof"><span>일정 장소 8곳 중 <strong>7곳 출처·운영 정보 확인</strong></span><span><strong>31명</strong> 저장</span></div>
+            <div class="actions"><button class="btn to-detail">일정 보기</button><button class="btn primary to-clone">이 일정으로 시작</button></div>
+          </div>
+        </article>
+        <article class="plan-card">
+          <div class="thumb oldtown"><span class="match-level">C · 테마 유사</span></div>
+          <div class="card-body">
+            <div><p class="who">같은 테마를 고른 사용자에게 인기</p><h3>다케오 온천 하루 산책</h3><p class="itinerary">추천 적기 10~11월 · 온천·휴양</p></div>
+            <div class="why"><b>확인 가능한 근거만 표시</b><div class="why-list"><span>테마 1개 일치</span></div></div>
+            <div class="proof"><span>일정 장소 5곳 중 <strong>5곳 출처·운영 정보 확인</strong></span><span><strong>16명</strong> 저장</span></div>
+            <div class="actions"><button class="btn to-detail">일정 보기</button><button class="btn primary to-clone">이 일정으로 시작</button></div>
+          </div>
+        </article>
+      </div>
+      <div class="fallback"><b>매칭 부족 시.</b> 성별 → 연령대 순으로 보조 조건을 완화한다. 선택 테마도 일치하지 않으면 "나와 비슷한" 표현을 쓰지 않고 일반 추천 또는 <b>Lovv 큐레이션</b>으로 표시한다.</div>
+      <div class="annotation"><span>📌</span><div><b>Kick 지점.</b> 사용자는 카드에서 "나와 왜 비슷한지"와 "다른 사람이 실제로 선택했는지"를 동시에 확인하고, 상세 탐색 없이도 <b>이 일정으로 시작</b>할 수 있다.</div></div>
+    </div>
+  </section>
+
+  <section id="detail" class="screen" role="tabpanel">
+    <div class="appbar"><div class="brand">Lovv</div><nav class="nav"><span>홈</span><b>공개 일정</b><span>지도</span><span>AI 채팅</span><span>마이페이지</span></nav><div class="user">수아</div></div>
+    <div class="content">
+      <div class="title-row"><div><div class="eyebrow">PUBLIC PLAN DETAIL</div><h2>공개 일정 상세</h2><p>원본 일정의 구성과 나에게 맞는 근거를 확인합니다.</p></div><button class="btn back-list">← 목록으로</button></div>
+      <div class="detail-grid">
+        <div>
+          <div class="detail-hero"><span class="ribbon">A · 4개 조건 일치</span><h2>유후인 온천 골목 2박 3일</h2><p>10월 · 온천·휴양 + 미식·노포 · 일정 장소 9곳 중 8곳 출처·운영 정보 확인</p></div>
+          <section class="match-panel"><h3>수아 님과 맞는 이유</h3><div class="match-grid"><div class="match-box"><small>연령대</small><b>20대 일치</b></div><div class="match-box"><small>성별</small><b>여성 일치</b></div><div class="match-box"><small>선호 국가</small><b>일본 일치</b></div><div class="match-box"><small>선택 테마</small><b>2개 일치</b></div></div></section>
+          <section class="timeline"><h3>일정 미리보기</h3><div class="stop"><span class="num">1</span><div><b>1일차 · 유후인 골목과 긴린코</b><span>긴린코 → 유노츠보 거리 → 로컬 디저트</span></div></div><div class="stop"><span class="num">2</span><div><b>2일차 · 온천과 노포</b><span>온천 산책 → 지역 식당 → 료칸 휴식</span></div></div><div class="stop"><span class="num">3</span><div><b>3일차 · 느린 아침</b><span>아침 시장 → 카페 → 역 이동</span></div></div></section>
+        </div>
+        <aside class="side-panel"><h3>이 일정으로 시작할까요?</h3><p>원본은 그대로 두고 수아 님 계정에 사본을 만듭니다.</p><div class="proof-box"><b>선택 증거</b><p>42명 저장 · 18명 일정 시작<br>마지막 출처·운영 정보 확인 2026.06.17</p></div><div class="proof-box"><b>공개 범위</b><p>연령대·성별은 작성자가 공개에 동의한 범위만 표시됩니다. 실제 방문 인증은 아직 적용되지 않았습니다.</p></div><button class="btn primary full to-clone">이 일정으로 시작</button><button class="btn full back-list" style="margin-top:7px">다른 일정 보기</button><p class="warning">복제 후 월·동선·장소를 자유롭게 바꿀 수 있어요.</p></aside>
+      </div>
+      <div class="annotation"><span>🔎</span><div><b>상세의 역할.</b> "유사도 92%" 같은 불투명한 점수 대신 네 온보딩 항목의 실제 일치 여부를 보여준다. 일정 월·기간·속도는 <b>일정 정보</b>일 뿐 유사성 근거가 아니다.</div></div>
+    </div>
+  </section>
+
+  <section id="clone" class="screen" role="tabpanel">
+    <div class="appbar"><div class="brand">Lovv</div><nav class="nav"><span>홈</span><span>공개 일정</span><span>지도</span><b>AI 조정</b><span>마이페이지</span></nav><div class="user">수아</div></div>
+    <div class="content">
+      <div class="clone-wrap">
+        <div class="success"><span class="check">✓</span><div><h2>공개 일정을 AI 챗봇으로 가져왔어요</h2><p>공개 원본은 그대로 두고, 지금부터 수아 님의 사본만 대화로 조정합니다.</p></div></div>
+        <div class="chat-layout">
+          <section class="chat-shell" aria-label="AI 일정 조정 채팅">
+            <div class="context-card"><div><small>가져온 공개 일정</small><b>유후인 온천 골목 2박 3일</b><span>10월 · 온천·휴양 + 미식·노포 · 원본 일정 18번째 복제</span></div><span class="copy-badge">내 사본</span></div>
+            <div class="chat-stream">
+              <div class="message bot"><b>Lovv AI</b>이 일정을 수아 님에게 어떻게 맞춰드릴까요? 일정 뼈대는 유지하고 말씀하신 부분만 바꿀게요.</div>
+              <div class="chat-quick"><button data-change="month">11월로 변경</button><button data-change="walk">조금 덜 걷게</button><button data-change="cafe">카페를 더 많이</button><button data-change="none">그대로 저장</button></div>
+              <div class="message user-msg" id="chatUserText" hidden></div>
+              <div class="message bot" id="chatBotText" hidden><b>Lovv AI</b><span></span></div>
+            </div>
+            <div class="chat-input"><input id="chatInput" type="text" placeholder="예: 온천은 유지하고 둘째 날 이동을 줄여줘" aria-label="일정 조정 요청"><button id="sendChat" type="button">보내기</button></div>
+          </section>
+          <aside class="condition-preview">
+            <h3>조건 미리보기</h3><p>대화 중에도 원본과 조정 조건을 고정해서 보여줍니다.</p>
+            <div class="condition-row"><small>여행 월</small><div class="condition-values"><s>10월</s><span>→</span><b id="previewMonth">변경 없음</b></div></div>
+            <div class="condition-row"><small>이동 강도</small><div class="condition-values"><s>도보 중심</s><span>→</span><b id="previewWalk">변경 없음</b></div></div>
+            <div class="condition-row"><small>카페</small><div class="condition-values"><s>1곳</s><span>→</span><b id="previewCafe">변경 없음</b></div></div>
+            <div class="condition-row"><small>유지 조건</small><div class="condition-values"><b>온천·휴양 · 미식·노포 · 2박 3일</b></div></div>
+            <p class="preview-note" id="previewNote">변경 조건을 선택하거나 채팅으로 입력해 주세요.</p>
+            <div class="preview-actions"><button class="btn primary" id="applyButton">변경 적용</button><button class="btn" id="resetButton">원본으로 되돌리기</button><button class="btn back-list">다른 공개 일정 보기</button></div>
+          </aside>
+        </div>
+        <div class="annotation"><span>✨</span><div><b>Kick 완성.</b> 공개 일정 카드를 챗봇 컨텍스트로 유지하고, 빠른 칩 또는 자연어로 필요한 차이만 말한다. 우측 조건 미리보기에서 변경 전후를 확인한 뒤 적용하거나 원본으로 되돌린다. 핵심 계측은 <code>public_plan_clone → cloned_plan_adjust → cloned_plan_save</code>.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="legend"><span><i class="dot" style="background:var(--orange-soft)"></i><b>유사 취향</b> 실제 일치 조건</span><span><i class="dot" style="background:var(--green-soft)"></i><b>품질</b> 출처·운영 정보 확인</span><span><i class="dot" style="background:var(--purple-soft)"></i><b>사본</b> 원본과 분리</span><span><i class="dot" style="background:var(--blue-soft)"></i><b>일정 정보</b> 유사성 점수와 분리</span></div>
+</main>
+<script>
+  const tabs=[...document.querySelectorAll('.tab')];
+  const screens=[...document.querySelectorAll('.screen')];
+  function show(id){
+    screens.forEach(screen=>screen.classList.toggle('active',screen.id===id));
+    tabs.forEach(tab=>tab.setAttribute('aria-selected',String(tab.dataset.screen===id)));
+    document.querySelector('.tabs').scrollIntoView({block:'nearest'});
+  }
+  tabs.forEach(tab=>tab.addEventListener('click',()=>show(tab.dataset.screen)));
+  document.querySelectorAll('.to-detail').forEach(button=>button.addEventListener('click',()=>show('detail')));
+  document.querySelectorAll('.to-clone').forEach(button=>button.addEventListener('click',()=>show('clone')));
+  document.querySelectorAll('.back-list').forEach(button=>button.addEventListener('click',()=>show('list')));
+  const adjustments={
+    month:{user:'11월로 변경해줘',bot:'여행 월을 11월로 바꾸고 계절 정보를 다시 확인할게요.',field:'previewMonth',value:'11월'},
+    walk:{user:'조금 덜 걷게 바꿔줘',bot:'둘째 날 도보 구간을 줄이고 가까운 장소끼리 다시 묶었어요.',field:'previewWalk',value:'이동 짧게'},
+    cafe:{user:'카페를 더 많이 넣어줘',bot:'일정 뼈대는 유지하고 카페를 2곳 더 추가했어요.',field:'previewCafe',value:'3곳'},
+    none:{user:'그대로 저장할게',bot:'변경 없이 수아 님의 일정으로 저장할 준비가 됐어요.',field:null,value:null}
+  };
+  function showReply(userText,botText){
+    const user=document.getElementById('chatUserText');
+    const bot=document.getElementById('chatBotText');
+    user.hidden=false;user.textContent=userText;
+    bot.hidden=false;bot.querySelector('span').textContent=botText;
+    document.getElementById('previewNote').textContent='변경안을 확인한 뒤 적용하거나 다시 조정할 수 있어요.';
+  }
+  document.querySelectorAll('.chat-quick button').forEach(button=>button.addEventListener('click',()=>{
+    document.querySelectorAll('.chat-quick button').forEach(item=>item.classList.remove('selected'));
+    button.classList.add('selected');
+    const change=adjustments[button.dataset.change];
+    if(change.field)document.getElementById(change.field).textContent=change.value;
+    showReply(change.user,change.bot);
+  }));
+  document.getElementById('sendChat').addEventListener('click',()=>{
+    const input=document.getElementById('chatInput');
+    const value=input.value.trim();
+    if(!value)return;
+    document.getElementById('previewWalk').textContent='대화 조건 반영';
+    showReply(value,'요청하신 조건만 반영한 변경안을 만들었어요. 오른쪽 미리보기에서 확인해 주세요.');
+    input.value='';
+  });
+  document.getElementById('chatInput').addEventListener('keydown',event=>{if(event.key==='Enter')document.getElementById('sendChat').click()});
+  document.getElementById('applyButton').addEventListener('click',event=>{
+    event.currentTarget.textContent='✓ 변경 적용됨 · 내 일정에 저장';
+    event.currentTarget.style.background='#3E8E7E';event.currentTarget.style.borderColor='#3E8E7E';
+  });
+  document.getElementById('resetButton').addEventListener('click',()=>{
+    document.getElementById('previewMonth').textContent='변경 없음';
+    document.getElementById('previewWalk').textContent='변경 없음';
+    document.getElementById('previewCafe').textContent='변경 없음';
+    document.getElementById('previewNote').textContent='원본 조건으로 되돌렸어요.';
+    document.getElementById('chatUserText').hidden=true;document.getElementById('chatBotText').hidden=true;
+    document.querySelectorAll('.chat-quick button').forEach(item=>item.classList.remove('selected'));
+  });
+</script>
+</body>
+</html>
