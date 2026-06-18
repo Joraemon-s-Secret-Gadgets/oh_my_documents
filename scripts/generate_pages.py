@@ -121,6 +121,15 @@ DOCUMENTS = [
         "초안",
         "운영 문서",
     ),
+    Document(
+        "docs/96_market_research/travel_ai_service_market_research.md",
+        "96_market_research.html",
+        "Market Research",
+        "로브 (Lovv) — 여행 AI 서비스 시장조사",
+        "트리플·트립닷컴 비교를 바탕으로 LOVV의 최소 충족 기능, 차별점, 보완 방향을 정리합니다.",
+        "검토 중",
+        "시장조사 문서",
+    ),
 ]
 
 def read_text(path: str) -> str:

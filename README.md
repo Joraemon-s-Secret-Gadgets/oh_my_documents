@@ -19,6 +19,7 @@ docs/08_data_preprocessing/ 수집된 데이터 및 전처리(ELT) 문서
 docs/09_ui_ux_guide/       UI/UX 가이드
 docs/10_test_plan/         테스트 계획서
 docs/11_deployment_ops/    배포·운영 가이드
+docs/96_market_research/   시장 조사 결과 문서
 docs/98_prd/               실행 단위별 PRD 문서 모음
 docs/99_pptx/              발표 자료 원본, HTML 발표본, 캡처 검증 산출물
 index.html                 GitHub Pages 첫 화면
