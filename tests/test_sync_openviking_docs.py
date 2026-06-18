@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from scripts import sync_openviking_docs
 
@@ -59,6 +60,37 @@ class OpenVikingSyncTests(unittest.TestCase):
         self.assertEqual(
             sync_openviking_docs.target_uri(Path("docs/OPENVIKING_INDEX.md")),
             "viking://resources/oh_my_documents/docs/OPENVIKING_INDEX.md",
+        )
+
+    def test_target_parent_uri_preserves_relative_parent_path(self) -> None:
+        self.assertEqual(
+            sync_openviking_docs.target_parent_uri(Path("docs/OPENVIKING_INDEX.md")),
+            "viking://resources/oh_my_documents/docs",
+        )
+        self.assertEqual(
+            sync_openviking_docs.target_parent_uri(Path("README.md")),
+            "viking://resources/oh_my_documents",
+        )
+
+    def test_upload_file_calls_ov_add_resource(self) -> None:
+        with patch.object(sync_openviking_docs, "ov_command", return_value="ov"):
+            with patch.object(sync_openviking_docs.subprocess, "run") as run:
+                sync_openviking_docs.upload_file(
+                    Path("docs/OPENVIKING_INDEX.md"),
+                    "viking://resources/oh_my_documents/docs/OPENVIKING_INDEX.md",
+                    dry_run=False,
+                )
+
+        run.assert_called_once_with(
+            [
+                "ov",
+                "add-resource",
+                "docs\\OPENVIKING_INDEX.md",
+                "--parent-auto-create",
+                "viking://resources/oh_my_documents/docs",
+                "--wait",
+            ],
+            check=True,
         )
 
 

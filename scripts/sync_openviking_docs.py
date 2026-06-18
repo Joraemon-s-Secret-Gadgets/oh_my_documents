@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import argparse
+import subprocess
+import sys
 from pathlib import Path
 
 
@@ -61,19 +63,49 @@ def target_uri(relative_path: Path) -> str:
     return f"{TARGET_ROOT}/{relative_path.as_posix()}"
 
 
-def upload_file(source_path: Path, destination_uri: str, *, dry_run: bool = True) -> None:
+def target_parent_uri(relative_path: Path) -> str:
+    parent = relative_path.parent.as_posix()
+    if parent == ".":
+        return TARGET_ROOT
+    return f"{TARGET_ROOT}/{parent}"
+
+
+def ov_command() -> str:
+    scripts_dir = Path(sys.executable).resolve().parent
+    executable = scripts_dir / ("ov.exe" if sys.platform == "win32" else "ov")
+    if executable.exists():
+        return str(executable)
+    return "ov"
+
+
+def upload_file(
+    source_path: Path,
+    destination_uri: str,
+    *,
+    dry_run: bool = True,
+    wait: bool = True,
+) -> None:
     if dry_run:
         print(f"DRY-RUN {source_path.as_posix()} -> {destination_uri}")
         return
 
-    # Replace this function body when the OpenViking CLI command is finalized.
-    print(f"UPLOAD-TODO {source_path.as_posix()} -> {destination_uri}")
+    destination_path = Path(destination_uri.removeprefix(f"{TARGET_ROOT}/"))
+    command = [
+        ov_command(),
+        "add-resource",
+        str(source_path),
+        "--parent-auto-create",
+        target_parent_uri(destination_path),
+    ]
+    if wait:
+        command.append("--wait")
+    subprocess.run(command, check=True)
 
 
-def sync_files(root: Path = ROOT, *, dry_run: bool = True) -> list[Path]:
+def sync_files(root: Path = ROOT, *, dry_run: bool = True, wait: bool = True) -> list[Path]:
     files = collect_sync_files(root)
     for relative_path in files:
-        upload_file(root / relative_path, target_uri(relative_path), dry_run=dry_run)
+        upload_file(root / relative_path, target_uri(relative_path), dry_run=dry_run, wait=wait)
     return files
 
 
@@ -98,13 +130,18 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Call upload_file() for each target. The current implementation is a placeholder.",
     )
+    parser.add_argument(
+        "--no-wait",
+        action="store_true",
+        help="Do not wait for OpenViking processing after each uploaded file.",
+    )
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
     dry_run = not args.upload or args.dry_run
-    files = sync_files(args.root.resolve(), dry_run=dry_run)
+    files = sync_files(args.root.resolve(), dry_run=dry_run, wait=not args.no_wait)
     print(f"Total files: {len(files)}")
     return 0
 
