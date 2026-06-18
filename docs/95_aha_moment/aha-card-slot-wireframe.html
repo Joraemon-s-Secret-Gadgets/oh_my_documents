@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>로브 · 메인 카드 슬롯 상태별 와이어프레임 (「기본」/「개인화」)</title>
+<style>
+  :root{
+    --cream:#FBF1E8; --cream2:#FDF6EF; --ink:#2B2723; --muted:#8A7F75;
+    --orange:#E86F2C; --orange-soft:#F4C9A8; --line:#E7D9CC; --card:#FFFFFF;
+    --discover:#3E8E7E; --discover-soft:#CDE7E1;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--cream);color:var(--ink);
+    font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+    line-height:1.5;}
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 28px 80px;}
+  h1{font-size:26px;margin:0 0 6px;}
+  .sub{color:var(--muted);font-size:14px;margin:0 0 8px;}
+  .model{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;margin:14px 0 8px;
+    background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 13px;color:#5e554d;}
+  .model b{color:var(--ink);}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin:14px 0 34px;padding:14px 18px;
+    background:var(--cream2);border:1px solid var(--line);border-radius:12px;font-size:12.5px;}
+  .legend b{display:inline-block;margin-right:5px;}
+  .key{display:inline-flex;align-items:center;gap:6px;}
+  .dot{width:11px;height:11px;border-radius:3px;display:inline-block;}
+
+  .state{margin:0 0 46px;padding:26px 24px 30px;background:var(--cream2);
+    border:1px solid var(--line);border-radius:18px;}
+  .state-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:4px;}
+  .pill-state{font-size:12px;font-weight:700;color:#fff;background:var(--ink);
+    padding:4px 11px;border-radius:999px;letter-spacing:.3px;}
+  .state h2{font-size:19px;margin:0;}
+  .state .cond{color:var(--muted);font-size:13px;margin:2px 0 4px;}
+  .slot-label{font-size:11px;font-weight:800;color:var(--orange);letter-spacing:.16em;margin:18px 0 2px;}
+  .slot-title{font-size:22px;font-weight:800;margin:0 0 3px;}
+  .slot-desc{color:var(--muted);font-size:13px;margin:0 0 16px;}
+
+  .row{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;}
+  @media(max-width:900px){.row{grid-template-columns:repeat(2,1fr);} }
+  .card{position:relative;background:var(--card);border:1px solid var(--line);
+    border-radius:14px;padding:0;overflow:hidden;min-height:196px;display:flex;flex-direction:column;}
+  .card .thumb{height:70px;background:linear-gradient(135deg,#d9cabb,#c7b6a4);position:relative;}
+  .card .body{padding:9px 11px 12px;flex:1;display:flex;flex-direction:column;}
+  .badge{position:absolute;top:8px;left:8px;font-size:10px;font-weight:700;
+    background:#fff;color:var(--ink);padding:3px 7px;border-radius:6px;}
+  .badge.t2{top:8px;left:auto;right:8px;background:var(--orange);color:#fff;}
+  .anchor{font-size:10px;color:var(--muted);margin:0 0 3px;}
+  .anchor span{font-weight:700;color:#6f655c;}
+  .ctitle{font-size:13px;font-weight:800;line-height:1.25;margin:0 0 6px;}
+  .payoff{margin-top:auto;font-size:10.5px;font-weight:700;color:var(--orange);
+    background:#FBE7D8;border-radius:7px;padding:5px 7px;line-height:1.3;}
+  .payoff small{display:block;font-weight:500;color:#b08a6a;font-size:9px;margin-top:1px;}
+  .rank{position:absolute;top:8px;left:8px;width:20px;height:20px;border-radius:50%;
+    background:var(--ink);color:#fff;font-size:11px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;z-index:2;}
+
+  .card.declared{border-color:var(--orange-soft);box-shadow:0 0 0 2px var(--orange-soft) inset;}
+  .card.discover{border-color:var(--discover-soft);box-shadow:0 0 0 2px var(--discover-soft) inset;}
+  .card.discover .payoff{color:var(--discover);background:var(--discover-soft);}
+  .card.discover .payoff small{color:#5f9a8f;}
+  .card.hero{grid-column:span 2;}
+  .card.hero .thumb{height:92px;background:linear-gradient(135deg,#c8a8e0,#9b78c4);}
+  .card.hero .ctitle{font-size:15px;}
+  .card.hero .payoff{color:#7A56A8;background:#E7DCF2;}
+  .card.hero .payoff small{color:#9b86b8;}
+  .card.perso{border-color:#C9B3E0;box-shadow:0 0 0 2px #E7DCF2 inset;}
+  .card.perso .thumb{background:linear-gradient(135deg,#c8a8e0,#9b78c4);}
+  .card.perso .payoff{color:#7A56A8;background:#E7DCF2;}
+  .card.perso .payoff small{color:#9b86b8;}
+  .cardx{position:absolute;top:6px;right:6px;width:19px;height:19px;border-radius:50%;
+    background:rgba(255,255,255,.92);color:#7A56A8;font-size:13px;font-weight:800;line-height:1;
+    display:flex;align-items:center;justify-content:center;z-index:3;border:1px solid #cbb6e6;}
+  .tag-time{display:inline-block;font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:5px;
+    margin:0 0 6px;background:#F6E7C8;color:#A9772A;width:fit-content;}
+
+  .note{margin-top:16px;display:flex;gap:9px;align-items:flex-start;font-size:12.5px;
+    background:#fff;border:1px dashed var(--line);border-radius:10px;padding:11px 13px;color:#5e554d;}
+  .note b{color:var(--ink);}
+  .arrow{font-size:11px;color:var(--muted);text-align:center;margin:-30px 0 8px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>로브 · 메인 카드 슬롯 상태별 와이어프레임</h1>
+  <p class="sub">6개 테마 × 한·일 대표 관광지 1쌍 슬롯. 메인 멘트는 "수아 님을 위한 추천(FOR YOU)"으로 고정. 평소엔 「기본」 상태로 띄우다가, 사용자 행동이 쌓이면 「개인화」 상태(맨 앞에 보라 카드 추가, 총 7장)로 전환.</p>
+
+  <div class="model">
+    <span>🧩</span>
+    <div><b>카드 모델.</b> 카드 짝(예: 경주·교토)은 <b>그 테마의 한·일 대표 관광지</b>(붐비는 유명지)로, 분위기를 인식시키는 <b>기준점</b>이다. 이 둘은 서로 대안이 아니다.
+    카드 하단의 <b>payoff = 같은 분위기의 덜 붐비는 소도시 추천</b>(로브의 실제 출력값). 소도시명은 예시이며 실제 추천 데이터로 교체.
+    <br><b>기본 국가.</b> 온보딩에서 테마와 함께 고른 <b>기본 국가(한/일)</b>로 payoff 소도시를 채우고, 대표 관광지 쌍도 기본 국가를 먼저 표기(아래는 한국 선호 예시). 여행 시기 입력 시 변경 가능한 soft default.</div>
+  </div>
+
+  <div class="legend">
+    <span class="key"><span class="dot" style="background:#F4C9A8"></span><b>선언 테마</b> 온보딩에서 고른 테마(우선 노출)</span>
+    <span class="key"><span class="dot" style="background:#CDE7E1"></span><b>발견 카드</b> 안 고른 테마(explore·학습용)</span>
+    <span class="key"><span class="dot" style="background:#FBE7D8"></span><b>소도시 payoff</b> 유명지 분위기 → 덜 붐비는 곳</span>
+    <span class="key"><span class="dot" style="background:#F6E7C8"></span><b>타이밍/희소성</b></span>
+    <span class="key"><span class="dot" style="background:#E7DCF2"></span><b>행동 기반 개인화</b></span>
+  </div>
+
+  <!-- STATE B (기본) -->
+  <section class="state">
+    <div class="state-head"><span class="pill-state">기본</span><h2>행동 쌓이기 전</h2></div>
+    <p class="cond">사용자 행동이 쌓이기 전 기본으로 띄우는 상태. <b>선호(선언) 테마로 관련성 확보 → 그 안에서 타이밍 좋은 순 정렬 → 테마 무관 "이번 달 절정" 카드 1장</b>.</p>
+
+    <div class="slot-label">FOR YOU</div>
+    <div class="slot-title">수아 님을 위한 추천</div>
+    <div class="slot-desc">이번 달 날씨·축제 경향이 맞는 소도시를 먼저 보여드려요</div>
+
+    <div class="row">
+      <div class="card declared"><div class="thumb"><span class="rank">1</span><span class="badge">미식·노포</span><span class="badge t2">현재 기준</span></div>
+        <div class="body"><p class="anchor">대표 관광지 <span>전주 · 오사카</span></p><span class="tag-time">10월 맑은 편</span><p class="ctitle">미식 산책</p>
+        <div class="payoff">→ 덜 붐비는 소도시<small>예: 군산</small></div></div></div>
+      <div class="card declared"><div class="thumb"><span class="rank">2</span><span class="badge">자연·트레킹</span></div>
+        <div class="body"><p class="anchor">대표 관광지 <span>제주 · 닛코</span></p><span class="tag-time">비수기 한산</span><p class="ctitle">한적한 트레킹</p>
+        <div class="payoff">→ 덜 붐비는 소도시<small>예: 곡성</small></div></div></div>
+      <div class="card declared"><div class="thumb"><span class="rank">3</span><span class="badge">역사·전통</span></div>
+        <div class="body"><p class="anchor">대표 관광지 <span>경주 · 교토</span></p><span class="tag-time">10월 축제 개최</span><p class="ctitle">여유로운 골목</p>
+        <div class="payoff">→ 덜 붐비는 소도시<small>예: 공주</small></div></div></div>
+      <div class="card discover"><div class="thumb"><span class="rank">★</span><span class="badge">바다·해안</span><span class="badge t2">이번 달 절정</span></div>
+        <div class="body"><p class="anchor">대표 관광지 <span>부산 · 오키나와</span></p><span class="tag-time">벚꽃 시즌</span><p class="ctitle">테마 무관 강력 추천</p>
+        <div class="payoff">순수 타이밍 카드 (테마 깸)<small>예: 영덕</small></div></div></div>
+      <div class="card discover"><div class="thumb"><span class="badge">온천·휴양</span></div>
+        <div class="body"><p class="anchor">대표 관광지 <span>아산·온양 · 벳푸</span></p><p class="ctitle">우천에도 좋은 온천</p>
+        <div class="payoff">발견<small>예: 수안보</small></div></div></div>
+      <div class="card discover"><div class="thumb"><span class="badge">예술·감성</span></div>
+        <div class="body"><p class="anchor">대표 관광지 <span>강릉 · 가나자와</span></p><p class="ctitle">감성 카페와 바다</p>
+        <div class="payoff">발견<small>예: 고성</small></div></div></div>
+    </div>
+    <div class="note"><span>📌</span><div><b>설계 포인트.</b> 1~3은 <b>선호 테마(관련성 베이스)</b>를 타이밍(노란 태그) 좋은 순으로 정렬. 선호 테마는 3개뿐이라 4번부터는 모두 <b>비선택 테마=초록 발견 카드</b>. 그중 가장 눈에 띄는 <b>4번 자리에 순수 타이밍 "이번 달 절정" 카드</b>(테마 깸)를 둬 희소성 aha를 가장 세게 + 발견 동시. 순수 타이밍 우선으로만 가면 관심 없는 테마가 떠 사용자를 식게 만들므로 1장만 허용. 메인 멘트는 "수아 님을 위한 추천(FOR YOU)"으로 고정, 서브 멘트만 타이밍 시의성 강조.</div></div>
+  </section>
+
+  <div class="arrow">▼ 사용자 행동(저장·반복 클릭) 쌓이고 신뢰 임계값 통과하면 → 맨 앞에 보라 카드 1장 추가 (총 7장)</div>
+
+  <!-- STATE C (정보 누적) -->
+  <section class="state">
+    <div class="state-head"><span class="pill-state">개인화</span><h2>행동 쌓인 후</h2></div>
+    <p class="cond">저장·반복 클릭이 임계값 통과. <b>「기본」의 6장은 그대로 두고, 맨 앞에 보라색 개인화 카드 1장을 추가해 총 7장.</b> 메인 멘트는 동일(FOR YOU), 서브 멘트만 개인화 버전으로.</p>
+
+    <div class="slot-label">FOR YOU</div>
+    <div class="slot-title">수아 님을 위한 추천</div>
+    <div class="slot-desc">지난번 저장하신 소도시의 분위기를 기억해, 비슷한 곳을 골랐어요</div>
+
+    <div class="row" style="grid-template-columns:repeat(7,1fr)">
+      <div class="card perso"><div class="thumb"><span class="rank">★</span><span class="badge">FOR YOU</span><span class="cardx" title="안 가본 곳 추천으로 전환">×</span></div>
+        <div class="body"><p class="anchor">지난번 ♥ <span>곡성</span> 과 비슷</p><p class="ctitle">조용한 강가 마을이 좋으셨죠 — 분위기 비슷한 〇〇</p>
+        <div class="payoff">갔던 곳 기반(비슷한 곳)<small>X → 안 가본 곳 추천으로 전환</small></div></div></div>
+      <div class="card declared"><div class="thumb"><span class="rank">1</span><span class="badge">미식·노포</span><span class="badge t2">현재 기준</span></div>
+        <div class="body"><p class="anchor">대표 관광지 <span>전주 · 오사카</span></p><span class="tag-time">10월 맑은 편</span><p class="ctitle">미식 산책</p>
+        <div class="payoff">→ 덜 붐비는 소도시<small>예: 군산</small></div></div></div>
+      <div class="card declared"><div class="thumb"><span class="rank">2</span><span class="badge">자연·트레킹</span></div>
+        <div class="body"><p class="anchor">대표 관광지 <span>제주 · 닛코</span></p><span class="tag-time">비수기 한산</span><p class="ctitle">한적한 트레킹</p>
+        <div class="payoff">→ 덜 붐비는 소도시<small>예: 곡성</small></div></div></div>
+      <div class="card declared"><div class="thumb"><span class="rank">3</span><span class="badge">역사·전통</span></div>
+        <div class="body"><p class="anchor">대표 관광지 <span>경주 · 교토</span></p><span class="tag-time">10월 축제 개최</span><p class="ctitle">여유로운 골목</p>
+        <div class="payoff">→ 덜 붐비는 소도시<small>예: 공주</small></div></div></div>
+      <div class="card discover"><div class="thumb"><span class="rank">★</span><span class="badge">바다·해안</span><span class="badge t2">이번 달 절정</span></div>
+        <div class="body"><p class="anchor">대표 관광지 <span>부산 · 오키나와</span></p><span class="tag-time">벚꽃 시즌</span><p class="ctitle">테마 무관 강력 추천</p>
+        <div class="payoff">순수 타이밍 카드 (테마 깸)<small>예: 영덕</small></div></div></div>
+      <div class="card discover"><div class="thumb"><span class="badge">온천·휴양</span></div>
+        <div class="body"><p class="anchor">대표 관광지 <span>아산·온양 · 벳푸</span></p><p class="ctitle">우천에도 좋은 온천</p>
+        <div class="payoff">발견<small>예: 수안보</small></div></div></div>
+      <div class="card discover"><div class="thumb"><span class="badge">예술·감성</span></div>
+        <div class="body"><p class="anchor">대표 관광지 <span>강릉 · 가나자와</span></p><p class="ctitle">감성 카페와 바다</p>
+        <div class="payoff">발견<small>예: 고성</small></div></div></div>
+    </div>
+    <div class="note" style="border-style:solid;background:#F6F1FA;border-color:#E0D2EE;"><span>🔄</span><div><b>개인화 카드 = 2가지 변형 + X 토글.</b>
+    기본은 <b>갔던 곳 기반(exploit)</b> — "지난번 ♥ 곡성과 비슷한 〇〇". 우상단 <b>×</b>를 누르면 <b>안 가본 곳(explore)</b> 추천으로 전환 — "아직 안 가보신 분위기, 새로운 △△"(취향과는 맞되 가본 적·저장한 적 없는 테마·지역). 갔던 곳만 반복하면 탐색이 막히므로 사용자가 <b>비슷한 곳 ↔ 안 가본 곳</b>을 직접 고르게 한다. X 선택도 신호로 기록(비슷한 곳 추천 비중 ↓).</div></div>
+    <div class="note"><span>📌</span><div><b>설계 포인트.</b> 「기본」의 6장(순서·내용 동일)을 유지하고 <b>맨 앞에 보라색 개인화 카드 1장만 추가</b> = 총 7장(개인화 카드는 비슷한 곳/안 가본 곳 토글). 신뢰 임계값 미달이면 이 카드를 빼고 「기본」(6장)으로 강등. 메인 멘트는 고정, 서브 멘트만 교체.</div></div>
+  </section>
+
+  <div class="note" style="border-style:solid;background:var(--cream2);">
+    <span>🧭</span>
+    <div><b>공통 원칙</b> — ① 메인 멘트 "수아 님을 위한 추천(FOR YOU)" 고정, 서브 멘트만 상태별 교체 ② 카드 짝은 <u>대안이 아니라 테마 대표 관광지</u>, 소도시는 별도 payoff ③ 「기본」(6장), 행동 쌓이면 「개인화」(맨 앞 보라 추가 7장) ④ 개인화는 <u>신뢰 임계값</u> 통과 시에만(미달→「기본」) ⑤ 측정: 카드 클릭=첫 aha 이벤트, <u>"안 고른 테마 클릭률"</u>로 발견 작동 검증.</div>
+  </div>
+</div>
+</body>
+</html>

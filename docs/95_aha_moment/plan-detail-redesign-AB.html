@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>로브 · PLAN DETAIL — 중앙 일정 흐름 재설계 (A·B)</title>
+<style>
+  :root{
+    --cream:#FBF1E8; --cream2:#FDF6EF; --ink:#2B2723; --muted:#8A7F75;
+    --orange:#E86F2C; --orange-soft:#F4C9A8; --line:#E7D9CC; --card:#FFFFFF;
+    --insight:#FBE7D8; --insight-ink:#A9772A; --reason:#FCEFE6;
+    --klook:#E7DCF2; --klook-ink:#7A56A8; --sea:#DCEAEF; --sea2:#BFD7E0;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--cream);color:var(--ink);
+    font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;line-height:1.5;}
+  .wrap{max-width:1180px;margin:0 auto;padding:30px 26px 80px;}
+  h1{font-size:22px;margin:0 0 6px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 18px;}
+  .sub b{color:var(--ink);}
+
+  /* variant switch */
+  .varswitch{display:flex;gap:9px;margin-bottom:18px;}
+  .varswitch button{font-size:13.5px;font-weight:800;padding:10px 18px;border-radius:999px;cursor:pointer;
+    border:1px solid var(--line);background:#fff;color:var(--ink);transition:.15s;}
+  .varswitch button.on{background:var(--orange);color:#fff;border-color:var(--orange);}
+  .varnote{font-size:12.5px;color:#5e554d;background:#fff;border:1px dashed var(--line);border-radius:10px;padding:11px 14px;margin:0 0 18px;}
+  .varnote b{color:var(--orange);}
+
+  /* ===== ORIGINAL hero (unchanged) ===== */
+  .hero{background:linear-gradient(135deg,#FBE7D8,#FDF6EF);border:1px solid var(--line);
+    border-radius:18px;padding:22px 24px;margin-bottom:18px;}
+  .hero .eyebrow{font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--orange);}
+  .hero h2{font-size:28px;margin:6px 0 8px;}
+  .hero .badges{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 12px;}
+  .badge{font-size:11px;font-weight:700;background:#fff;color:var(--ink);padding:4px 10px;border-radius:999px;border:1px solid var(--line);}
+  .hero p{font-size:13px;color:#5e554d;margin:0;}
+
+  .layout{display:grid;grid-template-columns:1fr 300px;gap:18px;}
+  @media(max-width:860px){.layout{grid-template-columns:1fr;}}
+
+  .flowhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+  .flowhead h3{font-size:16px;margin:0;}
+  .pill{font-size:11px;font-weight:700;color:#fff;background:var(--orange);padding:4px 11px;border-radius:999px;}
+  .flowdesc{font-size:12.5px;color:var(--muted);margin:0 0 14px;}
+
+  /* ===== ORIGINAL sidebar (unchanged) ===== */
+  .side{align-self:start;position:sticky;top:16px;}
+  .panel{background:var(--cream2);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px;}
+  .panel h4{font-size:13px;margin:0 0 8px;}
+  .panel p{font-size:12px;color:var(--muted);margin:0 0 12px;}
+  .fb{background:#fff;border:1px solid var(--line);border-radius:11px;padding:12px;margin-bottom:10px;}
+  .fb .q{font-size:12.5px;font-weight:700;margin:0 0 8px;}
+  .fbchips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+  .lk{font-size:10.5px;font-weight:700;padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;}
+  .lk.klook{background:var(--klook);border-color:#cbb6e6;color:var(--klook-ink);}
+  .lk.neg{background:#F6E7E2;border-color:#e6c6bb;color:#a8503a;}
+  .btn{display:block;text-align:center;font-size:13px;font-weight:800;padding:11px;border-radius:11px;border:1px solid var(--line);margin-top:8px;background:#fff;cursor:pointer;}
+  .btn.primary{background:var(--orange);color:#fff;border-color:var(--orange);}
+  .btn.like{background:#fff;color:var(--ink);}
+  .anno{font-size:10.5px;color:#b08a6a;margin-top:5px;}
+
+  /* ===== NEW center pieces ===== */
+  .daytabs{display:flex;gap:7px;margin:6px 0 14px;}
+  .daytab{flex:1;text-align:center;font-size:12.5px;font-weight:800;padding:9px 6px;border-radius:11px;cursor:pointer;
+    border:1px solid var(--line);background:#fff;color:#6f655c;transition:.15s;}
+  .daytab.on{background:var(--orange);color:#fff;border-color:var(--orange);}
+  .daytab small{display:block;font-size:10px;font-weight:600;opacity:.85;margin-top:1px;}
+
+  .maparea{position:relative;background:linear-gradient(160deg,var(--sea),var(--sea2));
+    border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+  .route{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+  .marker{position:absolute;transform:translate(-50%,-50%) rotate(45deg);width:30px;height:30px;
+    border-radius:50% 50% 50% 2px;background:var(--orange);color:#fff;font-size:13px;font-weight:800;
+    display:flex;align-items:center;justify-content:center;border:2.5px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.24);cursor:pointer;transition:.16s;}
+  .marker span{transform:rotate(-45deg);}
+  .marker.active{background:#B5471A;transform:translate(-50%,-50%) rotate(45deg) scale(1.32);z-index:4;}
+  .midlabel{position:absolute;transform:translate(-50%,-50%);font-size:9.5px;font-weight:700;color:#3e8e6e;
+    background:rgba(255,255,255,.9);border:1px solid #cfe5d8;padding:2px 6px;border-radius:6px;pointer-events:none;white-space:nowrap;}
+  .mapchips{position:absolute;top:10px;left:10px;display:flex;gap:6px;z-index:3;}
+  .mchip{font-size:11px;font-weight:800;padding:5px 11px;border-radius:999px;border:1px solid rgba(255,255,255,.7);
+    background:rgba(255,255,255,.85);color:#3E7387;cursor:pointer;}
+  .mchip.on{background:var(--orange);color:#fff;border-color:var(--orange);}
+  .maplabel{position:absolute;right:10px;bottom:9px;font-size:10px;font-weight:700;color:#3E7387;
+    background:rgba(255,255,255,.85);padding:4px 9px;border-radius:7px;}
+
+  .toolbar{display:flex;align-items:center;justify-content:space-between;margin:12px 0 10px;}
+  .weather{font-size:10.5px;font-weight:700;background:#E7F0F3;color:#3E7387;padding:3px 9px;border-radius:6px;}
+  .toggleall{font-size:12px;font-weight:800;color:var(--orange);cursor:pointer;border:none;background:none;}
+
+  /* accordion item (A) — original timeline look + collapse */
+  .item{position:relative;display:flex;gap:12px;margin-bottom:12px;}
+  .rail{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;}
+  .num{width:26px;height:26px;border-radius:50%;background:var(--orange);color:#fff;font-size:12px;font-weight:800;
+    display:flex;align-items:center;justify-content:center;}
+  .num.meal{background:#C9B8A6;}
+  .num.active{background:#B5471A;box-shadow:0 0 0 4px var(--orange-soft);}
+  .line-v{flex:1;width:2px;background:var(--line);margin:4px 0;}
+  .body{flex:1;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:12px 14px;}
+  .item.open .body{border-color:var(--orange-soft);box-shadow:0 4px 14px rgba(232,111,44,.08);}
+  .bhead{display:flex;align-items:flex-start;gap:8px;cursor:pointer;}
+  .bmain{flex:1;min-width:0;}
+  .meta{display:flex;gap:7px;align-items:center;margin-bottom:6px;flex-wrap:wrap;}
+  .tag{font-size:10px;font-weight:700;background:var(--cream);border:1px solid var(--line);color:#6f655c;padding:2px 7px;border-radius:6px;}
+  .tag.move{background:#EAF3EE;border-color:#cfe5d8;color:#3e8e6e;}
+  .pname{font-size:15px;font-weight:800;margin:0;}
+  .chev{flex:0 0 auto;color:var(--muted);font-size:14px;margin-top:2px;transition:.2s;}
+  .item.open .chev{transform:rotate(180deg);}
+  .detail{display:none;margin-top:9px;}
+  .item.open .detail{display:block;}
+  .pdesc{font-size:12px;color:#5e554d;margin:0 0 8px;}
+  .reason{background:var(--reason);border-radius:9px;padding:8px 10px;}
+  .reason .k{font-size:10px;font-weight:800;color:var(--orange);margin:0 0 3px;}
+  .reason .v{font-size:12px;color:#6a4f38;margin:0;}
+  .links{display:flex;gap:7px;margin-top:8px;flex-wrap:wrap;}
+
+  /* B: map-first + bottom sheet */
+  .bmapwrap{position:relative;height:540px;border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+  .bmap{position:absolute;inset:0;background:linear-gradient(160deg,var(--sea),var(--sea2));}
+  .sheet{position:absolute;left:0;right:0;bottom:0;z-index:6;background:#fff;border-top:1px solid var(--line);
+    border-radius:18px 18px 0 0;box-shadow:0 -8px 26px rgba(80,55,35,.14);height:210px;display:flex;flex-direction:column;transition:height .26s;}
+  .sheet.exp{height:430px;}
+  .handle{flex:0 0 auto;padding:9px 0 5px;display:flex;justify-content:center;cursor:pointer;}
+  .handle i{width:42px;height:4px;border-radius:3px;background:#d9c8b8;display:block;}
+  .sheethdr{display:flex;align-items:center;justify-content:space-between;padding:2px 18px 9px;}
+  .sheethdr b{font-size:14px;}
+  .sheethdr .hint{font-size:11px;color:var(--muted);}
+  .sheetscroll{flex:1;overflow-y:auto;padding:2px 16px 16px;}
+  .mcard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:9px;cursor:pointer;transition:.15s;}
+  .mcard.active{border-color:var(--orange);box-shadow:0 0 0 2px var(--orange-soft);}
+  .mcard .row{display:flex;align-items:center;gap:9px;}
+  .mcard .rn{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:var(--orange);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;}
+  .mcard .rn.meal{background:#C9B8A6;}
+  .mcard .rt{font-size:10px;font-weight:800;color:#6f655c;}
+  .mcard .rname{font-size:14px;font-weight:800;margin:1px 0 0;}
+  .mcard .mr{font-size:12px;color:#6a4f38;margin:8px 0 0;}
+  .sheetscroll::-webkit-scrollbar{width:7px;}
+  .sheetscroll::-webkit-scrollbar-thumb{background:var(--orange-soft);border-radius:4px;}
+
+  .legend{display:flex;flex-wrap:wrap;gap:13px;margin-top:16px;padding:12px 16px;background:var(--cream2);
+    border:1px solid var(--line);border-radius:12px;font-size:12px;}
+  .legend .key{display:inline-flex;align-items:center;gap:6px;}
+  .legend .dot{width:11px;height:11px;border-radius:3px;}
+  .legend .dash{width:18px;border-top:2px dashed var(--orange);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>로브 · PLAN DETAIL — 중앙 일정 흐름 재설계</h1>
+  <p class="sub">원본 와이어프레임의 <b>상단 소도시 소개</b>와 <b>우측 일정 액션</b>은 그대로, <b>중앙 일정 흐름만</b> 두 안으로 교체했습니다. 아래 버튼으로 A·B를 전환해 같은 레이아웃에서 비교하세요.</p>
+
+  <div class="varswitch">
+    <button data-var="A" class="on">안 A · 지도 + 세로 접이식</button>
+    <button data-var="B">안 B · 지도 우선 + 바텀시트</button>
+  </div>
+  <p class="varnote" id="varnote"></p>
+
+  <!-- ===== ORIGINAL hero (unchanged) ===== -->
+  <div class="hero">
+    <div class="eyebrow">PLAN DETAIL</div>
+    <h2>강릉시</h2>
+    <div class="badges">
+      <span class="badge">미식·노포 · 자연·트레킹 · 바다·해안</span>
+      <span class="badge">2박 3일</span>
+      <span class="badge">AI 추천 여행 코스</span>
+      <span class="badge">선택하신 10월</span>
+    </div>
+    <p>경포생태저류지와 순포습지에서 자연을 감상하고, 모래시계공원·경포플라워가든에서 풍경을 즐긴 뒤, 해변을 차례로 체험하는 흐름의 일정입니다.</p>
+  </div>
+
+  <div class="layout">
+    <!-- ===== CENTER: replaced flow (A or B) ===== -->
+    <div id="center"></div>
+
+    <!-- ===== ORIGINAL sidebar (unchanged) ===== -->
+    <div class="side">
+      <div class="panel">
+        <h4>일정 액션</h4>
+        <p>일정을 살펴본 뒤 피드백을 남기거나 마이페이지에 저장해 다시 확인할 수 있습니다.</p>
+        <div class="fb">
+          <p class="q">이 일정, 어떤 점이 좋았나요?</p>
+          <div class="fbchips">
+            <span class="lk">한적해서 좋았어요</span>
+            <span class="lk">자연 위주가 좋아요</span>
+            <span class="lk">동선이 편해요</span>
+            <span class="lk">일정이 알차요</span>
+          </div>
+          <span class="lk neg">이 일정은 관심 없어요</span>
+          <p class="anno">긍정 1탭 → 해당 분위기 선호 ↑ · "관심 없어요" → 부정 시드로 그 테마·분위기 노출 ↓. 둘 다 로그인 계정에 저장 → 단계 4 개인화 연료.</p>
+        </div>
+        <span class="btn like">♥ 좋아요 (저장 토글)</span>
+        <span class="btn primary">마이페이지에 저장</span>
+        <span class="btn">채팅으로 돌아가기</span>
+        <span class="btn">마이페이지로 이동</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span class="key"><span class="dash"></span><b>점선 동선</b> 마커를 방문 순서대로 연결</span>
+    <span class="key"><span class="dot" style="background:var(--orange)"></span><b>마커</b> 카드와 양방향 하이라이트</span>
+    <span class="key"><span class="dot" style="background:#EAF3EE"></span><b>이동시간</b> 동선 위 라벨 / 없으면 숨김</span>
+    <span class="key"><span class="dot" style="background:var(--reason)"></span><b>통찰형 이유</b> 펼침/포커스 시 노출</span>
+  </div>
+</div>
+
+<script>
+const TRIP={city:"강릉시",days:[
+  {day:1,label:"경포 자연·습지",weather:"10월 강릉 · 맑고 선선 (월별 경향)",items:[
+    {time:"아침",move:"12분",name:"경포생태저류지",mx:20,my:30,desc:"맑은 호수와 주변 습지를 따라 산책하기 좋은 자연 명소.",reason:"오전 첫 코스로 둔 이유 — 호수에 물안개가 남아 있고 사람도 적어요. 오후엔 방문객이 몰립니다.",anno:'기존(generic): "자연·트레킹 테마에 맞아 적합합니다." → 순서·타이밍 근거로 격상',links:[{t:"지도"}]},
+    {time:"점심",move:"18분",name:"순포습지",mx:42,my:55,desc:"다양한 수생식물과 조용한 물길이 어우러진 평화로운 자연 풍경.",reason:"습지 데크는 정오 햇빛에 반영이 예뻐요. 경포에서 가까워 이동 부담도 적습니다.",links:[{t:"지도"},{t:"체험 예약 · 클룩",cls:"klook"}]},
+    {time:"저녁",move:"9분",name:"모래시계공원",mx:66,my:38,desc:"독특한 모래시계와 바다 전망으로 사진 명소로 인기.",reason:"해 질 무렵 바다 전망이 절정이라 하루 마지막 코스로 배치했어요.",links:[{t:"지도"}]},
+    {time:"식사",move:null,name:"식사 — 자유 선택",meal:true,desc:"강릉에서 원하는 식당·카페를 자유롭게 선택해 즐기실 수 있어요.",reason:"식사는 취향차가 커서 고정하지 않았어요. 근처 맛집을 바로 탐색하세요.",links:[{t:"맛집·카페 검색(Kakao)"}]}
+  ]},
+  {day:2,label:"바다·해안",weather:"10월 강릉 · 맑고 바람 약간",items:[
+    {time:"아침",move:"15분",name:"경포해변",mx:30,my:26,desc:"길게 뻗은 백사장과 솔숲 산책로가 어우러진 대표 해변.",reason:"아침 해변이 한적해 산책으로 하루를 여는 코스로 좋아요.",links:[{t:"지도"}]},
+    {time:"점심",move:"7분",name:"안목 커피거리",mx:56,my:48,desc:"바다 전망 카페가 모인 강릉의 대표 커피 거리.",reason:"점심 후 커피 한 잔으로 쉬어가는 흐름으로 배치했어요.",links:[{t:"지도"},{t:"카페 검색(Kakao)"}]},
+    {time:"오후",move:"11분",name:"강문해변 솔바람다리",mx:45,my:68,desc:"포토스팟 다리와 해변 산책로가 이어지는 코스.",reason:"오후 햇빛에 다리·바다 색이 좋아 사진 코스로 배치했어요.",links:[{t:"지도"}]},
+    {time:"식사",move:null,name:"식사 — 자유 선택",meal:true,desc:"해변 근처 횟집·식당을 자유롭게 선택해 즐기세요.",reason:"근처 맛집을 바로 탐색하세요.",links:[{t:"맛집 검색(Kakao)"}]}
+  ]},
+  {day:3,label:"미식·노포",weather:"10월 강릉 · 맑음",items:[
+    {time:"아침",move:"10분",name:"초당순두부마을",mx:22,my:42,desc:"강릉 대표 순두부 노포가 모인 골목.",reason:"아침 식사로 강릉 미식을 시작하는 코스.",links:[{t:"지도"}]},
+    {time:"점심",move:"20분",name:"강릉중앙시장",mx:52,my:30,desc:"먹거리와 기념품이 모인 활기찬 전통시장.",reason:"점심 겸 시장 먹거리 탐방으로 동선을 묶었어요.",links:[{t:"지도"}]},
+    {time:"오후",move:"기차",name:"정동진",mx:72,my:62,desc:"바다 옆 기차역과 해돋이로 유명한 명소.",reason:"마지막 코스 — 바다 전망으로 여행을 마무리합니다.",links:[{t:"지도"},{t:"레일바이크 · 클룩",cls:"klook"}]}
+  ]}
+]};
+
+const NOTES={
+  A:"<b>안 A — 지도 + 세로 접이식:</b> 상단 지도에 그날 점선 동선과 이동시간을 얹고, 아래 타임라인은 카드를 한 줄로 접어둡니다. 마커를 누르면 해당 카드가 펼쳐지고(역방향도 동기), Day 탭으로 하루씩 봅니다. 원본 타임라인 룩을 유지해 가장 익숙하고 구현 부담이 낮은 안.",
+  B:"<b>안 B — 지도 우선 + 바텀시트:</b> 중앙을 큰 지도가 차지하고, 일정 리스트는 지도 위로 끌어올리는 바텀시트 안에 둡니다. 지도를 항상 보며 동선 중심으로 탐색하는 지도앱 패턴. 핸들을 눌러 시트를 펼치고 접으며, 마커↔리스트가 양방향 연동됩니다."
+};
+const state={variant:"A",day:0,open:{},active:null,sheet:false};
+
+/* helpers */
+function nonMeal(items){return items.filter(it=>!it.meal);}
+function linksHTML(it){return '<div class="links">'+it.links.map(l=>'<span class="lk '+(l.cls||'')+'">'+l.t+'</span>').join('')+'</div>';}
+function routeLine(items){const pts=nonMeal(items).map(it=>it.mx+','+it.my).join(' ');
+  return '<polyline points="'+pts+'" fill="none" stroke="#E86F2C" stroke-width="2.4" vector-effect="non-scaling-stroke" stroke-dasharray="6 6" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>';}
+function midLabels(items){const nm=nonMeal(items);let h='';
+  for(let i=0;i<nm.length-1;i++){const a=nm[i],b=nm[i+1];if(!a.move)continue;
+    const x=(a.mx+b.mx)/2,y=(a.my+b.my)/2;h+='<span class="midlabel" style="left:'+x+'%;top:'+y+'%;">'+a.move+'</span>';}
+  return h;}
+function markersHTML(items,active){return items.map((it,i)=>it.meal?'':
+  '<div class="marker '+(active===i?'active':'')+'" data-idx="'+i+'" style="left:'+it.mx+'%;top:'+it.my+'%;"><span>'+(i+1)+'</span></div>').join('');}
+function dayTabsHTML(){return '<div class="daytabs">'+TRIP.days.map((d,i)=>
+  '<div class="daytab '+(state.day===i?'on':'')+'" data-day="'+i+'">'+d.day+'일차<small>'+d.label+'</small></div>').join('')+'</div>';}
+function dayChipsHTML(){return '<div class="mapchips">'+TRIP.days.map((d,i)=>
+  '<span class="mchip '+(state.day===i?'on':'')+'" data-day="'+i+'">'+d.day+'일차</span>').join('')+'</div>';}
+function mapSVG(items){return '<svg class="route" viewBox="0 0 100 100" preserveAspectRatio="none">'+routeLine(items)+'</svg>';}
+
+/* ---------- 안 A ---------- */
+function renderA(){
+  const d=TRIP.days[state.day];
+  const allOpen=d.items.every((it,i)=>state.open[state.day+'-'+i]);
+  let html='<div class="flowhead"><h3>일차별 시간대 흐름</h3><span class="pill">3일 구성</span></div>'+
+    '<p class="flowdesc">상단 지도에서 동선을 한눈에 보고, 카드를 눌러 상세를 펼치세요.</p>'+
+    dayTabsHTML()+
+    '<div class="maparea" style="height:300px">'+mapSVG(d.items)+midLabels(d.items)+markersHTML(d.items,state.active)+
+      '<span class="maplabel">'+(state.day+1)+'일차 동선</span></div>'+
+    '<div class="toolbar"><span class="weather">'+d.weather+'</span>'+
+      '<button class="toggleall" data-toggleall>'+(allOpen?'전체 접기 ▴':'전체 펼치기 ▾')+'</button></div>';
+  d.items.forEach((it,i)=>{
+    const open=state.open[state.day+'-'+i];const last=i===d.items.length-1;
+    html+='<div class="item '+(open?'open':'')+'" data-idx="'+i+'"><div class="rail">'+
+      '<div class="num '+(it.meal?'meal':'')+' '+(state.active===i?'active':'')+'">'+(i+1)+'</div>'+(last?'':'<div class="line-v"></div>')+'</div>'+
+      '<div class="body"><div class="bhead"><div class="bmain">'+
+        '<div class="meta"><span class="tag">'+it.time+'</span>'+(it.move?'<span class="tag move">다음 장소까지 '+it.move+'</span>':'')+'</div>'+
+        '<p class="pname">'+it.name+'</p></div><span class="chev">▾</span></div>'+
+      '<div class="detail"><p class="pdesc">'+it.desc+'</p>'+
+        '<div class="reason"><p class="k">왜 여기 · 통찰형</p><p class="v">'+it.reason+'</p></div>'+
+        (it.anno?'<p class="anno">'+it.anno+'</p>':'')+linksHTML(it)+'</div></div></div>';
+  });
+  return html;
+}
+
+/* ---------- 안 B ---------- */
+function renderB(){
+  const d=TRIP.days[state.day];
+  let rows=d.items.map((it,i)=>{const act=state.active===i;
+    return '<div class="mcard '+(act?'active':'')+'" data-idx="'+i+'"><div class="row">'+
+      '<div class="rn '+(it.meal?'meal':'')+'">'+(i+1)+'</div>'+
+      '<div class="bmain"><div class="rt">'+it.time+'</div><div class="rname">'+it.name+'</div></div>'+
+      (it.move?'<span class="tag move">'+it.move+'</span>':'')+'</div>'+
+      (act?'<p class="mr">'+it.reason+'</p>'+linksHTML(it):'')+'</div>';}).join('');
+  return '<div class="flowhead"><h3>일차별 시간대 흐름</h3><span class="pill">3일 구성</span></div>'+
+    '<p class="flowdesc">지도로 동선을 먼저 훑고, 마커나 리스트를 눌러 상세를 확인하세요. 핸들을 끌어 리스트를 펼칩니다.</p>'+
+    '<div class="bmapwrap"><div class="bmap"></div>'+mapSVG(d.items)+midLabels(d.items)+markersHTML(d.items,state.active)+
+      dayChipsHTML()+'<span class="maplabel">지도를 끌어 탐색</span>'+
+      '<div class="sheet '+(state.sheet?'exp':'')+'"><div class="handle" data-sheet><i></i></div>'+
+        '<div class="sheethdr"><b>'+d.day+'일차 · '+d.label+'</b><span class="hint">'+d.weather+'</span></div>'+
+        '<div class="sheetscroll">'+rows+'</div></div></div>';
+}
+
+function render(){
+  document.getElementById('center').innerHTML = state.variant==='A'?renderA():renderB();
+  document.getElementById('varnote').innerHTML = NOTES[state.variant];
+  document.querySelectorAll('.varswitch button').forEach(b=>b.classList.toggle('on',b.dataset.var===state.variant));
+}
+
+/* events */
+document.querySelector('.varswitch').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  state.variant=b.dataset.var;state.active=null;state.sheet=false;render();});
+document.getElementById('center').addEventListener('click',e=>{
+  const tab=e.target.closest('.daytab,.mchip');
+  if(tab){state.day=+tab.dataset.day;state.active=null;render();return;}
+  const toggle=e.target.closest('[data-toggleall]');
+  if(toggle){const d=TRIP.days[state.day];const allOpen=d.items.every((it,i)=>state.open[state.day+'-'+i]);
+    d.items.forEach((it,i)=>state.open[state.day+'-'+i]=!allOpen);render();return;}
+  const sheet=e.target.closest('[data-sheet]');
+  if(sheet){state.sheet=!state.sheet;render();return;}
+  const mk=e.target.closest('.marker');
+  if(mk){const i=+mk.dataset.idx;
+    if(state.variant==='A'){state.active=i;state.open[state.day+'-'+i]=true;}
+    else{state.active=(state.active===i?null:i);if(!state.sheet)state.sheet=true;}
+    render();return;}
+  const item=e.target.closest('.item');
+  if(item){const i=+item.dataset.idx,key=state.day+'-'+i;state.open[key]=!state.open[key];state.active=state.open[key]?i:null;render();return;}
+  const mcard=e.target.closest('.mcard');
+  if(mcard){const i=+mcard.dataset.idx;state.active=(state.active===i?null:i);render();return;}
+});
+
+render();
+</script>
+</body>
+</html>
