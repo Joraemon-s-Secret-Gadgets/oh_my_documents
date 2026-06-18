@@ -1,5 +1,29 @@
 backups/
 
+# Python / uv local environment
+.venv/
+.cache/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local secrets and tool credentials
+.env
+.env.*
+!.env.example
+.openviking/
+.viking/
+
+# Local run outputs
+*.log
+*.tmp
+tmp/
+temp/
+
 # LaTeX build intermediates
 pdf/*.aux
 pdf/*.log

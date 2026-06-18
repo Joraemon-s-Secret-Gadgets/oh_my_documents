@@ -1,0 +1,14 @@
+[project]
+name = "oh-my-documents-openviking"
+version = "0.1.0"
+description = "OpenViking document sync tooling for oh_my_documents."
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = []
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
