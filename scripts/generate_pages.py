@@ -477,9 +477,9 @@ def render_toc(headings: list[tuple[int, str, str]]) -> str:
             if current_open:
                 lines.append("</div>")
             lines.append('<div class="toc-section">')
-            lines.append(f'<div class="toc-section-hd">{inline(text)}</div>')
+            lines.append(f'  <div class="toc-section-hd">{inline(text)}</div>')
             current_open = True
-        lines.append(f'<a class="toc-link" href="#{hid}">{inline(text)}</a>')
+        lines.append(f'  <a class="toc-link" href="#{hid}">{inline(text)}</a>')
     if current_open:
         lines.append("</div>")
     return "\n".join(lines)
@@ -665,6 +665,11 @@ def render_doc_nav(doc: Document) -> str:
         </nav>"""
 
 
+def indent_block(value: str, spaces: int) -> str:
+    prefix = " " * spaces
+    return "\n".join(prefix + line if line else line for line in value.splitlines())
+
+
 def render_page(doc: Document) -> str:
     markdown = read_text(doc.source)
     title = title_value(markdown)
@@ -673,6 +678,8 @@ def render_page(doc: Document) -> str:
     body, headings = render_blocks(markdown)
     toc = render_toc(headings)
     doc_nav = render_doc_nav(doc)
+    body_html = indent_block(body, 8)
+    toc_html = indent_block(toc, 10)
     version_short = plain_version(version)
     mermaid = (
         '\n    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" defer></script>'
@@ -702,12 +709,12 @@ def render_page(doc: Document) -> str:
           <div class="aside-status"><div class="status-dot"></div><span>{html.escape(doc.status_label)}</span></div>
         </div>
         <nav class="toc">
-{toc}
+{toc_html}
         </nav>
       </aside>
       <main id="cover">
         <h1 id="cover-title" class="s-h1">{html.escape(title)}</h1>
-{body}
+{body_html}
 {doc_nav}
       </main>
     </div>
