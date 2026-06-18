@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로브 (Lovv) — B2C 한일 소도시 수요 및 수익성 v0.2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../assets/css/requirements.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside>
+        <div class="aside-brand">
+          <div class="aside-logo">로브</div>
+          <div class="aside-ver">B2C Strategy · v0.2</div>
+          <div class="aside-status"><div class="status-dot"></div><span>검토 중</span></div>
+        </div>
+        <nav class="toc">
+<div class="toc-section"><a class="toc-link active" href="#cover">표지 / 문서 정보</a></div>
+<a class="toc-link" href="#s1">1. 결론 요약</a>
+<a class="toc-link" href="#s2">2. 조사 질문과 판정 기준</a>
+<a class="toc-link" href="#s3">3. 한일 여행 시장 규모와 증가세</a>
+<a class="toc-link" href="#s4">4. 소도시 선호 비중은 실제로 큰가</a>
+<a class="toc-link" href="#s5">5. 한국인은 일본 지방 소도시를 가는가</a>
+<a class="toc-link" href="#s6">6. 일본인은 한국 지방 소도시를 가는가</a>
+<a class="toc-link" href="#s7">7. B2C 고객 세그먼트</a>
+<a class="toc-link" href="#s8">8. B2C 가치 제안과 제품 범위</a>
+<a class="toc-link" href="#s9">9. 수익 모델과 손익 가설</a>
+<a class="toc-link" href="#s10">10. MVP 검증 설계</a>
+<a class="toc-link" href="#s11">11. 주요 위험과 대응</a>
+<a class="toc-link" href="#s12">12. 의사결정</a>
+<a class="toc-link" href="#s13">13. 출처와 한계</a>
+<a class="toc-link" href="#s14">14. 변경 이력</a>
+        </nav>
+      </aside>
+      <main id="cover">
+        <h1 id="cover-title" class="s-h1">로브(Lovv) B2C 수요 검증 — 한일 소도시 여행과 수익성</h1>
+<blockquote>
+<p class="doc-p">문서 버전: v0.2</p>
+<p class="doc-p">문서 상태: 검토 중 (Review)</p>
+<p class="doc-p">작성일: 2026-06-18</p>
+<p class="doc-p">조사 기준일: 2026-06-18</p>
+<p class="doc-p">적용 범위: 한국인 방일 여행객과 일본인 방한 여행객의 지역·소도시 여행 수요 및 B2C 사업성</p>
+</blockquote>
+<h2 id="s1" class="s-h2">1. 결론 요약</h2>
+<p class="doc-p"><strong>한일 여행 시장은 충분히 크고 재방문도 활발하지만, “여행객 다수가 소도시를 우선 선호한다”는 가설은 아직 사실로 보기 어렵다.</strong> 실제 이동은 서울·도쿄·오사카·후쿠오카 같은 관문 대도시에 강하게 집중되어 있다. 소도시 수요는 전체 대중시장이라기보다 다음 조건에서 커지는 <strong>고의도 하위 시장</strong>이다.</p>
+<ul class="bullet-list">
+<li>이미 대표 도시를 방문한 재방문객</li>
+<li>직항이나 철도로 1~2시간 이내 연결되는 지역</li>
+<li>온천·미식·자연·축제처럼 방문 이유가 분명한 목적형 여행</li>
+<li>정보 부족과 이동 불안을 일정 추천으로 줄여 줄 수 있는 개별여행객</li>
+</ul>
+<p class="doc-p">시장 방향은 비대칭이다. 2025년 한국인의 일본 방문은 945만 9,600명, 일본인의 한국 방문은 약 365만 명으로, 한국→일본 흐름이 약 2.6배 크다. 일본 지방 여행은 후쿠오카를 비롯한 규슈, 홋카이도, 오키나와, 시즈오카·하코다테 등 직항 지역으로 분산되는 관측 근거가 있다. 반면 일본인의 한국 여행은 여전히 서울 중심이고, 부산·경주·안동·강원권 지방 상품 수요가 증가하는 단계다.</p>
+<p class="doc-p">따라서 로브의 초기 B2C 전략은 다음이 적합하다.</p>
+<ul class="bullet-list">
+<li><strong>1차 시장은 한국인 재방일객의 일본 지역 여행</strong>으로 둔다.</li>
+<li>사용자의 취향과 여행 조건에 맞는 <strong>소도시 1개만 추천하고, 선택된 소도시 안에서만 여행 일정을 완성하는 서비스</strong>로 포지셔닝한다.</li>
+<li>일본인 방한 시장은 서울 재방문객을 부산·경주·안동·강원으로 확장하는 별도 코호트로 작게 검증한다.</li>
+<li>유료화는 정보 열람보다 <code>시간 절약</code>, <code>이동 실패 방지</code>, <code>예약 가능한 완성 일정</code>에 붙인다.</li>
+<li>전국 단위 콘텐츠를 먼저 구축하지 말고 3~5개 지역에서 저장·공유·예약·유료 전환을 확인한 뒤 확장한다.</li>
+</ul>
+<h2 id="s2" class="s-h2">2. 조사 질문과 판정 기준</h2>
+<h2 id="s2-1" class="s-h2">2.1 핵심 질문</h2>
+<ul class="bullet-list">
+<li>여행객 중 소도시 선호 비중이 실제로 큰가?</li>
+<li>한국인 방일객과 일본인 방한객은 증가하고 있는가?</li>
+<li>어느 지역을 방문하며 재방문 빈도는 충분한가?</li>
+<li>실제로 한국인은 일본 지방 소도시를, 일본인은 한국 지방 소도시를 방문하는가?</li>
+<li>이 수요에서 로브가 B2C 매출을 만들 수 있는가?</li>
+</ul>
+<h2 id="s2-2" class="s-h2">2.2 소도시의 운영상 정의</h2>
+<p class="doc-p">행정구역 인구만으로 소도시를 자르면 관광 행동을 설명하기 어렵다. 이 문서에서는 다음 세 층을 구분한다.</p>
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
+<thead><tr><th>구분</th><th>예시</th><th>수요 판정에서의 처리</th></tr></thead><tbody>
+<tr><td>관문 대도시</td><td>서울, 부산, 도쿄, 오사카, 후쿠오카, 삿포로</td><td>소도시 수요에서 제외</td></tr>
+<tr><td>지역 거점도시</td><td>가나자와, 나가사키, 가고시마, 전주, 강릉, 경주</td><td>지역 여행 수요로 분리</td></tr>
+<tr><td>인접 소도시·농산어촌</td><td>유후인, 벳푸 주변, 다카야마 주변, 안동 하회마을권 등</td><td>핵심 소도시 수요</td></tr>
+</tbody></table></div>
+<p class="doc-p">후쿠오카나 부산 방문 증가를 그대로 “소도시 선호 증가”라고 부르지 않는다. 관문도시 숙박 후 인접 지역으로 이동했는지, 해당 지역에서 숙박·체험·결제가 발생했는지가 더 강한 증거다.</p>
+<h2 id="s2-3" class="s-h2">2.3 증거 강도</h2>
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
+<thead><tr><th>증거</th><th>의미</th><th>신뢰도</th></tr></thead><tbody>
+<tr><td>실제 입국·숙박·방문 통계</td><td>실현된 여행</td><td>높음</td></tr>
+<tr><td>항공 노선·예약·검색 증가</td><td>실현 가능성이 높은 관심</td><td>중상</td></tr>
+<tr><td>방문 의향 설문</td><td>잠재 관심</td><td>중간</td></tr>
+<tr><td>SNS 언급·트렌드 기사</td><td>탐색 신호</td><td>보조</td></tr>
+</tbody></table></div>
+<h2 id="s3" class="s-h2">3. 한일 여행 시장 규모와 증가세</h2>
+<h2 id="s3-1" class="s-h2">3.1 연간 이동 규모</h2>
+<div class="table-wrap wide extra-wide scroll-table"><table class="info-tbl">
+<thead><tr><th>방향</th><th>2024년</th><th>2025년</th><th>전년 대비</th><th>해석</th></tr></thead><tbody>
+<tr><td>한국 → 일본</td><td>8,817,765명</td><td>9,459,600명</td><td>+7.3%</td><td>역대 최고. 일본 전체 외래객 중 한국이 최대 시장</td></tr>
+<tr><td>일본 → 한국</td><td>약 322만 명</td><td>약 365만 명</td><td>약 +13%</td><td>2025년 역대 최대 수준, 한국의 2위 방한 시장</td></tr>
+</tbody></table></div>
+<p class="doc-p">2025년 일본 전체 외래객은 4,268만 3,600명, 한국 전체 외래객은 약 1,894만 명이었다. 양국 모두 인바운드가 회복을 넘어 기록권에 진입했지만, 한일 양방향 절대 규모는 한국→일본이 훨씬 크다.</p>
+<blockquote>
+<p class="doc-p">주의: 입국자 수는 고유 인원 수가 아니라 여행 횟수에 가까운 흐름 지표다. 같은 사람이 여러 번 방문하면 중복 집계된다. 따라서 945만 명을 945만 명의 서로 다른 고객으로 계산하면 안 된다.</p>
+</blockquote>
+<h2 id="s3-2" class="s-h2">3.2 여행 빈도와 재방문</h2>
+<ul class="bullet-list">
+<li>JNTO의 2024년 한국 시장 조사에서는 방일 횟수 <code>1~2회</code> 응답이 많았고, <code>10회 초과</code> 헤비 리피터도 확인됐다.</li>
+<li>2024년 방한 일본인 가운데 <code>4회 이상 재방문</code> 비중은 47.8%로 보도되었으며, 전체 외래객의 같은 기준 27.8%보다 높았다.</li>
+<li>2024년 전체 방한 외래객 조사에서 재방문율은 54.7%였다. 국가별·횟수별 정의가 다르므로 47.8%와 직접 비교하지 않고, 일본 시장의 반복 방문 성향을 확인하는 보조 근거로 사용한다.</li>
+</ul>
+<p class="doc-p">재방문은 소도시 서비스에 중요하다. 첫 방문객은 대표 랜드마크와 관문도시에 집중하지만, 반복 방문객은 이미 본 장소를 피하고 새로운 테마와 지역을 찾을 가능성이 높기 때문이다.</p>
+<h2 id="s4" class="s-h2">4. 소도시 선호 비중은 실제로 큰가</h2>
+<h2 id="s4-1" class="s-h2">4.1 선언된 관심은 크다</h2>
+<p class="doc-p">Expedia Group의 <code>Unpack &#<wbr>x27;25</code>는 자체 여행 데이터와 2만 5,000명 설문을 바탕으로, 응답자의 63%가 다음 여행에서 유명 관광지 인근의 덜 알려진 <code>Detour Destination</code>을 방문할 가능성이 있다고 답했다고 발표했다. 덜 붐비고 새로운 장소에 대한 관심은 분명히 대중적이다.</p>
+<p class="doc-p">그러나 이 수치는 다음 이유로 한일 소도시의 실수요 비중으로 사용할 수 없다.</p>
+<ul class="bullet-list">
+<li>글로벌 설문이며 한국인·일본인만의 결과가 아니다.</li>
+<li>“가능성이 있다”는 의향이지 실제 예약·숙박이 아니다.</li>
+<li>Detour Destination은 독립 소도시만이 아니라 유명 도시 주변의 대체 목적지도 포함한다.</li>
+</ul>
+<h2 id="s4-2" class="s-h2">4.2 실제 행동은 관문도시 중심이다</h2>
+<p class="doc-p">일본 관광청 숙박통계에서 2024년 외국인 연박수 증가율은 3대 도시권이 +35.0%, 지방부가 +48.9%였다. 지방부 성장률은 더 빨랐지만, 이는 모든 국적을 합친 수치이며 지방의 절대 비중이 대도시권보다 크다는 뜻은 아니다.</p>
+<p class="doc-p">한국인 숙박은 도쿄·오사카·후쿠오카가 최상위권이다. 후쿠오카는 2024년 현지 외국인 관광객의 57%가 한국인일 정도로 강한 지역 관문이지만, 후쿠오카 자체는 소도시가 아니다. 다만 규슈의 벳푸·유후인·구마모토·나가사키 등으로 확장하기 좋은 출발점이라는 사업적 가치가 있다.</p>
+<p class="doc-p">한국에서도 일본인의 자유여행은 서울 중심이다. 한국관광공사 해외지사 자료는 서울 이외 지방 방문 패키지 고객이 늘고 있고, 주요 지역으로 부산·경주·안동 등 경상권과 강원권을 제시한다. <code>KTX로 가는 지방 방문 상품</code> 등 특정 테마 상품의 반응도 언급한다. 이는 지역 수요가 존재한다는 근거지만, 아직 서울 중심 시장을 뒤집을 정도의 대중 비중을 증명하지는 않는다.</p>
+<h2 id="s4-3" class="s-h2">4.3 최종 판정</h2>
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
+<thead><tr><th>가설</th><th>판정</th><th>근거</th></tr></thead><tbody>
+<tr><td>여행객 다수가 소도시를 1순위로 선택한다</td><td>기각에 가까움</td><td>실제 숙박·방문은 관문 대도시 집중</td></tr>
+<tr><td>덜 붐비는 지역에 대한 관심이 크다</td><td>지지</td><td>글로벌 의향 63%, 지방 숙박 성장률 우위</td></tr>
+<tr><td>한일 재방문객에게 지역 확장 수요가 있다</td><td>지지</td><td>높은 반복 방문, 지역 노선·상품 증가</td></tr>
+<tr><td>모든 소도시를 넓게 공급하면 수요가 생긴다</td><td>기각</td><td>접근성·테마·예약 재고가 없는 지역은 전환이 약함</td></tr>
+<tr><td>관문도시와 연결된 목적형 소도시는 사업 기회가 있다</td><td>강하게 지지</td><td>후쿠오카-규슈, 서울-경상·강원 등 관측 사례</td></tr>
+</tbody></table></div>
+<h2 id="s5" class="s-h2">5. 한국인은 일본 지방 소도시를 가는가</h2>
+<h2 id="s5-1" class="s-h2">5.1 답: 간다. 다만 관문도시와 교통이 수요를 만든다</h2>
+<p class="doc-p">한국인 방일객은 2025년 945만 9,600명으로 일본 최대 인바운드 시장이다. 2025년 상반기 증가 요인으로 JNTO는 인천-하코다테와 시즈오카 노선 증편 등 항공 좌석 증가를 들었다. 2024년 11월에도 지방 노선 증편이 월간 최고치에 기여한 것으로 분석됐다.</p>
+<p class="doc-p">이 패턴은 “원래 소도시를 좋아해서 간다”기보다 다음 구조에 가깝다.</p>
+<pre><code>재방문 경험 + 저비용 직항/짧은 비행 + 명확한 테마
+→ 접근 가능한 소도시 후보 탐색
+→ 가장 적합한 소도시 1개 추천
+→ 추천된 소도시 내부의 관광지·숙소·체험으로 일정 생성</code></pre>
+<h2 id="s5-2" class="s-h2">5.2 우선 검증할 일본 소도시 후보군</h2>
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
+<thead><tr><th>우선순위</th><th>접근 거점</th><th>추천 후보 소도시</th><th>선정 이유</th></tr></thead><tbody>
+<tr><td>1</td><td>후쿠오카</td><td>유후인, 벳푸, 구마모토, 나가사키</td><td>한국 수요가 이미 크고 교통·상품 재고가 풍부</td></tr>
+<tr><td>2</td><td>오사카</td><td>고베, 나라, 와카야마, 시가</td><td>초행·재방문 모두 크고 당일·1박 확장이 쉬움</td></tr>
+<tr><td>3</td><td>도쿄</td><td>가마쿠라, 가와고에, 하코네, 닛코</td><td>시장은 크지만 경쟁과 콘텐츠 포화도도 높음</td></tr>
+<tr><td>4</td><td>삿포로</td><td>오타루, 비에이, 후라노, 노보리베츠</td><td>계절 테마가 강하고 객단가가 높을 가능성</td></tr>
+<tr><td>5</td><td>직항 지역</td><td>시즈오카, 하코다테, 다카마쓰 등</td><td>노선이 수요를 열지만 운항 변동 위험이 큼</td></tr>
+</tbody></table></div>
+<p class="doc-p">행정상 소도시 여부보다 <code>접근 거점에서 120분 이내</code>, <code>도시 내부에 충분한 관광지·숙박·체험 보유</code>, <code>숙박 또는 교통 결제 가능성</code>을 우선 기준으로 삼는 편이 수익성에 유리하다. 후보는 여러 개를 탐색할 수 있지만 사용자에게는 가장 적합한 소도시 1개만 추천하며, 일정에 다른 도시를 섞지 않는다.</p>
+<h2 id="s6" class="s-h2">6. 일본인은 한국 지방 소도시를 가는가</h2>
+<h2 id="s6-1" class="s-h2">6.1 답: 가지만 아직 선택적이다</h2>
+<p class="doc-p">2025년 일본인 방한객은 약 365만 명으로 역대 최대 수준이다. 반복 방문층도 두껍지만 자유여행의 주력은 서울이다. 지방 여행은 다음 두 형태로 관측된다.</p>
+<ul class="bullet-list">
+<li>부산을 제2의 관문으로 이용하고 경주·안동 등 경상권으로 확장</li>
+<li>서울에서 KTX·패키지·테마 상품을 이용해 강원권과 지역 명소 방문</li>
+</ul>
+<p class="doc-p">즉, 일본인 지방 수요는 존재하지만 <code>전국 소도시 탐색</code>보다 <code>서울 또는 부산에서 실패 없이 다녀오는 테마 여행</code>에 가깝다. 언어, 지도·예약 앱, 지역 교통, 영업시간 정보의 불확실성이 전환 장벽이다.</p>
+<h2 id="s6-2" class="s-h2">6.2 우선 검증할 한국 소도시 후보군</h2>
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
+<thead><tr><th>우선순위</th><th>접근 거점</th><th>추천 후보 소도시</th><th>일본인에게 제시할 핵심 가치</th></tr></thead><tbody>
+<tr><td>1</td><td>부산</td><td>경주, 안동, 통영</td><td>역사·미식·바다를 묶은 1~2박 루트</td></tr>
+<tr><td>2</td><td>서울</td><td>강릉, 속초, 춘천</td><td>KTX/ITX 기반 교통 불안 해소</td></tr>
+<tr><td>3</td><td>서울</td><td>전주, 수원</td><td>한옥·음식·역사 테마의 당일 또는 1박</td></tr>
+<tr><td>4</td><td>제주</td><td>동부·서부 읍면권</td><td>렌터카 없이 가능한 권역별 일정</td></tr>
+</tbody></table></div>
+<p class="doc-p">부산은 광역도시이므로 그 자체를 소도시 실적으로 세지 않는다. 경주·안동·통영 중 사용자에게 추천된 소도시 1개의 일정 생성률·저장률·결제율을 핵심 KPI로 잡는다.</p>
+<h2 id="s7" class="s-h2">7. B2C 고객 세그먼트</h2>
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
+<thead><tr><th>세그먼트</th><th>문제</th><th>지불 가능성이 생기는 순간</th><th>우선도</th></tr></thead><tbody>
+<tr><td>일본 2회 이상 방문 한국인</td><td>유명 도시는 봤지만 다음 지역 결정이 어려움</td><td>항공권 구매 후 2~4일 일정을 완성할 때</td><td>1</td></tr>
+<tr><td>짧은 휴가의 직장인·커플</td><td>이동 실패가 여행 전체를 망침</td><td>교통·영업시간·예약을 한 번에 검증할 때</td><td>1</td></tr>
+<tr><td>테마형 여행자</td><td>온천·미식·축제 후보가 흩어져 있음</td><td>취향에 맞는 지역과 예약 상품을 묶을 때</td><td>2</td></tr>
+<tr><td>한국 4회 이상 방문 일본인</td><td>서울 반복에서 벗어나고 싶음</td><td>일본어로 지방 이동을 확신할 때</td><td>2</td></tr>
+<tr><td>초행 여행자</td><td>대표 도시 정보도 충분히 많음</td><td>무료 일정 외 유료 필요성이 낮음</td><td>3</td></tr>
+</tbody></table></div>
+<p class="doc-p">연령이나 성별보다 <code>방문 횟수</code>, <code>여행 기간</code>, <code>교통 허용도</code>, <code>테마</code>, <code>예약 시점</code>이 유료 전환을 더 잘 설명할 가능성이 높다.</p>
+<h2 id="s8" class="s-h2">8. B2C 가치 제안과 제품 범위</h2>
+<h2 id="s8-1" class="s-h2">8.1 가치 제안</h2>
+<blockquote>
+<p class="doc-p">로브는 여러 도시를 나열하거나 연결하는 서비스가 아니라, 사용자의 취향과 여행 조건에 가장 적합한 <strong>소도시 1개를 추천하고 그 도시 안에서만 실행 가능한 1~3일 일정을 완성하는 서비스</strong>다.</p>
+</blockquote>
+<p class="doc-p">사용자가 돈을 내는 대상은 장소 정보가 아니라 다음 결과다.</p>
+<ul class="bullet-list">
+<li>제한된 시간 안에 실행 가능한 일정</li>
+<li>환승, 막차, 휴무, 체크인 시간을 반영한 이동 계획</li>
+<li>날씨·계절·축제 일정에 맞는 대안</li>
+<li>동행·예산·운전 가능 여부를 반영한 추천 이유</li>
+<li>숙소·교통·체험의 예약 가능한 다음 행동</li>
+</ul>
+<h2 id="s8-2" class="s-h2">8.2 초기 범위</h2>
+<ul class="bullet-list">
+<li>일본·한국의 수요가 확인된 소도시 후보부터 제한적으로 구축</li>
+<li>소도시별 검증된 1~3일 일정 템플릿 구축</li>
+<li>무료: 추천된 소도시 1개와 대표 일정 미리보기, 저장</li>
+<li>유료: 개인화 일정, 교통·운영시간 검증, 대안 일정, 공유·내보내기</li>
+<li>예약 연동: 숙소·교통·체험 제휴 링크 또는 딥링크</li>
+</ul>
+<p class="doc-p"><strong>제품 불변 규칙</strong></p>
+<ul class="bullet-list">
+<li>추천 요청 1건의 최종 목적지는 소도시 1개다.</li>
+<li>생성 일정의 모든 관광지·숙소·체험은 추천된 소도시의 서비스 범위 안에 있어야 한다.</li>
+<li>접근을 위한 공항·역·관문도시는 교통 안내에만 사용할 수 있고 여행 일정에는 포함하지 않는다.</li>
+<li>적합한 소도시를 확정할 수 없으면 여러 도시를 섞어 일정을 만들지 않고 추가 조건을 요청한다.</li>
+</ul>
+<h2 id="s9" class="s-h2">9. 수익 모델과 손익 가설</h2>
+<h2 id="s9-1" class="s-h2">9.1 권장 수익 구조</h2>
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
+<thead><tr><th>수익원</th><th>초기 역할</th><th>장점</th><th>위험</th></tr></thead><tbody>
+<tr><td>여행 단위 유료 패스</td><td>핵심 B2C 검증</td><td>여행 시점의 강한 구매 의도와 맞음</td><td>여행 사이 사용 공백</td></tr>
+<tr><td>월 구독</td><td>헤비 리피터용</td><td>반복 매출</td><td>일반 사용자는 해지 가능성 큼</td></tr>
+<tr><td>예약 제휴 수수료</td><td>보조 수익</td><td>사용자 선결제 부담이 없음</td><td>취소·귀속·요율 변동</td></tr>
+<tr><td>프리미엄 컨시어지</td><td>고가 실험</td><td>높은 객단가</td><td>운영 인력과 응답 SLA 필요</td></tr>
+</tbody></table></div>
+<p class="doc-p">초기에는 월 구독보다 <code>여행 1회 패스</code>가 자연스럽다. 일본 지역 여행은 빈도가 높아도 매월 발생하지 않기 때문이다. 구독은 저장한 여행이 2개 이상이거나 연 3회 이상 출국하는 사용자에게만 제안한다.</p>
+<h2 id="s9-2" class="s-h2">9.2 가격 실험 가정</h2>
+<p class="doc-p">아래 가격은 확정 가격이 아니라 결제 의향을 확인하기 위한 실험 구간이다.</p>
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
+<thead><tr><th>상품</th><th>가격 가정</th><th>포함 범위</th></tr></thead><tbody>
+<tr><td>Trip Pass</td><td>4,900~9,900원</td><td>여행 1건 개인화·검증·내보내기</td></tr>
+<tr><td>Pro 월 구독</td><td>7,900~12,900원</td><td>복수 여행, 재생성, 실시간 변경 알림</td></tr>
+<tr><td>컨시어지</td><td>29,000~79,000원</td><td>사람 검수와 복잡한 교통·예약 보조</td></tr>
+</tbody></table></div>
+<h2 id="s9-3" class="s-h2">9.3 단위경제 시나리오</h2>
+<p class="doc-p">월 여행 의도 세션 10만 건, 일정 완성 진입률 20%, Trip Pass 평균 결제액 7,900원을 가정한다.</p>
+<pre><code>월 Trip Pass 매출
+= 여행 의도 세션 × 일정 완성 진입률 × 유료 전환율 × 평균 결제액</code></pre>
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
+<thead><tr><th>유료 전환율</th><th>결제 건수</th><th>월 Trip Pass 매출</th></tr></thead><tbody>
+<tr><td>1%</td><td>200건</td><td>1,580,000원</td></tr>
+<tr><td>3%</td><td>600건</td><td>4,740,000원</td></tr>
+<tr><td>5%</td><td>1,000건</td><td>7,900,000원</td></tr>
+</tbody></table></div>
+<p class="doc-p">이 매출만으로 대규모 콘텐츠·광고비를 감당하기는 어렵다. B2C 수익성이 성립하려면 다음 중 둘 이상이 필요하다.</p>
+<ul class="bullet-list">
+<li>검색·SNS·공유 일정으로 낮은 CAC 확보</li>
+<li>예약 제휴 매출로 사용자당 수익 보완</li>
+<li>반복 여행객의 재구매로 LTV 상승</li>
+<li>인기 소도시별 템플릿 재사용으로 일정 생성·검수 원가 절감</li>
+<li>컨시어지는 자동화가 어려운 고가 코호트에만 제한</li>
+</ul>
+<pre><code>기여이익
+= Trip Pass/구독 매출 + 실현된 제휴 수수료
+- 결제 수수료 - 모델/API 비용 - 일정 검수 변동비 - CS 변동비
+
+허용 CAC
+&lt; 90일 누적 사용자당 기여이익</code></pre>
+<h2 id="s9-4" class="s-h2">9.4 Go/No-Go 기준</h2>
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
+<thead><tr><th>지표</th><th>8주 탐색 기준</th><th>의미</th></tr></thead><tbody>
+<tr><td>추천 결과 → 일정 저장률</td><td>15% 이상</td><td>추천된 단일 소도시가 실제 관심을 만듦</td></tr>
+<tr><td>저장 → 공유/내보내기율</td><td>20% 이상</td><td>실행 의도가 있음</td></tr>
+<tr><td>유료 기능 노출 → 결제율</td><td>3% 이상</td><td>정보가 아닌 결과에 지불</td></tr>
+<tr><td>일정 → 예약 파트너 클릭률</td><td>10% 이상</td><td>거래 의도가 있음</td></tr>
+<tr><td>90일 내 재방문/새 여행 생성</td><td>20% 이상</td><td>LTV 확장 가능성</td></tr>
+<tr><td>환불·중대 일정 오류율</td><td>2% 미만</td><td>신뢰 가능한 상품 품질</td></tr>
+</tbody></table></div>
+<p class="doc-p">3% 결제율은 확정 성공 기준이 아니라 초기 가설이다. 유입 채널과 여행 출발일까지 남은 기간별로 분리해 평가한다.</p>
+<h2 id="s10" class="s-h2">10. MVP 검증 설계</h2>
+<h2 id="s10-1" class="s-h2">10.1 1차 실험: 한국인 일본 지역 여행</h2>
+<ul class="bullet-list">
+<li>코호트: 최근 3년 내 일본 방문 경험 2회 이상, 2~4일 자유여행 계획자</li>
+<li>후보군: 유후인·벳푸·나라·와카야마·오타루·비에이 등</li>
+<li>비교군: 여러 소도시 목록형 추천 vs 소도시 1개 추천+도시 내부 완성 일정</li>
+<li>핵심 행동: 소도시 선택, 일정 저장, 교통 확인, 예약 클릭, Trip Pass 결제</li>
+</ul>
+<h2 id="s10-2" class="s-h2">10.2 2차 실험: 일본인 한국 지역 여행</h2>
+<ul class="bullet-list">
+<li>코호트: 한국 방문 경험 4회 이상, 서울 외 방문 의향자</li>
+<li>후보군: 경주·안동·통영·강릉·속초·춘천 등</li>
+<li>제공 언어: 일본어 우선</li>
+<li>핵심 기능: KTX/버스 이동 설명, 영업시간·휴무 검증, 비운전자 일정</li>
+</ul>
+<h2 id="s10-3" class="s-h2">10.3 반드시 수집할 이벤트</h2>
+<pre><code>destination_impression
+→ regional_route_open
+→ itinerary_generated
+→ transport_detail_open
+→ itinerary_saved
+→ itinerary_shared_or_exported
+→ paywall_viewed
+→ trip_pass_purchased
+→ partner_clicked
+→ booking_completed_or_self_reported</code></pre>
+<p class="doc-p"><code>여러 소도시를 보여 주는 목록형 추천</code>과 <code>소도시 1개를 추천하고 해당 도시 내부 일정까지 생성한 결과</code>의 저장률·결제율·예약 클릭률을 비교해야 단일 소도시 일정의 가치를 측정할 수 있다.</p>
+<h2 id="s11" class="s-h2">11. 주요 위험과 대응</h2>
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
+<thead><tr><th>위험</th><th>영향</th><th>대응</th></tr></thead><tbody>
+<tr><td>소도시 의향을 실제 수요로 과대평가</td><td>콘텐츠 투자 회수 실패</td><td>숙박·예약·결제 행동으로 단계별 검증</td></tr>
+<tr><td>관문도시 방문을 소도시 실적으로 계산</td><td>잘못된 시장 판단</td><td>지역 숙박 또는 지역 상품 클릭을 별도 집계</td></tr>
+<tr><td>지방 항공 노선 중단</td><td>특정 소도시 수요 급락</td><td>철도 대체 가능한 소도시 우선, 노선 상태 재검증</td></tr>
+<tr><td>운영시간·교통 정보 오류</td><td>환불·신뢰 하락</td><td>출처·조회 시각 표시, 출발 전 재검증</td></tr>
+<tr><td>콘텐츠 제작비 과다</td><td>낮은 마진</td><td>수요 상위 소도시 템플릿부터 구축</td></tr>
+<tr><td>무료 지도·블로그와 차별화 부족</td><td>결제율 저하</td><td>추천보다 실행 가능성 검증과 변경 대응에 과금</td></tr>
+<tr><td>제휴 수수료 의존</td><td>정책 변경 시 매출 급감</td><td>Trip Pass 매출을 핵심, 제휴는 보조로 설계</td></tr>
+</tbody></table></div>
+<h2 id="s12" class="s-h2">12. 의사결정</h2>
+<h2 id="지금-할-것" class="s-h2">지금 할 것</h2>
+<ul class="bullet-list">
+<li>한국인 재방일객을 1차 B2C 타깃으로 확정한다.</li>
+<li>접근성과 수요가 검증된 일본 소도시 3개만 먼저 구축하고, 요청마다 그중 가장 적합한 소도시 1개만 추천한다.</li>
+<li>“소도시 선호”를 설문으로 재확인하기보다 일정 저장·공유·결제로 검증한다.</li>
+<li>여행 1회 패스와 무료 일정의 A/B 테스트를 실시한다.</li>
+<li>일본인 방한 코호트는 4회 이상 재방문자를 중심으로 부산-경상권과 서울-강원권에서 별도 검증한다.</li>
+</ul>
+<h2 id="지금-하지-않을-것" class="s-h2">지금 하지 않을 것</h2>
+<ul class="bullet-list">
+<li>전국 모든 소도시 콘텐츠를 선제 구축하지 않는다.</li>
+<li>후쿠오카·부산 방문을 소도시 수요로 포장하지 않는다.</li>
+<li>입국자 수를 고유 고객 수나 MAU로 환산하지 않는다.</li>
+<li>글로벌 63% 의향을 한일 시장의 실제 소도시 방문률로 사용하지 않는다.</li>
+<li>월 구독 하나만으로 수익성을 가정하지 않는다.</li>
+</ul>
+<h2 id="s13" class="s-h2">13. 출처와 한계</h2>
+<p class="doc-p">모든 링크는 2026-06-18에 확인했다. 공식 통계를 우선 사용했으며, 공식 자료를 재인용한 언론·공공기관 자료는 보조 근거로 구분했다.</p>
+<h2 id="s13-1" class="s-h2">13.1 1차·공식 자료</h2>
+<ul class="bullet-list">
+<li><a href="https://www.jnto.go.jp/statistics/data/visitors-statistics/">JNTO 방문객 통계</a> — 국적·월별 방일객 통계 원문</li>
+<li><a href="https://statistics.jnto.go.jp/en/">JNTO 일본 관광통계 데이터</a> — 도도부현 방문률·숙박 및 방일객 데이터</li>
+<li><a href="https://www.jnto.go.jp/inbound_market/topics_all_2501-02.pdf">JNTO 한국 시장 2025년 1~2월 토픽 PDF</a> — 2024년 한국인 방일 횟수 1~2회 중심, 10회 초과 리피터 관측</li>
+<li><a href="https://www.mlit.go.jp/kankocho/tokei_hakusyo/shukuhakutokei.html">일본 관광청 숙박여행통계</a> — 도도부현·국적별 연박수 조사</li>
+<li><a href="https://www.mlit.go.jp/kankocho/content/001899579.pdf">일본 관광청 2024년 숙박여행통계 연간 속보 PDF</a> — 3대 도시권과 지방부 외국인 연박 성장률</li>
+<li><a href="https://www.mlit.go.jp/kankocho/tokei_hakusyo/gaikokujinshohidoko.html">일본 관광청 인바운드 소비동향조사</a> — 방문 지역, 횟수, 소비, 만족도 조사</li>
+<li><a href="https://www.e-stat.go.jp/stat-search/files?toukei=00601020&amp;page=1">e-Stat 숙박여행통계</a> — 도도부현·국적별 숙박 원자료</li>
+<li><a href="https://know.tour.go.kr/stat/fReportsOfForeignerDis19Re.do">관광지식정보시스템 외래관광객조사 보고서</a> — 2024·2025 방한 여행 실태 최종 보고서</li>
+<li><a href="https://www.kcti.re.kr/web/board/boardContentsView.do?mode=W&amp;contents_id=969e40a59b534173bb2911c714ae929d&amp;board_id=14&amp;searchkey=ALL">한국문화관광연구원 2024년 외래관광객조사 주요 결과</a> — 2024년 전체 재방문율 54.7%</li>
+<li><a href="https://datalab.visitkorea.or.kr/datalab/portal/nat/getForTourDashForm.do">한국관광 데이터랩 방한여행 요약</a> — 국가별 방한 규모와 실태조사 대시보드</li>
+<li><a href="https://www.expedia.com/newsroom/unpack-25-travel-trends/">Expedia Group Unpack &#x27;25</a> — 2만 5,000명 설문과 검색 데이터 기반 Detour Destination 관심</li>
+<li><a href="https://www.alio.go.kr/download/download.json?fileNo=2914779">한국관광공사 해외지사 시장 동향 자료(ALIO 첨부)</a> — 일본인 FIT의 서울 집중 및 부산·경주·안동·강원 지방 상품 증가 관측</li>
+</ul>
+<h2 id="s13-2" class="s-h2">13.2 보조 자료</h2>
+<ul class="bullet-list">
+<li><a href="https://welcon.kocca.kr/ko/info/trend/1955119">한국콘텐츠진흥원: 후쿠오카의 한국 관광객 정책</a> — 2024년 후쿠오카 외국인 관광객 중 한국인 57%</li>
+<li><a href="https://www.news1.kr/industry/hotel-tourism/6046959">뉴스1: 2025년 방일 한국인 945만 9,600명</a> — JNTO 통계 재인용</li>
+<li><a href="https://www.ajunews.com/view/20260130103801235">아주경제: 2025년 방한객 1,894만 명, 일본 365만 명</a> — 한국관광공사 통계 재인용</li>
+<li><a href="https://www.traveltimes.co.kr/news/articleView.html?idxno=410458">여행신문: 지방 노선 증편과 방일 한국인 증가</a> — JNTO 월간 분석 재인용</li>
+<li><a href="https://www.traveltimes.co.kr/news/articleView.html?idxno=413598">여행신문: 하코다테·시즈오카 증편과 2025년 상반기 증가</a> — JNTO 분석 재인용</li>
+<li><a href="https://www.mt.co.kr/culture/2025/02/24/2025022416083756043">머니투데이: 일본인 방한객 4회 이상 재방문 47.8%</a> — 한국관광공사 조사 재인용</li>
+</ul>
+<h2 id="s13-3" class="s-h2">13.3 데이터 한계</h2>
+<ul class="bullet-list">
+<li>한일 양국은 “소도시 선호율”을 동일 정의로 직접 집계하지 않는다.</li>
+<li>방문률에는 공항·항만 소재지가 포함될 수 있고, 숙박통계는 당일 방문을 놓친다.</li>
+<li>입국자 수는 중복 방문자를 포함하므로 고유 사용자 수가 아니다.</li>
+<li>지방부 성장률은 전체 국적 합계이며 한국인만의 성장률이 아니다.</li>
+<li>민간 설문의 방문 의향은 실제 결제와 차이가 날 수 있다.</li>
+<li>2025년 일부 연간 수치는 최초 발표 당시 잠정치일 수 있으므로 사업계획 반영 전 최신 확정치를 재확인한다.</li>
+</ul>
+<h2 id="s14" class="s-h2">14. 변경 이력</h2>
+<div class="table-wrap wide scroll-table"><table class="info-tbl">
+<thead><tr><th>버전</th><th>날짜</th><th>변경 내용</th></tr></thead><tbody>
+<tr><td>v0.2</td><td>2026-06-18</td><td>추천 결과를 소도시 1개로 제한하고, 선택된 소도시 내부에서만 1~3일 일정을 생성하는 제품 원칙을 전략·MVP·KPI 전반에 반영</td></tr>
+<tr><td>v0.1</td><td>2026-06-18</td><td>한일 여행 규모, 재방문, 지역·소도시 실제 수요, B2C 고객·과금·단위경제와 MVP 검증 계획 최초 작성</td></tr>
+</tbody></table></div>
+        <nav class="doc-nav" aria-label="이전 다음 문서">
+          <a class="doc-nav-home" href="../../index.html">문서 홈</a>
+          <div class="doc-nav-pager">
+            <a class="doc-nav-link" href="../../pages/11_troubleshooting.html">이전 문서<br><strong>트러블슈팅 문서</strong></a>
+            <a class="doc-nav-link" href="../93_B2B/93_B2B.html">다음 문서<br><strong>B2B 제휴 및 수익화 전략</strong></a>
+          </div>
+        </nav>
+      </main>
+    </div>
+    <script src="../assets/js/requirements.js" defer></script>
+  </body>
+</html>
