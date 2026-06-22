@@ -1,9 +1,14 @@
 # Candidate Evidence Agent 명세서
 
-> 문서 버전: v0.12
+> 문서 버전: v0.13
 > 문서 상태: Review / Candidate Evidence Agent 상세 정본  
 > 대체 대상: `retriever.md`, `ranker.md`, `retriever_code.md`, `ranker_code.md`  
 > 기준 문서: `05_agent_spec.md`, `langgraph_flow.md`, `user_raw_query_flow.md`, `candidate_evidence_baseline_comparison.md`, `candidate_evidence_runtime_retrieval.md`, `destination_search_tool.md`, `dynamo_lookup_tool.md`, `scoring_tool.md`, `festival_verifier_agent.md`
+
+> **[PRD 반영 v0.1 — 대화형 빌더]** Candidate Evidence를 **3층 분해**한다: ① 공유 검색·스코어 **코어**
+> (stateless, 게이트 `city｜radius`, scoring 가중치 context별, query_vector 재사용) ② **도시 선정**
+> (1회, city 게이트) ③ **반경 Provider**(루프, radius 게이트+스텝 필터). 산출물은 **루프 시드**
+> `{도시, query_vector, anchor, budget}`. 후보는 **2티어**(DB 큐레이션 + 지도 API 보충). 상세: `../98_prd/interactive_builder_prd.md`.
 
 # 1. 문서 목적
 

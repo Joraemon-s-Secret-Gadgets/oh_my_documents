@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — 서비스 흐름 명세서 v0.2</title>
+    <title>로브 (Lovv) — 서비스 흐름 명세서 v0.3</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -16,7 +16,7 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">로브</div>
-          <div class="aside-ver">Service Flow · v0.2</div>
+          <div class="aside-ver">Service Flow · v0.3</div>
           <div class="aside-status"><div class="status-dot"></div><span>검토 중</span></div>
         </div>
         <nav class="toc">
@@ -91,9 +91,14 @@
       <main id="cover">
         <h1 id="cover-title" class="s-h1">로브 (Lovv) 서비스 흐름 명세서</h1>
         <blockquote>
-        <p class="doc-p">문서 버전: v0.2</p>
+        <p class="doc-p">문서 버전: v0.3</p>
         <p class="doc-p">문서 상태: 검토 중 (Review)</p>
         <p class="doc-p">기준 문서: 요구사항 명세서</p>
+        </blockquote>
+        <blockquote>
+        <p class="doc-p"><strong>[PRD 반영 v0.1 — 대화형 빌더]</strong> 일정 생성 흐름이 자동 결과 화면에서 <strong>사용자 주도 HITL 빌더</strong>로 바뀐다:</p>
+        <p class="doc-p">가장 적합한 장소 1곳을 시작으로 <strong>반경 내 후보(관광지 DB + 식당·카페 지도 API)를 제시 → 사용자 선택 → 다음 장소 반경 제시</strong>를 반복(interrupt/resume).</p>
+        <p class="doc-p">후보 선택은 메인 대화창과 격리된 <strong>서브 윈도우(사이드바)</strong> 에서 진행한다. 상세: <code>../<wbr>98_<wbr>prd/<wbr>interactive_<wbr>builder_<wbr>prd.md</code>.</p>
         </blockquote>
         <h1 id="s1" class="s-h1">1. 문서 개요</h1>
         <h2 id="s1-1" class="s-h2">1.1 목적</h2>

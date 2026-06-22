@@ -1,9 +1,12 @@
 # Candidate Evidence Runtime Tool Overview
 
-> 문서 버전: v0.9
+> 문서 버전: v0.10
 > 문서 상태: Draft / 실행 도구 개요
 > 작성일: 2026-06-13
 > 기준 문서: `candidate_evidence_agent.md`, `05_agent_spec.md`
+
+> **[PRD 반영 v0.1 — 대화형 빌더]** 반경 빌더에서는 코어를 **radius 게이트**로 재사용하고, **식당·카페는
+> 지도 API로 반경 표시**해 직접 선택지로 제공한다(아래 §5 통제조건 9 갱신). 상세: `../98_prd/interactive_builder_prd.md`.
 
 ## 1. 문서 목적
 
@@ -100,6 +103,7 @@ Candidate Evidence runtime은 다음 통제 조건을 유지한다.
 7. 후보 수 sufficiency fallback을 수행한다.
 8. Candidate Evidence에서는 DynamoDB detail enrichment를 수행하지 않는다. Planner가 최종 일정에 배치한 attraction item만 이후 `DynamoLookupTool`로 보강한다.
 9. `restaurant` 후보/테이블은 조회하지 않고, 미식 요청은 선택 도시 기준 `foodSearch` 링크 생성 요구로 Planner에 전달한다.
+   - **(빌더 전환 반영, PRD v0.1)** 대화형 반경 빌더에서는 식당·카페를 **지도 API로 반경 표시**해 직접 선택지로 제공한다(외부 링크 대체). 큐레이션 관광지(DB)는 통찰 이유 포함, 지도 API 보충 후보는 통찰 이유를 생성하지 않는다(2티어 구분).
 
 ## 6. Resource Metric 위치
 

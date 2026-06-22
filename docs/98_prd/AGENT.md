@@ -14,6 +14,7 @@
 db_build_prd.md          SAM 제외 데이터 스토어 구축 PRD
 data_pipeline_prd.md     데이터 파이프라인 한정 PRD
 s3_vector_index_prd.md   KR S3 vector index 구축 PRD (CEA 검색 요구 대조 기준. 구현 정본은 02_lovv_data_collect/docs/s3_vector_index_prd.md)
+interactive_builder_prd.md  대화형 일정 빌더 + 메모리(단기 AgentCore / 장기 DynamoDB TTL→S3) 전환 PRD
 ```
 
 ## Editing Rules

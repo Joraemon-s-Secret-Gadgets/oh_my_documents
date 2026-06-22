@@ -1,9 +1,15 @@
 # Planner Agent 명세서
 
-> 문서 버전: v1.6
+> 문서 버전: v1.7
 > 문서 상태: Review / Planner Agent 상세 정본
 > 작성일: 2026-06-12
 > 기준 문서: `05_agent_spec.md`, `langgraph_flow.md`, `candidate_evidence_agent.md`, `candidate_evidence_baseline_comparison.md`, `itinerary_flow.md`, `../07_api_spec/07_api_spec.md`, `../04_database_design/04_database_design.md`
+
+> **[PRD 반영 v0.1 — 대화형 빌더]** Planner는 후보를 **임의 배치하지 않는다**. 일정은 사용자가 반경 내
+> 후보를 순차 선택해 쌓는 **HITL 루프**로 구성되며, **동선 = 선택 순서**다. Planner 역할은 ① 좌표 기반
+> **Geo-Filter**(pure-code Haversine/Shapely, 반경/거리 검증) ② **구간 이동시간**(직전→새 장소, 교통
+> API) 계산 + 타임라인 렌더로 축소된다(LLM 동선 생성 금지). 다중 반경 교집합은 옵션. 본 문서의 자동
+> 일정 생성 로직(§8~§12)은 빌더 전환 시 이 원칙에 맞춰 재해석한다. 상세: `../98_prd/interactive_builder_prd.md`.
 
 ## 1. 문서 목적
 

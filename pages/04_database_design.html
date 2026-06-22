@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — 데이터베이스 설계 명세서 v0.6</title>
+    <title>로브 (Lovv) — 데이터베이스 설계 명세서 v0.7</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -16,7 +16,7 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">로브</div>
-          <div class="aside-ver">Database Design · v0.6</div>
+          <div class="aside-ver">Database Design · v0.7</div>
           <div class="aside-status"><div class="status-dot"></div><span>설계 진행중</span></div>
         </div>
         <nav class="toc">
@@ -81,10 +81,15 @@
       <main id="cover">
         <h1 id="cover-title" class="s-h1">로브 (Lovv) 데이터베이스 설계 명세서</h1>
         <blockquote>
-        <p class="doc-p">문서 버전: v0.6</p>
+        <p class="doc-p">문서 버전: v0.7</p>
         <p class="doc-p">문서 상태: 설계 진행중 (Designing)</p>
         <p class="doc-p">기준 문서: 요구사항 명세서 v1.7, 데이터 수집 계획서 v0.7, Agent 명세서 v0.6, 기술 명세서 v0.4, API 명세서 v0.3</p>
         <p class="doc-p">보조 문서: 데이터베이스 보존 기간·Neptune 비용 업데이트 초안, Neptune 대체 설계 명세서</p>
+        </blockquote>
+        <blockquote>
+        <p class="doc-p"><strong>[PRD 반영 v0.1 — 대화형 빌더 메모리]</strong> 에이전트 상태/메모리를 2계층으로 둔다:</p>
+        <p class="doc-p"><strong>단기 = AgentCore Memory</strong>(빌더 상태 <code>itinerary_<wbr>builder</code> + 세션 + checkpoint, <code>event_<wbr>expiry</code> 자동정리), <strong>장기 = 커스텀 DynamoDB</strong>(① 파생 개인화 프로필: 핫, TTL 없음 ② raw 이벤트: TTL→Streams→Lambda→S3 콜드).</p>
+        <p class="doc-p">매핑 테이블·raw PII는 어느 저장소에도 넣지 않고 별도 KMS·IAM, actorId=가명. 상세: <code>../<wbr>98_<wbr>prd/<wbr>interactive_<wbr>builder_<wbr>prd.md</code>, 보존/TTL 라인: 보조 문서 <code>database_<wbr>design_<wbr>retention_<wbr>neptune_<wbr>update.md</code> §0.</p>
         </blockquote>
         <h1 id="s1" class="s-h1">1. 문서 개요</h1>
         <h2 id="s1-1" class="s-h2">1.1 목적</h2>

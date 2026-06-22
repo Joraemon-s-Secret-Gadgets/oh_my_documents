@@ -17,6 +17,23 @@
 
 ---
 
+## 0. 대화형 빌더 메모리 계층 + TTL 라인 (PRD v0.1 반영)
+
+대화형 빌더(`../98_prd/interactive_builder_prd.md`)의 상태/메모리 결정을 본 보조 문서에 반영한다.
+
+- **단기 (AgentCore Memory)**: 빌더 상태 + 세션 + checkpoint, `event_expiry`로 자동 정리(일 단위).
+- **장기 ① 파생 개인화 프로필 (DynamoDB 핫, TTL 없음)**: 가명 ID PK, 선호 요약. 지우지 않음.
+- **장기 ② raw 이벤트 로그 (DynamoDB TTL → S3 콜드)** — TTL 라인:
+  1. 이벤트 아이템 `ttl`(epoch 초)=`now+N일`. best-effort 삭제 → "N일 후 반드시"면 `expires_at` 필드 + 읽기 시 앱레벨 필터.
+  2. DynamoDB Streams(NEW_AND_OLD_IMAGES) → Lambda가 TTL 삭제만 필터(`userIdentity.principalId=="dynamodb.amazonaws.com"`).
+  3. OLD_IMAGE(가명)를 S3 콜드 적재(날짜/actor-해시 파티션). 용도: 프로필 재계산·분석·학습.
+  4. 고볼륨 시 Kinesis→Firehose→S3 확장.
+- **hard line**: 매핑(가명ID↔실제신원)·raw PII는 미저장(별도 KMS·IAM). 삭제권은 DynamoDB+S3 양쪽 삭제.
+
+> 단기 `event_expiry` / raw 이벤트 TTL의 보존 일수 N은 아래 §2 "확정값"과 함께 정한다.
+
+---
+
 ## 1. 현재 반영 상태 (갭 분석)
 
 | 피드백 | 현재 상태 | 판정 |

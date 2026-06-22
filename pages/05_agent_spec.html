@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — Agent 명세서 v0.14</title>
+    <title>로브 (Lovv) — Agent 명세서 v0.15</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -16,7 +16,7 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">로브</div>
-          <div class="aside-ver">Agent Spec · v0.14</div>
+          <div class="aside-ver">Agent Spec · v0.15</div>
           <div class="aside-status"><div class="status-dot"></div><span>검토 중</span></div>
         </div>
         <nav class="toc">
@@ -89,10 +89,17 @@
       <main id="cover">
         <h1 id="cover-title" class="s-h1">로브 (Lovv) Agent 명세서</h1>
         <blockquote>
-        <p class="doc-p">문서 버전: v0.14</p>
+        <p class="doc-p">문서 버전: v0.15</p>
         <p class="doc-p">문서 상태: 검토 중 (Review)</p>
         <p class="doc-p">기준 문서: 요구사항 명세서 v1.7, 서비스 흐름 명세서 v0.2, 데이터 수집 계획서 v0.7, 데이터베이스 설계 명세서 v0.5, 기술 명세서 v0.3, API 명세서 v0.2</p>
         <p class="doc-p">상세 정본: <code>langgraph_<wbr>flow.md</code>, <code>intent_<wbr>agent.md</code>, <code>candidate_<wbr>evidence_<wbr>agent.md</code>, <code>candidate_<wbr>evidence_<wbr>baseline_<wbr>comparison.md</code>, <code>planner_<wbr>agent.md</code>, <code>agent_<wbr>harness_<wbr>design.md</code></p>
+        </blockquote>
+        <blockquote>
+        <p class="doc-p"><strong>[PRD 반영 v0.1 — 대화형 빌더]</strong> 일정 생성 단계를 자동 배치에서 <strong>사용자 주도 HITL 반경 루프</strong>로</p>
+        <p class="doc-p">전환한다(소도시 선정까지는 유지). 주요 변경: ① Candidate Evidence <strong>3층 분해</strong>(공유 코어 + 도시선정</p>
+        <p class="doc-p">1회 + 반경 Provider 루프, 게이트 <code>city｜radius</code>) ② <strong>Intent action 어휘</strong>(PICK·REPLACE_PLACE·</p>
+        <p class="doc-p">EXCLUDE·FILTER·DONE) + <strong>Profile Agent 분리·Lock</strong> ③ Planner = <strong>Geo-Filter</strong>(동선=선택 순서)</p>
+        <p class="doc-p">④ 결정론 Supervisor·스텝 병렬 fan-out 유지. 근거·상세: <code>../<wbr>98_<wbr>prd/<wbr>interactive_<wbr>builder_<wbr>prd.md</code>.</p>
         </blockquote>
         <h1 id="s1" class="s-h1">1. 문서 개요</h1>
         <h2 id="s1-1" class="s-h2">1.1 목적</h2>
