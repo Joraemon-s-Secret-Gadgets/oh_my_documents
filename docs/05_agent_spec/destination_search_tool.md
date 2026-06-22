@@ -1,9 +1,11 @@
 # Destination Search Tool 실행 명세
 
-> 문서 버전: v0.7
+> 문서 버전: v0.8
 > 문서 상태: Draft / Destination Search Tool 세부
 > 작성일: 2026-06-13
 > 기준 문서: `candidate_evidence_agent.md`, `candidate_evidence_runtime_retrieval.md`, `dynamo_lookup_tool.md`
+>
+> **[PRD 반영 v0.1 — 대화형 빌더]** 빌더 재사용을 위해 게이트를 **city AND ｜ radius** 로 추상화한다(anchor 좌표 기준 반경 필터). 식당·카페는 본 도구(S3 Vector attraction) 밖, 지도 API로 처리. 상세: `../98_prd/interactive_builder_prd.md`.
 
 ## 1. 문서 목적
 

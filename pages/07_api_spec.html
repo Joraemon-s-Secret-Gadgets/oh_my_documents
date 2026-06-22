@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — API 명세서 v0.3</title>
+    <title>로브 (Lovv) — API 명세서 v0.4</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -16,7 +16,7 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">로브</div>
-          <div class="aside-ver">API Spec · v0.3</div>
+          <div class="aside-ver">API Spec · v0.4</div>
           <div class="aside-status"><div class="status-dot"></div><span>기획 단계</span></div>
         </div>
         <nav class="toc">
@@ -80,9 +80,14 @@
       <main id="cover">
         <h1 id="cover-title" class="s-h1">로브 (Lovv) API 명세서</h1>
         <blockquote>
-        <p class="doc-p">문서 버전: v0.3</p>
+        <p class="doc-p">문서 버전: v0.4</p>
         <p class="doc-p">문서 상태: 기획 단계 (Planning)</p>
         <p class="doc-p">기준 문서: 요구사항 명세서 v1.7, 서비스 흐름 명세서 v0.2, 데이터베이스 설계 명세서 v0.5, Agent 명세서 v0.4, 기술 명세서 v0.4, 배포·운영 트러블슈팅 v0.2</p>
+        </blockquote>
+        <blockquote>
+        <p class="doc-p"><strong>[PRD 반영 v0.1 — 대화형 빌더]</strong> 대화형 빌더용 API 계약 추가 필요: <strong>반경 후보 조회</strong>(anchor+필터→2티어</p>
+        <p class="doc-p">후보), <strong>후보 선택/일정 추가</strong>(interrupt resume), <strong>서브 윈도우 오픈 플래그</strong>, 빌더 상태 재개(thread_id).</p>
+        <p class="doc-p">동선=선택 순서. 상세: <code>../<wbr>98_<wbr>prd/<wbr>interactive_<wbr>builder_<wbr>prd.md</code>.</p>
         </blockquote>
         <h1 id="s1" class="s-h1">1. 문서 개요</h1>
         <h2 id="s1-1" class="s-h2">1.1 목적</h2>

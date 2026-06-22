@@ -1,12 +1,14 @@
 # 로브 (Lovv) 일정 생성 흐름 정본 초안
 
-> 문서 버전: v0.4
+> 문서 버전: v0.5
 > 문서 상태: 초안 (Draft)
 > 기준 문서: `planner_agent.md`, `candidate_evidence_agent.md`, `festival_verifier_agent.md`, `05_agent_spec.md`, `langgraph_flow.md`, `../01_requirements/01_requirements.md`, `../02_service_flow/02_service_flow.md`, `../04_database_design/04_database_design.md`, `../06_technical_spec/06_technical_spec.md`, `../07_api_spec/07_api_spec.md`
 
 > 정본 우선순위: Planner Agent 구현 기준은 `planner_agent.md`를 우선한다. 일정 밀도, 슬롯 템플릿, 미식·노포 처리, 출력 스키마, 검증·재시도 규칙의 단일 정본은 `planner_agent.md`다. 본 문서는 PlanDraft, 일정 수정 흐름, 대체 일정 아이디어, 일반 수정 API 후보를 보존하는 보조 초안이며, 정본과 충돌할 경우 `planner_agent.md`를 따른다.
 
 > 용어 정합성: 본 문서가 사용하던 일부 초안 용어는 Candidate Evidence / Planner 정본 용어로 정리했다. 매핑은 4.3절을 참고한다.
+>
+> **[PRD 반영 v0.1 — 대화형 빌더]** 일정 생성이 자동 배치에서 **사용자 주도 HITL 반경 루프**로 전환된다(동선=선택 순서). 반경 후보(관광지 DB + 식당·카페 지도 API) 제시→선택→다음 anchor 반복. Planner는 Geo-Filter(반경/구간 동선)로 축소. 상세: `../98_prd/interactive_builder_prd.md`.
 
 # 1. 문서 목적
 

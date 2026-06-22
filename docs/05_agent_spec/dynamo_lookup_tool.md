@@ -1,9 +1,11 @@
 # Dynamo Lookup Tool 실행 명세
 
-> 문서 버전: v0.1
+> 문서 버전: v0.2
 > 문서 상태: Draft / Dynamo Lookup Tool 세부
 > 작성일: 2026-06-14
 > 기준 문서: `candidate_evidence_agent.md`, `planner_agent.md`, `candidate_evidence_runtime_retrieval.md`
+>
+> **[PRD 반영 v0.1 — 대화형 빌더]** 장기 raw 이벤트는 DynamoDB **TTL→S3 콜드** 라인으로 관리(파생 프로필은 핫·TTL 없음). 최종 배치 enrich는 빌더에서 사용자 픽 시점에 수행. 상세: `../98_prd/interactive_builder_prd.md`, TTL 라인: `../04_database_design/database_design_retention_neptune_update.md` §0.
 
 ## 1. 문서 목적
 
