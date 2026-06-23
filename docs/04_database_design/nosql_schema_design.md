@@ -1,5 +1,8 @@
 # TourAPI 기반 NoSQL 데이터 정규화 및 스키마 설계
 
+> 문서 성격: 보조 Markdown
+> 대표 문서: `04_database_design.md`
+
 작성일: 2026-06-06
 
 ## 1. 설계 범위

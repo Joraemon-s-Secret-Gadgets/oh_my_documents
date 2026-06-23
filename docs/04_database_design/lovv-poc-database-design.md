@@ -1,5 +1,8 @@
 # Lovv PoC Database Design
 
+> 문서 성격: 보조 Markdown
+> 대표 문서: `04_database_design.md`
+
 작성일: 2026-06-05
 
 ## 1. 설계 범위

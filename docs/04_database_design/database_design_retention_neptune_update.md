@@ -1,5 +1,8 @@
 # 데이터베이스 설계 명세서 업데이트 초안 — 보존 기간/TTL 및 Neptune 비용
 
+> 문서 성격: 보조 Markdown
+> 대표 문서: `04_database_design.md`
+
 > 보조 문서 (AGENT.md 워크플로 기준 초안)
 > 대상 원본: `04_database_design.md` (v0.4)
 > 작성일: 2026-06-08
