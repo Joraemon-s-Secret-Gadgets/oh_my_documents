@@ -3,7 +3,7 @@
 > 문서 버전: v1.5
 > 문서 상태: 검토 중 (Review)
 > 위상: 본 문서는 Lovv 에이전트의 **그래프 토폴로지·상태·라우팅 최상위 기준**이다.
-> 연관 문서: `05_agent_spec.md`(에이전트 명세), `agent_update.md`(수정 방안/A안 확정), `agent_harness_design.md`(하네스), `../01_requirements/lovv_agent_multiturn_context_spec.md`(멀티턴 컨텍스트 정책)
+> 연관 문서: `05_agent_spec.md`(에이전트 명세), `agent_spec_revision_plan.md`(수정 방안/A안 확정), `agent_harness_design.md`(하네스), `../01_requirements/lovv_agent_multiturn_context_spec.md`(멀티턴 컨텍스트 정책)
 >
 > **[PRD 반영 v0.1 — 대화형 빌더]** 빌더 전환 시 토폴로지가 바뀐다 — Planner 단일 노드의 자동 일정 생성 대신 **반경 Provider ↔ 후보 제시(interrupt) ↔ 사용자 픽 ↔ next anchor** HITL 루프가 추가된다. checkpointer(AgentCore Memory)로 interrupt/resume, `itinerary_builder` state 그룹 추가, Supervisor는 결정론 유지. 상세: `../98_prd/interactive_builder_prd.md`.
 
@@ -13,7 +13,7 @@
 
 설계 결정의 전제:
 
-- **A안 확정**: `Intent_Agent`는 오케스트레이션 루프 이전의 **entry node(컨텍스트 게이트)** 로 두고, `Supervisor_Router`는 raw를 보유하지 않는 **루프 오케스트레이터**로 둔다. (`agent_update.md` 4장·설계 결정 참조)
+- **A안 확정**: `Intent_Agent`는 오케스트레이션 루프 이전의 **entry node(컨텍스트 게이트)** 로 두고, `Supervisor_Router`는 raw를 보유하지 않는 **루프 오케스트레이터**로 둔다. (`agent_spec_revision_plan.md` 4장·설계 결정 참조)
 - **I/O 허브 원칙**: Supervisor는 압축 상태와 `fulfilled_matrix`만으로 라우팅하며, 토큰이 무겁거나 결정적인 작업은 Sub-Agent / Skill로 위임한다.
 - **개발 플랫폼**: AWS Bedrock AgentCore(Runtime/Memory/Gateway/Identity/Policy/Observability). LangGraph 그래프를 Runtime에 그대로 호스팅한다.
 
@@ -210,7 +210,7 @@ class UnifiedAgentState(TypedDict):
 
 # 9. Bedrock + AgentCore 매핑 (요약)
 
-상세는 `agent_update.md` 6장 참조. 본 설계는 **모델 계층(Bedrock)** 과 **런타임 계층(AgentCore)** 을 함께 사용한다.
+상세는 `agent_spec_revision_plan.md` 6장 참조. 본 설계는 **모델 계층(Bedrock)** 과 **런타임 계층(AgentCore)** 을 함께 사용한다.
 
 모델 계층 — **Amazon Bedrock**:
 

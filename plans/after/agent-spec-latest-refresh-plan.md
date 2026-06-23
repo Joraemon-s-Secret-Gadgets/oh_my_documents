@@ -8,14 +8,14 @@
 
 ## 목적
 
-`docs/05_agent_spec/05_agent_spec.md`를 Agent 명세서의 공개 정본으로 최신화한다. 현재 `agent_update.md`, `langgraph_flow.md`, `agent_harness_design.md`, `recommendation_flow.md`에 반영된 최신 설계가 대표 문서에 충분히 통합되지 않았으므로, 보조 문서의 결정 사항을 선별해 정본, 연결 문서, 생성 HTML을 같은 기준으로 맞춘다.
+`docs/05_agent_spec/05_agent_spec.md`를 Agent 명세서의 공개 정본으로 최신화한다. 현재 `agent_spec_revision_plan.md`, `langgraph_flow.md`, `agent_harness_design.md`, `recommendation_flow.md`에 반영된 최신 설계가 대표 문서에 충분히 통합되지 않았으므로, 보조 문서의 결정 사항을 선별해 정본, 연결 문서, 생성 HTML을 같은 기준으로 맞춘다.
 
 ## 현재 기준
 
 | 구분 | 현재 상태 | 처리 방향 |
 | --- | --- | --- |
 | 대표 문서 | `docs/05_agent_spec/05_agent_spec.md` v0.2 | 최신 결정 반영 후 v0.4 후보로 갱신 |
-| 수정 방안 | `docs/05_agent_spec/agent_update.md`가 v0.3/v0.4 반영 항목을 보유 | 반영할 항목과 보류할 항목을 구분 |
+| 수정 방안 | `docs/05_agent_spec/agent_spec_revision_plan.md`가 v0.3/v0.4 반영 항목을 보유 | 반영할 항목과 보류할 항목을 구분 |
 | 그래프 정본 | `docs/05_agent_spec/langgraph_flow.md` v1.0 | 상태 스키마, 노드, 엣지, 루프 가드를 대표 문서에 요약 반영 |
 | 하네스 | `docs/05_agent_spec/agent_harness_design.md` v1.0 | 검증 기준, 평가 지표, CI 연계 내용을 품질 검증 장에 반영 |
 | 추천 흐름 | `docs/05_agent_spec/recommendation_flow.md` | 추천 점수화, 근거 생성, 예외 흐름을 Ranker/Explanation에 반영 |
@@ -37,7 +37,7 @@
 
 ### Task 1: 최신 결정 범위 확정
 
-**Description:** `agent_update.md`의 적용 순서와 체크리스트를 기준으로 대표 문서에 반영할 항목을 확정한다.
+**Description:** `agent_spec_revision_plan.md`의 적용 순서와 체크리스트를 기준으로 대표 문서에 반영할 항목을 확정한다.
 
 **Acceptance criteria:**
 - [x] Intent/Condition 병합, 루프 가드, Festival 검색 캐시, 명칭 통일 항목의 반영 여부가 정리된다.
@@ -45,12 +45,12 @@
 - [x] 보류 항목은 별도 후속 작업으로 남긴다.
 
 **Verification:**
-- [x] `agent_update.md` 9장 체크리스트와 계획 항목이 1:1로 대응하는지 확인한다.
+- [x] `agent_spec_revision_plan.md` 9장 체크리스트와 계획 항목이 1:1로 대응하는지 확인한다.
 
 **Dependencies:** None
 
 **Files likely touched:**
-- `docs/05_agent_spec/agent_update.md`
+- `docs/05_agent_spec/agent_spec_revision_plan.md`
 - `plans/before/agent-spec-latest-refresh-plan.md`
 
 **Estimated scope:** S
@@ -96,7 +96,7 @@
 
 ### Task 4: 추천 로직과 근거 생성 반영
 
-**Description:** `recommendation_flow.md`와 `agent_update.md` 7장의 추천 흐름을 Ranker, Retriever, Explanation 장에 반영한다.
+**Description:** `recommendation_flow.md`와 `agent_spec_revision_plan.md` 7장의 추천 흐름을 Ranker, Retriever, Explanation 장에 반영한다.
 
 **Acceptance criteria:**
 - [x] 자연어 입력, 필수 조건, 선호 조건, unsupported 조건 분류가 반영된다.

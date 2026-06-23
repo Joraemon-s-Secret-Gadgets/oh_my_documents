@@ -471,7 +471,7 @@ POST /recommendations/{recommendationId}/revise
 3. `04_database_design.md`에 `itinerary_days`, `itinerary_items` 상세 컬럼과 API 매핑 표를 반영한다.
 4. `agent_harness_design.md`에 일정 생성 전용 테스트 케이스를 추가한다.
 5. `02_service_flow.md`의 `PlanDraft` 설명을 최신 API/DB 원칙에 맞게 보완한다.
-6. `docs/02_service_flow/Update.md`의 구형 `/v1/chat/*`, `/v1/plans/*`, Transcript 저장 표현은 최신 정본과 충돌하므로 참고 문서로만 유지하거나 정리한다.
+6. `docs/02_service_flow/service_flow_update_summary.md`의 구형 `/v1/chat/*`, `/v1/plans/*`, Transcript 저장 표현은 최신 정본과 충돌하므로 참고 문서로만 유지하거나 정리한다.
 
 # 17. 변경 이력
 

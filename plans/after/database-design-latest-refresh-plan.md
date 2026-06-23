@@ -25,8 +25,8 @@
 | 구분 | 파일 | 처리 |
 | --- | --- | --- |
 | 원본 | `docs/04_database_design/04_database_design.md` | 최신화 주 대상 |
-| 보조 원본 | `docs/04_database_design/DBMS.md` | DBMS 결정 표와 대표 문서의 저장소 책임 일치 확인 |
-| 보조 원본 | `docs/04_database_design/integrated_draft.md` | 상세 초안과 대표 문서 사이의 엔티티·저장소 충돌 확인 |
+| 보조 원본 | `docs/04_database_design/database_storage_decision_summary.md` | DBMS 결정 표와 대표 문서의 저장소 책임 일치 확인 |
+| 보조 원본 | `docs/04_database_design/database_design_integration_report.md` | 상세 초안과 대표 문서 사이의 엔티티·저장소 충돌 확인 |
 | 보조 원본 | `docs/04_database_design/nosql_schema_design.md` | DynamoDB 테이블·PK/SK·GSI·TTL 후보 반영 |
 | 보조 원본 | `docs/04_database_design/lovv-service-db-erd.md` | ERD와 대표 문서의 관계·테이블명 일치 확인 |
 | 생성물 | `pages/04_database_design.html` | Markdown 수정 후 재생성 |
@@ -56,7 +56,7 @@
 - [x] DynamoDB 논리 모델에 Agent 실행 상태, async job, 사용자 이벤트, API 로그, 축제 검증 캐시, TTL/GSI 후보가 명확한지 확인한다.
 - [x] S3 vector 기능 기반 RAG 인덱스 모델에 문서 chunk, embedding, source reference, metadata filter 기준이 명확한지 확인한다.
 - [x] 보존 정책에 대화 전문 미저장, PII 마스킹, 이벤트 TTL, 운영 로그 접근 권한을 반영한다.
-- [x] `DBMS.md`, `integrated_draft.md`, `nosql_schema_design.md`, `lovv-service-db-erd.md`와 대표 문서 사이의 충돌을 정리한다.
+- [x] `database_storage_decision_summary.md`, `database_design_integration_report.md`, `nosql_schema_design.md`, `lovv-service-db-erd.md`와 대표 문서 사이의 충돌을 정리한다.
 - [x] `scripts/generate_pages.py`로 HTML 생성물을 재생성한다.
 - [x] `pages/04_database_design.html`, `index.html`, 구 번호 리다이렉트 페이지의 링크와 상태를 확인한다.
 - [x] `git diff --check`와 문서 링크/앵커 검색으로 Markdown·HTML 구조 오류를 검증한다.

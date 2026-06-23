@@ -2,7 +2,7 @@
 
 > 작성일: 2026-06-08
 > 대상 문서: `docs/05_agent_spec/05_agent_spec.md`
-> 관련 보조 문서: `agent_build_target.md`, `agent_harness_design.md`, `agent_update.md`, `langgraph_flow.md`, `recommendation_flow.md`, `user_raw_query_flow.md`, `theme_analysis_report.md`
+> 관련 보조 문서: `agent_build_target.md`, `agent_harness_design.md`, `agent_spec_revision_plan.md`, `langgraph_flow.md`, `recommendation_flow.md`, `user_raw_query_flow.md`, `theme_analysis_report.md`
 > 산출물: `pages/05_agent_spec.html`
 
 ## 1. 목표
@@ -134,7 +134,7 @@
 **Files likely touched:**
 - `docs/05_agent_spec/agent_build_target.md`
 - `docs/05_agent_spec/agent_harness_design.md`
-- `docs/05_agent_spec/agent_update.md`
+- `docs/05_agent_spec/agent_spec_revision_plan.md`
 
 **Estimated scope:** Medium
 
@@ -193,4 +193,4 @@
 
 - 이번 작업에서는 Agent 명세 문서 버전을 `v0.4`로 유지한다. 버전 상향은 추후 별도 작업에서 결정한다.
 - 이번 작업에서는 PDF 산출물을 제외하고 Markdown 원본과 HTML 생성물까지만 갱신한다. PDF 최신화는 추후 별도 작업으로 진행한다.
-- 이번 작업에서는 `agent_update.md`의 변경 이력성 내용을 대표 문서에 요약 반영하지 않는다. 해당 반영 여부는 추후 별도 작업에서 결정한다.
+- 이번 작업에서는 `agent_spec_revision_plan.md`의 변경 이력성 내용을 대표 문서에 요약 반영하지 않는다. 해당 반영 여부는 추후 별도 작업에서 결정한다.

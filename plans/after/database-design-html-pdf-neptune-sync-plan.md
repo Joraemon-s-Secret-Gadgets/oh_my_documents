@@ -14,8 +14,8 @@
 | 구분 | 파일 | 처리 방향 |
 | --- | --- | --- |
 | 대표 원본 | `docs/04_database_design/04_database_design.md` | 현재 반영된 RDB/Neptune 내용의 기준 |
-| 보조 원본 | `docs/04_database_design/DBMS.md` | DBMS 요약에 AWS Neptune 포함 여부 확인 |
-| 보조 원본 | `docs/04_database_design/integrated_draft.md` | 상세 초안의 저장소 방향과 대표 문서 충돌 확인 |
+| 보조 원본 | `docs/04_database_design/database_storage_decision_summary.md` | DBMS 요약에 AWS Neptune 포함 여부 확인 |
+| 보조 원본 | `docs/04_database_design/database_design_integration_report.md` | 상세 초안의 저장소 방향과 대표 문서 충돌 확인 |
 | 연결 원본 | `docs/05_agent_spec/05_agent_spec.md` | Retriever 저장소 계약 확인 |
 | 연결 원본 | `docs/06_technical_spec/06_technical_spec.md` | Retrieval 기술 후보 확인 |
 | HTML 생성물 | `pages/04_database_design.html`, `pages/05_agent_spec.html`, `pages/06_technical_spec.html`, `index.html` | `scripts/generate_pages.py`로 재생성 |

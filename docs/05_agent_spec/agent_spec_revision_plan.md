@@ -1,9 +1,11 @@
-# 로브 (Lovv) Agent 명세서 수정 방안
+# 로브 Agent 명세 수정 계획
 
 > 문서 상태: 제안 (Proposal)
 > 대상 문서: `docs/05_agent_spec/05_agent_spec.md` (v0.4)
 > 연관 문서: `docs/05_agent_spec/agent_build_target.md`
 > 작성일: 2026-06-07
+> 문서 성격: 보조 Markdown
+> 대표 문서: `05_agent_spec.md`
 
 # 1. 문서 목적
 

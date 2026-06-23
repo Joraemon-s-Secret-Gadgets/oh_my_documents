@@ -19,7 +19,7 @@
 | 현재 공개 대상 | `00_project_plan`부터 `07_api_spec`까지 8개 대표 문서가 생성 대상이다. |
 | 과거 HTML 잔존 | `pages/03_technical_spec.html`, `pages/04_data_collect_plan.html`, `pages/04_api_spec.html`, `pages/05_api_spec.html`, `pages/05_database_design.html`, `pages/06_database_design.html`, `pages/06_agent_spec.html` 같은 이전 번호 체계 파일은 리다이렉트로 유지한다. |
 | 리다이렉트 기준 | `scripts/generate_pages.py`에는 이전 파일을 새 파일로 연결하는 `REDIRECTS`가 있다. |
-| 현재 작업트리 주의 | `docs/05_agent_spec/agent_update.md`에 별도 수정이 있으므로, HTML 최신화 작업 전 반영 여부를 결정해야 한다. |
+| 현재 작업트리 주의 | `docs/05_agent_spec/agent_spec_revision_plan.md`에 별도 수정이 있으므로, HTML 최신화 작업 전 반영 여부를 결정해야 한다. |
 
 ## 목표 문서 순서
 
@@ -54,7 +54,7 @@
 
 - [x] 현재 `docs/`, `pages/`, `index.html`, `scripts/generate_pages.py`의 문서 목록을 재확인한다.
 - [x] `pages/04_api_spec.html`, `pages/05_database_design.html`, `pages/06_agent_spec.html`을 리다이렉트로 유지할지 삭제할지 결정한다.
-- [x] `docs/05_agent_spec/agent_update.md`의 미커밋 변경을 대표 문서에 반영할지, 별도 초안으로 둘지 결정한다.
+- [x] `docs/05_agent_spec/agent_spec_revision_plan.md`의 미커밋 변경을 대표 문서에 반영할지, 별도 초안으로 둘지 결정한다.
 - [x] `scripts/generate_pages.py`의 `DOCUMENTS` 배열을 `00 → 01 → 02 → 03 → 04 → 05 → 06 → 07` 순서에 맞게 재정렬한다.
 - [x] 필요 시 `Document.target` 파일명을 새 순서에 맞게 변경하고 `REDIRECTS`를 갱신한다.
 - [x] `README.md`와 루트 `AGENT.md`의 문서 흐름 설명이 새 순서와 충돌하지 않는지 확인한다.
@@ -85,7 +85,7 @@
 | 문서 번호 변경으로 기존 링크가 깨짐 | 공유된 GitHub Pages 링크가 404가 될 수 있음 | `REDIRECTS`를 유지하거나 리다이렉트 HTML을 새로 생성한다. |
 | `00_project_plan`이 상세 문서와 어긋남 | 첫 진입 문서가 실제 설계 상태를 잘못 안내 | 공개 순서는 00을 먼저 두되, 내용 수정 시 상세 문서를 읽기 전용 기준으로 확인한다. |
 | 보조 Markdown까지 무분별하게 공개됨 | 초안과 정본이 섞여 사용자 혼란 발생 | 대표 문서만 기본 공개하고 보조 문서 공개는 별도 결정으로 둔다. |
-| 미커밋 Agent 초안 변경이 HTML에 누락됨 | Agent 관련 최신 결정이 공개 HTML과 다름 | 작업 초반에 `agent_update.md` 변경 반영 여부를 결정한다. |
+| 미커밋 Agent 초안 변경이 HTML에 누락됨 | Agent 관련 최신 결정이 공개 HTML과 다름 | 작업 초반에 `agent_spec_revision_plan.md` 변경 반영 여부를 결정한다. |
 
 ## 완료 기준
 

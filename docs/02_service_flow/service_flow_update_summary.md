@@ -1,4 +1,8 @@
-# Lovv Service Flow 및 User Flow 추가 요청
+# 로브 서비스 흐름 추가 요청 요약
+
+> 문서 성격: 보조 Markdown
+> 대표 문서: `02_service_flow.md`
+> 정리 기준: 이 문서는 서비스 흐름 보강 요청을 정리한 참고 문서이며, 공개 정본은 `02_service_flow.md`로 유지한다.
 
 ## 반영 요청
 

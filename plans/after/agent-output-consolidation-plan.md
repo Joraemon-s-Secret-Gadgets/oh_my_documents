@@ -7,7 +7,7 @@
 
 ## 목적
 
-`agent_update.md` 6.5의 기존 통합 제안인 `Itinerary_Planner_Agent` + `Explanation_Writer_Agent` 통합을 정본 문서와 하위 문서에 반영한다. 목표는 일정 생성과 설명 생성을 하나의 구조화 출력 노드로 합쳐 LLM 호출 수와 중복 컨텍스트 전달을 줄이고, 일정과 추천 이유가 서로 어긋나는 문제를 줄이는 것이다.
+`agent_spec_revision_plan.md` 6.5의 기존 통합 제안인 `Itinerary_Planner_Agent` + `Explanation_Writer_Agent` 통합을 정본 문서와 하위 문서에 반영한다. 목표는 일정 생성과 설명 생성을 하나의 구조화 출력 노드로 합쳐 LLM 호출 수와 중복 컨텍스트 전달을 줄이고, 일정과 추천 이유가 서로 어긋나는 문제를 줄이는 것이다.
 
 ## 기준 결정
 
@@ -21,9 +21,9 @@
 
 | 문서 | 현재 역할 |
 | --- | --- |
-| `docs/05_agent_spec/agent_update.md` 6.5 | 출력 통합 제안 원문 |
-| `docs/05_agent_spec/agent_update.md` 10장 | `Planner` + `Writer` 적용 완료 상태 반영 |
-| `docs/05_agent_spec/agent_update.md` 11.4 | `05_agent_spec.md`, `langgraph_flow.md`, `agent_harness_design.md` 동시 갱신 결과 반영 |
+| `docs/05_agent_spec/agent_spec_revision_plan.md` 6.5 | 출력 통합 제안 원문 |
+| `docs/05_agent_spec/agent_spec_revision_plan.md` 10장 | `Planner` + `Writer` 적용 완료 상태 반영 |
+| `docs/05_agent_spec/agent_spec_revision_plan.md` 11.4 | `05_agent_spec.md`, `langgraph_flow.md`, `agent_harness_design.md` 동시 갱신 결과 반영 |
 | `docs/05_agent_spec/05_agent_spec.md` | 공개 정본을 `Itinerary_Writer_Agent` 단일 생성 노드 기준으로 갱신 |
 | `docs/05_agent_spec/langgraph_flow.md` | 그래프 정본을 `Itinerary_Writer → Validation Skill → Output_Validator` 순차 호출로 갱신 |
 | `docs/05_agent_spec/agent_harness_design.md` | 하네스와 trajectory를 `generation` 단일 생성 키 기준으로 갱신 |
@@ -31,7 +31,7 @@
 
 ## 작업 체크리스트
 
-- [x] `docs/05_agent_spec/agent_update.md`의 6.5, 10장, 11.4 내용을 기준으로 적용 범위를 확정한다.
+- [x] `docs/05_agent_spec/agent_spec_revision_plan.md`의 6.5, 10장, 11.4 내용을 기준으로 적용 범위를 확정한다.
 - [x] `docs/05_agent_spec/05_agent_spec.md` 4장 출력, 5.2 파이프라인, 7.6/7.7 단계별 명세를 `Itinerary_Writer_Agent` 기준으로 통합한다.
 - [x] `docs/05_agent_spec/05_agent_spec.md`의 Validator 실패 분기에서 `grounding_missing`, `explanation_weak` 재호출 대상을 `Itinerary_Writer_Agent` 또는 부분 재작성 정책으로 갱신한다.
 - [x] `docs/05_agent_spec/05_agent_spec.md`의 `fulfilled_matrix` 표준 키를 검토해 `itinerary`와 `explanation`을 유지할지, `generation` 단일 키로 통합할지 결정한다.
