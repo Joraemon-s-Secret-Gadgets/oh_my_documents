@@ -1,5 +1,8 @@
 # 로브 (Lovv) 데이터 전처리 PoC 예산 임시 기록
 
+> 문서 성격: 보조 Markdown
+> 대표 문서: `data_preprocessing_plan.md`
+
 > 문서 버전: v0.1
 > 문서 상태: 임시 기록 (Draft)
 > 작성일: 2026-06-03

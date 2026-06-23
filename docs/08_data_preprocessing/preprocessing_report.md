@@ -1,5 +1,8 @@
 # KR 상세 데이터 전처리 완료 보고서
 
+> 문서 성격: 보조 Markdown
+> 대표 문서: `data_preprocessing_plan.md`
+
 ## 1. 보고서 개요
 
 - 작성 기준일: 2026-06-10
