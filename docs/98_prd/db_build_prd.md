@@ -4,6 +4,8 @@
 > 문서 상태: 초안 (Draft)
 > 작성일: 2026-06-10
 > 작성자: 조동휘
+> 문서 성격: 보조 Markdown
+> 대표 문서: `98_prd.md`
 > 범위 한정: **SAM 앱 스택과 분리된 데이터 스토어 구축(프로비저닝 + 스키마 생성)**. 제품 전체 PRD 아님
 > 입력 문서: `04_database_design/04_database_design.md`(v0.5), `06_technical_spec`(v0.4, §5.3 SAM 분리 전략), `07_api_spec`(v0.2)
 > 보조 문서: 본 문서는 `docs/04_database_design`의 보조 Markdown이다. 대표 문서(`04_database_design.md`) 수정은 별도 요청 시에만 반영한다.

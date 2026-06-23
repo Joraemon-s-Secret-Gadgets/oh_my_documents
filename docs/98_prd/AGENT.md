@@ -5,12 +5,14 @@
 ## Scope
 
 - 서비스 전체 요구사항의 기준은 `../01_requirements/01_requirements.md`다.
-- 이 폴더의 PRD는 특정 구축 범위, 파이프라인, 기능 묶음처럼 실행 단위가 분리된 제품 요구사항을 정의한다.
+- 대표 문서는 `98_prd.md`다. 이 폴더의 PRD 목록, 범위 경계, 상위 요구사항과의 관계를 관리한다.
+- 이 폴더의 하위 PRD는 특정 구축 범위, 파이프라인, 기능 묶음처럼 실행 단위가 분리된 제품 요구사항을 정의한다.
 - PRD가 DB, 전처리, API, Agent, 운영 문서의 결정과 충돌하면 각 상세 문서의 최신 결정을 우선 확인하고 PRD에 반영한다.
 
 ## Documents
 
 ```text
+98_prd.md                 PRD 대표 문서와 범위 맵
 db_build_prd.md          SAM 제외 데이터 스토어 구축 PRD
 data_pipeline_prd.md     데이터 파이프라인 한정 PRD
 s3_vector_index_prd.md   KR S3 vector index 구축 PRD (CEA 검색 요구 대조 기준. 구현 정본은 02_lovv_data_collect/docs/s3_vector_index_prd.md)

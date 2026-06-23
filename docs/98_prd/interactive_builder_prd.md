@@ -4,6 +4,8 @@
 > 문서 상태: 초안 (Draft)
 > 작성일: 2026-06-22
 > 작성자: 조동휘
+> 문서 성격: 보조 Markdown
+> 대표 문서: `98_prd.md`
 > 범위 한정: **대화형 일정 빌더(HITL) + 메모리/상태 아키텍처 전환**. 제품 전체 PRD 아님
 > 입력 문서: `05_agent_spec/`(에이전트 설계), `04_database_design/`(저장소·보관), `02_service_flow/`,
 >   `94_kick/`, `95_aha_moment/`, `98_prd/db_build_prd.md`

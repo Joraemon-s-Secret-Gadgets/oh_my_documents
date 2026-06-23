@@ -4,6 +4,8 @@
 > 문서 상태: 초안 (Draft)
 > 작성일: 2026-06-11
 > 작성자: 조동휘
+> 문서 성격: 보조 Markdown
+> 대표 문서: `98_prd.md`
 > 범위 한정: **KR S3 vector index(`kr-tour-domain-v1`) 구축과 Candidate_Evidence_Agent 검색 요구 충족**. 제품 전체 PRD 아님
 > 입력 문서: `../08_data_preprocessing/s3_vector_index_plan.md`(v0.2), `../05_agent_spec/candidate_evidence_agent.md`(v0.1), `../08_data_preprocessing/korea_data_preprocessing_result_report.md`, `../04_database_design/04_database_design.md`(§3.4)
 > 보조 문서: 본 문서는 실행 단위 PRD다. 인덱스 기술 계약의 정본은 `s3_vector_index_plan.md`이며, 본 PRD와 충돌 시 해당 문서의 최신 결정을 우선 확인하고 반영한다.

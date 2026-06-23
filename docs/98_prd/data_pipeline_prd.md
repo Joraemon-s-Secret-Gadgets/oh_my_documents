@@ -4,6 +4,8 @@
 > 문서 상태: 초안 (Draft)
 > 작성일: 2026-06-09 (v0.2 취득=repo 참조 재구성: 2026-06-09)
 > 작성자: 조동휘
+> 문서 성격: 보조 Markdown
+> 대표 문서: `98_prd.md`
 > 범위 한정: **데이터 파이프라인(취득 → 전처리 → 적재)**. 제품 전체 PRD 아님
 > 입력 문서: `03_data_collect_plan`(취득), `08_data_preprocessing`(전처리), `04_database_design`(적재 타깃)
 > **취득 라인(Extract)**: `Gloveman/tour-api-korea` (main) **git repo를 참조·재사용**한다(재구현 금지). 본 PRD의 구현 대상은 그 산출물 이후의 Load(Raw)·Transform·Load(Service)다.
