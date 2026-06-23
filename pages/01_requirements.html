@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — 요구사항 명세서 v1.7</title>
+    <title>로브 (Lovv) — 요구사항 명세서 v1.9</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -16,7 +16,7 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">로브</div>
-          <div class="aside-ver">Requirements Spec · v1.7</div>
+          <div class="aside-ver">Requirements Spec · v1.9</div>
           <div class="aside-status"><div class="status-dot"></div><span>검토 중</span></div>
         </div>
         <nav class="toc">
@@ -106,7 +106,7 @@
         <p class="doc-p">Local(소도시) + Vibe(분위기·감성), 또는 Voyage(항해·여행)를 뜻한다.</p>
         <p class="doc-p">일반적인 Love와 달리 알파벳 v를 겹쳐 써서 트렌디한 스타트업이나 테크 서비스 같은 힙한 인상을 준다.</p>
         <blockquote>
-        <p class="doc-p">문서 버전: v1.7 — WBS 기준 개발 일정 정합화</p>
+        <p class="doc-p">문서 버전: v1.9 — 보조 요구사항 문서 정리 및 대표 문서 동기화</p>
         <p class="doc-p">문서 상태: 검토 중 (Review)</p>
         <p class="doc-p">적용 범위: 로브 서비스 전체</p>
         </blockquote>
@@ -132,6 +132,7 @@
         <li>Google Maps Platform, Kakao Maps, Yahoo Japan, WeatherAPI 연동</li>
         <li>지도 표시, 장소 상세 정보, 현재 날씨 표시, 숙소 검색 링크, 외부 탐색 링크 제공 기능</li>
         </ul>
+        <p class="doc-p"><code>docs/<wbr>01_<wbr>requirements/<wbr></code>의 보조 Markdown은 요구사항 후보·근거 자료로 관리한다. 확정된 내용은 이 대표 문서의 기능 요구사항, 데이터 요구사항, 제약사항, 변경 이력에 통합하고, 아직 검토 단계인 내용은 P5 또는 향후 검토 후보로 유지한다.</p>
         <h2 id="s1-3" class="s-h2">1.3 용어 정의</h2>
         <div class="table-wrap wide scroll-table"><table class="info-tbl">
         <thead><tr><th>용어</th><th>정의</th></tr></thead><tbody>
@@ -334,6 +335,16 @@
         <tr><td>P4</td><td>스키 액티비티 여행 추천, 개인화 랭킹 모델 고도화, 현재 위치 반경 추천, 여행 중 즉흥 일정 조정</td><td>정의</td><td>구현</td><td>Production</td></tr>
         <tr><td>P5</td><td>별 관측 조건 기반 여행지 추천, 치유·웰니스 여정 추천, 예산 역산 추천</td><td>제외</td><td>검토</td><td>제외</td></tr>
         </tbody></table></div>
+        <p class="doc-p">보조 요구사항 문서의 대표 문서 반영 기준은 다음과 같다.</p>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>분류</th><th>보조 문서</th><th>대표 문서 반영 방식</th></tr></thead><tbody>
+        <tr><td>P1 핵심 추천</td><td><code>overturizim.md</code>, <code>korea_<wbr>japan.md</code>, <code>weather_<wbr>first.md</code></td><td>혼잡 회피, 한일 축제, 월별 기상 경향 기반 추천 요구사항으로 통합</td></tr>
+        <tr><td>P2 선택 구현</td><td><code>japan_<wbr>add_<wbr>function.md</code></td><td>일본어 검색 키워드와 일본 현지 탐색 링크 요구사항으로 통합</td></tr>
+        <tr><td>P3 설계</td><td><code>kdrama-pipeline.md</code>, <code>animation.md</code>, <code>trip_<wbr>train.md</code>, <code>craft_<wbr>experience.md</code>, <code>personalization.md</code>, <code>lovv_<wbr>agent_<wbr>multiturn_<wbr>context_<wbr>spec.md</code></td><td>미디어 성지순례, 철도, 지역 문화 체험, 개인화, 멀티턴 컨텍스트 요구사항으로 통합</td></tr>
+        <tr><td>P4 Production</td><td><code>seasonal_<wbr>activity.md</code></td><td>스키 액티비티와 여행 중 즉흥 일정 조정 요구사항으로 통합</td></tr>
+        <tr><td>P5 향후 검토</td><td><code>astro_<wbr>rag_<wbr>proposal.md</code>, <code>healing_<wbr>wellness.md</code>, <code>budget_<wbr>first.md</code></td><td>이번 프로젝트 상세 기능 요구사항에서는 제외하고 데이터 후보·제약사항에 향후 검토로 기록</td></tr>
+        <tr><td>우선순위 정리</td><td><code>priority_<wbr>plan.md</code></td><td>P1~P5 단계별 추진 범위의 기준 자료로 반영</td></tr>
+        </tbody></table></div>
         <h2 id="우선순위-기능-요구사항" class="s-h2">우선순위 기능 요구사항</h2>
         <div class="table-wrap wide scroll-table"><table class="info-tbl">
         <thead><tr><th>ID</th><th>서비스/영역</th><th>요구사항 내용</th><th>비고</th></tr></thead><tbody>
@@ -366,6 +377,13 @@
         <tr><td>FR-THEME-ACTIVITY-003</td><td>스키 액티비티 여행 추천</td><td>시스템은 스키 액티비티와 주변 휴식, 온천, 식당 코스를 하나의 여정으로 결합해야 한다.</td><td>활동+회복 결합</td></tr>
         </tbody></table></div>
         <p class="doc-p">표 캡션: FR-JP-005 일본어 검색 키워드 예시는 金沢 観光 / 金沢 モデルコース / 金沢 カフェ / 金沢 穴場 / 金沢 ひとり旅 기준으로 작성한다.</p>
+        <p class="doc-p">향후 검토 후보는 다음과 같이 관리한다. 이 항목은 이번 프로젝트의 상세 기능 요구사항 표에는 포함하지 않는다.</p>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>후보</th><th>근거 보조 문서</th><th>검토 조건</th></tr></thead><tbody>
+        <tr><td>별 관측 조건 기반 여행지 추천</td><td><code>astro_<wbr>rag_<wbr>proposal.md</code></td><td>광해, 월령, 구름량, 대기 안정도 데이터를 안정적으로 확보하고, 일반 소도시 추천과 별도 성공률 계산 기준을 정의한 뒤 검토</td></tr>
+        <tr><td>치유·웰니스 여정 추천</td><td><code>healing_<wbr>wellness.md</code></td><td>온천 테마와 중복되지 않는 회복 활동 데이터, 템플스테이·치유의숲 운영 정보, 한적함 지표를 확보한 뒤 검토</td></tr>
+        <tr><td>예산 역산 추천</td><td><code>budget_<wbr>first.md</code></td><td>교통·숙박·식비·액티비티 비용 추정치와 실시간 가격 미연동 제약을 명확히 한 뒤 검토</td></tr>
+        </tbody></table></div>
         <h2 id="s4-7" class="s-h2">4.7 운영·관리·검증 기능</h2>
         <div class="table-wrap wide scroll-table"><table class="info-tbl">
         <thead><tr><th>ID</th><th>서비스/영역</th><th>요구사항 내용</th><th>비고</th></tr></thead><tbody>
@@ -517,6 +535,7 @@
         <tr><td>사용자 여행 예산 정보</td><td>교통비, 숙박비, 식비, 액티비티 비용 추정치, 기간·인원 기준, 예산 초과 금액, 숙박 수준별 조정 대안</td></tr>
         <tr><td>대체 일정 정보</td><td>월별 기상 경향에 따른 실내 중심 대체 일정, 대체 일정 제공 조건, 토글 표시 여부</td></tr>
         <tr><td>외부 행동 링크</td><td>지도 열기, 공식 관광 정보, 예약, 교통, 숙박, 맛집, 현지 플랫폼으로 이어지는 링크</td></tr>
+        <tr><td>별 관측 후보 데이터</td><td>광해 등급, 월령, 구름량, 대기 안정도, 투명도, 관측 시설·예약 링크 등 향후 검토 후보 데이터</td></tr>
         </tbody></table></div>
         <h2 id="s7-2" class="s-h2">7.2 데이터 품질 기준</h2>
         <div class="table-wrap"><table class="info-tbl compact-tbl">
@@ -550,6 +569,7 @@
         <li>PoC 단계의 개인화 데이터는 브라우저 로컬 스토리지 중심으로 관리하며, Production 단계에서는 로그인 사용자 계정 기반으로 누적·조회·삭제할 수 있도록 확장한다.</li>
         <li>위치 반경 추천은 사용자의 명시적 위치 동의 또는 직접 입력한 기준 위치를 전제로 하며, 국가 자동 선택보다 사용자가 지정한 반경 안의 소도시 후보를 좁히는 것을 목적으로 한다.</li>
         <li>여행 중 즉흥 일정 조정은 현재 여행 중 남은 예산·남은 일정 기반 재조정이며, 전체 예산을 먼저 입력해 여행지를 역산 추천하는 예산 역산 추천과 구분한다.</li>
+        <li>별 관측, 치유·웰니스, 예산 역산 추천은 P5 향후 검토 후보이며, 대표 문서에는 데이터 후보와 검토 조건만 유지한다. 상세 기능 요구사항으로 승격하려면 별도 우선순위 재검토와 데이터 확보 기준을 먼저 확정한다.</li>
         </ul>
         <h1 id="s9" class="s-h1">9. 예산안·인력 분배·개발 기한</h1>
         <p class="doc-p">본 섹션은 로브 서비스의 MVP 개발을 위한 예산, 수행 인력, 개발 기간을 정의한다. 금액과 일정은 요구사항 정의 단계의 기준값이며, 외부 API 사용량, 데이터 확보 범위, Production 전환 승인 여부에 따라 조정될 수 있다.</p>
@@ -631,6 +651,7 @@
         <h1 id="s10" class="s-h1">10. 변경 이력</h1>
         <div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
         <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+        <tr><td>v1.9</td><td>2026-06-23</td><td>로브 기획팀</td><td>01 요구사항 보조 문서 백업·인덱스화, P1~P5 보조 문서 반영 기준, P5 향후 검토 후보, 별 관측 후보 데이터, 대표 문서 동기화 기준 반영</td></tr>
         <tr><td>v1.8</td><td>2026-06-01</td><td>로브 기획팀</td><td>여행 일정 추천 받기 CTA와 추천 다시 받기 요구사항, 재추천 이벤트 데이터 정의 추가</td></tr>
         <tr><td>v1.7</td><td>2026-06-01</td><td>로브 기획팀</td><td>GitHub Projects Lovv WBS 기준으로 개발 기한, M1/M2/M3 마일스톤, Sprint 1~9 일정, Production 종료일을 정합화</td></tr>
         <tr><td>v1.6</td><td>2026-06-01</td><td>로브 기획팀</td><td>개인화 확장 요구사항 반영: 북마크, 방문 기록, 방문 소도시 별점, cold start, 소도시 랭킹, PoC ML 랭킹, Production 개인화 데이터 누적, 개인화 랭킹 1차 운영, 위치 반경 추천, 여행 중 즉흥 일정 조정 추가</td></tr>
