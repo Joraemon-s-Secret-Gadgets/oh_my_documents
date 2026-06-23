@@ -1,5 +1,8 @@
 # 로브 (Lovv) Agent 하네스 설계
 
+> 문서 성격: 보조 Markdown
+> 대표 문서: `05_agent_spec.md`
+
 > 문서 버전: v1.5
 > 문서 상태: 검토 중 (Review)
 > 기준 문서: `langgraph_flow.md`(그래프 정본), `agent_spec_revision_plan.md`(설계 결정), `../01_requirements/lovv_agent_multiturn_context_spec.md`(멀티턴 정책)

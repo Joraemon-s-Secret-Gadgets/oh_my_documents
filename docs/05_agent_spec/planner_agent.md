@@ -1,5 +1,8 @@
 # Planner Agent 명세서
 
+> 문서 성격: 보조 Markdown
+> 대표 문서: `05_agent_spec.md`
+
 > 문서 버전: v1.7
 > 문서 상태: Review / Planner Agent 상세 정본
 > 작성일: 2026-06-12

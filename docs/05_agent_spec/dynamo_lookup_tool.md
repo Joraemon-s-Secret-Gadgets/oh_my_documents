@@ -1,5 +1,8 @@
 # Dynamo Lookup Tool 실행 명세
 
+> 문서 성격: 보조 Markdown
+> 대표 문서: `05_agent_spec.md`
+
 > 문서 버전: v0.2
 > 문서 상태: Draft / Dynamo Lookup Tool 세부
 > 작성일: 2026-06-14

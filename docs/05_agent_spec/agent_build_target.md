@@ -1,5 +1,8 @@
 # 로브 Agent 구축 대상 정리
 
+> 문서 성격: 보조 Markdown
+> 대표 문서: `05_agent_spec.md`
+
 > 문서 상태: 초안 (Draft)
 > 작성 목적: 구현 단계에서 어떤 Agent를 만들 것인지 역할 단위로 정리
 > 기준 문서: `docs/05_agent_spec/05_agent_spec.md` v0.4

@@ -1,5 +1,8 @@
 # 추천 근거 및 흐름
 
+> 문서 성격: 보조 Markdown
+> 대표 문서: `05_agent_spec.md`
+
 > 업데이트 메모: 기존 문서의 “검색 후 랭킹” 구간은 `Candidate_Evidence_Agent`가 장소 evidence를 검색하고, 도시/장소 후보를 scoring하여 Planner가 사용할 evidence package를 구성하는 흐름으로 해석한다. 본 문서는 추천 근거 논리를 보존하며, 일정 생성 세부 흐름은 별도 확정 전까지 변경하지 않는다.
 
 > **[PRD 반영 v0.1 — 대화형 빌더]** 추천 이후 **일정 구성**은 자동 배치가 아니라 사용자 주도 HITL 반경 빌더로 진행된다(소도시 선정까지는 동일). 상세: `../98_prd/interactive_builder_prd.md`.

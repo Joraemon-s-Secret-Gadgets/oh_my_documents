@@ -1,5 +1,8 @@
 # 로브 (Lovv) LangGraph Flow 명세 (Canonical)
 
+> 문서 성격: 보조 Markdown
+> 대표 문서: `05_agent_spec.md`
+
 > 문서 버전: v1.5
 > 문서 상태: 검토 중 (Review)
 > 위상: 본 문서는 Lovv 에이전트의 **그래프 토폴로지·상태·라우팅 최상위 기준**이다.

@@ -1,5 +1,8 @@
 # 테마 분포 분석 및 추천 임계치 제안 보고서
 
+> 문서 성격: 보조 Markdown
+> 대표 문서: `05_agent_spec.md`
+
 > 문서 버전: v0.2
 > 문서 상태: Review
 > 기준 문서: `recommendation_flow.md`, `candidate_evidence_agent.md`

@@ -1,5 +1,8 @@
 # Candidate Evidence Agent 명세서
 
+> 문서 성격: 보조 Markdown
+> 대표 문서: `05_agent_spec.md`
+
 > 문서 버전: v0.13
 > 문서 상태: Review / Candidate Evidence Agent 상세 정본  
 > 대체 대상: `retriever.md`, `ranker.md`, `retriever_code.md`, `ranker_code.md`  

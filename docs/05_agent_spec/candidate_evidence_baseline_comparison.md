@@ -1,5 +1,8 @@
 # Candidate Evidence Agent Baseline 비교 설계
 
+> 문서 성격: 보조 Markdown
+> 대표 문서: `05_agent_spec.md`
+
 > 문서 버전: v1.1
 > 문서 상태: 검토 중 (Review)  
 > 기준 문서: `05_agent_spec.md`, `candidate_evidence_agent.md`, `../10_test_plan/candidate_evidence_search_test_plan.md`

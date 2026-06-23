@@ -1,5 +1,8 @@
 # 로브 (Lovv) 일정 생성 흐름 정본 초안
 
+> 문서 성격: 보조 Markdown
+> 대표 문서: `05_agent_spec.md`
+
 > 문서 버전: v0.5
 > 문서 상태: 초안 (Draft)
 > 기준 문서: `planner_agent.md`, `candidate_evidence_agent.md`, `festival_verifier_agent.md`, `05_agent_spec.md`, `langgraph_flow.md`, `../01_requirements/01_requirements.md`, `../02_service_flow/02_service_flow.md`, `../04_database_design/04_database_design.md`, `../06_technical_spec/06_technical_spec.md`, `../07_api_spec/07_api_spec.md`
