@@ -1,5 +1,8 @@
 # 개인화 요구사항 정리
 
+> 문서 성격: 보조 Markdown
+> 대표 문서: `01_requirements.md`
+
 ## 1. 목적
 
 본 문서는 로브(Lovv) 서비스의 개인화 기능을 PoC와 Production 단계로 구분해 정리한다.
