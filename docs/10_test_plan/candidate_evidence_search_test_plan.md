@@ -3,6 +3,8 @@
 > 문서 버전: v1.2
 > 문서 상태: 검토 중 (Review)  
 > 문서 범위: 도시 선정 및 관광지·음식점 Candidate Evidence 검색  
+> 문서 성격: 보조 Markdown
+> 대표 문서: `10_test_plan.md`
 > 기준 문서: `../05_agent_spec/candidate_evidence_agent.md`, `../05_agent_spec/candidate_evidence_baseline_comparison.md`
 
 # 1. 목적
