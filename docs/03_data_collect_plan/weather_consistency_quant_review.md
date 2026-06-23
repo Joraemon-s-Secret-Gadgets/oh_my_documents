@@ -1,5 +1,8 @@
 # 데이터 수집 계획서 검토 — 날씨 데이터 활용·정합성 정량화 초안
 
+> 문서 성격: 보조 Markdown
+> 대표 문서: `03_data_collect_plan.md`
+
 > 보조 문서 (AGENT.md 워크플로 기준 초안)
 > 대상 원본: `03_data_collect_plan.md`, `korea_data_acquisition_plan_updated.md`, `japan_data_acquisition_plan.md`
 > 작성일: 2026-06-08

@@ -1,5 +1,8 @@
 # 한국 데이터 취득 계획서
 
+> 문서 성격: 보조 Markdown
+> 대표 문서: `03_data_collect_plan.md`
+
 > 문서 버전: v0.3
 > 문서 상태: 실제 수집 샘플 코드(tour-api-korea) 산출물 기준으로 최신화
 > 원본 문서: `oh_my_documents/docs/03_data_collect_plan/korea_data_acquisition_plan.md` v0.1
