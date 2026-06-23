@@ -1,5 +1,8 @@
 # 프로젝트 기획서 업데이트 메모 정리 안내
 
+> 문서 성격: 보조 Markdown
+> 대표 문서: `00_project_plan.md`
+
 > 문서 성격: 보조 Markdown 정리 안내
 > 정리일: 2026-06-23
 > 백업 위치: `docs/00_project_plan/bak/2026-06-23_before_project_plan_split/update_project_plan.md`
