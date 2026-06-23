@@ -1,8 +1,8 @@
 # Lovv 시장 포지셔닝 보조 문서
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `00_project_plan.md`
-> 기준 문서: `../96_market_research/travel_ai_service_market_research.md`, `update_project_plan.md` 백업본
+> 대표 문서: `../00_project_plan.md`
+> 기준 문서: `../../96_market_research/travel_ai_service_market_research.md`, `update_project_plan.md` 백업본
 
 ## 카피
 

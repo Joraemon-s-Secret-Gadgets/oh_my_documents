@@ -1,8 +1,8 @@
 # Lovv Aha Moment 보조 문서
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `00_project_plan.md`
-> 기준 문서: `../95_aha_moment/95_aha_moment.md`
+> 대표 문서: `../00_project_plan.md`
+> 기준 문서: `../../95_aha_moment/95_aha_moment.md`
 
 ## 핵심 aha
 

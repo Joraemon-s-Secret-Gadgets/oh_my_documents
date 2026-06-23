@@ -91,6 +91,8 @@ docs/
 
 보조 Markdown에는 수정할 내용, 근거, 초안을 먼저 작성할 수 있다. 이후 Agent는 보조 Markdown을 검토해 해당 폴더의 대표 문서에 반영하고, 필요한 경우 `pages/`의 HTML 생성물도 최신화한다.
 
+`docs/00_project_plan`은 예외적으로 `sections/*.md`를 먼저 수정하고 `00_project_plan.md` 통합본에 반영한다. 대표 문서 보조 자료는 같은 폴더 루트가 아니라 `docs/00_project_plan/supplemental/`에 적재한다.
+
 ## HTML Generation Rules
 
 - `index.html`은 전체 문서 목차, 문서별 요약, 상태를 보여주는 GitHub Pages 첫 화면으로 생성한다.
@@ -100,6 +102,12 @@ docs/
 - HTML 문서에는 공통 헤더, 본문, 이전/다음 문서 링크, 푸터를 포함한다.
 - 생성된 HTML 링크는 모두 상대 경로를 사용한다.
 - 문서 상태는 `Draft`, `Review`, `Complete` 중 하나를 사용한다.
+
+## Change History Rules
+
+- 문서의 `변경 이력`, `파일 이력`, `History`, `Changelog` 표는 최신 항목이 위에 오도록 최신순으로 정렬한다.
+- 같은 날짜의 이력은 더 높은 버전 또는 더 늦게 작성된 항목을 위에 둔다.
+- 새 이력을 추가할 때는 표 하단이 아니라 헤더 바로 아래에 추가한다.
 
 ## Presentation Rules
 

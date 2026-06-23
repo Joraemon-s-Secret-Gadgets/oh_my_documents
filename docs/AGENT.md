@@ -30,6 +30,8 @@
 ## Editing Rules
 
 - 문서 버전, 문서 상태, 기준 문서를 상단 메타데이터에 유지한다.
+- 문서의 `변경 이력`, `파일 이력`, `History`, `Changelog` 표는 최신 항목이 위에 오도록 최신순으로 작성한다. 같은 날짜의 이력은 더 높은 버전 또는 더 늦게 작성된 항목을 위에 둔다.
+- `docs/00_project_plan` 작업에서는 `sections/*.md`를 먼저 수정한 뒤 `00_project_plan.md` 통합본과 생성 HTML을 갱신한다.
 - Markdown 표의 열 의미를 바꾸면 관련 HTML 생성물과 연결 문서도 함께 확인한다.
 - 같은 폴더 안에 보조 Markdown을 추가해 수정할 내용, 근거, 초안을 먼저 작성할 수 있다. Agent는 보조 Markdown을 검토해 대표 문서에 반영한다.
 - 새 문서 폴더를 추가하면 해당 폴더에 `AGENT.md`를 추가하고 `index.html` 및 `pages/` 생성 문서를 갱신한다.

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — 프로젝트 기획서 v0.5</title>
+    <title>로브 (Lovv) — 프로젝트 기획서 v0.10</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -16,7 +16,7 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">로브</div>
-          <div class="aside-ver">Project Plan · v0.5</div>
+          <div class="aside-ver">Project Plan · v0.10</div>
           <div class="aside-status"><div class="status-dot"></div><span>검토 중</span></div>
         </div>
         <nav class="toc">
@@ -27,6 +27,7 @@
             <a class="toc-link" href="#s1-1">1.1 프로젝트명</a>
             <a class="toc-link" href="#s1-2">1.2 한 줄 정의</a>
             <a class="toc-link" href="#s1-3">1.3 기획 배경</a>
+            <a class="toc-link" href="#s1-4">1.4 시장 포지셔닝과 차별점</a>
           </div>
           <div class="toc-section">
             <div class="toc-section-hd">2. 문제 정의</div>
@@ -90,8 +91,8 @@
             <a class="toc-link" href="#s12">12. 리스크 및 대응</a>
           </div>
           <div class="toc-section">
-            <div class="toc-section-hd">13. 후속 문서</div>
-            <a class="toc-link" href="#s13">13. 후속 문서</a>
+            <div class="toc-section-hd">13. 후속 문서 및 분리 문서</div>
+            <a class="toc-link" href="#s13">13. 후속 문서 및 분리 문서</a>
           </div>
           <div class="toc-section">
             <div class="toc-section-hd">14. 변경 이력</div>
@@ -102,10 +103,12 @@
       <main id="cover">
         <h1 id="cover-title" class="s-h1">로브 (Lovv) 프로젝트 기획서</h1>
         <blockquote>
-        <p class="doc-p">문서 버전: v0.5</p>
+        <p class="doc-p">문서 버전: v0.10</p>
         <p class="doc-p">문서 상태: 검토 중 (Review)</p>
         <p class="doc-p">적용 범위: 로브 서비스 PoC 및 Production 기획</p>
         <p class="doc-p">기준 문서: 요구사항 명세서 v1.7, 서비스 흐름 명세서 v0.3, 데이터 수집 계획서 v0.10, 데이터베이스 설계 명세서 v0.7, Agent 명세서 v0.15, 기술 명세서 v0.5, API 명세서 v0.4, B2C 수요 검증 v0.4, B2B 제휴 전략 v0.3, KICK 설계 v0.6, Aha Moment 설계 v0.25, 시장조사 v0.2, B2G 공익 협력 v0.9</p>
+        <p class="doc-p">보조 문서: <code>supplemental/<wbr>market_<wbr>positioning.md</code>, <code>supplemental/<wbr>feature_<wbr>scope_<wbr>summary.md</code>, <code>supplemental/<wbr>business_<wbr>model.md</code>, <code>supplemental/<wbr>data_<wbr>ops_<wbr>scope.md</code>, <code>supplemental/<wbr>kick_<wbr>summary.md</code>, <code>supplemental/<wbr>aha_<wbr>moment_<wbr>summary.md</code>, <code>supplemental/<wbr>technical_<wbr>direction_<wbr>summary.md</code></p>
+        <p class="doc-p">하위 문서: <code>sections/<wbr>*.md</code></p>
         </blockquote>
         <h1 id="s1" class="s-h1">1. 프로젝트 개요</h1>
         <h2 id="s1-1" class="s-h2">1.1 프로젝트명</h2>
@@ -121,6 +124,25 @@
         <p class="doc-p">로브는 오버투어리즘 회피와 소도시 발견이라는 문제를 여행자 관점의 추천 경험으로 해결한다. 사용자가 국가와 여행 시기를 먼저 입력하면, 서비스는 그 조건을 기준으로 사용자의 자연어 취향과 날씨 조건을 해석하고 추천 근거가 있는 소도시 여정과 주변 정보를 함께 제공한다.</p>
         <p class="doc-p">일반 여행 일정 서비스가 사용자가 이미 선택한 대도시 안에서 동선과 일정을 최적화하는 데 강점이 있다면, 로브는 어디를 갈지부터 정하지 못한 사용자에게 국가와 시기 조건에 맞는 대체 소도시를 발견하게 하는 목적지 탐색 엔진으로 차별화한다.</p>
         <p class="doc-p">PoC 단계에서는 많은 지역을 얕게 나열하기보다 한국·일본의 제한된 소도시를 깊게 다룬다. 축제, 기상, 교통, 체험, 외부 링크를 고밀도로 채워 Lovv다운 목적지 추천 경험을 먼저 검증한다.</p>
+        <h2 id="s1-4" class="s-h2">1.4 시장 포지셔닝과 차별점</h2>
+        <p class="doc-p">트리플이 인기 도시 안에서 여행 일정을 최적화하는 슈퍼앱이라면, Lovv는 국가와 시기부터 시작해 오버투어리즘을 피할 수 있는 소도시 대체 여행지를 발견하게 해주는 설명 가능한 추천 에이전트다.</p>
+        <p class="doc-p">Lovv는 “어디를 가라”에서 끝나는 서비스가 아니라, 왜 이 소도시인지, 어떤 데이터에 근거했는지, 지금 실제로 갈 수 있는지를 함께 보여주는 목적지 탐색 엔진이다.</p>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>축</th><th>기존 일정 서비스</th><th>Lovv</th></tr></thead><tbody>
+        <tr><td>목적지</td><td>사용자가 이미 선택한 도시 내부 일정 최적화</td><td>국가·시기 조건에서 대체 소도시 1곳 발견</td></tr>
+        <tr><td>추천 방식</td><td>장소 목록과 동선 중심</td><td>RAG 기반 후보 검색, 추천 이유, 출처·검증 상태 제공</td></tr>
+        <tr><td>입력 흐름</td><td>도시 선택 후 일정 생성</td><td>로그인·온보딩 후 국가·시기·일정 길이 선질문</td></tr>
+        <tr><td>데이터 운영</td><td>내부 DB·상품 중심</td><td>공공·지자체·외부 API·제휴 링크를 함께 관리</td></tr>
+        <tr><td>AI 철학</td><td>블랙박스형 일정 생성에 가까움</td><td>Explainable RAG 기반 소도시 추천 엔진</td></tr>
+        </tbody></table></div>
+        <p class="doc-p">PoC 보완 방향은 다음과 같다.</p>
+        <ul class="bullet-list">
+        <li>소도시를 넓게 나열하기보다 제한된 후보 도시를 깊게 구성한다.</li>
+        <li>출처와 외부 링크를 UI에서 적극적으로 노출해 “LLM이 만든 이야기”가 아니라 데이터 기반 큐레이션임을 드러낸다.</li>
+        <li>첫 질문은 “어디로 갈까요?”보다 “언제, 어느 나라로 떠나세요?”로 설계한다.</li>
+        <li>소도시 후보 리스트보다 소도시 1곳을 깊게 이해하는 상세 흐름을 우선한다.</li>
+        <li>지자체·공공 파트너가 볼 수 있는 추천 노출, 클릭, 관심도 지표를 장기 확장 방향으로 둔다.</li>
+        </ul>
         <h1 id="s2" class="s-h1">2. 문제 정의</h1>
         <h2 id="s2-1" class="s-h2">2.1 사용자 문제</h2>
         <div class="table-wrap"><table class="info-tbl compact-tbl">
@@ -161,39 +183,76 @@
         </tbody></table></div>
         <h1 id="s4" class="s-h1">4. 서비스 개념</h1>
         <h2 id="s4-1" class="s-h2">4.1 핵심 서비스</h2>
-        <p class="doc-p">로브는 회원가입·로그인 이후 온보딩에서 테마와 기본 국가 선호를 입력받고, 카드 슬롯·지도 마커·AI 챗봇으로 일정 생성에 진입하게 한다. 챗봇은 국가, 여행 시기(월), 여행 일정 길이(당일치기~2박 3일)를 먼저 확인한 뒤 사용자의 자연어 취향을 테마 또는 추천 진입점으로 해석한다.</p>
+        <p class="doc-p">로브는 공개 추천 흐름에서는 선택 로그인 또는 온보딩을 통해 테마와 기본 국가 선호를 입력받고, 카드 슬롯·지도 마커·AI 챗봇으로 일정 생성에 진입하게 한다. 챗봇은 국가, 여행 시기(월), 여행 일정 길이(당일치기~2박 3일)를 먼저 확인한 뒤 사용자의 자연어 취향을 테마 또는 추천 진입점으로 해석한다.</p>
         <p class="doc-p">소도시는 행정구역의 인구수만으로 판단하지 않는다. 관문 대도시(서울·도쿄·오사카·후쿠오카 등)는 교통 안내에만 사용하고, 지역 거점도시와 인접 소도시·농산어촌을 분리해 관광객 집중도가 낮고 실제 여행 경험을 만들 수 있는 목적지와 주변 지역을 중심으로 본다.</p>
-        <p class="doc-p">제품 불변 규칙은 다음과 같다.</p>
+        <p class="doc-p">PoC 기준 핵심 설계 원칙은 다음과 같다.</p>
         <ul class="bullet-list">
         <li>추천 1건의 최종 목적지는 소도시 1곳이다.</li>
-        <li>생성 일정의 모든 관광지·숙소·체험은 추천 소도시 서비스 범위 안에 있어야 한다.</li>
+        <li>생성 일정의 주요 관광지와 체험은 추천 소도시 서비스 범위 안에서 구성한다. 숙소는 직접 추천보다 검색 링크로 연결한다.</li>
         <li>공항·역·관문도시는 교통 안내에만 사용하고 일정의 목적지로 섞지 않는다.</li>
         <li>적합 소도시를 확정할 수 없으면 여러 도시를 섞지 않고 추가 조건을 요청한다.</li>
         </ul>
         <p class="doc-p">로브의 첫 질문은 “어디로 갈까요?”보다 “언제, 어느 나라로 떠나세요?”에 가깝다. 사용자가 도시를 이미 정했다고 가정하지 않고, 국가와 여행 시기부터 고정한 뒤 조건에 맞는 소도시를 좁혀 간다.</p>
-        <p class="doc-p">추천 경험의 핵심 aha는 “이런 곳이 있는 줄 몰랐는데, 지금 내 조건에 맞고, 진짜 갈 수 있겠다”이다. 이 경험은 발견, 납득, 실행가능성의 세 요소로 구성되며, 로브는 첫 진입부터 일정 저장과 재방문까지 이 세 요소를 반복해서 강화한다.</p>
-        <p class="doc-p">KICK은 발견·납득·실행 다음의 선택 전환 장치다. 사용자는 나와 취향이 비슷한 사용자의 공개 일정을 보고 1탭으로 복제한 뒤 챗봇으로 일부 조건을 조정할 수 있다. 공개 일정이 부족한 초기에는 가짜 사용자 일정을 만들지 않고 명시적인 Lovv 큐레이션으로 노출한다.</p>
-        <p class="doc-p">주요 추천 축은 다음과 같다.</p>
+        <p class="doc-p">추천 경험의 핵심 aha는 “이런 곳이 있는 줄 몰랐는데, 지금 내 조건에 맞고, 진짜 갈 수 있겠다”이다. 이 문장은 세 요소로 나뉜다.</p>
+        <div class="table-wrap"><table class="info-tbl compact-tbl">
+        <thead><tr><th>요소</th><th>의미</th></tr></thead><tbody>
+        <tr><td>발견</td><td>사용자가 몰랐던 소도시를 만난다.</td></tr>
+        <tr><td>납득</td><td>왜 이 도시가 지금 내 조건에 맞는지 이해한다.</td></tr>
+        <tr><td>실행가능성</td><td>일정, 지도, 날씨, 외부 링크로 실제 행동이 가능해진다.</td></tr>
+        </tbody></table></div>
+        <p class="doc-p">추천 여정 funnel은 다음과 같다.</p>
+        <div class="table-wrap"><table class="info-tbl compact-tbl">
+        <thead><tr><th>단계</th><th>목표</th></tr></thead><tbody>
+        <tr><td>0. 첫 진입</td><td>온보딩 직후 행동 이력이 없어도 타이밍·축제·혼잡 정보로 첫 발견을 만든다.</td></tr>
+        <tr><td>1. 추천 기준</td><td>왜 이 도시인지 설명해 납득을 만든다.</td></tr>
+        <tr><td>2. 후속 질의</td><td>세션 내 신호로 미니 개인화를 제공한다.</td></tr>
+        <tr><td>3. 일정 생성·저장</td><td>day-by-day 일정과 저장으로 실행가능성을 만든다.</td></tr>
+        <tr><td>4. 재방문</td><td>선언·행동·세션 신호를 누적해 개인화 정확도를 높인다.</td></tr>
+        </tbody></table></div>
+        <p class="doc-p">행동 이력이 없어도 타이밍, 날씨, 축제, 혼잡은 누구에게나 현재 존재한다. Lovv는 초기 추천에서 이 공통 신호를 활용하고, 사용자의 세션 내 선택과 후속 질의를 빠르게 반영한다. 갔던 곳 기반 개인화는 재방문 단계의 무기로 분리한다.</p>
+        <p class="doc-p">취향 프로필은 세 계층으로 다룬다.</p>
         <ul class="bullet-list">
-        <li>혼잡 회피 대체 여행지 추천</li>
-        <li>한일 축제 기반 여정 추천</li>
-        <li>월별 기상 경향 기반 추천</li>
-        <li>미디어 촬영지·성지순례 추천</li>
-        <li>철도 경로 기반 주변 관광지 안내</li>
-        <li>지역 문화 체험 추천</li>
-        <li>스키 액티비티 여행 추천</li>
-        <li>유사 취향 공개 일정 기반 KICK</li>
+        <li>선언 신호: 온보딩에서 입력한 테마·국가·여행 스타일</li>
+        <li>행동 신호: 저장, 클릭, 복제, 외부 링크 이동</li>
+        <li>세션 신호: 현재 대화에서 나온 여행 시기, 일정 길이, 동행, 이동 강도</li>
+        </ul>
+        <p class="doc-p">KICK은 발견·납득·실행 다음의 선택 전환 장치다. 사용자는 나와 취향이 비슷한 공개 일정을 참고하고, 필요한 경우 1탭 복제와 챗봇 부분 조정으로 내 일정에 가깝게 바꿀 수 있다. 대표 기획서에서는 KICK을 추천 축 자체가 아니라 선택 불안을 줄이는 P2 설계 검토 범위로 다룬다.</p>
+        <p class="doc-p">KICK의 핵심 후보 흐름은 다음과 같다.</p>
+        <ul class="bullet-list">
+        <li>로그인·온보딩으로 기본 취향을 확보한다.</li>
+        <li>공개 일정 카드에서 유사 취향 근거를 보여준다.</li>
+        <li>사용자는 공개 일정을 1탭으로 복제하거나 참고한다.</li>
+        <li>챗봇이 일정 길이, 이동 강도, 동행 등 일부 조건을 조정한다.</li>
+        <li>조정된 일정은 저장 또는 재추천 흐름으로 이어진다.</li>
+        </ul>
+        <p class="doc-p">KICK 운영 원칙은 상세 설계에서 다음 방향으로 검토한다.</p>
+        <ul class="bullet-list">
+        <li>공개 일정 부족 시 가짜 사용자 일정을 만들지 않는다.</li>
+        <li>초기에는 명시적인 <code>Lovv 큐레이션</code>으로 노출한다.</li>
+        <li>유사성 표현은 실제 일치 근거만 표시하고 과장하지 않는다.</li>
+        <li>공개 일정 복제와 부분 수정은 개인정보, 공개 범위, 버전 관리 기준을 먼저 확정한 뒤 설계한다.</li>
+        <li>개인정보는 선택 공개, 익명화, 공개 범위 제한을 기본 방향으로 검토한다.</li>
+        </ul>
+        <p class="doc-p">KICK 성공 기준은 다음과 같다.</p>
+        <ul class="bullet-list">
+        <li>공개 일정 노출</li>
+        <li>유사 취향 근거 확인</li>
+        <li>1탭 복제</li>
+        <li>챗봇 부분 수정</li>
+        <li>일정 저장</li>
+        <li>외부 링크 클릭</li>
+        <li>재방문</li>
         </ul>
         <h2 id="s4-2" class="s-h2">4.2 사용자 흐름</h2>
         <div class="table-wrap wide scroll-table"><table class="info-tbl">
         <thead><tr><th>단계</th><th>사용자 입력</th><th>시스템 처리</th><th>결과</th></tr></thead><tbody>
-        <tr><td>1</td><td>회원가입·로그인, 온보딩</td><td>테마·기본 국가 선호 저장</td><td>개인화 초기 조건 설정</td></tr>
+        <tr><td>1</td><td>선택 로그인 또는 온보딩</td><td>테마·기본 국가 선호 설정</td><td>개인화 초기 조건 설정</td></tr>
         <tr><td>2</td><td>카드 슬롯, 지도 마커, AI 챗봇 중 진입점 선택</td><td>진입점을 추천 컨텍스트로 변환</td><td>일정 생성 흐름 시작</td></tr>
         <tr><td>3</td><td>국가, 여행 시기, 일정 길이 입력</td><td>필수 조건 고정</td><td>추천 대상 범위 설정</td></tr>
         <tr><td>4</td><td>자연어 취향 입력</td><td>분위기·관심사·동행·이동 강도 등을 테마로 해석</td><td>추천 기준 생성</td></tr>
         <tr><td>5</td><td>후보 비교</td><td>RAG 후보 검색, 방문객 수, 계절, 축제, 월별 기상 경향, 개인화 피드백 기준 정렬</td><td>소도시 1곳 선정 및 일정 구성</td></tr>
         <tr><td>6</td><td>추천 결과 확인</td><td>day-by-day 일정, 추천 이유, 지도, 날씨, 외부 링크, 출처·검증 상태 제공</td><td>여행 계획 보조</td></tr>
-        <tr><td>7</td><td>공개 일정 복제 또는 후속 질의</td><td>유사 취향 공개 일정 1탭 복제, 조건 변경 기반 재검색</td><td>저장·부분 수정·재추천</td></tr>
+        <tr><td>7</td><td>공개 일정 참고 또는 후속 질의</td><td>유사 취향 공개 일정 검토, 조건 변경 기반 재검색</td><td>저장·부분 수정·재추천</td></tr>
         </tbody></table></div>
         <h1 id="s5" class="s-h1">5. 주요 사용자 및 이해관계자</h1>
         <div class="table-wrap wide scroll-table"><table class="info-tbl">
@@ -215,9 +274,9 @@
         <div class="table-wrap wide extra-wide scroll-table"><table class="info-tbl">
         <thead><tr><th>우선순위</th><th>기능 범위</th><th>PoC</th><th>Production</th><th>상태</th></tr></thead><tbody>
         <tr><td>P1</td><td>혼잡 회피 대체 여행지 추천, 한일 축제 기반 여정 추천, 일주일 이내 여행의 날씨 기반 추천</td><td>구현</td><td>고도화</td><td>핵심</td></tr>
-        <tr><td>P2</td><td>미디어 촬영지·성지순례 추천, KICK(유사 취향 공개 일정·1탭 복제)</td><td>설계</td><td>구현</td><td>선택 구현</td></tr>
-        <tr><td>P3</td><td>철도 경로 기반 주변 관광지 안내, 지역 문화 체험 추천</td><td>설계</td><td>구현</td><td>설계</td></tr>
-        <tr><td>P4</td><td>스키 액티비티 여행 추천</td><td>정의</td><td>구현</td><td>Production</td></tr>
+        <tr><td>P2</td><td>미디어 촬영지·성지순례 추천, KICK(유사 취향 공개 일정·1탭 복제)</td><td>설계</td><td>구현 검토</td><td>선택 구현</td></tr>
+        <tr><td>P3</td><td>철도 경로 기반 주변 관광지 안내, 지역 문화 체험 추천</td><td>설계</td><td>구현 검토</td><td>설계</td></tr>
+        <tr><td>P4</td><td>스키 액티비티 여행 추천</td><td>정의</td><td>Production 구현 검토</td><td>Production</td></tr>
         <tr><td>P5</td><td>별 관측 조건 기반 여행지 추천, 치유·웰니스 여정 추천, 예산 역산 추천</td><td>제외</td><td>검토</td><td>제외</td></tr>
         </tbody></table></div>
         <p class="doc-p">PoC 데이터는 한국 강원·경북 및 일본 관동을 우선 수집 범위로 삼는다. 전국을 선제 구축하지 않고 3~5개 검증 후보 도시부터 깊게 구성한 뒤, 같은 공통 데이터 모델을 한국·일본 전체 도시로 확장한다.</p>
@@ -233,14 +292,14 @@
         <h1 id="s7" class="s-h1">7. 기능 구성</h1>
         <h2 id="s7-1" class="s-h2">7.1 사용자 기능</h2>
         <ul class="bullet-list">
-        <li>회원가입·로그인</li>
+        <li>선택 로그인 및 온보딩</li>
         <li>온보딩에서 테마와 기본 국가 선호 입력</li>
         <li>자연어 기반 여행 조건 입력</li>
         <li>국가, 여행 시기, 여행 일정 길이를 먼저 고정한 뒤 취향, 날씨 조건을 반영하는 추천</li>
         <li>추천 여정 카드 확인</li>
         <li>지도, 날씨, 외부 링크 확인</li>
         <li>추천 결과 비교 및 후속 질의</li>
-        <li>공개 일정 탐색, 1탭 복제, 챗봇 부분 조정</li>
+        <li>공개 일정 참고, 1탭 복제 검토, 챗봇 부분 조정</li>
         <li>저장, 피드백, 재방문 개인화</li>
         </ul>
         <h2 id="s7-2" class="s-h2">7.2 추천 기능</h2>
@@ -248,13 +307,13 @@
         <thead><tr><th>기능</th><th>설명</th></tr></thead><tbody>
         <tr><td>혼잡 회피 추천</td><td>혼잡도가 높은 유명 관광지 대신 대체 소도시와 방문 시간대를 제안</td></tr>
         <tr><td>축제 기반 추천</td><td>한국·일본의 덜 알려진 축제와 주변 관광 자원을 결합</td></tr>
-        <tr><td>날씨 기반 추천</td><td>일주일 이내 여행 조건에서는 예보를 활용하고, 월별 기후 경향은 정합성 검증에 활용</td></tr>
+        <tr><td>날씨 기반 추천</td><td>실시간 날씨는 상세 화면 표시용으로 활용하고, 추천 후보 스코어링과 대체 일정은 월별 기후 경향을 기준으로 함</td></tr>
         <tr><td>설명 가능한 추천</td><td>추천 이유, 출처 링크, 갱신 시점, 검증 상태를 함께 제공해 데이터 기반 큐레이션임을 드러냄</td></tr>
         <tr><td>미디어 성지순례</td><td>K-Drama 촬영지와 애니메이션 성지를 하나의 미디어 테마로 추천</td></tr>
         <tr><td>철도 경로 안내</td><td>철도 경로, 주요 역, 환승, 주변 관광지를 함께 안내</td></tr>
         <tr><td>지역 문화 체험</td><td>공예, 차, 지역 요리, 전통문화, 농어촌 활동 등 지역 문화를 체험할 수 있는 목적지 추천</td></tr>
         <tr><td>스키 액티비티</td><td>스키장 접근성, 적설·날씨 조건, 강습·장비 정보를 기반으로 겨울 액티비티 추천</td></tr>
-        <tr><td>유사 취향 공개 일정</td><td>공개 일정의 유사성 근거를 과장하지 않고 보여주고 1탭 복제·저장으로 연결</td></tr>
+        <tr><td>유사 취향 공개 일정</td><td>공개 일정의 유사성 근거를 과장하지 않고 보여주며, 1탭 복제와 저장 전환은 P2 설계에서 검토</td></tr>
         <tr><td>타이밍·시즌성 넛지</td><td>한일 시즌성, 축제, 기후 정합성, 혼잡 분산 조건을 결합해 지금 갈 이유를 제시</td></tr>
         </tbody></table></div>
         <h2 id="s7-3" class="s-h2">7.3 운영·관리 기능</h2>
@@ -263,50 +322,74 @@
         <li>관광 운영자와 데이터 제공 기관의 데이터 제안</li>
         <li>서비스 관리자의 데이터 검토, 승인, 반려, 수정 요청</li>
         <li>데이터 제안·검토 이력 관리</li>
-        <li>공개 일정 운영, 신고, 익명화, 불변 스냅샷·사본 계보 관리</li>
+        <li>공개 일정 운영, 신고, 익명화, 공개 범위 기준 검토</li>
         <li>추천 정책, 공지사항, 데이터 갱신 상태 관리</li>
-        <li>B2G 월간 큐레이션인 “이번 달 여행지” 운영</li>
+        <li>B2G 월간 큐레이션인 “이번 달 여행지” 운영 검토</li>
         <li>소도시별 추천 노출 수, 클릭 수, 일정 생성·저장 등 파트너 리포트 확장 검토</li>
         </ul>
         <h2 id="s7-4" class="s-h2">7.4 비즈니스 모델</h2>
+        <p class="doc-p">B2C·B2B·B2G는 서로 다른 수익화 단계가 아니라 수요 검증, 성과형 제휴, 공익 협력을 분리해 관리하는 사업 트랙이다. 가격 실험, 수익성 시뮬레이션, 파트너별 제안 전문은 상세 문서에 둔다.</p>
+        <p class="doc-p">B2C 과금·가격 모델과 B2G 영리화 시나리오는 대표 기획서 범위에서 제외한다. 비즈니스 모델 세부 내용은 보조 문서 <code>supplemental/<wbr>business_<wbr>model.md</code>에서 관리한다.</p>
         <h2 id="b2c-수요-가치-검증-트랙" class="s-h2">B2C: 수요·가치 검증 트랙</h2>
-        <p class="doc-p">B2C의 1차 타깃은 한국인 재방일객의 일본 지역 여행이다. 사용자 가치는 정보 열람 자체가 아니라 제한된 시간 안에서 실행 가능한 일정, 이동 실패 방지, 예약 가능한 다음 행동에 둔다.</p>
-        <p class="doc-p">B2C 핵심 KPI는 일정 저장률, 공유·내보내기율, 예약 파트너 클릭률, 재방문율이다. 과금·가격 모델은 현재 기획서 범위에서 제외하고, 상세 검증은 B2C 수요 검증 문서에서 관리한다.</p>
+        <p class="doc-p">1차 타깃은 한국인 재방일객의 일본 지역 여행이다. 서비스 가치는 정보 열람이 아니라 제한된 시간 안에서 실행 가능한 일정, 이동 실패 방지, 예약 가능한 다음 행동에 둔다.</p>
+        <p class="doc-p">핵심 KPI는 다음과 같다.</p>
+        <ul class="bullet-list">
+        <li>일정 저장률</li>
+        <li>공유·내보내기율</li>
+        <li>예약 파트너 클릭률</li>
+        <li>재방문율</li>
+        </ul>
         <h2 id="b2b-성과형-제휴-트랙" class="s-h2">B2B: 성과형 제휴 트랙</h2>
-        <p class="doc-p">B2B는 취향·일정 맥락을 예약 가능한 상품으로 연결하고, 이용 완료된 거래에 성과형 수수료를 받는 추천 중개 모델이다. 파트너 후보는 클룩, 라쿠텐 트래블, KKday이며 국적별 우선순위를 다르게 둔다.</p>
-        <p class="doc-p">한국인 여행자에게는 KKday·클룩 액티비티를 병렬로 연결하고 라쿠텐 숙박은 조건부로 연결한다. 일본인 여행자에게는 라쿠텐 숙박과 KKday 액티비티를 우선 연결한다. 매출은 총 예약액이 아니라 승인 매출 기준으로 인식한다.</p>
+        <p class="doc-p">B2B는 취향·일정 맥락을 예약 가능한 상품 탐색으로 연결하고, 성과형 제휴 가능성을 검토하는 추천 중개 트랙이다.</p>
+        <div class="table-wrap"><table class="info-tbl compact-tbl">
+        <thead><tr><th>사용자</th><th>우선 검토 제휴</th></tr></thead><tbody>
+        <tr><td>한국인 방일 여행자</td><td>KKday·클룩 액티비티 병렬, 라쿠텐 숙박 조건부</td></tr>
+        <tr><td>일본인 방한 여행자</td><td>라쿠텐 숙박, KKday 액티비티</td></tr>
+        </tbody></table></div>
+        <p class="doc-p">수익 인식 기준은 총 예약액보다 승인 매출 기준으로 검토한다. 성과 구간, CPA, 추천 모듈·API, 화이트라벨, 공동브랜드 같은 장기 확장 후보는 보조 문서에서 관리한다.</p>
         <h2 id="b2g-비과금-공익-협력-트랙" class="s-h2">B2G: 비과금 공익 협력 트랙</h2>
-        <p class="doc-p">B2G는 지자체·공공기관과 검증된 관광 정보를 “이번 달 여행지” 월간 큐레이션으로 노출하는 비과금 협력이다. 성과는 재정 수치가 아니라 노출, 클릭, 일정 생성·저장, 공식 정보 이동, 방문 의향 같은 비재정 지표로 측정한다.</p>
-        <p class="doc-p">공식 정보 링크와 제휴 링크는 분리하고, 관문도시 방문을 소도시 성과로 오인하지 않도록 지역 숙박·지역 상품 클릭·공식 정보 이동을 별도 집계한다. 영리화 시나리오는 본 기획서 범위에서 제외한다.</p>
+        <p class="doc-p">B2G는 지자체·공공기관과 검증된 관광 정보를 “이번 달 여행지” 월간 큐레이션으로 노출하는 비과금 협력이다.</p>
+        <p class="doc-p">성과 지표는 재정 수치보다 다음 비재정 지표를 우선한다.</p>
+        <ul class="bullet-list">
+        <li>노출</li>
+        <li>클릭</li>
+        <li>일정 생성</li>
+        <li>일정 저장</li>
+        <li>공식 정보 이동</li>
+        <li>방문 의향</li>
+        </ul>
+        <p class="doc-p">공식 정보 링크와 제휴 링크는 분리한다. 관문도시 방문은 소도시 성과로 보지 않고, 지역 숙박·지역 상품 클릭·공식 정보 이동을 별도로 집계한다.</p>
         <h1 id="s8" class="s-h1">8. 데이터 및 외부 연동</h1>
         <h2 id="s8-1" class="s-h2">8.1 필요 데이터</h2>
-        <div class="table-wrap"><table class="info-tbl compact-tbl">
-        <thead><tr><th>데이터</th><th>활용</th></tr></thead><tbody>
-        <tr><td>소도시 기본 정보</td><td>목적지 설명, 지역, 태그, 추천 이유 구성</td></tr>
-        <tr><td>축제·행사 정보</td><td>시기별 추천과 주변 여정 구성</td></tr>
-        <tr><td>혼잡도·방문 통계</td><td>대체 여행지 추천, 수요 분산 근거, 관문도시 성과 오인 방지</td></tr>
-        <tr><td>월별 기후 경향</td><td>ComfortScore, recommended_months, 계절 정합성 검증</td></tr>
-        <tr><td>실시간 날씨 정보</td><td>목적지 상세 화면의 현재 날씨 표시</td></tr>
-        <tr><td>지도·장소 정보</td><td>위치 표시, 주변 명소, 외부 탐색 링크</td></tr>
-        <tr><td>출처·검증 정보</td><td>데이터 출처, 갱신 시점, 검증 상태, 신뢰도 표시</td></tr>
-        <tr><td>미디어 촬영지 정보</td><td>작품명, 장소, 공식성, 신뢰도, 근거 URL</td></tr>
-        <tr><td>철도·교통 정보</td><td>주요 역, 환승, 소요 시간, 패스 활용 가능 여부</td></tr>
-        <tr><td>지역 문화 체험 정보</td><td>체험 유형, 예약 필요 여부, 난이도, 우천 적합성</td></tr>
-        <tr><td>공개 일정 데이터</td><td>익명화된 일정 스냅샷, 사본 계보, 복제·저장 전환 측정</td></tr>
+        <p class="doc-p">우선 데이터는 소도시 기본 정보, 축제·행사, 혼잡도·방문 통계, 월별 기후 경향, 지도·장소, 출처·검증 정보로 구성한다. 실시간 날씨는 상세 화면 표시용으로 두고, 미디어 촬영지, 철도·교통, 지역 문화 체험, 공개 일정 데이터는 P2 이후 확장 데이터로 검토한다.</p>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>구분</th><th>데이터</th><th>활용</th></tr></thead><tbody>
+        <tr><td>우선</td><td>소도시 기본 정보</td><td>목적지 설명, 지역, 태그, 추천 이유 구성</td></tr>
+        <tr><td>우선</td><td>축제·행사 정보</td><td>시기별 추천과 주변 여정 구성</td></tr>
+        <tr><td>우선</td><td>혼잡도·방문 통계</td><td>대체 여행지 추천, 수요 분산 근거, 관문도시 성과 오인 방지</td></tr>
+        <tr><td>우선</td><td>월별 기후 경향</td><td>월별 추천 적합도와 계절 정합성 검증</td></tr>
+        <tr><td>우선</td><td>지도·장소 정보</td><td>위치 표시, 주변 명소, 외부 탐색 링크</td></tr>
+        <tr><td>우선</td><td>출처·검증 정보</td><td>데이터 출처, 갱신 시점, 검증 상태, 신뢰도 표시</td></tr>
+        <tr><td>표시</td><td>실시간 날씨 정보</td><td>목적지 상세 화면의 현재 날씨 표시</td></tr>
+        <tr><td>확장</td><td>미디어 촬영지 정보</td><td>작품명, 장소, 공식성, 신뢰도, 근거 URL</td></tr>
+        <tr><td>확장</td><td>철도·교통 정보</td><td>주요 역, 환승, 소요 시간, 패스 활용 가능 여부</td></tr>
+        <tr><td>확장</td><td>지역 문화 체험 정보</td><td>체험 유형, 예약 필요 여부, 난이도, 우천 적합성</td></tr>
+        <tr><td>확장</td><td>공개 일정 데이터</td><td>익명화된 일정, 복제·저장 전환 측정</td></tr>
         </tbody></table></div>
+        <p class="doc-p">PoC는 한국 강원·경북과 일본 관동을 우선 수집 범위로 삼는다. 현재 범위는 전국 선제 구축이 아니라 검증 후보 도시를 깊게 구성하기 위한 출발점이다. 최종 목표는 한국·일본 전체 도시 확장이다. 확장 시에도 AdministrativeArea, City, Attraction, Festival, VisitorStatistics를 중심으로 한 공통 데이터 모델을 유지한다.</p>
         <h2 id="s8-2" class="s-h2">8.2 외부 연동</h2>
+        <p class="doc-p">외부 연동은 지도·장소, 날씨, 관광·방문 통계, 예약 딥링크, 공공 관광 데이터로 나뉜다. 클라이언트에서 직접 호출하기 어려운 API는 딥링크 또는 백엔드 프록시로 대체한다.</p>
         <div class="table-wrap"><table class="info-tbl compact-tbl">
-        <thead><tr><th>플랫폼</th><th>역할</th></tr></thead><tbody>
-        <tr><td>Google Maps Platform</td><td>지도, 장소 상세, 주변 명소, 사진</td></tr>
-        <tr><td>Kakao Maps</td><td>국내 장소 검색, 지도, 맛집·카페·숙박 탐색</td></tr>
-        <tr><td>Yahoo Japan / 일본 현지 플랫폼</td><td>일본 숙박·맛집·여행 탐색 딥링크</td></tr>
-        <tr><td>WeatherAPI</td><td>목적지 상세 화면의 실시간 현재 날씨 표시</td></tr>
-        <tr><td>기상청 API허브 / 일본기상청(JMA)</td><td>월별 기후 경향과 추천 적기 산출 근거</td></tr>
-        <tr><td>TourAPI / DataLab</td><td>한국 관광지·축제·방문 통계 수집</td></tr>
-        <tr><td>JNTO / 일본 관광청(JTA) / e-Stat</td><td>일본 방문 통계와 지역 관광 데이터 검증</td></tr>
-        <tr><td>클룩·라쿠텐 트래블·KKday</td><td>예약 가능한 상품·숙박·액티비티 딥링크</td></tr>
+        <thead><tr><th>출처</th><th>역할</th></tr></thead><tbody>
+        <tr><td>TourAPI / DataLab</td><td>한국 관광지·축제·방문 통계</td></tr>
+        <tr><td>JNTO / 일본 관광청(JTA) / e-Stat</td><td>일본 방문 통계와 지역 검증</td></tr>
+        <tr><td>WeatherAPI</td><td>목적지 상세 화면의 실시간 현재 날씨</td></tr>
+        <tr><td>기상청 API허브 / 일본기상청(JMA)</td><td>월별 기후 경향, ComfortScore, recommended_months</td></tr>
+        <tr><td>Google Maps Platform / Kakao Maps / Yahoo Japan</td><td>지도, 장소, 외부 탐색 딥링크</td></tr>
+        <tr><td>클룩·라쿠텐 트래블·KKday</td><td>예약·숙박·액티비티 탐색 링크 연결</td></tr>
         <tr><td>공공 관광 데이터</td><td>관광지, 축제, 교통, 지역 공식 정보</td></tr>
         </tbody></table></div>
+        <p class="doc-p">WeatherAPI는 상세 화면에서 현재 날씨를 보여주는 역할이다. 월별 기후 경향, 추천 적기, 기후 정합성 검증은 기상청 API허브와 일본기상청(JMA)을 기준으로 한다. 두 데이터는 역할이 다르므로 함께 사용한다.</p>
         <h1 id="s9" class="s-h1">9. 기술 방향</h1>
         <h2 id="s9-1" class="s-h2">9.1 추천 구조</h2>
         <p class="doc-p">Lovv의 기술 방향은 Explainable RAG 기반 소도시 추천 엔진이다. 추천 파이프라인은 다음 단계로 구성한다.</p>
@@ -318,7 +401,7 @@
         <li>일정 구성</li>
         <li>추천 이유와 외부 정보 보강</li>
         <li>출처·갱신 시점·검증 상태 표시</li>
-        <li>공개 일정 복제 또는 후속 질의응답</li>
+        <li>P2 KICK 흐름 또는 후속 질의응답</li>
         <li>조건 변경 기반 재추천</li>
         </ul>
         <h2 id="s9-2" class="s-h2">9.2 시스템 원칙</h2>
@@ -330,12 +413,19 @@
         <li>데이터 출처, 최신성, 검증 상태를 표시한다.</li>
         <li>사용자가 후속 질문에서 조건을 바꾸면 동일한 추천 파이프라인을 재실행해 대체 소도시 또는 수정 일정을 제안한다.</li>
         <li>첫 화면은 가능한 한 사전계산·캐시를 활용하고, 이유 문구는 템플릿 또는 정형 근거를 우선 사용한다.</li>
-        <li>공개 일정은 불변 스냅샷과 사본 계보로 관리하고, LLM은 전체 재생성 대신 허용된 수정 operation만 제안한다.</li>
-        <li>서버는 공개 일정 복제·수정의 diff, 버전 충돌, rollback을 검증한다.</li>
+        <li>공개 일정 복제와 부분 수정은 P2 상세 설계에서 권한, 개인정보, 버전 관리 기준을 정리한다.</li>
         <li>PoC에서는 빠른 검증을 위해 핵심 흐름을 우선 구현한다.</li>
         </ul>
         <h2 id="s9-3" class="s-h2">9.3 데이터 파이프라인</h2>
-        <p class="doc-p">데이터 파이프라인은 자동 수집, 로컬 검증 산출물, S3 Raw Bucket 보존, Lambda 배치 전처리, DynamoDB 정규화 적재 흐름을 기준으로 한다. 원본 데이터는 재처리 가능성을 위해 보존하고, 추천·검색에 필요한 정규화 데이터는 운영 테이블과 벡터 검색 계층으로 분리한다.</p>
+        <p class="doc-p">데이터 파이프라인은 수집, 로컬 검증, 원본 보존, 정규화, 추천·검색 활용 계층으로 나눈다. S3 Raw Bucket, Lambda, DynamoDB 같은 구체 구현 방식은 데이터 수집 계획서, 데이터베이스 설계 명세서, 기술 명세서에서 관리한다.</p>
+        <ul class="bullet-list">
+        <li>자동 수집</li>
+        <li>로컬 검증 산출물 생성</li>
+        <li>원본 데이터 보존</li>
+        <li>배치 전처리</li>
+        <li>정규화 데이터 적재</li>
+        <li>추천·검색 계층에서 RAG와 운영 조회에 활용</li>
+        </ul>
         <h1 id="s10" class="s-h1">10. 추진 일정</h1>
         <div class="table-wrap wide scroll-table"><table class="info-tbl">
         <thead><tr><th>단계</th><th>기간</th><th>주요 산출물</th></tr></thead><tbody>
@@ -344,7 +434,7 @@
         <tr><td>PoC 구현</td><td>2026-06-06 ~ 2026-06-15</td><td>P1 기능 구현, 기본 추천 UI, 지도·날씨 연동</td></tr>
         <tr><td>중간 점검·발표</td><td>2026-06-16</td><td>PoC 결과 검토, 중간발표</td></tr>
         <tr><td>기획 고도화</td><td>2026-06-17 ~ 2026-06-22</td><td>중간발표 피드백 반영, KICK 설계, B2C·B2B·B2G 모델, 시장조사, 데이터 수집 계획 v0.10 반영</td></tr>
-        <tr><td>Production 준비·최종</td><td>2026-06-23 이후</td><td>KICK·P2 설계 구현, P1 고도화, 운영·관리 기능 상세화, 최종발표 준비</td></tr>
+        <tr><td>Production 준비·최종</td><td>2026-06-23 이후</td><td>KICK·P2 설계 구체화 및 선택 구현 검토, P1 고도화, 운영·관리 기능 상세화, 최종발표 준비</td></tr>
         </tbody></table></div>
         <h1 id="s11" class="s-h1">11. 기대 효과</h1>
         <p class="doc-p">로브를 통해 여행자는 유명 관광지 중심의 반복적인 여행 탐색에서 벗어나, 덜 붐비면서도 자신의 취향과 여행 시기에 맞는 소도시 대체 여행지를 더 쉽게 발견할 수 있다. 단순히 장소 목록을 보여주는 것이 아니라 추천 이유, 날씨, 지도, 외부 링크, 출처·검증 상태를 함께 제공하므로 실제 여행 계획으로 이어지는 의사결정 부담도 줄어든다.</p>
@@ -355,18 +445,25 @@
         <h1 id="s12" class="s-h1">12. 리스크 및 대응</h1>
         <div class="table-wrap wide scroll-table"><table class="info-tbl">
         <thead><tr><th>리스크</th><th>영향</th><th>대응</th></tr></thead><tbody>
-        <tr><td>외부 API 제약</td><td>지도·날씨·장소 데이터 제공 제한</td><td>딥링크, 캐시, 백엔드 프록시 검토</td></tr>
-        <tr><td>데이터 최신성 부족</td><td>축제·날씨·운영 정보 오류 가능</td><td>갱신 시각, 출처, 검증 상태 표시</td></tr>
-        <tr><td>추천 신뢰도 부족</td><td>사용자 신뢰 저하</td><td>RAG 근거와 추천 이유 제공</td></tr>
+        <tr><td>외부 API·데이터 제약</td><td>지도·날씨·장소 데이터 제공 제한, 데이터 최신성 저하</td><td>딥링크, 캐시, 백엔드 프록시, 갱신 시각·출처·검증 상태 표시</td></tr>
+        <tr><td>추천 신뢰도 부족</td><td>사용자 신뢰 저하</td><td>RAG 근거, 추천 이유, 출처·검증 상태 제공</td></tr>
         <tr><td>범위 과다</td><td>PoC 일정 지연</td><td>P1 구현, P2~P3 설계, P4 Production, P5 제외 기준 유지</td></tr>
-        <tr><td>권한 관리 복잡도</td><td>운영 기능 구현 지연</td><td>PoC에서는 공개 추천 중심, Production에서 권한 기능 확장</td></tr>
+        <tr><td>권한·운영 복잡도</td><td>운영 기능 구현 지연</td><td>PoC에서는 공개 추천 중심, Production에서 권한 기능 확장</td></tr>
         <tr><td>소도시 의향 과대평가</td><td>콘텐츠 투자 회수 실패</td><td>숙박·예약·결제 행동으로 단계별 검증</td></tr>
         <tr><td>관문도시 방문을 소도시 실적으로 오인</td><td>잘못된 시장 판단</td><td>지역 숙박·지역 상품 클릭·공식 정보 이동 별도 집계</td></tr>
-        <tr><td>공개 일정 개인정보 노출</td><td>신뢰·법적 위험</td><td>구간화, 선택 공개, 익명화, 최소 집단 크기 적용</td></tr>
-        <tr><td>제휴 수수료 의존</td><td>정책 변경 시 매출 급감</td><td>파트너·수익원 다변화, 링크 라우팅 계층, 최소 보장·API 사용료 협상 검토</td></tr>
-        <tr><td>지방 항공 노선 중단</td><td>특정 소도시 수요 급락</td><td>철도 대체 가능 소도시 우선, 노선 상태 재검증</td></tr>
+        <tr><td>공개 일정 개인정보 노출</td><td>신뢰·법적 위험</td><td>선택 공개, 익명화, 공개 범위 제한 기준 검토</td></tr>
+        <tr><td>제휴·교통 조건 의존</td><td>정책 변경 또는 지방 항공 노선 중단 시 수요 급락</td><td>파트너 다변화, 철도 대체 가능 소도시 우선, 노선 상태 재검증</td></tr>
         </tbody></table></div>
-        <h1 id="s13" class="s-h1">13. 후속 문서</h1>
+        <p class="doc-p">상세 리스크는 보조 문서 <code>supplemental/<wbr>business_<wbr>model.md</code>, <code>supplemental/<wbr>data_<wbr>ops_<wbr>scope.md</code>, <code>supplemental/<wbr>kick_<wbr>summary.md</code>에서 관리한다.</p>
+        <p class="doc-p">운영 리스크 해석 원칙은 다음과 같다.</p>
+        <ul class="bullet-list">
+        <li>입국자 수는 고유 사용자 수가 아니므로 여행 횟수 흐름 지표로 해석한다.</li>
+        <li>관문도시 방문을 소도시 성과로 보지 않는다.</li>
+        <li>축제·날씨·교통 데이터는 갱신 시각과 출처를 함께 표시한다.</li>
+        <li>외부 API 제약이 생기면 딥링크, 캐시, 백엔드 프록시를 조합한다.</li>
+        <li>지방 항공 노선 중단 가능성을 고려해 철도 대체 가능 소도시를 우선한다.</li>
+        </ul>
+        <h1 id="s13" class="s-h1">13. 후속 문서 및 분리 문서</h1>
         <div class="table-wrap"><table class="info-tbl compact-tbl">
         <thead><tr><th>문서</th><th>목적</th></tr></thead><tbody>
         <tr><td>요구사항 명세서</td><td>기능·비기능 요구사항과 우선순위 상세 정의</td></tr>
@@ -383,14 +480,32 @@
         <tr><td>시장조사</td><td>트리플·트립닷컴 대비 최소 기능과 차별점</td></tr>
         <tr><td>B2G 공익 협력</td><td>비과금 월간 여행지 노출과 공공 성과 측정</td></tr>
         </tbody></table></div>
+        <p class="doc-p">대표 기획서와 같은 기준으로 관리하는 보조 Markdown은 <code>docs/<wbr>00_<wbr>project_<wbr>plan/<wbr>supplemental/<wbr></code>에서 관리한다.</p>
+        <div class="table-wrap"><table class="info-tbl compact-tbl">
+        <thead><tr><th>보조 Markdown</th><th>분리 내용</th></tr></thead><tbody>
+        <tr><td><code>supplemental/<wbr>market_<wbr>positioning.md</code></td><td>카피, 시장 포지셔닝, 기존 서비스 대비 차별점</td></tr>
+        <tr><td><code>supplemental/<wbr>feature_<wbr>scope_<wbr>summary.md</code></td><td>대표 기획서와 동일한 사용자 흐름, 사용자 기능, 추천 기능, 운영·관리 기능 상세</td></tr>
+        <tr><td><code>supplemental/<wbr>business_<wbr>model.md</code></td><td>대표 기획서와 동일한 B2C·B2B·B2G 모델 상세</td></tr>
+        <tr><td><code>supplemental/<wbr>data_<wbr>ops_<wbr>scope.md</code></td><td>대표 기획서와 동일한 데이터 범위, 외부 연동, 데이터 파이프라인, 운영 리스크</td></tr>
+        <tr><td><code>supplemental/<wbr>kick_<wbr>summary.md</code></td><td>대표 기획서와 동일한 KICK 정의, 공개 일정·1탭 복제 원칙, 개인정보 원칙</td></tr>
+        <tr><td><code>supplemental/<wbr>aha_<wbr>moment_<wbr>summary.md</code></td><td>대표 기획서와 동일한 Aha Moment, funnel, cold start, 취향 프로필</td></tr>
+        <tr><td><code>supplemental/<wbr>technical_<wbr>direction_<wbr>summary.md</code></td><td>대표 기획서와 동일한 Explainable RAG 파이프라인과 시스템 원칙 상세</td></tr>
+        </tbody></table></div>
+        <p class="doc-p">대표 기획서의 최상위 <code>#<wbr></code> 장 단위 하위 Markdown은 <code>docs/<wbr>00_<wbr>project_<wbr>plan/<wbr>sections/<wbr>*.md</code>에 둔다. 하위 Markdown은 장 단위 편집 원본이며, 대표 문서인 <code>00_<wbr>project_<wbr>plan.md</code>는 이 파일들을 순서대로 합쳐 만든 통합본이다.</p>
+        <p class="doc-p">앞으로 프로젝트 기획서 본문은 <code>sections/<wbr>*.md</code>를 먼저 수정한 뒤 <code>00_<wbr>project_<wbr>plan.md</code> 통합본에 반영한다.</p>
         <h1 id="s14" class="s-h1">14. 변경 이력</h1>
         <div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
         <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
-        <tr><td>v0.1</td><td>2026-05-28</td><td>조동휘</td><td>프로젝트 기획서 초안 작성</td></tr>
-        <tr><td>v0.2</td><td>2026-05-28</td><td>조동휘</td><td>국가와 여행 시기 선입력, 자연어 취향 반영, 관광지 방문객 수 기준의 소도시 판단, 00 프로젝트 기획서 HTML 산출물 생성 계획 반영</td></tr>
+        <tr><td>v0.10</td><td>2026-06-23</td><td>조동휘</td><td>보조 문서 위치를 <code>sections/<wbr>*.md</code>에 먼저 반영하고 대표 기획서의 구현·운영 확정 표현을 기획 수준으로 완화</td></tr>
+        <tr><td>v0.9</td><td>2026-06-23</td><td>조동휘</td><td>프로젝트 기획서 작업 규칙을 <code>sections/<wbr>*.md</code> 선수정 후 <code>00_<wbr>project_<wbr>plan.md</code> 반영 흐름으로 바꾸고 보조 문서를 <code>supplemental/<wbr></code> 폴더로 이동</td></tr>
+        <tr><td>v0.8</td><td>2026-06-23</td><td>조동휘, 최수아</td><td>시장 포지셔닝, Aha Moment, KICK, 비즈니스 모델, 데이터·운영 범위, 기술 방향 보조 MD 내용을 대표 기획서에 모두 반영하고 최상위 <code>#<wbr></code> 장 기준 하위 MD를 생성</td></tr>
+        <tr><td>v0.7</td><td>2026-06-23</td><td>조동휘, 최수아</td><td><code>supplemental/<wbr>feature_<wbr>scope_<wbr>summary.md</code>로 분리했던 사용자 흐름, 사용자 기능, 추천 기능, 운영·관리 기능 상세를 대표 기획서 본문에도 동일하게 반영</td></tr>
+        <tr><td>v0.6</td><td>2026-06-23</td><td>조동휘, 최수아</td><td>대표 기획서에 어울리지 않는 상세 사용자 흐름, 기능 목록, 운영 기능, 기술 파이프라인을 보조 Markdown으로 분리하고 본문을 상위 기획 중심으로 축약</td></tr>
+        <tr><td>v0.5</td><td>2026-06-23</td><td>조동휘, 최수아</td><td>03·92~96 동기화, 제품 불변 규칙, KICK(P2), 비즈니스 모델(B2C·B2B·B2G), 데이터 파이프라인·취향 프로필·공개 일정 스냅샷, 외부 연동(클룩·라쿠텐·KKday 등) 반영</td></tr>
+        <tr><td>v0.4</td><td>2026-06-01</td><td>조동휘, 최수아</td><td>Lovv 포지셔닝, 대체 여행지 탐색 엔진 차별점, 설명 가능한 RAG 추천, 데이터 기반 큐레이션 방향 반영</td></tr>
         <tr><td>v0.3</td><td>2026-05-29</td><td>최수아</td><td>소도시 1곳 집중 일정, 지도 마커 진입, 월별 기상 경향 기반 추천, WeatherAPI 표시 전용 역할 반영</td></tr>
-        <tr><td>v0.4</td><td>2026-06-01</td><td>로브 기획팀</td><td>Lovv 포지셔닝, 대체 여행지 탐색 엔진 차별점, 설명 가능한 RAG 추천, 데이터 기반 큐레이션 방향 반영</td></tr>
-        <tr><td>v0.5</td><td>2026-06-23</td><td>로브 기획팀</td><td>03·92~96 동기화, 제품 불변 규칙, KICK(P2), 비즈니스 모델(B2C·B2B·B2G), 데이터 파이프라인·취향 프로필·공개 일정 스냅샷, 외부 연동(클룩·라쿠텐·KKday 등) 반영</td></tr>
+        <tr><td>v0.2</td><td>2026-05-28</td><td>조동휘</td><td>국가와 여행 시기 선입력, 자연어 취향 반영, 관광지 방문객 수 기준의 소도시 판단, 00 프로젝트 기획서 HTML 산출물 생성 계획 반영</td></tr>
+        <tr><td>v0.1</td><td>2026-05-28</td><td>조동휘</td><td>프로젝트 기획서 초안 작성</td></tr>
         </tbody></table></div>
         <nav class="doc-nav" aria-label="이전 다음 문서">
           <a class="doc-nav-home" href="../index.html">문서 홈</a>
