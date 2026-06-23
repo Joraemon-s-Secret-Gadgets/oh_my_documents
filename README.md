@@ -19,6 +19,10 @@ docs/08_data_preprocessing/ 수집된 데이터 및 전처리(ELT) 문서
 docs/09_ui_ux_guide/       UI/UX 가이드
 docs/10_test_plan/         테스트 계획서
 docs/11_deployment_ops/    배포·운영 가이드
+docs/92_B2C/               B2C 수요 검증과 과금 가설
+docs/93_B2B/               B2B 제휴 전략과 수익 모델
+docs/94_kick/              제품 선택 전환 장치(KICK) 설계
+docs/95_aha_moment/        Aha Moment 설계
 docs/96_market_research/   시장 조사 결과 문서
 docs/98_prd/               실행 단위별 PRD 문서 모음
 docs/99_pptx/              발표 자료 원본, HTML 발표본, 캡처 검증 산출물
@@ -138,13 +142,29 @@ docs/
 │   ├── AGENT.md
 │   └── data_preprocessing_plan.md
 ├── 09_ui_ux_guide/
+│   └── 09_ui_ux_guide.md
 ├── 10_test_plan/
+│   └── 10_test_plan.md
 ├── 11_deployment_ops/
+│   └── 11_deployment_ops.md
+├── 92_B2C/
+│   └── 92_B2C.md
+├── 93_B2B/
+│   └── 93_B2B.md
+├── 94_kick/
+│   └── 94_kick.md
+├── 95_aha_moment/
+│   └── 95_aha_moment.md
+├── 96_market_research/
+│   └── travel_ai_service_market_research.md
 ├── 98_prd/
 │   ├── AGENT.md
-│   └── *.md
+│   ├── 98_prd.md
+│   └── *_prd.md
 └── 99_pptx/
-    └── */
+    ├── AGENT.md
+    ├── 99_pptx.md
+    └── 01_midterm_presentation/
 ```
 
 문서 내용이 많아지면 같은 폴더 안에 보조 Markdown을 추가할 수 있습니다. 단, 각 폴더의 대표 문서는 위 경로를 유지합니다.

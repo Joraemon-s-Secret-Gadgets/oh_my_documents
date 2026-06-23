@@ -6,7 +6,10 @@
 - `docs/01_requirements/01_requirements.md`는 기능·비기능 요구사항의 기준 문서다.
 - `docs/02_service_flow/02_service_flow.md`부터 `docs/07_api_spec/07_api_spec.md`까지는 요구사항 명세서를 상세화한 설계 문서다.
 - `docs/00_project_plan/00_project_plan.md`는 상위 기획 문서이며, 상세 문서들의 최신 내용을 반영해 갱신한다.
-- `docs/98_prd/`는 특정 구축 범위나 실행 단위별 PRD를 모아 관리하는 보조 문서 영역이다.
+- `docs/08_data_preprocessing/data_preprocessing_plan.md`부터 `docs/11_deployment_ops/11_deployment_ops.md`까지는 수집 이후 전처리, UI/UX, 테스트, 운영 문서의 대표 문서다.
+- `docs/92_B2C/`, `docs/93_B2B/`, `docs/94_kick/`, `docs/95_aha_moment/`, `docs/96_market_research/`는 시장·제품 검증 보조 영역이며 각 폴더의 대표 문서를 기준으로 관리한다.
+- `docs/98_prd/98_prd.md`는 특정 구축 범위나 실행 단위별 PRD를 모아 관리하는 대표 문서다.
+- `docs/99_pptx/99_pptx.md`는 발표 자료 원본과 발표 단계별 하위 문서의 대표 문서다.
 
 ## Project Plan Synchronization
 
@@ -30,4 +33,5 @@
 - Markdown 표의 열 의미를 바꾸면 관련 HTML 생성물과 연결 문서도 함께 확인한다.
 - 같은 폴더 안에 보조 Markdown을 추가해 수정할 내용, 근거, 초안을 먼저 작성할 수 있다. Agent는 보조 Markdown을 검토해 대표 문서에 반영한다.
 - 새 문서 폴더를 추가하면 해당 폴더에 `AGENT.md`를 추가하고 `index.html` 및 `pages/` 생성 문서를 갱신한다.
+- 대표 문서 이외에 새 `index.md` 파일은 만들지 않는다.
 - 백업 파일은 근거 확인용으로만 사용하고, 현재 원본은 `docs/` 아래 Markdown으로 본다.
