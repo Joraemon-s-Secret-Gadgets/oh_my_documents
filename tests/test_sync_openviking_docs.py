@@ -20,7 +20,7 @@ class OpenVikingSyncTests(unittest.TestCase):
             root = Path(directory)
             write_file(root / "README.md")
             write_file(root / "AGENT.md")
-            write_file(root / "docs" / "OPENVIKING_INDEX.md")
+            write_file(root / "docs" / "OPENVIKING_SUMMARY.md")
             write_file(root / "docs" / "05_agent_spec" / "AGENT.md")
             write_file(root / "docs" / "sample.txt")
             write_file(root / "docs" / "sample.json")
@@ -48,7 +48,7 @@ class OpenVikingSyncTests(unittest.TestCase):
                 "AGENT.md",
                 "README.md",
                 "docs/05_agent_spec/AGENT.md",
-                "docs/OPENVIKING_INDEX.md",
+                "docs/OPENVIKING_SUMMARY.md",
                 "docs/sample.json",
                 "docs/sample.txt",
                 "docs/sample.yaml",
@@ -58,13 +58,13 @@ class OpenVikingSyncTests(unittest.TestCase):
 
     def test_target_uri_preserves_relative_path(self) -> None:
         self.assertEqual(
-            sync_openviking_docs.target_uri(Path("docs/OPENVIKING_INDEX.md")),
-            "viking://resources/oh_my_documents/docs/OPENVIKING_INDEX.md",
+            sync_openviking_docs.target_uri(Path("docs/OPENVIKING_SUMMARY.md")),
+            "viking://resources/oh_my_documents/docs/OPENVIKING_SUMMARY.md",
         )
 
     def test_target_parent_uri_preserves_relative_parent_path(self) -> None:
         self.assertEqual(
-            sync_openviking_docs.target_parent_uri(Path("docs/OPENVIKING_INDEX.md")),
+            sync_openviking_docs.target_parent_uri(Path("docs/OPENVIKING_SUMMARY.md")),
             "viking://resources/oh_my_documents/docs",
         )
         self.assertEqual(
@@ -76,8 +76,8 @@ class OpenVikingSyncTests(unittest.TestCase):
         with patch.object(sync_openviking_docs, "ov_command", return_value="ov"):
             with patch.object(sync_openviking_docs.subprocess, "run") as run:
                 sync_openviking_docs.upload_file(
-                    Path("docs/OPENVIKING_INDEX.md"),
-                    "viking://resources/oh_my_documents/docs/OPENVIKING_INDEX.md",
+                    Path("docs/OPENVIKING_SUMMARY.md"),
+                    "viking://resources/oh_my_documents/docs/OPENVIKING_SUMMARY.md",
                     dry_run=False,
                 )
 
@@ -85,7 +85,7 @@ class OpenVikingSyncTests(unittest.TestCase):
             [
                 "ov",
                 "add-resource",
-                "docs\\OPENVIKING_INDEX.md",
+                "docs\\OPENVIKING_SUMMARY.md",
                 "--parent-auto-create",
                 "viking://resources/oh_my_documents/docs",
                 "--wait",

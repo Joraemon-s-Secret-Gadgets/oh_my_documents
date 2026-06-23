@@ -1,4 +1,4 @@
-# OpenViking 이관 인덱스
+# OpenViking 이관 요약
 
 ## 이관 목적
 

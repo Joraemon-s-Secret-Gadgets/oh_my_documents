@@ -35,13 +35,13 @@ Upload the OpenViking index document:
 
 ```powershell
 $env:UV_CACHE_DIR='.cache\uv'
-uv run python -c "from pathlib import Path; from scripts import sync_openviking_docs as s; p=Path('docs/OPENVIKING_INDEX.md'); s.upload_file(p, s.target_uri(p), dry_run=False)"
+uv run python -c "from pathlib import Path; from scripts import sync_openviking_docs as s; p=Path('docs/OPENVIKING_SUMMARY.md'); s.upload_file(p, s.target_uri(p), dry_run=False)"
 ```
 
 OpenViking imports Markdown resources under a resource folder. For example, the uploaded file is read at:
 
 ```text
-viking://resources/oh_my_documents/docs/OPENVIKING_INDEX/OPENVIKING_INDEX.md
+viking://resources/oh_my_documents/docs/OPENVIKING_SUMMARY/OPENVIKING_SUMMARY.md
 ```
 
 ## MCP Server
