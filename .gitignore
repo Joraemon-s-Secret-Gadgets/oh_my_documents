@@ -1,4 +1,5 @@
 backups/
+bak/
 
 # Python / uv local environment
 .venv/
