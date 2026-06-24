@@ -5,6 +5,14 @@
 ## Primary Document
 
 대표 문서는 `02_service_flow.md`다. 사용자 진입, 온보딩, 지도 탐색, 챗봇 추천, 결과 확인, 저장·피드백 흐름을 정의한다.
+## Representative Document Flow
+
+- `02_service_flow.md` is the integrated representative document for this folder.
+- `sections/*.md` is the editing source for `02_service_flow.md`.
+- When changing representative document body content, edit the matching `sections/*.md` file first, then regenerate or update `02_service_flow.md` in the same change.
+- `supplemental/*.md` stores supporting notes, rationale, drafts, and detailed references for this folder.
+- Do not keep supplemental Markdown documents at this folder root.
+- Do not create an `index.md` file in this folder.
 
 ## Dependencies
 
