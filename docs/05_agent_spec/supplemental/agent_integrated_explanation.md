@@ -1,7 +1,7 @@
 # Lovv Agent 통합 상세 설명서
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `05_agent_spec.md`
+> 대표 문서: `../05_agent_spec.md`
 
 > 목적: Lovv의 Agent 구조를 처음 보는 사람도 "사용자 입력이 어떻게 여행 추천 결과로 바뀌는지" 이해할 수 있도록, 전체 파이프라인과 핵심 Agent별 역할, Tool 활용, 입력/출력 계약을 하나의 문서로 설명한다.
 
@@ -11,7 +11,7 @@
 | --- | --- |
 | 문서 상태 | Draft |
 | 대상 독자 | Agent 구조를 처음 보는 팀원, 발표 청중, 백엔드/API/프론트엔드 협업자 |
-| 기준 문서 | [05_agent_spec.md](./05_agent_spec.md), [intent_agent.md](./intent_agent.md), [candidate_evidence_agent.md](./candidate_evidence_agent.md), [planner_agent.md](./planner_agent.md) |
+| 기준 문서 | [../05_agent_spec.md](./../05_agent_spec.md), [intent_agent.md](./intent_agent.md), [candidate_evidence_agent.md](./candidate_evidence_agent.md), [planner_agent.md](./planner_agent.md) |
 | 핵심 범위 | 초기 입력, 최종 출력, Agent별 책임, Tool/Skill 활용, 상태 흐름, 검증 방식 |
 
 ---
@@ -992,7 +992,7 @@ Planner는 선택 도시 기준 `foodSearch` 링크와 식사 슬롯 CTA/placeho
 
 | 확인하고 싶은 내용 | 기준 문서 |
 | --- | --- |
-| 전체 Agent 구조와 State | [05_agent_spec.md](./05_agent_spec.md) |
+| 전체 Agent 구조와 State | [../05_agent_spec.md](./../05_agent_spec.md) |
 | 사용자 입력 해석과 조건 구조화 | [intent_agent.md](./intent_agent.md) |
 | 후보 검색, 랭킹, Candidate Evidence Package | [candidate_evidence_agent.md](./candidate_evidence_agent.md) |
 | 일정 생성, 설명, 검증 | [planner_agent.md](./planner_agent.md) |

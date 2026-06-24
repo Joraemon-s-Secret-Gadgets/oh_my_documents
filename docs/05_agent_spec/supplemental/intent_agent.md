@@ -1,16 +1,16 @@
 # Intent Agent 명세서
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `05_agent_spec.md`
+> 대표 문서: `../05_agent_spec.md`
 
 > 문서 버전: v1.8
 > 문서 상태: Review / Intent Agent 상세 정본
 > 작성일: 2026-06-12
-> 기준 문서: `05_agent_spec.md`, `langgraph_flow.md`, `candidate_evidence_agent.md`, `user_raw_query_flow.md`, `recommendation_flow.md`, `../07_api_spec/07_api_spec.md`
+> 기준 문서: `../05_agent_spec.md`, `langgraph_flow.md`, `candidate_evidence_agent.md`, `user_raw_query_flow.md`, `recommendation_flow.md`, `../../07_api_spec/07_api_spec.md`
 
 > **[PRD 반영 v0.1 — 대화형 빌더]** 빌더 루프에서 Intent는 매 턴 발화를 **action 어휘**로 파싱한다:
 > `PICK`·`REPLACE_PLACE`·`EXCLUDE`·`FILTER`(=follow-up 간판 5종)·`DONE`. 장기 성향은 **Profile Agent**로
-> 분리하고, 루프 중 Profile은 **Lock**(동행자·테마 근본 변경 시만 재트리거). 상세: `../98_prd/interactive_builder_prd.md`.
+> 분리하고, 루프 중 Profile은 **Lock**(동행자·테마 근본 변경 시만 재트리거). 상세: `../../98_prd/interactive_builder_prd.md`.
 
 ## 1. 문서 목적
 

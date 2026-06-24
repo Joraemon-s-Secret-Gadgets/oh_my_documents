@@ -1,13 +1,13 @@
 # 로브 (Lovv) Agent 하네스 설계
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `05_agent_spec.md`
+> 대표 문서: `../05_agent_spec.md`
 
 > 문서 버전: v1.5
 > 문서 상태: 검토 중 (Review)
-> 기준 문서: `langgraph_flow.md`(그래프 정본), `agent_spec_revision_plan.md`(설계 결정), `../01_requirements/lovv_agent_multiturn_context_spec.md`(멀티턴 정책)
+> 기준 문서: `langgraph_flow.md`(그래프 정본), `agent_spec_revision_plan.md`(설계 결정), `../../01_requirements/supplemental/lovv_agent_multiturn_context_spec.md`(멀티턴 정책)
 >
-> **[PRD 반영 v0.1 — 대화형 빌더]** 하네스에 **checkpointer 주입 지점**(`compile(checkpointer=AgentCore Memory)`)과 **노드 계측 래퍼**(OTel span + CloudWatch JSON, `trace_node`)를 추가한다. 무상태 기본 동작은 opt-in으로 보존. 상세: `../98_prd/interactive_builder_prd.md`, 관측 정본: `Lovv-agent/docs/specs/LOVV_AGENTCORE_OBSERVABILITY_SPEC.md`.
+> **[PRD 반영 v0.1 — 대화형 빌더]** 하네스에 **checkpointer 주입 지점**(`compile(checkpointer=AgentCore Memory)`)과 **노드 계측 래퍼**(OTel span + CloudWatch JSON, `trace_node`)를 추가한다. 무상태 기본 동작은 opt-in으로 보존. 상세: `../../98_prd/interactive_builder_prd.md`, 관측 정본: `Lovv-agent/docs/specs/LOVV_AGENTCORE_OBSERVABILITY_SPEC.md`.
 
 # 1. 문서 개요
 

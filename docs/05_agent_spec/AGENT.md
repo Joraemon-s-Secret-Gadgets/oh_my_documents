@@ -5,6 +5,14 @@
 ## Primary Document
 
 대표 문서는 `05_agent_spec.md`다. 조건 분류, RAG 검색, 후보 선정, 일정 구성, 설명 생성, 폴백, 검증 기준을 정의한다.
+## Representative Document Flow
+
+- `05_agent_spec.md` is the integrated representative document for this folder.
+- `sections/*.md` is the editing source for `05_agent_spec.md`.
+- When changing representative document body content, edit the matching `sections/*.md` file first, then regenerate or update `05_agent_spec.md` in the same change.
+- `supplemental/*.md` stores supporting notes, rationale, drafts, and detailed references for this folder.
+- Do not keep supplemental Markdown documents at this folder root.
+- Do not create an `index.md` file in this folder.
 
 ## Dependencies
 

@@ -1,14 +1,14 @@
 # Scoring Tool 실행 명세
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `05_agent_spec.md`
+> 대표 문서: `../05_agent_spec.md`
 
 > 문서 버전: v0.4
 > 문서 상태: Draft / Scoring Tool 세부
 > 작성일: 2026-06-13
 > 기준 문서: `candidate_evidence_agent.md`, `candidate_evidence_runtime_retrieval.md`
 >
-> **[PRD 반영 v0.1 — 대화형 빌더]** scoring 가중치를 **context별**로 둔다 — 도시 선정(테마 커버리지 중심) vs 반경 스텝(거리 중심). 기존 거리 페널티를 반경 모드에서 가중. 상세: `../98_prd/interactive_builder_prd.md`.
+> **[PRD 반영 v0.1 — 대화형 빌더]** scoring 가중치를 **context별**로 둔다 — 도시 선정(테마 커버리지 중심) vs 반경 스텝(거리 중심). 기존 거리 페널티를 반경 모드에서 가중. 상세: `../../98_prd/interactive_builder_prd.md`.
 
 ## 1. 문서 목적
 

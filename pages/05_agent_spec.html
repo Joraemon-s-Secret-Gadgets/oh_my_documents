@@ -92,7 +92,7 @@
         <p class="doc-p">문서 버전: v0.15</p>
         <p class="doc-p">문서 상태: 검토 중 (Review)</p>
         <p class="doc-p">기준 문서: 요구사항 명세서 v1.7, 서비스 흐름 명세서 v0.2, 데이터 수집 계획서 v0.7, 데이터베이스 설계 명세서 v0.5, 기술 명세서 v0.3, API 명세서 v0.2</p>
-        <p class="doc-p">상세 정본: <code>langgraph_<wbr>flow.md</code>, <code>intent_<wbr>agent.md</code>, <code>candidate_<wbr>evidence_<wbr>agent.md</code>, <code>candidate_<wbr>evidence_<wbr>baseline_<wbr>comparison.md</code>, <code>planner_<wbr>agent.md</code>, <code>agent_<wbr>harness_<wbr>design.md</code></p>
+        <p class="doc-p">상세 정본: <code>supplemental/<wbr>langgraph_<wbr>flow.md</code>, <code>supplemental/<wbr>intent_<wbr>agent.md</code>, <code>supplemental/<wbr>candidate_<wbr>evidence_<wbr>agent.md</code>, <code>supplemental/<wbr>candidate_<wbr>evidence_<wbr>baseline_<wbr>comparison.md</code>, <code>supplemental/<wbr>planner_<wbr>agent.md</code>, <code>supplemental/<wbr>agent_<wbr>harness_<wbr>design.md</code></p>
         </blockquote>
         <blockquote>
         <p class="doc-p"><strong>[PRD 반영 v0.1 — 대화형 빌더]</strong> 일정 생성 단계를 자동 배치에서 <strong>사용자 주도 HITL 반경 루프</strong>로</p>
@@ -176,7 +176,7 @@
         <tr><td>6</td><td><code>Backend_<wbr>Serving /<wbr> SAM</code></td><td>응답 패키징, 저장, UI 서빙</td><td>최종 추천 응답</td></tr>
         </tbody></table></div>
         <h1 id="s6" class="s-h1">6. UnifiedAgentState</h1>
-        <p class="doc-p">LangGraph 그래프 전역 상태다. 구현 기준은 Python 3.12 <code>TypedDict</code>이며 상세 정본은 <code>langgraph_<wbr>flow.md</code>를 따른다.</p>
+        <p class="doc-p">LangGraph 그래프 전역 상태다. 구현 기준은 Python 3.12 <code>TypedDict</code>이며 상세 정본은 <code>supplemental/<wbr>langgraph_<wbr>flow.md</code>를 따른다.</p>
         <pre><code>from typing import TypedDict, List, Dict, Any, Optional
 
         class UnifiedAgentState(TypedDict):
@@ -241,7 +241,7 @@
         <tr><td>분리 트리거</td><td>파싱 정확도 저하, 프롬프트 비대화, 테스트 하네스에서 파싱 실패율 상승 시 별도 노드로 분리한다.</td></tr>
         </tbody></table></div>
         <p class="doc-p">온보딩은 장기 선호, 자연어는 현재 여행 의도로 본다. active theme는 최대 3개를 기본으로 하며, 자연어가 강하게 요구한 테마가 온보딩보다 우선한다.</p>
-        <p class="doc-p">현재 단계의 Intent Agent 구현 기준은 <code>intent_<wbr>agent.md</code>를 따른다. 핵심 산출물은 <code>candidate_<wbr>evidence_<wbr>agent.md</code>의 입력 계약에 맞춘 <code>candidate_<wbr>evidence_<wbr>input</code>이며, Intent Agent는 도시 검색·점수화·일정 생성을 수행하지 않는다.</p>
+        <p class="doc-p">현재 단계의 Intent Agent 구현 기준은 <code>supplemental/<wbr>intent_<wbr>agent.md</code>를 따른다. 핵심 산출물은 <code>supplemental/<wbr>candidate_<wbr>evidence_<wbr>agent.md</code>의 입력 계약에 맞춘 <code>candidate_<wbr>evidence_<wbr>input</code>이며, Intent Agent는 도시 검색·점수화·일정 생성을 수행하지 않는다.</p>
         <h2 id="s7-2" class="s-h2">7.2 <code>Supervisor_<wbr>Router</code></h2>
         <div class="table-wrap"><table class="info-tbl compact-tbl decision-tbl">
         <thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
@@ -310,7 +310,7 @@
         <tr><td>통합 이유</td><td>일정, 설명, 검증이 같은 후보·점수·검증 결과를 보게 해 &quot;이유-일정&quot; 불일치와 후단 재호출을 줄인다.</td></tr>
         <tr><td>규칙</td><td>필수 테마를 일정과 설명에 함께 반영하고, 과도한 이동·검증되지 않은 축제 배치·DB 근거 없는 장소 설명을 금지한다.</td></tr>
         </tbody></table></div>
-        <p class="doc-p">Planner Agent의 상세 정본은 <code>planner_<wbr>agent.md</code>를 따른다. <code>itinerary_<wbr>flow.md</code>는 PlanDraft, 수정 흐름, 대체 일정 아이디어를 담은 초안 문서로 유지하되 구현 기준은 <code>planner_<wbr>agent.md</code>를 우선한다.</p>
+        <p class="doc-p">Planner Agent의 상세 정본은 <code>supplemental/<wbr>planner_<wbr>agent.md</code>를 따른다. <code>supplemental/<wbr>itinerary_<wbr>flow.md</code>는 PlanDraft, 수정 흐름, 대체 일정 아이디어를 담은 초안 문서로 유지하되 구현 기준은 <code>supplemental/<wbr>planner_<wbr>agent.md</code>를 우선한다.</p>
         <p class="doc-p">추천 이유와 동선 설명은 다음 세 축을 중심으로 작성한다.</p>
         <div class="table-wrap"><table class="info-tbl compact-tbl">
         <thead><tr><th>축</th><th>포함 내용</th></tr></thead><tbody>
@@ -406,7 +406,7 @@
         <tr><td>trace, latency, token, retry, fallback 비율</td><td>AgentCore Observability</td></tr>
         <tr><td>회귀 평가, trajectory 평가, LLM-as-Judge</td><td>AgentCore Evaluations</td></tr>
         </tbody></table></div>
-        <p class="doc-p">AgentCore 하네스는 도메인 추론을 대체하지 않는다. 요청 정규화, graph compile/cache, model adapter, identity, runtime guard, redacted logging, entrypoint contract test는 하네스 책임으로 두고, Agent node·routing rule·prompt·schema·fallback behavior는 도메인 workflow의 정본으로 유지한다. 상세 책임 경계는 <code>agent_<wbr>harness_<wbr>design.md</code> 2.2.1을 따른다.</p>
+        <p class="doc-p">AgentCore 하네스는 도메인 추론을 대체하지 않는다. 요청 정규화, graph compile/cache, model adapter, identity, runtime guard, redacted logging, entrypoint contract test는 하네스 책임으로 두고, Agent node·routing rule·prompt·schema·fallback behavior는 도메인 workflow의 정본으로 유지한다. 상세 책임 경계는 <code>supplemental/<wbr>agent_<wbr>harness_<wbr>design.md</code> 2.2.1을 따른다.</p>
         <p class="doc-p">Memory에는 다음 턴의 의도 해석과 재추천에 필요한 요약 상태만 저장한다. <code>messages</code> recent window, <code>conversation_<wbr>summary</code>, <code>fulfilled_<wbr>matrix</code>, <code>city_<wbr>anchor</code>, <code>festival_<wbr>verifications</code> summary, <code>PlanDraft</code> summary는 저장 후보지만, raw RAG result, raw web content, full <code>candidate_<wbr>evidence_<wbr>package</code>, embedding cache, secret, PII는 Memory와 log에 저장하지 않는다. 전체 <code>candidate_<wbr>evidence_<wbr>package</code>는 단일 실행 내부 payload로만 사용하고, 멀티턴 재추천에는 city/place id와 audit 요약만 남긴다.</p>
         <p class="doc-p">LLM 호출은 Bedrock Converse API로 추상화한다. 본 정본은 특정 모델 ID나 Agent별 모델 tier 배정을 고정하지 않는다. 실제 모델 ID와 tier 배정은 Bedrock Converse adapter, 배포 환경 설정, 비용·지연·품질 평가 결과에 따라 결정한다. 임베딩은 Amazon Titan Text Embeddings V2 또는 Cohere Embed 계열을 후보로 두고, S3 vector 기능 기반 RAG 인덱스와 연동한다.</p>
         <h2 id="s9-1" class="s-h2">9.1 저장소 연결 원칙</h2>
@@ -434,10 +434,10 @@
         <tr><td>후보 없음 분기</td><td><code>no_<wbr>candidate</code>는 검증 재시도와 분리해 즉시 안전 폴백</td></tr>
         <tr><td>축제 검증 비용</td><td>축제 포함 요청은 Candidate Evidence Agent가 구성한 상위 도시/축제 후보 K건만 웹 검증</td></tr>
         </tbody></table></div>
-        <p class="doc-p">테스트 하네스는 <code>agent_<wbr>harness_<wbr>design.md</code>를 따른다. PR 단계는 결정적 L1/L2/L4 핵심 케이스를 우선하고, LLM 평가와 전체 trajectory 평가는 nightly 또는 릴리즈 게이트로 분리한다.</p>
+        <p class="doc-p">테스트 하네스는 <code>supplemental/<wbr>agent_<wbr>harness_<wbr>design.md</code>를 따른다. PR 단계는 결정적 L1/L2/L4 핵심 케이스를 우선하고, LLM 평가와 전체 trajectory 평가는 nightly 또는 릴리즈 게이트로 분리한다.</p>
         <h2 id="s10-1" class="s-h2">10.1 Candidate Evidence Agent 비교 검증</h2>
         <p class="doc-p">검색·후보 구성의 Baseline은 raw query similarity만 사용하는 단순 RAG로 정의한다. Ours는 동일한 hard-theme gate, 후보 예산, fallback 조건 위에 soft retrieval, 다요소 scoring, entropy balance, min quota와 soft max quota를 추가한다.</p>
-        <p class="doc-p">설계 차이와 현재 실험 근거는 <code>candidate_<wbr>evidence_<wbr>baseline_<wbr>comparison.md</code>를 따른다. 도시·관광지 검색 테스트 계획과 상세 결과의 정본은 <code>../<wbr>10_<wbr>test_<wbr>plan/<wbr>candidate_<wbr>evidence_<wbr>search_<wbr>test_<wbr>plan.md</code>, <code>../<wbr>10_<wbr>test_<wbr>plan/<wbr>candidate_<wbr>evidence_<wbr>evaluation_<wbr>results.md</code>다.</p>
+        <p class="doc-p">설계 차이와 현재 실험 근거는 <code>supplemental/<wbr>candidate_<wbr>evidence_<wbr>baseline_<wbr>comparison.md</code>를 따른다. 도시·관광지 검색 테스트 계획과 상세 결과의 정본은 <code>../<wbr>10_<wbr>test_<wbr>plan/<wbr>supplemental/<wbr>candidate_<wbr>evidence_<wbr>search_<wbr>test_<wbr>plan.md</code>, <code>../<wbr>10_<wbr>test_<wbr>plan/<wbr>supplemental/<wbr>candidate_<wbr>evidence_<wbr>evaluation_<wbr>results.md</code>다.</p>
         <h1 id="s11" class="s-h1">11. 금지 사항</h1>
         <ul class="bullet-list">
         <li>대화 로그 전문을 장기 저장하지 않는다.</li>
@@ -459,10 +459,10 @@
         <tr><td>v0.11</td><td>2026-06-13</td><td>llm</td><td>Candidate Evidence 관련 외부 평가 구현 경로 직접 참조를 제거하고 정본 내부 문서 연결 중심으로 정리</td></tr>
         <tr><td>v0.10</td><td>2026-06-12</td><td>llm팀</td><td>정본에서 특정 LLM 모델 고정 문구를 제거하고 Bedrock Converse 추상화 원칙으로 정리</td></tr>
         <tr><td>v0.9</td><td>2026-06-12</td><td>llm팀</td><td>AgentCore 하네스/Memory/Gateway/Policy/Observability 책임 경계와 Memory 저장 금지 원칙을 대표 문서에 반영</td></tr>
-        <tr><td>v0.8</td><td>2026-06-12</td><td>llm팀</td><td><code>intent_<wbr>agent.md</code>를 Intent Agent 상세 정본으로 추가하고, 모델 호출 경계를 Bedrock Converse adapter로 분리</td></tr>
-        <tr><td>v0.7</td><td>2026-06-12</td><td>llm팀</td><td><code>planner_<wbr>agent.md</code>를 Planner Agent 상세 정본으로 추가하고, 일정 생성·설명·검증의 구현 기준을 대표 문서에 연결</td></tr>
+        <tr><td>v0.8</td><td>2026-06-12</td><td>llm팀</td><td><code>supplemental/<wbr>intent_<wbr>agent.md</code>를 Intent Agent 상세 정본으로 추가하고, 모델 호출 경계를 Bedrock Converse adapter로 분리</td></tr>
+        <tr><td>v0.7</td><td>2026-06-12</td><td>llm팀</td><td><code>supplemental/<wbr>planner_<wbr>agent.md</code>를 Planner Agent 상세 정본으로 추가하고, 일정 생성·설명·검증의 구현 기준을 대표 문서에 연결</td></tr>
         <tr><td>v0.6</td><td>2026-06-12</td><td>llm팀</td><td>Candidate Evidence Agent의 Baseline/Ours 비교 원칙과 테스트 계획·결과 문서 연결 추가</td></tr>
-        <tr><td>v0.5</td><td>2026-06-10</td><td>llm팀</td><td>UnifiedAgentState를 <code>langgraph_<wbr>flow.md</code> 상세 정본과 정합화하고, <code>Candidate_<wbr>Evidence_<wbr>Agent</code> 검색 도구 명칭을 <code>Destination Search Tool</code>로 통일</td></tr>
+        <tr><td>v0.5</td><td>2026-06-10</td><td>llm팀</td><td>UnifiedAgentState를 <code>supplemental/<wbr>langgraph_<wbr>flow.md</code> 상세 정본과 정합화하고, <code>Candidate_<wbr>Evidence_<wbr>Agent</code> 검색 도구 명칭을 <code>Destination Search Tool</code>로 통일</td></tr>
         <tr><td>v0.4</td><td>2026-06-10</td><td>llm팀</td><td>Retriever/Ranker 분리 구간을 <code>Candidate_<wbr>Evidence_<wbr>Agent</code>로 통합하고 Planner가 일정·설명·검증을 구조 수준에서 통합 담당하도록 정리</td></tr>
         <tr><td>v0.4</td><td>2026-06-08</td><td>llm팀</td><td>DB v0.5 기준으로 Agent trace 저장 필드를 <code>lovv_<wbr>agent_<wbr>runs</code> 요약 필드와 Observability 메트릭으로 분리</td></tr>
         <tr><td>v0.4</td><td>2026-06-08</td><td>llm팀</td><td>Itinerary Planner와 Explanation Writer를 <code>Itinerary_<wbr>Writer_<wbr>Agent</code>로 통합하고 생성 matrix 키를 <code>generation</code>으로 정리</td></tr>

@@ -1,17 +1,17 @@
 # 로브 (Lovv) 일정 생성 흐름 정본 초안
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `05_agent_spec.md`
+> 대표 문서: `../05_agent_spec.md`
 
 > 문서 버전: v0.5
 > 문서 상태: 초안 (Draft)
-> 기준 문서: `planner_agent.md`, `candidate_evidence_agent.md`, `festival_verifier_agent.md`, `05_agent_spec.md`, `langgraph_flow.md`, `../01_requirements/01_requirements.md`, `../02_service_flow/02_service_flow.md`, `../04_database_design/04_database_design.md`, `../06_technical_spec/06_technical_spec.md`, `../07_api_spec/07_api_spec.md`
+> 기준 문서: `planner_agent.md`, `candidate_evidence_agent.md`, `festival_verifier_agent.md`, `../05_agent_spec.md`, `langgraph_flow.md`, `../../01_requirements/01_requirements.md`, `../../02_service_flow/02_service_flow.md`, `../../04_database_design/04_database_design.md`, `../../06_technical_spec/06_technical_spec.md`, `../../07_api_spec/07_api_spec.md`
 
 > 정본 우선순위: Planner Agent 구현 기준은 `planner_agent.md`를 우선한다. 일정 밀도, 슬롯 템플릿, 미식·노포 처리, 출력 스키마, 검증·재시도 규칙의 단일 정본은 `planner_agent.md`다. 본 문서는 PlanDraft, 일정 수정 흐름, 대체 일정 아이디어, 일반 수정 API 후보를 보존하는 보조 초안이며, 정본과 충돌할 경우 `planner_agent.md`를 따른다.
 
 > 용어 정합성: 본 문서가 사용하던 일부 초안 용어는 Candidate Evidence / Planner 정본 용어로 정리했다. 매핑은 4.3절을 참고한다.
 >
-> **[PRD 반영 v0.1 — 대화형 빌더]** 일정 생성이 자동 배치에서 **사용자 주도 HITL 반경 루프**로 전환된다(동선=선택 순서). 반경 후보(관광지 DB + 식당·카페 지도 API) 제시→선택→다음 anchor 반복. Planner는 Geo-Filter(반경/구간 동선)로 축소. 상세: `../98_prd/interactive_builder_prd.md`.
+> **[PRD 반영 v0.1 — 대화형 빌더]** 일정 생성이 자동 배치에서 **사용자 주도 HITL 반경 루프**로 전환된다(동선=선택 순서). 반경 후보(관광지 DB + 식당·카페 지도 API) 제시→선택→다음 anchor 반복. Planner는 Geo-Filter(반경/구간 동선)로 축소. 상세: `../../98_prd/interactive_builder_prd.md`.
 
 # 1. 문서 목적
 
@@ -34,7 +34,7 @@
 - API, DB, 테스트 문서에 반영해야 할 영향
 
 본 문서는 소도시 후보 검색과 최종 목적지 선정 로직은 다루지 않는다.
-해당 흐름은 `recommendation_flow.md`, `05_agent_spec.md`, `langgraph_flow.md`를 따른다.
+해당 흐름은 `recommendation_flow.md`, `../05_agent_spec.md`, `langgraph_flow.md`를 따른다.
 
 # 3. 일정 생성의 위치
 
@@ -469,12 +469,12 @@ POST /recommendations/{recommendationId}/revise
 
 # 16. 후속 반영 작업
 
-1. `05_agent_spec.md`의 `Planner_Agent` 절에 본 문서와 `planner_agent.md` 링크를 유지한다.
+1. `../05_agent_spec.md`의 `Planner_Agent` 절에 본 문서와 `planner_agent.md` 링크를 유지한다.
 2. `07_api_spec.md`에 일반 일정 수정 API 후보를 반영할지 결정한다.
 3. `04_database_design.md`에 `itinerary_days`, `itinerary_items` 상세 컬럼과 API 매핑 표를 반영한다.
 4. `agent_harness_design.md`에 일정 생성 전용 테스트 케이스를 추가한다.
 5. `02_service_flow.md`의 `PlanDraft` 설명을 최신 API/DB 원칙에 맞게 보완한다.
-6. `docs/02_service_flow/service_flow_update_summary.md`의 구형 `/v1/chat/*`, `/v1/plans/*`, Transcript 저장 표현은 최신 정본과 충돌하므로 참고 문서로만 유지하거나 정리한다.
+6. `docs/02_service_flow/supplemental/service_flow_update_summary.md`의 구형 `/v1/chat/*`, `/v1/plans/*`, Transcript 저장 표현은 최신 정본과 충돌하므로 참고 문서로만 유지하거나 정리한다.
 
 # 17. 변경 이력
 

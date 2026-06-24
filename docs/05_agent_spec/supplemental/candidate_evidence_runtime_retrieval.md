@@ -1,15 +1,15 @@
 # Candidate Evidence Runtime Tool Overview
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `05_agent_spec.md`
+> 대표 문서: `../05_agent_spec.md`
 
 > 문서 버전: v0.10
 > 문서 상태: Draft / 실행 도구 개요
 > 작성일: 2026-06-13
-> 기준 문서: `candidate_evidence_agent.md`, `05_agent_spec.md`
+> 기준 문서: `candidate_evidence_agent.md`, `../05_agent_spec.md`
 
 > **[PRD 반영 v0.1 — 대화형 빌더]** 반경 빌더에서는 코어를 **radius 게이트**로 재사용하고, **식당·카페는
-> 지도 API로 반경 표시**해 직접 선택지로 제공한다(아래 §5 통제조건 9 갱신). 상세: `../98_prd/interactive_builder_prd.md`.
+> 지도 API로 반경 표시**해 직접 선택지로 제공한다(아래 §5 통제조건 9 갱신). 상세: `../../98_prd/interactive_builder_prd.md`.
 
 ## 1. 문서 목적
 

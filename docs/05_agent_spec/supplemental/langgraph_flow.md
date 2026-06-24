@@ -1,14 +1,14 @@
 # 로브 (Lovv) LangGraph Flow 명세 (Canonical)
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `05_agent_spec.md`
+> 대표 문서: `../05_agent_spec.md`
 
 > 문서 버전: v1.5
 > 문서 상태: 검토 중 (Review)
 > 위상: 본 문서는 Lovv 에이전트의 **그래프 토폴로지·상태·라우팅 최상위 기준**이다.
-> 연관 문서: `05_agent_spec.md`(에이전트 명세), `agent_spec_revision_plan.md`(수정 방안/A안 확정), `agent_harness_design.md`(하네스), `../01_requirements/lovv_agent_multiturn_context_spec.md`(멀티턴 컨텍스트 정책)
+> 연관 문서: `../05_agent_spec.md`(에이전트 명세), `agent_spec_revision_plan.md`(수정 방안/A안 확정), `agent_harness_design.md`(하네스), `../../01_requirements/supplemental/lovv_agent_multiturn_context_spec.md`(멀티턴 컨텍스트 정책)
 >
-> **[PRD 반영 v0.1 — 대화형 빌더]** 빌더 전환 시 토폴로지가 바뀐다 — Planner 단일 노드의 자동 일정 생성 대신 **반경 Provider ↔ 후보 제시(interrupt) ↔ 사용자 픽 ↔ next anchor** HITL 루프가 추가된다. checkpointer(AgentCore Memory)로 interrupt/resume, `itinerary_builder` state 그룹 추가, Supervisor는 결정론 유지. 상세: `../98_prd/interactive_builder_prd.md`.
+> **[PRD 반영 v0.1 — 대화형 빌더]** 빌더 전환 시 토폴로지가 바뀐다 — Planner 단일 노드의 자동 일정 생성 대신 **반경 Provider ↔ 후보 제시(interrupt) ↔ 사용자 픽 ↔ next anchor** HITL 루프가 추가된다. checkpointer(AgentCore Memory)로 interrupt/resume, `itinerary_builder` state 그룹 추가, Supervisor는 결정론 유지. 상세: `../../98_prd/interactive_builder_prd.md`.
 
 # 1. 문서 개요
 
@@ -148,7 +148,7 @@ class UnifiedAgentState(TypedDict):
 - 선택된 도시에 축제 포함 요청이 있으면 `Festival_Verifier_Agent`가 해당 도시의 월·테마 매칭 축제 후보만 목표 연도 기준으로 검증한다.
 - `Festival_Verifier_Agent`는 `date_status=confirmed` 축제만 Planner에 확정 배치 가능 후보로 넘긴다.
 - `X`가 더 없으면 순차 구간으로 전이.
-- 구체적인 matrix 전이 표준은 `05_agent_spec.md` 8.2를 단일 출처로 따른다.
+- 구체적인 matrix 전이 표준은 `../05_agent_spec.md` 8.2를 단일 출처로 따른다.
 
 ## 6.3 순차 생성 구간 (매트릭스 재평가 없음)
 
