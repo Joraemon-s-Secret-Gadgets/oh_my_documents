@@ -36,7 +36,7 @@ PDF는 Markdown 원본의 의미를 바꾸지 않고, `scripts/markdown_to_tex.p
 ## 생성 명령 초안
 
 ```powershell
-python scripts\markdown_to_tex.py docs\05_agent_spec\05_agent_spec.md pdf\agent_spec.tex --title "Agent 명세서" --author "이창우, 전승권, 전종혁, 조동휘, 최수아" --mentor "멘토 최민수" --team "조라에몽의 만능 도구들" --service-label "로브 서비스 Agent 명세" --section-pagebreak --ci-images "../assets/images/SK-Networks-logo.png" "../assets/images/en-core-logo.png" "../assets/images/playdata-logo.png"
+python scripts\markdown_to_tex.py docs\05_agent_spec\05_agent_spec.md pdf\agent_spec.tex --title "Agent 명세서" --author "이창우, 전종혁, 조동휘, 최수아" --mentor "멘토 최민수" --team "조라에몽의 만능 도구들" --service-label "로브 서비스 Agent 명세" --section-pagebreak --ci-images "../assets/images/SK-Networks-logo.png" "../assets/images/en-core-logo.png" "../assets/images/playdata-logo.png"
 Push-Location pdf
 xelatex -interaction=nonstopmode -halt-on-error agent_spec.tex
 xelatex -interaction=nonstopmode -halt-on-error agent_spec.tex

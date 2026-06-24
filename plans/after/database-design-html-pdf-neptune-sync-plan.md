@@ -52,7 +52,7 @@
 권장 명령:
 
 ```powershell
-python scripts\markdown_to_tex.py docs\04_database_design\04_database_design.md pdf\database_design.tex --title "데이터베이스 설계 명세서" --author "이창우, 전승권, 전종혁, 조동휘, 최수아" --mentor "멘토 최민수" --team "조라에몽의 만능 도구들" --service-label "로브 서비스 데이터베이스 설계" --section-pagebreak --ci-images "../assets/images/SK-Networks-logo.png" "../assets/images/en-core-logo.png" "../assets/images/playdata-logo.png"
+python scripts\markdown_to_tex.py docs\04_database_design\04_database_design.md pdf\database_design.tex --title "데이터베이스 설계 명세서" --author "이창우, 전종혁, 조동휘, 최수아" --mentor "멘토 최민수" --team "조라에몽의 만능 도구들" --service-label "로브 서비스 데이터베이스 설계" --section-pagebreak --ci-images "../assets/images/SK-Networks-logo.png" "../assets/images/en-core-logo.png" "../assets/images/playdata-logo.png"
 Push-Location pdf
 xelatex -interaction=nonstopmode -halt-on-error database_design.tex
 xelatex -interaction=nonstopmode -halt-on-error database_design.tex

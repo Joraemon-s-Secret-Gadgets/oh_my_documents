@@ -122,19 +122,19 @@
 - [x] 한국 상세 PDF 생성 명령을 실행한다.
 
 ```powershell
-python scripts\markdown_to_tex.py docs\04_data_collect_plan\korea_data_acquisition_plan.md pdf\korea_data_acquisition_plan.tex --title "한국 데이터 취득 계획서" --author "이창우, 전승권, 전종혁, 조동휘, 최수아" --mentor "멘토 최민수" --team "조라에몽의 만능 도구들" --service-label "로브 서비스 데이터 수집 계획" --section-pagebreak --ci-images "../assets/images/SK-Networks-logo.png" "../assets/images/en-core-logo.png" "../assets/images/playdata-logo.png"
+python scripts\markdown_to_tex.py docs\04_data_collect_plan\korea_data_acquisition_plan.md pdf\korea_data_acquisition_plan.tex --title "한국 데이터 취득 계획서" --author "이창우, 전종혁, 조동휘, 최수아" --mentor "멘토 최민수" --team "조라에몽의 만능 도구들" --service-label "로브 서비스 데이터 수집 계획" --section-pagebreak --ci-images "../assets/images/SK-Networks-logo.png" "../assets/images/en-core-logo.png" "../assets/images/playdata-logo.png"
 ```
 
 - [x] 대표 데이터 수집 PDF 생성 명령을 실행한다.
 
 ```powershell
-python scripts\markdown_to_tex.py docs\04_data_collect_plan\04_data_collect_plan.md pdf\data_collect_plan.tex --title "데이터 수집 계획서" --author "이창우, 전승권, 전종혁, 조동휘, 최수아" --mentor "멘토 최민수" --team "조라에몽의 만능 도구들" --service-label "로브 서비스 데이터 수집 계획" --section-pagebreak --body-pagebreak-before "2.3 City 수집 항목" "2.4 Attraction 수집 항목" "2.6 데이터 출처" "2.6.2 일본 데이터 출처" --ci-images "../assets/images/SK-Networks-logo.png" "../assets/images/en-core-logo.png" "../assets/images/playdata-logo.png"
+python scripts\markdown_to_tex.py docs\04_data_collect_plan\04_data_collect_plan.md pdf\data_collect_plan.tex --title "데이터 수집 계획서" --author "이창우, 전종혁, 조동휘, 최수아" --mentor "멘토 최민수" --team "조라에몽의 만능 도구들" --service-label "로브 서비스 데이터 수집 계획" --section-pagebreak --body-pagebreak-before "2.3 City 수집 항목" "2.4 Attraction 수집 항목" "2.6 데이터 출처" "2.6.2 일본 데이터 출처" --ci-images "../assets/images/SK-Networks-logo.png" "../assets/images/en-core-logo.png" "../assets/images/playdata-logo.png"
 ```
 
 - [x] 전처리 PDF가 변경 대상이면 생성 명령을 실행한다.
 
 ```powershell
-python scripts\markdown_to_tex.py docs\04_data_collect_plan\data_preprocessing_plan.md pdf\data_preprocessing_plan.tex --title "데이터 전처리 계획서" --author "이창우, 전승권, 전종혁, 조동휘, 최수아" --mentor "멘토 최민수" --team "조라에몽의 만능 도구들" --service-label "로브 서비스 데이터 수집 계획" --section-pagebreak --ci-images "../assets/images/SK-Networks-logo.png" "../assets/images/en-core-logo.png" "../assets/images/playdata-logo.png"
+python scripts\markdown_to_tex.py docs\04_data_collect_plan\data_preprocessing_plan.md pdf\data_preprocessing_plan.tex --title "데이터 전처리 계획서" --author "이창우, 전종혁, 조동휘, 최수아" --mentor "멘토 최민수" --team "조라에몽의 만능 도구들" --service-label "로브 서비스 데이터 수집 계획" --section-pagebreak --ci-images "../assets/images/SK-Networks-logo.png" "../assets/images/en-core-logo.png" "../assets/images/playdata-logo.png"
 ```
 
 ### 8. 최종 검증
