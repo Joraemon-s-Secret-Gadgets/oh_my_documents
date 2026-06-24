@@ -3,12 +3,12 @@
 > 문서 버전: v0.1
 > 문서 상태: 확정 범위 (MVP Build Contract)
 > 기준 문서: API 명세서 v0.2, 기술 명세서 v0.3, Product API 전환 보강 명세서 v0.1
-> 대표 문서: [07_api_spec.md](./07_api_spec.md)
+> 대표 문서: [../07_api_spec.md](./../07_api_spec.md)
 
 # 1. 문서 목적
 
 본 문서는 AWS SAM 백엔드 구현 시 우선 구축할 MVP 확정 API만 분리해 정리한다.
-기존 대표 API 명세서인 `07_api_spec.md`를 대체하지 않으며, 기존 문서에 이미 작성된 내용을 수정하지 않고 MVP 구현 범위를 명확히 하기 위한 보조 문서다.
+기존 대표 API 명세서인 `../07_api_spec.md`를 대체하지 않으며, 기존 문서에 이미 작성된 내용을 수정하지 않고 MVP 구현 범위를 명확히 하기 위한 보조 문서다.
 
 프론트엔드와 백엔드는 이 문서의 endpoint 목록과 request/response 필드를 기준으로 MVP 구현 범위를 맞춘다.
 후속 Product 기능은 `product_api_transition_supplement.md`에 후보로 남기고, 구현 확정 시 별도 반영한다.

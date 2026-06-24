@@ -5,6 +5,14 @@
 ## Primary Document
 
 대표 문서는 `07_api_spec.md`다. 프론트엔드, 백엔드, 추천 Agent, 운영 화면이 사용하는 API 계약을 정의한다.
+## Representative Document Flow
+
+- `07_api_spec.md` is the integrated representative document for this folder.
+- `sections/*.md` is the editing source for `07_api_spec.md`.
+- When changing representative document body content, edit the matching `sections/*.md` file first, then regenerate or update `07_api_spec.md` in the same change.
+- `supplemental/*.md` stores supporting notes, rationale, drafts, and detailed references for this folder.
+- Do not keep supplemental Markdown documents at this folder root.
+- Do not create an `index.md` file in this folder.
 
 ## Dependencies
 
