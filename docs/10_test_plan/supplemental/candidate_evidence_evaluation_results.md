@@ -6,7 +6,7 @@
 > 대상: Baseline Simple RAG vs Candidate Evidence Agent Ours  
 > 평가 범위: 도시 선정 및 관광지·음식점 Candidate Evidence 검색  
 > 문서 성격: 보조 Markdown
-> 대표 문서: `10_test_plan.md`
+> 대표 문서: `../10_test_plan.md`
 > 테스트 계획: `candidate_evidence_search_test_plan.md`  
 > 원본 산출물: Evaluation report, Baseline/Ours raw output, Blind review result
 

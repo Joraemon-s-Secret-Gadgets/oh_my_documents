@@ -10,8 +10,16 @@
 
 현재 하위 문서는 다음과 같다.
 
-- `candidate_evidence_search_test_plan.md`: Candidate Evidence Agent의 도시 및 관광지 검색 테스트 계획
-- `candidate_evidence_evaluation_results.md`: 해당 검색 테스트와 블라인드 정성 평가의 실행 결과와 한계
+- `supplemental/candidate_evidence_search_test_plan.md`: Candidate Evidence Agent의 도시 및 관광지 검색 테스트 계획
+- `supplemental/candidate_evidence_evaluation_results.md`: 해당 검색 테스트와 블라인드 정성 평가의 실행 결과와 한계
+## Representative Document Flow
+
+- `10_test_plan.md` is the integrated representative document for this folder.
+- `sections/*.md` is the editing source for `10_test_plan.md`.
+- When changing representative document body content, edit the matching `sections/*.md` file first, then regenerate or update `10_test_plan.md` in the same change.
+- `supplemental/*.md` stores supporting notes, rationale, drafts, and detailed references for this folder.
+- Do not keep supplemental Markdown documents at this folder root.
+- Do not create an `index.md` file in this folder.
 
 ## Dependencies
 
