@@ -1,7 +1,7 @@
 # 애니메이션 성지순례 보조 제안
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `01_requirements.md`
+> 대표 문서: `../01_requirements.md`
 
 대주제: 애니메이션 성지순례
 

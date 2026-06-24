@@ -1,7 +1,7 @@
 # 로컬루트 Japan 기능 추가 제안서
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `01_requirements.md`
+> 대표 문서: `../01_requirements.md`
 
 ## 1. 기준 방향
 

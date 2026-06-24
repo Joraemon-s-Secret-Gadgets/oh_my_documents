@@ -1,7 +1,7 @@
 # Lovv 에이전트 명세서 — 멀티턴 컨텍스트 관리 정책
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `01_requirements.md`
+> 대표 문서: `../01_requirements.md`
 
 ## 0. 문서 상태
 

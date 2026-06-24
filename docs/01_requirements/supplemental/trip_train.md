@@ -1,7 +1,7 @@
 # RailRoute-RAG
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `01_requirements.md`
+> 대표 문서: `../01_requirements.md`
 
 철도망 기반 소도시 추천 서비스 기획서
 

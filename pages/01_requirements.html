@@ -336,14 +336,14 @@
         <tr><td>P5</td><td>별 관측 조건 기반 여행지 추천, 치유·웰니스 여정 추천, 예산 역산 추천</td><td>제외</td><td>검토</td><td>제외</td></tr>
         </tbody></table></div>
         <p class="doc-p">보조 요구사항 문서의 대표 문서 반영 기준은 다음과 같다.</p>
-        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <div class="table-wrap wide extra-wide scroll-table"><table class="info-tbl">
         <thead><tr><th>분류</th><th>보조 문서</th><th>대표 문서 반영 방식</th></tr></thead><tbody>
-        <tr><td>P1 핵심 추천</td><td><code>overturizim.md</code>, <code>korea_<wbr>japan.md</code>, <code>weather_<wbr>first.md</code></td><td>혼잡 회피, 한일 축제, 월별 기상 경향 기반 추천 요구사항으로 통합</td></tr>
-        <tr><td>P2 선택 구현</td><td><code>japan_<wbr>add_<wbr>function.md</code></td><td>일본어 검색 키워드와 일본 현지 탐색 링크 요구사항으로 통합</td></tr>
-        <tr><td>P3 설계</td><td><code>kdrama-pipeline.md</code>, <code>animation.md</code>, <code>trip_<wbr>train.md</code>, <code>craft_<wbr>experience.md</code>, <code>personalization.md</code>, <code>lovv_<wbr>agent_<wbr>multiturn_<wbr>context_<wbr>spec.md</code></td><td>미디어 성지순례, 철도, 지역 문화 체험, 개인화, 멀티턴 컨텍스트 요구사항으로 통합</td></tr>
-        <tr><td>P4 Production</td><td><code>seasonal_<wbr>activity.md</code></td><td>스키 액티비티와 여행 중 즉흥 일정 조정 요구사항으로 통합</td></tr>
-        <tr><td>P5 향후 검토</td><td><code>astro_<wbr>rag_<wbr>proposal.md</code>, <code>healing_<wbr>wellness.md</code>, <code>budget_<wbr>first.md</code></td><td>이번 프로젝트 상세 기능 요구사항에서는 제외하고 데이터 후보·제약사항에 향후 검토로 기록</td></tr>
-        <tr><td>우선순위 정리</td><td><code>priority_<wbr>plan.md</code></td><td>P1~P5 단계별 추진 범위의 기준 자료로 반영</td></tr>
+        <tr><td>P1 핵심 추천</td><td><code>supplemental/<wbr>overturizim.md</code>, <code>supplemental/<wbr>korea_<wbr>japan.md</code>, <code>supplemental/<wbr>weather_<wbr>first.md</code></td><td>혼잡 회피, 한일 축제, 월별 기상 경향 기반 추천 요구사항으로 통합</td></tr>
+        <tr><td>P2 선택 구현</td><td><code>supplemental/<wbr>japan_<wbr>add_<wbr>function.md</code></td><td>일본어 검색 키워드와 일본 현지 탐색 링크 요구사항으로 통합</td></tr>
+        <tr><td>P3 설계</td><td><code>supplemental/<wbr>kdrama-pipeline.md</code>, <code>supplemental/<wbr>animation.md</code>, <code>supplemental/<wbr>trip_<wbr>train.md</code>, <code>supplemental/<wbr>craft_<wbr>experience.md</code>, <code>supplemental/<wbr>personalization.md</code>, <code>supplemental/<wbr>lovv_<wbr>agent_<wbr>multiturn_<wbr>context_<wbr>spec.md</code></td><td>미디어 성지순례, 철도, 지역 문화 체험, 개인화, 멀티턴 컨텍스트 요구사항으로 통합</td></tr>
+        <tr><td>P4 Production</td><td><code>supplemental/<wbr>seasonal_<wbr>activity.md</code></td><td>스키 액티비티와 여행 중 즉흥 일정 조정 요구사항으로 통합</td></tr>
+        <tr><td>P5 향후 검토</td><td><code>supplemental/<wbr>astro_<wbr>rag_<wbr>proposal.md</code>, <code>supplemental/<wbr>healing_<wbr>wellness.md</code>, <code>supplemental/<wbr>budget_<wbr>first.md</code></td><td>이번 프로젝트 상세 기능 요구사항에서는 제외하고 데이터 후보·제약사항에 향후 검토로 기록</td></tr>
+        <tr><td>우선순위 정리</td><td><code>supplemental/<wbr>priority_<wbr>plan.md</code></td><td>P1~P5 단계별 추진 범위의 기준 자료로 반영</td></tr>
         </tbody></table></div>
         <h2 id="우선순위-기능-요구사항" class="s-h2">우선순위 기능 요구사항</h2>
         <div class="table-wrap wide scroll-table"><table class="info-tbl">
@@ -380,9 +380,9 @@
         <p class="doc-p">향후 검토 후보는 다음과 같이 관리한다. 이 항목은 이번 프로젝트의 상세 기능 요구사항 표에는 포함하지 않는다.</p>
         <div class="table-wrap wide scroll-table"><table class="info-tbl">
         <thead><tr><th>후보</th><th>근거 보조 문서</th><th>검토 조건</th></tr></thead><tbody>
-        <tr><td>별 관측 조건 기반 여행지 추천</td><td><code>astro_<wbr>rag_<wbr>proposal.md</code></td><td>광해, 월령, 구름량, 대기 안정도 데이터를 안정적으로 확보하고, 일반 소도시 추천과 별도 성공률 계산 기준을 정의한 뒤 검토</td></tr>
-        <tr><td>치유·웰니스 여정 추천</td><td><code>healing_<wbr>wellness.md</code></td><td>온천 테마와 중복되지 않는 회복 활동 데이터, 템플스테이·치유의숲 운영 정보, 한적함 지표를 확보한 뒤 검토</td></tr>
-        <tr><td>예산 역산 추천</td><td><code>budget_<wbr>first.md</code></td><td>교통·숙박·식비·액티비티 비용 추정치와 실시간 가격 미연동 제약을 명확히 한 뒤 검토</td></tr>
+        <tr><td>별 관측 조건 기반 여행지 추천</td><td><code>supplemental/<wbr>astro_<wbr>rag_<wbr>proposal.md</code></td><td>광해, 월령, 구름량, 대기 안정도 데이터를 안정적으로 확보하고, 일반 소도시 추천과 별도 성공률 계산 기준을 정의한 뒤 검토</td></tr>
+        <tr><td>치유·웰니스 여정 추천</td><td><code>supplemental/<wbr>healing_<wbr>wellness.md</code></td><td>온천 테마와 중복되지 않는 회복 활동 데이터, 템플스테이·치유의숲 운영 정보, 한적함 지표를 확보한 뒤 검토</td></tr>
+        <tr><td>예산 역산 추천</td><td><code>supplemental/<wbr>budget_<wbr>first.md</code></td><td>교통·숙박·식비·액티비티 비용 추정치와 실시간 가격 미연동 제약을 명확히 한 뒤 검토</td></tr>
         </tbody></table></div>
         <h2 id="s4-7" class="s-h2">4.7 운영·관리·검증 기능</h2>
         <div class="table-wrap wide scroll-table"><table class="info-tbl">

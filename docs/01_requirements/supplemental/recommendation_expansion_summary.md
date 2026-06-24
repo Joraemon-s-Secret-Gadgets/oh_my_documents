@@ -1,7 +1,7 @@
 # 추천 확장 요구사항 보조 요약
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `01_requirements.md`
+> 대표 문서: `../01_requirements.md`
 > 기준 문서: `animation.md`, `kdrama-pipeline.md`, `trip_train.md`, `craft_experience.md`, `seasonal_activity.md`, `astro_rag_proposal.md`, `healing_wellness.md`, `budget_first.md`
 
 ## P3 반영 범위
@@ -30,6 +30,6 @@
 
 ## 대표 문서 반영 위치
 
-- `01_requirements.md` 4.6: 우선순위 및 단계별 추진 범위
-- `01_requirements.md` 7.1: 필요 데이터 항목
-- `01_requirements.md` 8.2: 향후 검토 후보 가정사항
+- `../01_requirements.md` 4.6: 우선순위 및 단계별 추진 범위
+- `../01_requirements.md` 7.1: 필요 데이터 항목
+- `../01_requirements.md` 8.2: 향후 검토 후보 가정사항

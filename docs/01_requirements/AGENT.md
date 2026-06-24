@@ -5,10 +5,18 @@
 ## Primary Document
 
 대표 문서는 `01_requirements.md`다. 기능 요구사항, 비기능 요구사항, 데이터 요구사항, 제약사항, 변경 이력은 이 파일을 기준으로 관리한다.
+## Representative Document Flow
+
+- `01_requirements.md` is the integrated representative document for this folder.
+- `sections/*.md` is the editing source for `01_requirements.md`.
+- When changing representative document body content, edit the matching `sections/*.md` file first, then regenerate or update `01_requirements.md` in the same change.
+- `supplemental/*.md` stores supporting notes, rationale, drafts, and detailed references for this folder.
+- Do not keep supplemental Markdown documents at this folder root.
+- Do not create an `index.md` file in this folder.
 
 ## Supporting Documents
 
-`02_overturizim.md`부터 `14_priority_plan.md`까지의 보조 문서는 요구사항 명세서에 반영할 후보·근거 자료다. 보조 문서의 내용이 확정되면 `01_requirements.md`에 요구사항 형식으로 통합한다.
+`supplemental/*.md`의 보조 문서는 요구사항 명세서에 반영할 후보·근거 자료다. 보조 문서의 내용이 확정되면 `sections/*.md`를 먼저 수정하고 `01_requirements.md`에 요구사항 형식으로 통합한다.
 
 ## Editing Rules
 

@@ -1,7 +1,7 @@
 # 개인화 요구사항 정리
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `01_requirements.md`
+> 대표 문서: `../01_requirements.md`
 
 ## 1. 목적
 

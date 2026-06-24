@@ -1,7 +1,7 @@
 # StarryNight-RAG
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `01_requirements.md`
+> 대표 문서: `../01_requirements.md`
 
 아스트로 투어리즘 지능형 매칭 서비스 기획서
 

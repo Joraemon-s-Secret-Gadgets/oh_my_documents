@@ -1,7 +1,7 @@
 # 개인화·에이전트 요구사항 보조 요약
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `01_requirements.md`
+> 대표 문서: `../01_requirements.md`
 > 기준 문서: `personalization.md`, `lovv_agent_multiturn_context_spec.md`
 
 ## 대표 문서 반영 범위
@@ -26,7 +26,7 @@
 
 ## 대표 문서 반영 위치
 
-- `01_requirements.md` 2.4: 권한 원칙
-- `01_requirements.md` 4.6: P2~P4 개인화 범위
-- `01_requirements.md` 4.8: 추천 파이프라인
-- `01_requirements.md` 7.1: 개인화·학습·실험 데이터
+- `../01_requirements.md` 2.4: 권한 원칙
+- `../01_requirements.md` 4.6: P2~P4 개인화 범위
+- `../01_requirements.md` 4.8: 추천 파이프라인
+- `../01_requirements.md` 7.1: 개인화·학습·실험 데이터
