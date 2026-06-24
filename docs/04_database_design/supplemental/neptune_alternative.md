@@ -1,7 +1,7 @@
 # 로브 (Lovv) Neptune 대체 설계 명세서
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `04_database_design.md`
+> 대표 문서: `../04_database_design.md`
 
 > 문서 버전: v0.2
 > 문서 상태: 검토 중 (Review)

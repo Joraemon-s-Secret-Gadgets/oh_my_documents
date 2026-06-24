@@ -1,17 +1,17 @@
 # 데이터베이스 설계 명세서 업데이트 초안 — 보존 기간/TTL 및 Neptune 비용
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `04_database_design.md`
+> 대표 문서: `../04_database_design.md`
 
 > 보조 문서 (AGENT.md 워크플로 기준 초안)
-> 대상 원본: `04_database_design.md` (v0.4)
+> 대상 원본: `../04_database_design.md` (v0.4)
 > 작성일: 2026-06-08
 > 상태: Review 대기 (값 확정 후 대표 문서 반영)
 
 > 최신 반영 메모(2026-06-12): 대표 문서는 Neptune 직접 도입 대신 Lambda 기반 관계 탐색 보조 기능 구현 예정으로 조정되었다. 아래 Neptune 비용 검토는 "왜 직접 도입을 보류했는가"의 근거로 유지한다.
 
 이 문서는 두 가지 피드백을 대표 문서에 반영하기 위한 초안이다. 값 확정 후
-`04_database_design.md`의 해당 섹션에 옮기고, `pages/` HTML 생성물을 최신화한다.
+`../04_database_design.md`의 해당 섹션에 옮기고, `pages/` HTML 생성물을 최신화한다.
 
 피드백 원문:
 
@@ -22,7 +22,7 @@
 
 ## 0. 대화형 빌더 메모리 계층 + TTL 라인 (PRD v0.1 반영)
 
-대화형 빌더(`../98_prd/interactive_builder_prd.md`)의 상태/메모리 결정을 본 보조 문서에 반영한다.
+대화형 빌더(`../../98_prd/interactive_builder_prd.md`)의 상태/메모리 결정을 본 보조 문서에 반영한다.
 
 - **단기 (AgentCore Memory)**: 빌더 상태 + 세션 + checkpoint, `event_expiry`로 자동 정리(일 단위).
 - **장기 ① 파생 개인화 프로필 (DynamoDB 핫, TTL 없음)**: 가명 ID PK, 선호 요약. 지우지 않음.

@@ -5,6 +5,14 @@
 ## Primary Document
 
 대표 문서는 `04_database_design.md`다. 핵심 데이터 모델, 테이블 후보, 관계, 인덱스, 보존 정책을 정의한다.
+## Representative Document Flow
+
+- `04_database_design.md` is the integrated representative document for this folder.
+- `sections/*.md` is the editing source for `04_database_design.md`.
+- When changing representative document body content, edit the matching `sections/*.md` file first, then regenerate or update `04_database_design.md` in the same change.
+- `supplemental/*.md` stores supporting notes, rationale, drafts, and detailed references for this folder.
+- Do not keep supplemental Markdown documents at this folder root.
+- Do not create an `index.md` file in this folder.
 
 ## Dependencies
 
