@@ -77,7 +77,7 @@ DOCUMENTS = [
         "설계·명세 문서",
     ),
     Document(
-        "docs/04_database_design/neptune_alternative.md",
+        "docs/04_database_design/supplemental/neptune_alternative.md",
         "04_neptune_alternative.html",
         "Neptune Alternative",
         "로브 (Lovv) — Neptune 대체 설계 명세서",
@@ -113,7 +113,7 @@ DOCUMENTS = [
         "설계·명세 문서",
     ),
     Document(
-        "docs/11_deployment_ops/troubleshooting.md",
+        "docs/11_deployment_ops/supplemental/troubleshooting.md",
         "11_troubleshooting.html",
         "Troubleshooting",
         "로브 (Lovv) — 트러블슈팅 문서",
