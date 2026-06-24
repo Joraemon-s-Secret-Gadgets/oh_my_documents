@@ -5,12 +5,20 @@
 ## Primary Document
 
 대표 문서는 `11_deployment_ops.md`다. 배포 파이프라인, 환경 구성, 운영 절차(runbook)를 정의한다. 인프라의 "왜"는 기술 명세서(06)에 두고, 이 문서는 "어떻게 배포·운영하는가"에 집중한다.
+## Representative Document Flow
+
+- `11_deployment_ops.md` is the integrated representative document for this folder.
+- `sections/*.md` is the editing source for `11_deployment_ops.md`.
+- When changing representative document body content, edit the matching `sections/*.md` file first, then regenerate or update `11_deployment_ops.md` in the same change.
+- `supplemental/*.md` stores supporting notes, rationale, drafts, and detailed references for this folder.
+- Do not keep supplemental Markdown documents at this folder root.
+- Do not create an `index.md` file in this folder.
 
 ## Documents
 
 ```text
 11_deployment_ops.md  배포·운영 대표 문서
-troubleshooting.md    프로젝트 진행 중 발생한 주요 이슈와 대응 기준
+supplemental/troubleshooting.md    프로젝트 진행 중 발생한 주요 이슈와 대응 기준
 ```
 
 ## Scope Boundary (06 vs 11)

@@ -1,13 +1,13 @@
 # 로브 (Lovv) 트러블슈팅 문서
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `11_deployment_ops.md`
+> 대표 문서: `../11_deployment_ops.md`
 
 > 문서 버전: v0.3
 > 문서 상태: 초안 (Draft)
 > 작성일: 2026-06-12
 > 작성자: llm팀
-> 기준 문서: `../04_database_design/04_database_design.md`, `../04_database_design/neptune_alternative.md`, `../07_api_spec/07_api_spec.md`, `../08_data_preprocessing/korea_data_preprocessing_result_report.md`, `../08_data_preprocessing/s3_vector_index_plan.md`, `../99_pptx/01_midterm_presentation/01_midterm_presentation.md`
+> 기준 문서: `../../04_database_design/04_database_design.md`, `../../04_database_design/supplemental/neptune_alternative.md`, `../../07_api_spec/07_api_spec.md`, `../../08_data_preprocessing/supplemental/korea_data_preprocessing_result_report.md`, `../../08_data_preprocessing/supplemental/s3_vector_index_plan.md`, `../../99_pptx/01_midterm_presentation/01_midterm_presentation.md`
 > 문서 목적: 프로젝트 진행 중 발생한 주요 이슈를 원인, 판단, 조치, 재발 방지 기준으로 정리해 발표와 운영 문서에서 함께 사용할 수 있게 한다.
 
 ---
@@ -185,7 +185,7 @@ python scripts\verify_pages_structure.py
 
 | 항목 | 경로 예시 |
 | --- | --- |
-| 원본 Markdown | `docs/08_data_preprocessing/korea_data_preprocessing_result_report.md` |
+| 원본 Markdown | `docs/08_data_preprocessing/supplemental/korea_data_preprocessing_result_report.md` |
 | TeX 산출물 | `pdf/korea_data_preprocessing_result_report.tex` |
 | PDF 산출물 | `pdf/korea_data_preprocessing_result_report.pdf` |
 | 산출물 목록 | `pdf/AGENT.md` |

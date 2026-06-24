@@ -2,7 +2,7 @@
 
 > 문서 성격: 보조 Markdown
 > 대표 문서: `../00_project_plan.md`
-> 기준 문서: `../../03_data_collect_plan/03_data_collect_plan.md`, `../../04_database_design/04_database_design.md`, `../../11_deployment_ops/troubleshooting.md`
+> 기준 문서: `../../03_data_collect_plan/03_data_collect_plan.md`, `../../04_database_design/04_database_design.md`, `../../11_deployment_ops/supplemental/troubleshooting.md`
 
 ## PoC 데이터 범위
 
