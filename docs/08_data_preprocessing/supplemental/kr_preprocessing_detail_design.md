@@ -1,20 +1,20 @@
 # 로브 (Lovv) 한국(KR) 데이터 전처리 상세 설계서
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `data_preprocessing_plan.md`
+> 대표 문서: `../data_preprocessing_plan.md`
 
 > 문서 버전: v0.3
 > 문서 상태: 초안 (Draft)
 > 작성일: 2026-06-08 (v0.2 심화: 2026-06-09, v0.3 코드대조: 2026-06-09)
 > 작성자: 조동휘
 > 기준 문서: `docs/08_data_preprocessing/data_preprocessing_plan.md` v0.5
-> 실데이터 기준: `docs/03_data_collect_plan/korea_data_acquisition_plan_updated.md` v0.3
-> 코드 대조: `Gloveman/tour-api-korea` (main), `docs/08_data_preprocessing/kr_preprocessing_code_based_design.md` v0.1
-> 불일치 정리: `docs/03_data_collect_plan/korea_acquisition_plan_corrections.md` v0.1
+> 실데이터 기준: `docs/03_data_collect_plan/supplemental/korea_data_acquisition_plan_updated.md` v0.3
+> 코드 대조: `Gloveman/tour-api-korea` (main), `docs/08_data_preprocessing/supplemental/kr_preprocessing_code_based_design.md` v0.1
+> 불일치 정리: `docs/03_data_collect_plan/supplemental/korea_acquisition_plan_corrections.md` v0.1
 
 > **[v0.3 코드대조 요약]** 실제 수집 샘플 코드(`tour-api-korea`)와 대조하여 ID 형식(`KR-{GW\|GB}-*`, `ATT-`/`FEST-{contentid}`), 방문통계 구조(final 임베드→unnest, `locals_*`/`out_of_town_*`/`foreigners_*`), 데이터 파일 구조(`data/raw/*`·`data/city/*`·`data/visitor/*`), 테마 키(`lclsSystm3 or cat3`)를 코드 사실로 정정한다. 코드 미구현 항목(tel 폴백, `prefecture_id`, City 보강)은 **전처리 단계 보강 대상**임을 명시한다.
-> 적재 설계 기준: `docs/04_database_design/nosql_schema_design.md`
-> 예산 기준: `docs/08_data_preprocessing/preprocessing_budget_estimate.md` v0.1
+> 적재 설계 기준: `docs/04_database_design/supplemental/nosql_schema_design.md`
+> 예산 기준: `docs/08_data_preprocessing/supplemental/preprocessing_budget_estimate.md` v0.1
 
 # 1. 문서 개요
 
@@ -22,7 +22,7 @@
 
 본 문서는 한국(강원·경북) 실제 수집 데이터를 대상으로, 수집 산출물을 S3에 적재(Load)한 뒤 AWS Lambda로 변환(Transform)하여 DynamoDB 서비스 데이터로 만드는 **ELT 파이프라인의 상세 설계**를 정의한다.
 
-상위 계획서(`data_preprocessing_plan.md` v0.5)가 한국·일본 공통 전처리 원칙과 아키텍처를 다룬다면, 본 문서는 그 원칙을 **한국 실수집 데이터 구조(TourAPI 4.0 KorService2 / DataLabService)에 맞춰 필드 단위로 구체화**하고, 단계별 입출력·변환 규칙·실패 처리·멱등성 기준을 구현 가능한 수준으로 기술한다.
+상위 계획서(`../data_preprocessing_plan.md` v0.5)가 한국·일본 공통 전처리 원칙과 아키텍처를 다룬다면, 본 문서는 그 원칙을 **한국 실수집 데이터 구조(TourAPI 4.0 KorService2 / DataLabService)에 맞춰 필드 단위로 구체화**하고, 단계별 입출력·변환 규칙·실패 처리·멱등성 기준을 구현 가능한 수준으로 기술한다.
 
 ## 1.2 적용 범위
 

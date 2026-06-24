@@ -1,12 +1,12 @@
 # 로브 (Lovv) KR S3 vector index 구축안
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `data_preprocessing_plan.md`
+> 대표 문서: `../data_preprocessing_plan.md`
 
 > 문서 버전: v0.2
 > 문서 상태: 초안 (Draft)
 > 작성일: 2026-06-10
-> 기준 보고서: `docs/08_data_preprocessing/korea_data_preprocessing_result_report.md`
+> 기준 보고서: `docs/08_data_preprocessing/supplemental/korea_data_preprocessing_result_report.md`
 > 기준 저장소: `TourKoreaDomainData`, `s3://lovv-data-pipeline-dev-925273580929/raw/KR/details/20260609/*.json`
 > 관련 문서: `docs/08_data_preprocessing/data_preprocessing_plan.md`, `docs/04_database_design/04_database_design.md`, `docs/05_agent_spec/05_agent_spec.md`
 

@@ -1,7 +1,7 @@
 # KR 상세 데이터 전처리 완료 보고서
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `data_preprocessing_plan.md`
+> 대표 문서: `../data_preprocessing_plan.md`
 
 ## 1. 보고서 개요
 
@@ -13,7 +13,7 @@
 - 관련 Spec:
   - `docs/specs/kr_details_elt_spec.md`
   - `docs/specs/raw_preprocessing_dynamodb_spec.md`
-  - `docs/data_preprocessing_plan.md`
+  - `docs/08_data_preprocessing/data_preprocessing_plan.md`
 
 본 보고서는 현재 완료된 작업을 기준으로, 한국 상세 Raw JSON을 서비스 적재 가능한 도메인별 데이터로 분리·정규화하고 DynamoDB에 적재한 결과와 남은 리스크를 정리한다.
 

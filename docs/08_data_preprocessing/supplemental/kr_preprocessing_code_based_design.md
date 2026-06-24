@@ -1,7 +1,7 @@
 # 로브 (Lovv) 한국(KR) 전처리 설계 — 샘플 코드 기반
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `data_preprocessing_plan.md`
+> 대표 문서: `../data_preprocessing_plan.md`
 
 > 문서 버전: v0.2
 > 문서 상태: 초안 (Draft)
@@ -9,8 +9,8 @@
 > 작성자: 조동휘
 > 기준 코드: `Gloveman/tour-api-korea` (main) — 현재 한국 수집 샘플 코드
 > 상위 계획서: `docs/08_data_preprocessing/data_preprocessing_plan.md` v0.5
-> 관련 상세설계: `docs/08_data_preprocessing/kr_preprocessing_detail_design.md` v0.2
-> 불일치 정리: `docs/03_data_collect_plan/korea_acquisition_plan_corrections.md` v0.1
+> 관련 상세설계: `docs/08_data_preprocessing/supplemental/kr_preprocessing_detail_design.md` v0.2
+> 불일치 정리: `docs/03_data_collect_plan/supplemental/korea_acquisition_plan_corrections.md` v0.1
 
 ## 1. 문서 개요
 

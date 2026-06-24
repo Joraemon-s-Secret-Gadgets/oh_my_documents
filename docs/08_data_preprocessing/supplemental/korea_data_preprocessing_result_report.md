@@ -1,7 +1,7 @@
 # 한국 데이터 전처리 결과보고서
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `data_preprocessing_plan.md`
+> 대표 문서: `../data_preprocessing_plan.md`
 
 ## 1. 보고서 개요
 
