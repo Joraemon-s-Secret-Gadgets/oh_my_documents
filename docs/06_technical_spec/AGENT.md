@@ -5,6 +5,14 @@
 ## Primary Document
 
 대표 문서는 `06_technical_spec.md`다. 프론트엔드, 백엔드, 데이터, 외부 API, AI/RAG 계층의 책임과 경계를 정의한다.
+## Representative Document Flow
+
+- `06_technical_spec.md` is the integrated representative document for this folder.
+- `sections/*.md` is the editing source for `06_technical_spec.md`.
+- When changing representative document body content, edit the matching `sections/*.md` file first, then regenerate or update `06_technical_spec.md` in the same change.
+- `supplemental/*.md` stores supporting notes, rationale, drafts, and detailed references for this folder.
+- Do not keep supplemental Markdown documents at this folder root.
+- Do not create an `index.md` file in this folder.
 
 ## Dependencies
 
