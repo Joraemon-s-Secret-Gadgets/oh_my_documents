@@ -91,7 +91,7 @@ docs/
 
 보조 Markdown에는 수정할 내용, 근거, 초안을 먼저 작성할 수 있다. 이후 Agent는 보조 Markdown을 검토해 해당 폴더의 대표 문서에 반영하고, 필요한 경우 `pages/`의 HTML 생성물도 최신화한다.
 
-`docs/00_project_plan`은 예외적으로 `sections/*.md`를 먼저 수정하고 `00_project_plan.md` 통합본에 반영한다. 대표 문서 보조 자료는 같은 폴더 루트가 아니라 `docs/00_project_plan/supplemental/`에 적재한다.
+`docs/00_project_plan` 및 `docs/01_requirements`부터 `docs/11_deployment_ops`까지는 `sections/*.md`를 먼저 수정하고 각 폴더의 대표 문서 통합본에 반영한다. 대표 문서 보조 자료는 같은 폴더 루트가 아니라 각 폴더의 `supplemental/`에서 관리한다. 90번대 문서 폴더는 이 `sections/`·`supplemental/` 강제 구조 적용 대상에서 제외한다.
 
 ## HTML Generation Rules
 
