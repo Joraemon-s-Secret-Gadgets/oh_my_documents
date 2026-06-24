@@ -1,10 +1,10 @@
 # 데이터 수집 계획서 검토 — 날씨 데이터 활용·정합성 정량화 초안
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `03_data_collect_plan.md`
+> 대표 문서: `../03_data_collect_plan.md`
 
 > 보조 문서 (AGENT.md 워크플로 기준 초안)
-> 대상 원본: `03_data_collect_plan.md`, `korea_data_acquisition_plan_updated.md`, `japan_data_acquisition_plan.md`
+> 대상 원본: `../03_data_collect_plan.md`, `korea_data_acquisition_plan_updated.md`, `japan_data_acquisition_plan.md`
 > 작성일: 2026-06-08
 > 상태: Review 대기 (파라미터 확정 후 대표 문서 반영)
 
@@ -22,9 +22,9 @@
 
 | 위치 | 내용 |
 | --- | --- |
-| `03_data_collect_plan.md` L61 | "Wikipedia 기후 표는 `climate_table`로 보존하고 자동 취득 실패 시 `needs_review`로 관리" |
-| `03_data_collect_plan.md` L73 | climate: 한국=Wikipedia 취득 후 기상청 API허브·기후통계 비교 / 일본=Wikipedia 취득 후 JMA 비교 |
-| `03_data_collect_plan.md` L123·136 | 기상청·JMA 월별 기후(평균 기온·강수량·계절 메모) 비교 검증 |
+| `../03_data_collect_plan.md` L61 | "Wikipedia 기후 표는 `climate_table`로 보존하고 자동 취득 실패 시 `needs_review`로 관리" |
+| `../03_data_collect_plan.md` L73 | climate: 한국=Wikipedia 취득 후 기상청 API허브·기후통계 비교 / 일본=Wikipedia 취득 후 JMA 비교 |
+| `../03_data_collect_plan.md` L123·136 | 기상청·JMA 월별 기후(평균 기온·강수량·계절 메모) 비교 검증 |
 | `korea_..._updated.md` L70·263~271 | `climate_table`(Wikipedia 기후 표 wikitext) + 기상청 보완, "계절 추천 지표 산출에 사용" |
 | `japan_..._plan.md` L57·159·347 | Wikipedia climate + JMA 비교, 불일치 검수 메타데이터 기록 |
 

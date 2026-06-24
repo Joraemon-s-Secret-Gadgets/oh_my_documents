@@ -1,17 +1,17 @@
 # 한국 데이터 취득 계획서
 
 > 문서 성격: 보조 Markdown
-> 대표 문서: `03_data_collect_plan.md`
+> 대표 문서: `../03_data_collect_plan.md`
 
 > 문서 버전: v0.3
 > 문서 상태: 실제 수집 샘플 코드(tour-api-korea) 산출물 기준으로 최신화
-> 원본 문서: `oh_my_documents/docs/03_data_collect_plan/korea_data_acquisition_plan.md` v0.1
+> 원본 문서: `oh_my_documents/docs/03_data_collect_plan/supplemental/korea_data_acquisition_plan.md` v0.1
 > 작성일: 2026-06-06 (v0.3 최신화: 2026-06-09)
 > 작성자: 조동휘
 > 반영 예정 문서: `docs/03_data_collect_plan/03_data_collect_plan.md`
 > 반영 예정 HTML: `pages/03_data_collect_plan.html` (재생성 보류)
 > 대조 기준 코드: `Gloveman/tour-api-korea` (main)
-> 불일치 정리: `docs/03_data_collect_plan/korea_acquisition_plan_corrections.md` v0.1
+> 불일치 정리: `docs/03_data_collect_plan/supplemental/korea_acquisition_plan_corrections.md` v0.1
 
 > **[업데이트 요약]**
 > 실제 데이터 수집(`tour-api-korea` 레포지토리)의 **소스 코드 11종을 직접 대조**하여 강원(GW)·경북(GB) 지역 데이터 수집 구조를 사실 기준으로 최신화하였다.
@@ -283,7 +283,7 @@ Festival은 도시와 1:N 관계를 가지며, 월별 추천과 계절성 추천
 | 취득 대상 | 월별 평균 기온, 강수량, 폭염·한파·강설 등 계절성 메모 |
 | 장점 | 공식 기상기후 데이터로 월별 추천 근거를 만들 수 있다. |
 | 한계 | 시·군·구와 관측 지점 매핑 기준을 별도로 정의해야 한다. Wikipedia 기후 표 자동 취득이 실패한 도시의 보완 소스로 사용한다. |
-| 적용 방식 | City의 `climate_table` 보완 및 계절 추천 지표 산출에 사용한다. 정합성은 `03_data_collect_plan.md` 4.1절의 정량 지표(`MAE_T`, `MAPE_P`, `ConsistencyScore`)로 판정하고, 월별 추천 근거는 `ComfortScore_m` 산식으로 산출한다(세부: `weather_consistency_quant_review.md`). |
+| 적용 방식 | City의 `climate_table` 보완 및 계절 추천 지표 산출에 사용한다. 정합성은 `../03_data_collect_plan.md` 4.1절의 정량 지표(`MAE_T`, `MAPE_P`, `ConsistencyScore`)로 판정하고, 월별 추천 근거는 `ComfortScore_m` 산식으로 산출한다(세부: `weather_consistency_quant_review.md`). |
 
 ## 3.6 관광 통계 및 보조 공공데이터
 

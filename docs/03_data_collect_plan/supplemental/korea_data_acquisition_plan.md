@@ -3,7 +3,7 @@
 > 문서 버전: v0.4.3
 > 문서 상태: 실제 수집 데이터 구조 및 API 명세 분석 결과 반영
 > 작성일: 2026-06-06
-> 기준 문서: `docs/03_data_collect_plan/korea_data_acquisition_plan_updated.md` v0.3
+> 기준 문서: `docs/03_data_collect_plan/supplemental/korea_data_acquisition_plan_updated.md` v0.3
 > 동기화 대상 문서: `docs/03_data_collect_plan/03_data_collect_plan.md`
 > 공유 산출물: `pages/03_data_collect_plan.html`, `pdf/korea_data_acquisition_plan.pdf`
 

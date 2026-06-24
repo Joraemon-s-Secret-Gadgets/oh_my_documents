@@ -5,11 +5,11 @@
 > 작성일: 2026-06-09
 > 작성자: 조동휘
 > 대조 기준 코드: `Gloveman/tour-api-korea` (main) — 현재 한국 수집 샘플 코드
-> 대상 문서: `docs/03_data_collect_plan/korea_data_acquisition_plan_updated.md` v0.2, `docs/03_data_collect_plan/03_data_collect_plan.md`
+> 대상 문서: `docs/03_data_collect_plan/supplemental/korea_data_acquisition_plan_updated.md` v0.2, `docs/03_data_collect_plan/03_data_collect_plan.md`
 
 ## 0. 문서 목적
 
-본 문서는 현재 한국 수집 샘플 코드(`tour-api-korea`)의 **실제 동작·산출 구조**를 기준으로, 한국 데이터 취득 계획서(이하 "취득 계획서")에서 **실제와 다른 부분**을 식별하고 수정안을 제안한다. AGENT.md 규칙에 따라 본 문서는 보조 Markdown(수정 제안 초안)이며, 대표 문서(`03_data_collect_plan.md`)·갱신 문서(`korea_data_acquisition_plan_updated.md`)는 사용자 승인 후 반영한다.
+본 문서는 현재 한국 수집 샘플 코드(`tour-api-korea`)의 **실제 동작·산출 구조**를 기준으로, 한국 데이터 취득 계획서(이하 "취득 계획서")에서 **실제와 다른 부분**을 식별하고 수정안을 제안한다. AGENT.md 규칙에 따라 본 문서는 보조 Markdown(수정 제안 초안)이며, 대표 문서(`../03_data_collect_plan.md`)·갱신 문서(`korea_data_acquisition_plan_updated.md`)는 사용자 승인 후 반영한다.
 
 신뢰도 표기: 코드 원문에서 직접 확인한 항목은 **신뢰도: 높음**, 코드에 미구현이라 설계 의도와 실제가 갈리는 항목은 **신뢰도: 확인 필요**로 표기한다.
 
