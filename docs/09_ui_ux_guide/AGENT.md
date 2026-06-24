@@ -5,6 +5,14 @@
 ## Primary Document
 
 대표 문서는 `09_ui_ux_guide.md`다. 화면 구성, 인터랙션 흐름, 컴포넌트 규칙, 디자인 토큰(색상·타이포·간격), 접근성 기준을 정의한다.
+## Representative Document Flow
+
+- `09_ui_ux_guide.md` is the integrated representative document for this folder.
+- `sections/*.md` is the editing source for `09_ui_ux_guide.md`.
+- When changing representative document body content, edit the matching `sections/*.md` file first, then regenerate or update `09_ui_ux_guide.md` in the same change.
+- `supplemental/*.md` stores supporting notes, rationale, drafts, and detailed references for this folder.
+- Do not keep supplemental Markdown documents at this folder root.
+- Do not create an `index.md` file in this folder.
 
 ## Dependencies
 
