@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import re
 import subprocess
@@ -47,11 +47,12 @@ def verify_requirements_page(html: str) -> None:
 
     assert_contains(html, '<div class="api-grid">', "API card grid")
     assert_count(html, '<div class="api-card">', 4, "API cards")
-    for api_name in ("Google Maps Platform", "Kakao Maps", "Yahoo Japan", "WeatherAPI"):
+    for api_name in ("Google Maps Platform", "Kakao Maps", "OpenRouteService", "Yahoo Japan"):
         assert_contains(html, f'<div class="api-card-name">{api_name}</div>', f"API card {api_name}")
 
     for constraint in (
-        "Yahoo Japan Maps SDK 지원 중단:",
+        "일본 데이터 수집 실패:",
+        "Yahoo Japan Maps SDK 지원 중단 (일본 트랙 P5 재검토 시 적용):",
         "Yahoo Japan REST API CORS:",
         "Kakao REST API 도메인 제약:",
         "Google Places API 과금:",
@@ -86,3 +87,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

@@ -531,7 +531,7 @@ def collect_api_cards(lines: list[str], start: int) -> tuple[str, int]:
             items.append(stripped)
         cursor += 1
 
-    card_icons = {"🌐", "🟡", "🔴", "☀"}
+    card_icons = {"🌐", "🟡", "🔴", "☀", "🟢"}
     first_card = next((idx for idx, item in enumerate(items) if item in card_icons), -1)
     if first_card < 0:
         return "", start
@@ -543,6 +543,8 @@ def collect_api_cards(lines: list[str], start: int) -> tuple[str, int]:
         "Kakao Maps": ("api-ic-k", "K"),
         "Yahoo Japan": ("api-ic-y", "Y"),
         "WeatherAPI": ("api-ic-w", "W"),
+        "기상청 API허브": ("api-ic-w", "KMA"),
+        "OpenRouteService": ("api-ic-w", "ORS"),
     }
     card_data: list[tuple[str, str, str, str]] = []
     for idx in range(0, len(card_items), 5):
