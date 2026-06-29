@@ -82,7 +82,7 @@ docs/
 ├── 93_B2B/93_B2B.md
 ├── 94_kick/94_kick.md
 ├── 95_aha_moment/95_aha_moment.md
-├── 96_market_research/travel_ai_service_market_research.md
+├── 96_market_research/96_market_research.md
 ├── 98_prd/98_prd.md
 └── 99_pptx/99_pptx.md
 ```

@@ -122,7 +122,7 @@ DOCUMENTS = [
         "운영 문서",
     ),
     Document(
-        "docs/96_market_research/travel_ai_service_market_research.md",
+        "docs/96_market_research/96_market_research.md",
         "96_market_research.html",
         "Market Research",
         "로브 (Lovv) — 여행 AI 서비스 시장조사",

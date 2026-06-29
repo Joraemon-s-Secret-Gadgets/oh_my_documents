@@ -4,7 +4,7 @@
 
 ## Primary Document
 
-대표 문서는 `travel_ai_service_market_research.md`다. 트리플·트립닷컴 등 여행 서비스 비교와 LOVV 기능 보완 방향의 기준 문서다.
+대표 문서는 `96_market_research.md`다. 트리플·트립닷컴 등 여행 서비스 비교와 LOVV 기능 보완 방향의 기준 문서다.
 
 ## Supporting Documents
 

@@ -4,7 +4,7 @@
 > 문서 상태: 검토 중 (Review)
 > 작성일: 2026-06-23
 > 문서 성격: 대표 Markdown
-> 기준 문서: `../00_project_plan/00_project_plan.md`, `../05_agent_spec/05_agent_spec.md`, `../96_market_research/travel_ai_service_market_research.md`
+> 기준 문서: `../00_project_plan/00_project_plan.md`, `../05_agent_spec/05_agent_spec.md`, `../96_market_research/96_market_research.md`
 
 # 1. 문서 목적
 

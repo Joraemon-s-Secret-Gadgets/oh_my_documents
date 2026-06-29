@@ -156,7 +156,7 @@ docs/
 ├── 95_aha_moment/
 │   └── 95_aha_moment.md
 ├── 96_market_research/
-│   └── travel_ai_service_market_research.md
+│   └── 96_market_research.md
 ├── 98_prd/
 │   ├── AGENT.md
 │   ├── 98_prd.md
