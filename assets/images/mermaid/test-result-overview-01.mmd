@@ -1,0 +1,15 @@
+%%{init: {"theme": "base", "flowchart": {"nodeSpacing": 46, "rankSpacing": 42, "curve": "linear"}, "themeVariables": {"fontFamily": "Malgun Gothic, Arial, sans-serif", "primaryColor": "#FFF3E7", "primaryBorderColor": "#F26518", "primaryTextColor": "#222222", "lineColor": "#D44A14", "secondaryColor": "#FCE7DB", "tertiaryColor": "#FFFFFF"}}}%%
+flowchart TB
+    A["LovvAgentV1<br/>강원·경북 소도시 여행 추천"]
+    B["AgentCore<br/>배포 실행 환경"]
+    C["LangGraph 실행 파이프라인<br/>Intent → Route → Data → Check → Plan → Pack"]
+
+    A --> B --> C
+
+    classDef source fill:#FFF3E7,stroke:#F26518,stroke-width:2px,color:#222222;
+    classDef runtime fill:#FCE7DB,stroke:#D44A14,stroke-width:2px,color:#222222;
+    classDef pipeline fill:#FFFFFF,stroke:#D44A14,stroke-width:2px,color:#222222;
+
+    class A source;
+    class B runtime;
+    class C pipeline;

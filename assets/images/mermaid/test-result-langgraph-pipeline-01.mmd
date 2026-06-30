@@ -1,0 +1,24 @@
+%%{init: {"theme": "base", "flowchart": {"htmlLabels": true, "curve": "linear", "nodeSpacing": 44, "rankSpacing": 64}, "themeVariables": {"fontFamily": "Malgun Gothic, Arial, sans-serif", "fontSize": "22px", "primaryColor": "#FFF3E7", "primaryBorderColor": "#F26518", "primaryTextColor": "#222222", "lineColor": "#F26518", "clusterBkg": "#FFFFFF", "clusterBorder": "#F26518", "secondaryColor": "#FCE7DB", "tertiaryColor": "#FFFFFF"}}}%%
+flowchart TB
+  subgraph P1["입력 및 후보 생성"]
+    direction LR
+    A["요청<br/>chat / map<br/>home / wrap"]
+    B["Intent<br/>입력 검증<br/>테마·기간 추출"]
+    C["Route<br/>경로 결정"]
+    D["Data<br/>S3 / DB 조회<br/>후보 스코어링"]
+    A --> B --> C --> D
+  end
+
+  subgraph P2["검증 및 응답 구성"]
+    direction LR
+    E["Check<br/>날짜 검증<br/>배치 가능성"]
+    F["Plan<br/>일정 구성<br/>LLM 설명 생성"]
+    G["Pack<br/>status<br/>userNotice"]
+    H["응답<br/>completed 등"]
+    E --> F --> G --> H
+  end
+
+  D --> E
+
+  classDef node fill:#FFF3E7,stroke:#F26518,stroke-width:2px,color:#222222;
+  class A,B,C,D,E,F,G,H node;
