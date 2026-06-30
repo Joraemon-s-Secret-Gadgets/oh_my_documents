@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로브 (Lovv) — UI/UX 가이드 v0.1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/requirements.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside>
+        <div class="aside-brand">
+          <div class="aside-logo">로브</div>
+          <div class="aside-ver">UI/UX Guide · v0.1</div>
+          <div class="aside-status"><div class="status-dot"></div><span>초안</span></div>
+        </div>
+        <nav class="toc">
+          <div class="toc-section"><a class="toc-link active" href="#cover">표지 / 문서 정보</a></div>
+            <a class="toc-link" href="#s0">0. 범위와 원칙</a>
+            <a class="toc-link" href="#s1">1. 색상·디자인 토큰</a>
+            <a class="toc-link" href="#s2">2. 저장 일정 상세 (PLAN DETAIL) 화면</a>
+            <a class="toc-link" href="#s3">3. 변경 이력</a>
+        </nav>
+      </aside>
+      <main id="cover">
+        <h1 id="cover-title" class="s-h1">로브(Lovv) UI/UX 가이드</h1>
+        <blockquote>
+        <p class="doc-p">문서 버전: v0.1</p>
+        <p class="doc-p">문서 상태: 초안 (Draft)</p>
+        <p class="doc-p">기준 문서: <code>../<wbr>01_<wbr>requirements/<wbr>01_<wbr>requirements.md</code>, <code>../<wbr>02_<wbr>service_<wbr>flow/<wbr>02_<wbr>service_<wbr>flow.md</code>, <code>../<wbr>06_<wbr>technical_<wbr>spec/<wbr>06_<wbr>technical_<wbr>spec.md</code>, <code>../<wbr>07_<wbr>api_<wbr>spec/<wbr>07_<wbr>api_<wbr>spec.md</code></p>
+        <p class="doc-p">색상 기준: 저장소 루트 <code>color-map.md</code></p>
+        <p class="doc-p">관련 산출물: <code>../<wbr>95_<wbr>aha_<wbr>moment/<wbr>plan-detail.md</code>, <code>../<wbr>95_<wbr>aha_<wbr>moment/<wbr>plan-detail-wireframe.html</code></p>
+        </blockquote>
+        <h2 id="s0" class="s-h2">0. 범위와 원칙</h2>
+        <p class="doc-p">이 문서는 화면 구성, 인터랙션 흐름, 컴포넌트 규칙, 디자인 토큰, 접근성 기준을 정의한다. 화면·상태 정의는 기술 명세서(<code>06_<wbr>technical_<wbr>spec</code>)의 프론트엔드 정의와 모순되지 않게 작성한다. 색상은 <code>color-map.md</code>를 단일 기준으로 삼는다.</p>
+        <p class="doc-p">현재 버전은 <strong>저장 일정 상세(PLAN DETAIL) 화면</strong>을 우선 정리한다. 다른 화면(온보딩, 지도, 챗봇, 마이페이지 목록 등)은 후속 버전에서 같은 구조로 추가한다.</p>
+        <h2 id="s1" class="s-h2">1. 색상·디자인 토큰</h2>
+        <p class="doc-p">핵심 팔레트는 <code>color-map.md</code>를 따른다.</p>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>토큰</th><th>값</th><th>용도</th></tr></thead><tbody>
+        <tr><td>Main Orange</td><td><code>#<wbr>F26518</code></td><td>핵심 CTA, 활성 탭/마커, 강조 텍스트</td></tr>
+        <tr><td>Muted Brown</td><td><code>#<wbr>D44A14</code></td><td>활성(선택)된 마커, 보조 강조</td></tr>
+        <tr><td>Dark Charcoal</td><td><code>#<wbr>222222</code></td><td>본문·타이틀 텍스트</td></tr>
+        <tr><td>Soft Beige</td><td><code>#<wbr>FFF3E7</code></td><td>페이지 배경</td></tr>
+        <tr><td>Card Peach</td><td><code>#<wbr>FCE7DB</code></td><td>헤더/카드형 정보 영역 배경</td></tr>
+        <tr><td>Sub Text Gray</td><td><code>#<wbr>666666</code></td><td>보조 설명·캡션</td></tr>
+        </tbody></table></div>
+        <p class="doc-p">화면용 보조 토큰(가독성 보정): 카드 배경 <code>#<wbr>FFFFFF</code>, 경계선 <code>#<wbr>E7D9CC</code>, 통찰형 이유 박스 <code>#<wbr>FCEFE6</code>, 이동시간 칩 <code>#<wbr>EAF3EE</code>(녹색 계열), 날씨 칩 <code>#<wbr>E7F0F3</code>(청색 계열), 클룩 링크 <code>#<wbr>E7DCF2</code>(보라 계열). 보조 토큰은 핵심 팔레트와 충돌하지 않는 범위에서만 사용하고, 텍스트 대비를 <code>Dark Charcoal</code> 기준으로 확보한다.</p>
+        <h2 id="s2" class="s-h2">2. 저장 일정 상세 (PLAN DETAIL) 화면</h2>
+        <p class="doc-p">마이페이지에서 저장 일정을 클릭하거나, 일정 생성 직후 진입하는 결과 화면. 설계 배경과 데이터는 <code>../<wbr>95_<wbr>aha_<wbr>moment/<wbr>plan-detail.md</code>를 따른다.</p>
+        <h2 id="s2-1" class="s-h2">2.1 레이아웃</h2>
+        <p class="doc-p">데스크톱은 상단 헤더(전폭) + 본문 2단(중앙 일정 흐름 <code>1fr</code> / 우측 일정 액션 <code>300px</code>). 860px 이하에서는 1단으로 접는다.</p>
+        <ul class="bullet-list">
+        <li><strong>헤더(소도시 소개).</strong> PLAN DETAIL 이름표, 도시명, 배지(테마칩 · 기간 · &quot;AI 추천 여행 코스&quot; · &quot;선택하신 N월&quot;), 한 문단 요약.</li>
+        <li><strong>중앙(일정 흐름).</strong> §2.2의 Day 탭 + 지도 + 접이식 타임라인.</li>
+        <li><strong>우측(일정 액션).</strong> 분위기 피드백(긍정 4종 + &quot;관심 없어요&quot;), 좋아요(저장 토글), 마이페이지에 저장, 채팅으로 돌아가기, 마이페이지로 이동. 데스크톱에서 sticky.</li>
+        </ul>
+        <h2 id="s2-2" class="s-h2">2.2 중앙 일정 흐름 — 긴 스크롤 해소 (필수 규칙)</h2>
+        <p class="doc-p">저장 일정을 펼치면 모든 일자·카드가 한 번에 노출돼 세로 스크롤이 과도하게 길어지는 문제를 <strong>점진적 노출(progressive disclosure)</strong>로 해소한다.</p>
+        <ul class="bullet-list">
+        <li><strong>Day 탭으로 일자 분할.</strong> 한 번에 한 일자만 렌더한다. 상단 일자 탭(<code>1일차/<wbr>2일차/<wbr>…</code>, 각 탭에 일자 테마 라벨)으로 전환한다. 당일치기 등 단일 일자는 탭을 생략한다.</li>
+        <li><strong>카드 기본 접힘.</strong> 타임라인 카드는 기본적으로 <strong>요약 한 줄</strong>(시간대 · 장소명 · &quot;다음 장소까지 N분&quot;)만 표시한다. 탭하면 한 줄 설명 · 통찰형 추천 이유 · 외부 링크가 펼쳐진다.</li>
+        <li><strong>전체 펼치기/접기 토글.</strong> 현재 일자의 모든 카드를 일괄 펼치거나 접는다(기본값: 접힘).</li>
+        <li><strong>지도 + 점선 동선.</strong> 일자별 지도에 그날 장소를 방문 순서 번호 <strong>마커</strong>로 찍고, 순서대로 <strong>점선</strong>으로 잇는다. 마커 사이에 구간 <strong>이동시간 라벨</strong>을 둔다. 좌표 없는 항목(식사 자유 선택 등)은 마커를 만들지 않는다.</li>
+        <li><strong>마커 ↔ 카드 양방향 연동.</strong> 마커 탭 → 해당 카드 펼침·강조, 카드 펼침 → 대응 마커 강조.</li>
+        </ul>
+        <h2 id="s2-3" class="s-h2">2.3 컴포넌트 규칙</h2>
+        <ul class="bullet-list">
+        <li><strong>일자 탭.</strong> 활성 탭은 Main Orange 배경. 비활성은 흰 배경·경계선. 탭 아래 보조 텍스트로 일자 테마를 1줄 표기.</li>
+        <li><strong>지도 마커.</strong> 물방울형 번호 마커. 기본 Main Orange, 선택(active) 시 Muted Brown + 확대 + 상위 레이어. 마커는 카드/시트 등 상위 UI를 가리지 않도록 레이어 순서를 둔다.</li>
+        <li><strong>점선 동선.</strong> 마커를 방문 순서대로 연결하는 대시 라인. 선 두께는 지도 확대와 무관하게 일정하게 유지한다.</li>
+        <li><strong>타임라인 카드.</strong> 좌측 번호 레일(원형 번호 + 세로 연결선) + 본문 카드. 식사 등 보조 블록의 번호는 톤다운 색으로 구분.</li>
+        <li><strong>이동시간 칩.</strong> 녹색 계열. <strong>값이 없으면 칩과 줄을 숨긴다(0분 노출 금지).</strong></li>
+        <li><strong>통찰형 이유 박스.</strong> &quot;왜 여기 · 통찰형&quot; 라벨 + 장소·순서·시간대 근거 1문장. generic 묘사 금지, 근거 없으면 미생성(<code>plan-detail.md</code> §4).</li>
+        <li><strong>외부 링크.</strong> 지도/검색은 기본 링크, 투어·체험·입장권은 클룩(Klook) 딥링크(보라 계열). 죽은 링크는 숨긴다.</li>
+        <li><strong>날씨 칩.</strong> 선택하신 달 월별 경향을 일자별로 표기. 우천 가능 달이면 실내 대안 1줄.</li>
+        </ul>
+        <h2 id="s2-4" class="s-h2">2.4 인터랙션·상태</h2>
+        <ul class="bullet-list">
+        <li><strong>기본 진입 상태.</strong> 1일차 탭 활성, 모든 카드 접힘, 지도에 1일차 동선 표시.</li>
+        <li><strong>펼침/접힘.</strong> 카드 헤더(또는 셰브론) 탭으로 토글. 셰브론은 펼침 시 180° 회전.</li>
+        <li><strong>일자 전환.</strong> 탭 변경 시 활성 마커/펼침 상태를 초기화하고 해당 일자 지도·카드로 갱신.</li>
+        <li><strong>빈 데이터 처리.</strong> 이동시간·날씨·딥링크·좌표가 없으면 해당 요소를 숨긴다(빈 값·0분·죽은 링크 노출 금지). 실패·timeout 등 폴백은 <code>plan-detail.md</code> §11을 따른다.</li>
+        </ul>
+        <h2 id="s2-5" class="s-h2">2.5 접근성</h2>
+        <ul class="bullet-list">
+        <li>탭·마커·카드 헤더·링크는 키보드 포커스와 활성화(Enter/Space)를 지원한다.</li>
+        <li>마커는 텍스트 대안(장소명·순서)을 제공하고, 색상만으로 활성 상태를 구분하지 않는다(확대·테두리 등 형태 단서 병행).</li>
+        <li>본문 텍스트는 <code>Dark Charcoal</code> 기준으로 배경 대비를 확보한다. 이동시간/클룩 등 색상 칩도 대비 기준을 만족시킨다.</li>
+        </ul>
+        <h2 id="s3" class="s-h2">3. 변경 이력</h2>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
+        <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+        <tr><td>v0.1</td><td>2026-06-18</td><td>로브 기획팀</td><td>가이드 신설. 저장 일정 상세(PLAN DETAIL) 화면 규칙 정리 — 레이아웃, 긴 스크롤 해소(Day 탭 + 지도 점선 동선 + 접이식 카드), 컴포넌트·인터랙션·상태·접근성. <code>../<wbr>95_<wbr>aha_<wbr>moment/<wbr>plan-detail.md</code> §4.1 및 <code>plan-detail-wireframe.html</code>과 연동</td></tr>
+        </tbody></table></div>
+        <nav class="doc-nav" aria-label="이전 다음 문서">
+          <a class="doc-nav-home" href="../index.html">문서 홈</a>
+          <div class="doc-nav-pager">
+            <a class="doc-nav-link" href="./07_api_spec.html">이전 문서<br><strong>API 명세서</strong></a>
+            <a class="doc-nav-link" href="./11_troubleshooting.html">다음 문서<br><strong>트러블슈팅 문서</strong></a>
+          </div>
+        </nav>
+      </main>
+    </div>
+    <script src="../assets/js/requirements.js" defer></script>
+  </body>
+</html>
