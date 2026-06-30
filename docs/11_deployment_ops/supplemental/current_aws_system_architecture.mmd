@@ -1,0 +1,49 @@
+%% Lovv V2 AWS system architecture
+%% Canonical diagram source for current_aws_system_architecture.md
+flowchart TB
+  user["User / Browser"]
+
+  edge["Edge / Frontend<br/>CloudFront + S3 frontend<br/>US dev / Seoul frontend"]
+  imagecdn["Image CDN<br/>CloudFront + S3 image bucket"]
+  api["API stack: lovv-dev-api<br/>API Gateway HTTP API axpn5imhbc"]
+  lambdas["API Lambda group<br/>Auth + Authorizer<br/>SmallCities<br/>Preference / SavedPlans / Admin<br/>AgentCoreFunction"]
+  data["Data Stack<br/>Private RDS MySQL<br/>Operational DynamoDB<br/>SSM + Secrets Manager<br/>VPC endpoints + NAT EC2"]
+  citysource["Current city source<br/>S3 raw city detail JSON<br/>lovv-data-pipeline-dev"]
+  agentcore["Bedrock AgentCore Runtime<br/>LovvAgentCore_LovvAgentV1"]
+  ragv2["V2 RAG target<br/>TourKoreaDomainDataV2<br/>kr-tour-domain-v2"]
+  agentindex["AgentCore index<br/>lovv-agentcore-v1-vector / kr-agentcore-v1"]
+  v1fallback["V1 fallback/reference<br/>TourKoreaDomainData<br/>kr-tour-domain-v1"]
+  pipeline["KR data pipeline<br/>S3 raw/images -> loader/transform/image/vector Lambdas"]
+
+  user -->|"HTTPS"| edge
+  user -->|"direct API"| api
+  edge -->|"API calls"| api
+  edge -->|"static assets"| user
+  imagecdn -->|"serves images"| user
+
+  api --> lambdas
+  lambdas -->|"business state/config"| data
+  lambdas -->|"map/city current source"| citysource
+  lambdas -->|"recommendation boundary"| agentcore
+
+  agentcore -->|"semantic search + domain lookup"| ragv2
+  agentcore -->|"agent index"| agentindex
+  ragv2 -. "fallback until V2 cutover" .-> v1fallback
+
+  pipeline -->|"loads V2 domain data"| ragv2
+  pipeline -->|"image outputs"| imagecdn
+  citysource --> pipeline
+
+  classDef edgeNode fill:#dae8fc,stroke:#6c8ebf,color:#1f2937;
+  classDef apiNode fill:#ffe6cc,stroke:#d79b00,color:#1f2937;
+  classDef dataNode fill:#d5e8d4,stroke:#82b366,color:#1f2937;
+  classDef agentNode fill:#e1d5e7,stroke:#9673a6,color:#1f2937;
+  classDef pipelineNode fill:#fff2cc,stroke:#d6b656,color:#1f2937;
+  classDef externalNode fill:#f5f5f5,stroke:#666666,color:#1f2937;
+
+  class user externalNode;
+  class edge,imagecdn edgeNode;
+  class api,lambdas apiNode;
+  class agentcore,ragv2,agentindex,v1fallback agentNode;
+  class data dataNode;
+  class citysource,pipeline pipelineNode;
