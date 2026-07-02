@@ -74,6 +74,7 @@ def escape_latex(text: str) -> str:
     escaped = escaped.replace("✓", "O")
     escaped = escaped.replace("✗", "X")
     escaped = escaped.replace("🌐", "글로벌")
+    escaped = escaped.replace("🟢", "O")
     escaped = escaped.replace("🟡", "주의")
     escaped = escaped.replace("🔴", "위험")
     escaped = escaped.replace("☀", "맑음")
@@ -94,13 +95,13 @@ def split_table_row(line: str) -> list[str]:
 
 def table_target_width(column_count: int) -> float:
     target_by_columns = {
-        2: 0.940,
-        3: 0.920,
-        4: 0.900,
-        5: 0.880,
-        6: 0.850,
+        2: 0.972,
+        3: 0.959,
+        4: 0.947,
+        5: 0.934,
+        6: 0.921,
     }
-    return target_by_columns.get(column_count, 0.830)
+    return target_by_columns.get(column_count, 0.915)
 
 
 def normalize_column_widths(widths: list[float], column_count: int, min_widths: list[float] | None = None) -> list[float]:
@@ -173,6 +174,7 @@ def table_to_latex(
         widths = infer_column_widths(header, body)
     centered_columns = centered_columns or set()
     table_font = "footnotesize" if column_count >= 4 else "small"
+    table_row_stretch = "1.48" if column_count >= 4 else "1.42"
     table_needspace = min(38, max(8, 6 + len(body) * 2)) if len(body) <= 15 else 8
     col_specs = []
     for index, width in enumerate(widths):
@@ -183,6 +185,9 @@ def table_to_latex(
     result = [
         rf"\DocNeedspace{{{table_needspace}\baselineskip}}",
         rf"\begin{{{table_font}}}",
+        r"\setlength{\tabcolsep}{3pt}",
+        r"\setlength{\extrarowheight}{1pt}",
+        rf"\renewcommand{{\arraystretch}}{{{table_row_stretch}}}",
         rf"\begin{{longtable}}{{@{{}}{col_spec}@{{}}}}",
         r"\toprule",
         " & ".join(
@@ -258,6 +263,42 @@ def format_body_text(text: str, split_sentences: bool = False) -> str:
     return formatted
 
 
+def clean_project_plan_pdf_text(text: str) -> str:
+    text = re.sub(
+        r"\s*비즈니스 모델 세부 내용은 보조 문서 `supplemental/[^`]+`에서 관리한다\.",
+        "",
+        text,
+    )
+    text = re.sub(
+        r"상세 리스크는 보조 문서 `supplemental/[^`]+`(?:, `supplemental/[^`]+`)*에서 관리한다\.",
+        "상세 리스크는 운영 검토 항목으로 별도 관리한다.",
+        text,
+    )
+    text = text.replace(
+        "성과 구간, CPA, 추천 모듈·API, 화이트라벨, 공동브랜드 같은 장기 확장 후보는 보조 문서에서 관리한다.",
+        "성과 구간, CPA, 추천 모듈·API, 화이트라벨, 공동브랜드 같은 장기 확장 후보는 별도 검토 항목으로 관리한다.",
+    )
+    text = re.sub(r"`supplemental/[^`]+`로 분리했던\s*", "세부 문서로 분리했던 ", text)
+    text = re.sub(r"`supplemental/[^`]+`", "세부 문서", text)
+    text = text.replace("`supplemental/`", "별도 폴더")
+    text = text.replace("보조 Markdown", "세부 문서")
+    text = text.replace("보조 MD", "세부 문서")
+    text = text.replace("하위 MD", "하위 문서")
+    text = text.replace("보조 문서", "세부 문서")
+    return re.sub(r"\s{2,}", " ", text).strip()
+
+
+def clean_project_plan_pdf_table_lines(rows: list[str]) -> list[str]:
+    cleaned_rows: list[str] = []
+    for row in rows:
+        if is_table_separator(row):
+            cleaned_rows.append(row)
+            continue
+        cleaned_cells = [clean_project_plan_pdf_text(cell) for cell in split_table_row(row)]
+        cleaned_rows.append("| " + " | ".join(cleaned_cells) + " |")
+    return cleaned_rows
+
+
 def image_to_latex(markdown_src: str, alt: str) -> list[str]:
     src = markdown_src.replace("\\", "/")
     if src.startswith("../../assets/"):
@@ -316,9 +357,11 @@ def acquisition_pipeline_flow_to_latex(lines: list[str]) -> list[str]:
     result = [
         r"\DocNeedspace{18\baselineskip}",
         r"\begin{center}",
-        r"\renewcommand{\arraystretch}{1.45}",
+        r"\setlength{\tabcolsep}{3pt}",
+        r"\setlength{\extrarowheight}{1pt}",
+        r"\renewcommand{\arraystretch}{1.52}",
         r"\begin{footnotesize}",
-        r"\begin{tabular}{@{}>{\centering\arraybackslash}m{0.085\linewidth}>{\RaggedRight\arraybackslash}m{0.230\linewidth}>{\RaggedRight\arraybackslash}m{0.605\linewidth}@{}}",
+        r"\begin{tabular}{@{}>{\centering\arraybackslash}m{0.089\linewidth}>{\RaggedRight\arraybackslash}m{0.244\linewidth}>{\RaggedRight\arraybackslash}m{0.626\linewidth}@{}}",
         r"\toprule",
         r"\textbf{순서} & \textbf{단계} & \textbf{처리 내용} \\",
         r"\midrule",
@@ -398,12 +441,41 @@ def success_criteria_table_to_latex(rows: list[str]) -> list[str]:
     if len(rows) < 3 or not is_table_separator(rows[1]):
         return table_to_latex(rows)
 
+    forced_line_breaks = {
+        "사용자가 국내 지역과 여행 시기, 여행 일정 길이, 자연어 취향 또는 지도 마커를 입력하면 조건에 맞는 소도시 1곳과 day-by-day 일정이 생성된다.": [
+            "사용자가 국내 지역과 여행 시기, 여행 일정 길이,",
+            "자연어 취향 또는 지도 마커를 입력하면",
+            "조건에 맞는 소도시 1곳과 day-by-day 일정이 생성된다.",
+        ],
+        "추천 결과에는 추천 이유, 지도 링크, 월별 날씨 경향, 외부 탐색 링크, 출처·검증 상태 중 핵심 정보가 함께 제공된다.": [
+            "추천 결과에는 추천 이유, 지도 링크, 월별 날씨 경향,",
+            "외부 탐색 링크, 출처·검증 상태 중",
+            "핵심 정보가 함께 제공된다.",
+        ],
+        "유사 취향 공개 일정이 노출되고 사용자가 1탭 복제 후 저장 또는 부분 수정으로 이어지는 흐름을 설계 산출물로 확보한다.": [
+            "유사 취향 공개 일정이 노출되고",
+            "사용자가 1탭 복제 후 저장 또는 부분 수정으로",
+            "이어지는 흐름을 설계 산출물로 확보한다.",
+        ],
+        "PoC에서는 P1 한국 강원·경북 데이터 기반 추천을 구현하고, P2 한국 전국 확장과 KICK은 설계 중심으로 정리하며, 일본 데이터 기반 추천은 P5 재검토 범위로 관리한다.": [
+            "PoC에서는 P1 한국 강원·경북 데이터 기반 추천을 구현하고,",
+            "P2 한국 전국 확장과 KICK은 설계 중심으로 정리하며,",
+            "일본 데이터 기반 추천은 P5 재검토 범위로 관리한다.",
+        ],
+        "신규 지역, 축제, 촬영지, 체험 정보, 외부 데이터 소스를 추가할 수 있는 공통 데이터 모델과 운영 구조를 유지한다.": [
+            "신규 지역, 축제, 촬영지, 체험 정보,",
+            "외부 데이터 소스를 추가할 수 있는",
+            "공통 데이터 모델과 운영 구조를 유지한다.",
+        ],
+    }
     body = [split_table_row(row) for row in rows[2:]]
     result = [
         r"\DocNeedspace{8\baselineskip}",
         r"\begin{center}",
-        r"\renewcommand{\arraystretch}{1.55}",
-        r"\begin{tabular}{@{}>{\RaggedRight\arraybackslash}m{0.230\linewidth}>{\RaggedRight\arraybackslash}m{0.690\linewidth}@{}}",
+        r"\setlength{\tabcolsep}{3pt}",
+        r"\setlength{\extrarowheight}{1pt}",
+        r"\renewcommand{\arraystretch}{1.58}",
+        r"\begin{tabular}{@{}>{\RaggedRight\arraybackslash}m{0.243\linewidth}>{\RaggedRight\arraybackslash}m{0.729\linewidth}@{}}",
         r"\toprule",
         r"\multicolumn{1}{c}{\textbf{구분}} & \multicolumn{1}{c}{\textbf{성공 기준}} \\",
         r"\midrule",
@@ -414,9 +486,9 @@ def success_criteria_table_to_latex(rows: list[str]) -> list[str]:
         label, criterion = row[0], row[1]
         result.append(
             r"\textbf{"
-            + escape_latex(label)
+            + format_table_cell(label, forced_line_breaks)
             + r"} & "
-            + escape_latex(criterion)
+            + format_table_cell(criterion, forced_line_breaks)
             + r" \\[0.35em]"
         )
     result.extend([r"\bottomrule", r"\end{tabular}", r"\end{center}", ""])
@@ -564,6 +636,7 @@ def markdown_to_latex(
     current_heading = ""
     last_block_was_level1_heading = False
     preface_skipped = not skip_preface
+    is_project_plan_pdf = title == "프로젝트 기획서"
 
     def heading_has_level2_child(start_index: int) -> bool:
         for next_line in lines[start_index + 1 :]:
@@ -611,12 +684,35 @@ def markdown_to_latex(
             i += 1
             continue
 
+        if (
+            is_project_plan_pdf
+            and current_heading == "13. 후속 문서 및 분리 문서"
+            and line.strip().startswith("대표 기획서와 같은 기준으로 관리하는 보조 Markdown은")
+        ):
+            in_list = close_list(output, in_list)
+            while i < len(lines):
+                next_line = lines[i].rstrip()
+                if re.match(r"^#\s+\d+\.", next_line):
+                    break
+                i += 1
+            output.append("")
+            last_block_was_level1_heading = False
+            continue
+
         if line.strip().startswith("|") and i + 1 < len(lines) and is_table_separator(lines[i + 1]):
             in_list = close_list(output, in_list)
             table_lines = []
             while i < len(lines) and lines[i].strip().startswith("|"):
                 table_lines.append(lines[i].rstrip())
                 i += 1
+            if is_project_plan_pdf:
+                if current_heading == "13. 후속 문서 및 분리 문서" and split_table_row(table_lines[0]) == [
+                    "보조 Markdown",
+                    "분리 내용",
+                ]:
+                    last_block_was_level1_heading = False
+                    continue
+                table_lines = clean_project_plan_pdf_table_lines(table_lines)
             if current_heading in {"2.1 사용자 문제", "2.2 시장·운영 문제"}:
                 output.extend(issue_table_to_paragraphs(table_lines))
             elif current_heading == "3.2 성공 기준":
@@ -661,21 +757,51 @@ def markdown_to_latex(
                         {"자연어 취향 또는 지도 마커 선택": ["자연어 취향 또는", "지도 마커 선택"]},
                     )
                 )
+            elif current_heading == "1.4 시장 포지셔닝과 차별점":
+                output.extend(
+                    table_to_latex(
+                        table_lines,
+                        [0.16, 0.36, 0.44],
+                        {0},
+                        {
+                            "사용자가 이미 선택한 도시 내부 일정 최적화": ["사용자가 이미 선택한 도시 내부", "일정 최적화"],
+                            "국내 지역·시기 조건에서 대체 소도시 1곳 발견": ["국내 지역·시기 조건에서", "대체 소도시 1곳 발견"],
+                            "RAG 기반 후보 검색, 추천 이유, 출처·검증 상태 제공": [
+                                "RAG 기반 후보 검색",
+                                "추천 이유",
+                                "출처·검증 상태 제공",
+                            ],
+                            "로그인·온보딩 후 국내 지역·시기·일정 길이 선질문": [
+                                "로그인·온보딩 후",
+                                "국내 지역·시기·일정 길이",
+                                "선질문",
+                            ],
+                            "공공·지자체·외부 API·제휴 링크를 함께 관리": [
+                                "공공·지자체·외부 API",
+                                "제휴 링크를 함께 관리",
+                            ],
+                            "블랙박스형 일정 생성에 가까움": ["블랙박스형 일정 생성에", "가까움"],
+                            "Explainable RAG 기반 소도시 추천 엔진": ["Explainable RAG 기반", "소도시 추천 엔진"],
+                        },
+                    )
+                )
             elif current_heading == "5. 주요 사용자 및 이해관계자":
                 output.extend(table_to_latex(table_lines, [0.23, 0.20, 0.55]))
-            elif current_heading == "6.1 PoC 범위":
+            elif current_heading in {"6.1 우선순위", "6.1 PoC 범위"}:
                 output.extend(table_to_latex(table_lines, [0.12, 0.50, 0.10, 0.14, 0.12], {0, 2, 3, 4}))
             elif current_heading == "7.2 추천 기능":
                 output.extend(table_to_latex(table_lines, [0.26, 0.72], {0}))
+            elif current_heading == "7.4.3 B2G: 비과금 공익 협력 트랙":
+                output.extend(table_to_latex(table_lines, [0.16, 0.52, 0.30], {0, 2}))
             elif current_heading == "8.1 필요 데이터":
-                output.extend(table_to_latex(table_lines, [0.30, 0.68], {0}))
+                output.extend(table_to_latex(table_lines, [0.16, 0.36, 0.46], {0}))
             elif current_heading == "8.2 외부 연동":
-                output.extend(table_to_latex(table_lines, [0.34, 0.64], {0}))
+                output.extend(table_to_latex(table_lines, [0.18, 0.38, 0.42], {0}))
             elif current_heading == "10. 추진 일정":
                 output.extend(table_to_latex(table_lines, [0.20, 0.28, 0.50], {0, 1}))
             elif current_heading == "12. 리스크 및 대응":
                 output.extend(table_to_latex(table_lines, [0.24, 0.34, 0.40], {0}))
-            elif current_heading == "13. 후속 문서":
+            elif current_heading in {"13. 후속 문서", "13. 후속 문서 및 분리 문서"}:
                 output.extend(table_to_latex(table_lines, [0.30, 0.68], {0}))
             elif current_heading == "14. 변경 이력":
                 output.extend(table_to_latex(latest_first_table_rows(table_lines), [0.11, 0.18, 0.16, 0.53], {0, 1, 2}))
@@ -714,6 +840,12 @@ def markdown_to_latex(
             if section_pagebreak and raw_text == "2.2 시장·운영 문제":
                 output.append(r"\newpage")
                 output.append("")
+            if section_pagebreak and raw_text == "7.2 추천 기능":
+                output.append(r"\newpage")
+                output.append("")
+            if section_pagebreak and raw_text == "7.4.2 B2B: 성과형 제휴 트랙":
+                output.append(r"\newpage")
+                output.append("")
             if body_pagebreak_before and raw_text in body_pagebreak_before:
                 output.append(r"\newpage")
                 output.append("")
@@ -749,22 +881,36 @@ def markdown_to_latex(
 
         if line.startswith(">"):
             in_list = close_list(output, in_list)
-            output.append(r"\begin{quote}")
+            quote_lines: list[str] = []
             while i < len(lines) and lines[i].startswith(">"):
-                output.append(escape_latex(lines[i].lstrip("> ").rstrip()) + r"\\")
+                quote_line = lines[i].lstrip("> ").rstrip()
+                if is_project_plan_pdf:
+                    quote_line = clean_project_plan_pdf_text(quote_line)
+                if quote_line:
+                    quote_lines.append(quote_line)
                 i += 1
-            output.append(r"\end{quote}")
-            output.append("")
+            if quote_lines:
+                output.append(r"\begin{quote}")
+                for quote_line in quote_lines:
+                    output.append(escape_latex(quote_line) + r"\\")
+                output.append(r"\end{quote}")
+                output.append("")
             last_block_was_level1_heading = False
             continue
 
         bullet = re.match(r"^\s*[-*]\s+(.+)$", line)
         ordered = re.match(r"^\s*\d+\.\s+(.+)$", line)
         if bullet or ordered:
+            item_text = (bullet or ordered).group(1).strip()
+            if is_project_plan_pdf:
+                item_text = clean_project_plan_pdf_text(item_text)
+            if not item_text:
+                i += 1
+                continue
             if not in_list:
                 output.append(r"\begin{itemize}")
                 in_list = True
-            output.append(r"\item " + format_body_text((bullet or ordered).group(1).strip()))
+            output.append(r"\item " + format_body_text(item_text))
             last_block_was_level1_heading = False
             i += 1
             continue
@@ -776,8 +922,14 @@ def markdown_to_latex(
             continue
 
         in_list = close_list(output, in_list)
+        paragraph_text = line.strip()
+        if is_project_plan_pdf:
+            paragraph_text = clean_project_plan_pdf_text(paragraph_text)
+        if not paragraph_text:
+            i += 1
+            continue
         output.append(r"\DocNeedspace{3\baselineskip}")
-        output.append(format_body_text(line.strip(), split_sentences=True))
+        output.append(format_body_text(paragraph_text, split_sentences=True))
         output.append("")
         last_block_was_level1_heading = False
         i += 1

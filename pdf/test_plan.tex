@@ -1,0 +1,227 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=22mm]{geometry}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\usepackage{kotex}
+\usepackage{graphicx}
+\usepackage[table]{xcolor}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{setspace}
+\setmainfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setsansfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setmonofont{Consolas}
+\newfontfamily\jpfont[Path=C:/Windows/Fonts/]{NotoSansJP-VF.ttf}
+\setCJKmainfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setCJKsansfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setCJKmonofont[Path=C:/Windows/Fonts/]{malgun.ttf}
+\XeTeXlinebreaklocale "ko"
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\binoppenalty=10000
+\relpenalty=10000
+\emergencystretch=2em
+\sloppy
+\newcommand{\DocNeedspace}[1]{\par\ifdim\dimexpr\pagegoal-\pagetotal\relax<#1\newpage\fi}
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue}
+\definecolor{DarkCharcoal}{HTML}{222222}
+\definecolor{MainOrange}{HTML}{F26518}
+\definecolor{MutedBrown}{HTML}{D44A14}
+\definecolor{SoftBeige}{HTML}{FFF3E7}
+\definecolor{CardPeach}{HTML}{FCE7DB}
+\definecolor{SubTextGray}{HTML}{666666}
+\color{DarkCharcoal}
+\colorlet{LovvGreen}{MutedBrown}
+\colorlet{LovvGreenDark}{DarkCharcoal}
+\colorlet{LovvGold}{MainOrange}
+\colorlet{LovvPaper}{SoftBeige}
+\renewcommand{\arraystretch}{1.35}
+\setlength{\tabcolsep}{2pt}
+\setlength{\LTpre}{6pt}
+\setlength{\LTpost}{10pt}
+\setlength{\LTleft}{\fill}
+\setlength{\LTright}{\fill}
+\setlist[itemize]{leftmargin=*, itemsep=2pt, topsep=2pt}
+\setstretch{1.08}
+\setlength{\headheight}{30pt}
+\setcounter{tocdepth}{2}
+\newcommand{\TocNoChildTight}{\vspace{-0.28em}}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\hbox{\makebox[42pt][c]{\includegraphics[width=38pt,height=13pt,keepaspectratio]{../assets/images/SK-Networks-logo.png}}\hspace{0.7em}\makebox[42pt][c]{\includegraphics[width=44pt,height=15pt,keepaspectratio]{../assets/images/en-core-logo.png}}\hspace{0.7em}\makebox[42pt][c]{\includegraphics[width=38pt,height=13pt,keepaspectratio]{../assets/images/playdata-logo.png}}}}
+\rhead{\scriptsize v0.1 | 초안 (Draft)}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{LovvGreen}\leaders\hrule height \headrulewidth\hfill}}
+\begin{document}
+\begin{titlepage}
+\thispagestyle{empty}
+
+\noindent \hbox to\textwidth{\makebox[0.28\textwidth][c]{\includegraphics[width=0.22\textwidth,height=0.82cm,keepaspectratio]{../assets/images/SK-Networks-logo.png}}\hfil \makebox[0.28\textwidth][c]{\includegraphics[width=0.26\textwidth,height=0.98cm,keepaspectratio]{../assets/images/en-core-logo.png}}\hfil \makebox[0.28\textwidth][c]{\includegraphics[width=0.22\textwidth,height=0.82cm,keepaspectratio]{../assets/images/playdata-logo.png}}}
+\vspace{1em}
+\par\noindent\color{LovvGold}\rule{\textwidth}{1.2pt}\color{black}
+
+\centering
+\vspace*{0.16\textheight}
+{\Huge\bfseries 테스트 계획서\par}
+
+\vspace{1.5em}
+{\large 로브 서비스 테스트 계획\par}
+
+\vfill
+{\Large\bfseries 조라에몽의 만능 도구들\par}\vspace{0.8em}
+{\Large 이창우, 전종혁, 조동휘, 최수아\\[0.8em]{\large 멘토 최민수}\par}
+\vspace{2em}
+{\large 2026-05-30\par}
+\end{titlepage}
+\begingroup
+\fontsize{11.7pt}{12.5pt}\selectfont
+\setlength{\parskip}{0pt}
+\tableofcontents
+\endgroup
+\newpage
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{1. 문서 목적}
+\addcontentsline{toc}{section}{1. 문서 목적}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+\DocNeedspace{3\baselineskip}
+이 문서는 Lovv 전체 테스트 범위를 대표 문서에서 관리하기 위한 상위 계획서다.\newline 현재 확정된 검증 산출물은 Candidate Evidence Agent 검색 평가이며, Planner 일정 생성, Festival Verifier, API E2E, 배포·운영 검증은 후속 계획 범위로 둔다.
+
+
+\DocNeedspace{3\baselineskip}
+\texttt{docs/\allowbreak{}10\_\allowbreak{}test\_\allowbreak{}plan/\allowbreak{}}의 보조 Markdown은 개별 평가 계획과 결과 보고서로 관리한다.\newline 보조 문서의 범위가 전체 시스템 테스트 기준으로 승격되면 이 대표 문서에 요약 반영한다.
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{2. 테스트 범위}
+\addcontentsline{toc}{section}{2. 테스트 범위}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\DocNeedspace{18\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.42}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.176\linewidth}>{\RaggedRight\arraybackslash}m{0.105\linewidth}>{\RaggedRight\arraybackslash}m{0.678\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.176\linewidth}}{\textbf{구분}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.105\linewidth}}{\textbf{현재 문서화 상태}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.678\linewidth}}{\textbf{대표 문서 반영 기준}} \\
+\midrule
+\endhead
+Candidate Evidence 검색 & 계획·결과 문서화 완료 & 현재 문서의 3장에 요약 \\
+Planner 일정 생성 & 후속 작성 필요 & \texttt{05\_\allowbreak{}agent\_\allowbreak{}spec.\allowbreak{}md}, \texttt{planner\_\allowbreak{}agent.\allowbreak{}md}, \texttt{itinerary\_\allowbreak{}flow.\allowbreak{}md} 기준으로 테스트 계획 작성 \\
+Festival Verifier & 후속 작성 필요 & \texttt{festival\_\allowbreak{}verifier\_\allowbreak{}agent.\allowbreak{}md} 기준으로 날짜·출처 검증 테스트 작성 \\
+API E2E & 후속 작성 필요 & \texttt{07\_\allowbreak{}api\_\allowbreak{}spec.\allowbreak{}md} 기준으로 인증, 추천, 저장, 피드백, 운영 API 시나리오 작성 \\
+UI/UX 수용 테스트 & 후속 작성 필요 & \texttt{09\_\allowbreak{}ui\_\allowbreak{}ux\_\allowbreak{}guide.\allowbreak{}md} 기준으로 주요 사용자 여정 검증 \\
+배포·운영 검증 & 후속 작성 필요 & \texttt{11\_\allowbreak{}deployment\_\allowbreak{}ops.\allowbreak{}md} 기준으로 배포, 롤백, 모니터링, 장애 대응 검증 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{3. 현재 반영된 평가 산출물}
+\addcontentsline{toc}{section}{3. 현재 반영된 평가 산출물}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\DocNeedspace{10\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.42}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.428\linewidth}>{\RaggedRight\arraybackslash}m{0.426\linewidth}>{\RaggedRight\arraybackslash}m{0.105\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.428\linewidth}}{\textbf{보조 문서}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.426\linewidth}}{\textbf{범위}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.105\linewidth}}{\textbf{상태}} \\
+\midrule
+\endhead
+\texttt{supplemental/\allowbreak{}candidate\_\allowbreak{}evidence\_\allowbreak{}search\_\allowbreak{}test\_\allowbreak{}plan.\allowbreak{}md} & Candidate Evidence Agent의 도시 및 관광지 검색 테스트 계획 & Review \\
+\texttt{supplemental/\allowbreak{}candidate\_\allowbreak{}evidence\_\allowbreak{}evaluation\_\allowbreak{}results.\allowbreak{}md} & Baseline Simple RAG와 Candidate Evidence Agent Ours 비교 결과 & Review \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{3\baselineskip}
+Candidate Evidence 평가는 도시 선정, 관광지·음식점 후보 검색, scoring, quota, fallback, audit 구조를 검증한다.\newline Planner 일정 품질, Festival 검증, LangGraph 전체 trajectory, API E2E는 해당 평가의 범위 밖이다.
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{4. 공통 검증 원칙}
+\addcontentsline{toc}{section}{4. 공통 검증 원칙}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\begin{itemize}
+\item 테스트 범위는 요구사항 ID, Agent 입출력, API 계약, 데이터 모델과 연결한다.
+\item 부분 평가 문서는 전체 시스템 합격으로 해석하지 않는다.
+\item 실행 결과는 통과·실패 수치뿐 아니라 범위, 제외 항목, 해석 한계를 함께 기록한다.
+\item LLM judge나 합성 fixture를 사용하는 경우 실제 사용자 검증을 대체하지 않는다고 명시한다.
+\item 성능, 비용, observability 항목은 기술 명세서와 배포·운영 문서의 기준을 따른다.
+\end{itemize}
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{5. 후속 작성 항목}
+\addcontentsline{toc}{section}{5. 후속 작성 항목}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\DocNeedspace{16\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.42}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.080\linewidth}>{\RaggedRight\arraybackslash}m{0.314\linewidth}>{\RaggedRight\arraybackslash}m{0.565\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.080\linewidth}}{\textbf{우선순위}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.314\linewidth}}{\textbf{항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.565\linewidth}}{\textbf{기준 문서}} \\
+\midrule
+\endhead
+P1 & Planner 일정 생성 테스트 계획 & \texttt{.\allowbreak{}.\allowbreak{}/\allowbreak{}05\_\allowbreak{}agent\_\allowbreak{}spec/\allowbreak{}supplemental/\allowbreak{}planner\_\allowbreak{}agent.\allowbreak{}md}, \texttt{.\allowbreak{}.\allowbreak{}/\allowbreak{}05\_\allowbreak{}agent\_\allowbreak{}spec/\allowbreak{}supplemental/\allowbreak{}itinerary\_\allowbreak{}flow.\allowbreak{}md} \\
+P1 & API 추천·저장 E2E 테스트 계획 & \texttt{.\allowbreak{}.\allowbreak{}/\allowbreak{}07\_\allowbreak{}api\_\allowbreak{}spec/\allowbreak{}07\_\allowbreak{}api\_\allowbreak{}spec.\allowbreak{}md} \\
+P2 & Festival Verifier 날짜·출처 검증 테스트 & \texttt{.\allowbreak{}.\allowbreak{}/\allowbreak{}05\_\allowbreak{}agent\_\allowbreak{}spec/\allowbreak{}supplemental/\allowbreak{}festival\_\allowbreak{}verifier\_\allowbreak{}agent.\allowbreak{}md} \\
+P2 & UI 주요 여정 수용 테스트 & \texttt{.\allowbreak{}.\allowbreak{}/\allowbreak{}09\_\allowbreak{}ui\_\allowbreak{}ux\_\allowbreak{}guide/\allowbreak{}09\_\allowbreak{}ui\_\allowbreak{}ux\_\allowbreak{}guide.\allowbreak{}md} \\
+P3 & 배포·운영 smoke 및 rollback 테스트 & \texttt{.\allowbreak{}.\allowbreak{}/\allowbreak{}11\_\allowbreak{}deployment\_\allowbreak{}ops/\allowbreak{}11\_\allowbreak{}deployment\_\allowbreak{}ops.\allowbreak{}md} \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{6. 변경 이력}
+\addcontentsline{toc}{section}{6. 변경 이력}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\DocNeedspace{8\baselineskip}
+\begin{footnotesize}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.48}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.125\linewidth}>{\RaggedRight\arraybackslash}m{0.125\linewidth}>{\RaggedRight\arraybackslash}m{0.083\linewidth}>{\RaggedRight\arraybackslash}m{0.614\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.125\linewidth}}{\textbf{버전}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.125\linewidth}}{\textbf{날짜}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.083\linewidth}}{\textbf{작성자}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.614\linewidth}}{\textbf{변경 내용}} \\
+\midrule
+\endhead
+v0.1 & {\footnotesize 2026-\allowbreak{}06-\allowbreak{}23} & 로브 기획팀 & 테스트 계획 대표 문서 생성, Candidate Evidence 평가 산출물과 후속 테스트 범위 정리 \\
+\bottomrule
+\end{longtable}
+\end{footnotesize}
+
+\end{document}

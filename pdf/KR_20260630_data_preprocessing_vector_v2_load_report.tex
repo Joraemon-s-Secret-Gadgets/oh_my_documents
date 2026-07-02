@@ -1,0 +1,509 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=22mm]{geometry}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\usepackage{kotex}
+\usepackage{graphicx}
+\usepackage[table]{xcolor}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{setspace}
+\setmainfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setsansfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setmonofont{Consolas}
+\newfontfamily\jpfont[Path=C:/Windows/Fonts/]{NotoSansJP-VF.ttf}
+\setCJKmainfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setCJKsansfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setCJKmonofont[Path=C:/Windows/Fonts/]{malgun.ttf}
+\XeTeXlinebreaklocale "ko"
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\binoppenalty=10000
+\relpenalty=10000
+\emergencystretch=2em
+\sloppy
+\newcommand{\DocNeedspace}[1]{\par\ifdim\dimexpr\pagegoal-\pagetotal\relax<#1\newpage\fi}
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue}
+\definecolor{DarkCharcoal}{HTML}{222222}
+\definecolor{MainOrange}{HTML}{F26518}
+\definecolor{MutedBrown}{HTML}{D44A14}
+\definecolor{SoftBeige}{HTML}{FFF3E7}
+\definecolor{CardPeach}{HTML}{FCE7DB}
+\definecolor{SubTextGray}{HTML}{666666}
+\color{DarkCharcoal}
+\colorlet{LovvGreen}{MutedBrown}
+\colorlet{LovvGreenDark}{DarkCharcoal}
+\colorlet{LovvGold}{MainOrange}
+\colorlet{LovvPaper}{SoftBeige}
+\renewcommand{\arraystretch}{1.35}
+\setlength{\tabcolsep}{2pt}
+\setlength{\LTpre}{6pt}
+\setlength{\LTpost}{10pt}
+\setlength{\LTleft}{\fill}
+\setlength{\LTright}{\fill}
+\setlist[itemize]{leftmargin=*, itemsep=2pt, topsep=2pt}
+\setstretch{1.08}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt plus 1pt}
+\setlength{\headheight}{30pt}
+\setcounter{tocdepth}{2}
+\renewcommand{\contentsname}{Contents}
+\newcommand{\TocNoChildTight}{\vspace{-0.28em}}
+\titleformat{\section}{\Large\bfseries\color{DarkCharcoal}}{}{0pt}{}
+\titlespacing*{\section}{0pt}{0.1em}{0.75em}
+\titleformat{\subsection}{\normalsize\bfseries\color{DarkCharcoal}}{}{0pt}{}
+\titlespacing*{\subsection}{0pt}{0.55em}{0.30em}
+\newcommand{\SectionLead}[1]{\noindent{\color{SubTextGray}#1}\par\vspace{0.35em}}
+\newcommand{\ReportSubsection}[1]{\DocNeedspace{6\baselineskip}\phantomsection\subsection*{#1}\addcontentsline{toc}{subsection}{#1}}
+\newcommand{\ReportCallout}[1]{%
+  \par\noindent\begingroup
+  \setlength{\fboxsep}{7pt}%
+  \colorbox{LovvPaper}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{#1}}%
+  \endgroup\par\vspace{0.7em}}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\hbox{\makebox[42pt][c]{\includegraphics[width=38pt,height=13pt,keepaspectratio]{../assets/images/SK-Networks-logo.png}}\hspace{0.7em}\makebox[42pt][c]{\includegraphics[width=44pt,height=15pt,keepaspectratio]{../assets/images/en-core-logo.png}}\hspace{0.7em}\makebox[42pt][c]{\includegraphics[width=38pt,height=13pt,keepaspectratio]{../assets/images/playdata-logo.png}}}}
+\rhead{\scriptsize v1.0 | 완료 (Complete) | 데이터 전처리 보고}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{LovvGreen}\leaders\hrule height \headrulewidth\hfill}}
+\begin{document}
+\begin{titlepage}
+\thispagestyle{empty}
+
+\noindent \hbox to\textwidth{\makebox[0.28\textwidth][c]{\includegraphics[width=0.22\textwidth,height=0.82cm,keepaspectratio]{../assets/images/SK-Networks-logo.png}}\hfil \makebox[0.28\textwidth][c]{\includegraphics[width=0.26\textwidth,height=0.98cm,keepaspectratio]{../assets/images/en-core-logo.png}}\hfil \makebox[0.28\textwidth][c]{\includegraphics[width=0.22\textwidth,height=0.82cm,keepaspectratio]{../assets/images/playdata-logo.png}}}
+\vspace{1em}
+\par\noindent\color{LovvGold}\rule{\textwidth}{1.2pt}\color{black}
+
+\centering
+\vspace*{0.16\textheight}
+{\Huge\bfseries 데이터 전처리 보고서\par}
+
+\vspace{1.5em}
+{\large KR 20260629 상세 데이터 전처리 결과\par}
+
+\vfill
+{\Large\bfseries 조라에몽의 만능 도구들\par}\vspace{0.8em}
+{\Large 이창우, 전종혁, 조동휘, 최수아\\[0.8em]{\large 멘토 최민수}\par}
+\vspace{2em}
+{\large 2026-06-29\par}
+\end{titlepage}
+\begingroup
+\fontsize{11.7pt}{12.5pt}\selectfont
+\setlength{\parskip}{0pt}
+\setlength{\parindent}{0pt}
+\vspace*{-0.5em}
+\tableofcontents
+\endgroup
+\newpage
+\DocNeedspace{10\baselineskip}
+\section*{1. 보고서 개요}
+\addcontentsline{toc}{section}{1. 보고서 개요}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+\ReportSubsection{1.1 처리 기준}
+
+\SectionLead{전처리 기준일, 원천 위치, 실행 Lambda, 산출물 prefix를 먼저 고정해 이후 수치 검토의 기준을 명확히 한다.}
+
+\DocNeedspace{16\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.42}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.266\linewidth}>{\RaggedRight\arraybackslash}m{0.706\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.266\linewidth}}{\textbf{항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.706\linewidth}}{\textbf{내용}} \\
+\midrule
+\endhead
+작성일 & {\footnotesize 2026-\allowbreak{}06-\allowbreak{}29} \\
+대상 프로젝트 & \texttt{02\_\allowbreak{}lovv\_\allowbreak{}data\_\allowbreak{}collect} \\
+입력 날짜 형식 & \texttt{YYYYMMDD} 형식으로 입력한다. 예: \texttt{20260629} = 2026-06-29 \\
+대상 원천 데이터 & \texttt{raw/\allowbreak{}KR/\allowbreak{}details/\allowbreak{}YYYYMMDD/\allowbreak{}}\newline{\footnotesize 이번 실행 예: \texttt{raw/\allowbreak{}KR/\allowbreak{}details/\allowbreak{}20260629/\allowbreak{}}} \\
+전처리 Lambda & \texttt{kr-\allowbreak{}pipeline-\allowbreak{}transform} \\
+processed prefix & \texttt{processed/\allowbreak{}KR/\allowbreak{}details/\allowbreak{}YYYYMMDD/\allowbreak{}}\newline{\footnotesize 이번 실행 예: \texttt{processed/\allowbreak{}KR/\allowbreak{}details/\allowbreak{}20260629/\allowbreak{}}} \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\ReportSubsection{1.2 보고 범위}
+
+\DocNeedspace{3\baselineskip}
+이 보고서는 2026-06-29 KR 상세 raw 240개에 대한 전처리 실행 결과와 후속 검토 대상을 한 흐름으로 정리한다. 주요 확인 범위는 품질 검토 대상, Wikipedia 보강 상태, 이미지 S3 URL 치환 상태다.
+
+
+\ReportSubsection{1.3 S3 전처리 후 적재 흐름}
+
+\DocNeedspace{3\baselineskip}
+전처리 후 S3 적재는 raw 보존, Lambda 전처리, 결과 prefix 분리 순서로 진행된다. 입력 날짜는 실행 기준일을 \texttt{YYYYMMDD} 형식으로 적은 값이며, 예를 들어 2026-06-29 실행이면 입력 날짜는 \texttt{20260629}다. S3 prefix는 \texttt{raw/\allowbreak{}KR/\allowbreak{}details/\allowbreak{}YYYYMMDD/\allowbreak{}}와 \texttt{processed/\allowbreak{}KR/\allowbreak{}details/\allowbreak{}YYYYMMDD/\allowbreak{}} 형식으로 구성한다.
+
+\DocNeedspace{5\baselineskip}
+\begin{itemize}[leftmargin=1.35em, itemsep=5pt, topsep=3pt]
+\item \textbf{Raw 보존:} 원천 JSON은 \texttt{raw/\allowbreak{}KR/\allowbreak{}details/\allowbreak{}YYYYMMDD/\allowbreak{}}에 저장한다. 이번 실행 예시는 \texttt{raw/\allowbreak{}KR/\allowbreak{}details/\allowbreak{}20260629/\allowbreak{}}이며, 수집 원본을 날짜별 prefix에 남겨 동일 기준으로 재처리할 수 있게 한다.
+\item \textbf{전처리 실행:} \texttt{kr-\allowbreak{}pipeline-\allowbreak{}transform}이 raw 객체를 순회하며 스키마 검증, 값 정리, 좌표와 날짜 정규화, 품질 분류를 수행한다. 이번 실행에서는 raw 객체 240개가 처리됐다.
+\item \textbf{정상 산출:} 정규화 결과는 \texttt{processed/\allowbreak{}KR/\allowbreak{}details/\allowbreak{}YYYYMMDD/\allowbreak{}passed/\allowbreak{}}에 저장한다. 이번 실행 예시는 \texttt{processed/\allowbreak{}KR/\allowbreak{}details/\allowbreak{}20260629/\allowbreak{}passed/\allowbreak{}}이며, \texttt{passed/\allowbreak{}} 산출 item은 8,010건이다.
+\item \textbf{검토 산출:} 자동 확정이 어려운 품질 이슈와 보강 필요 항목은 \texttt{processed/\allowbreak{}KR/\allowbreak{}details/\allowbreak{}YYYYMMDD/\allowbreak{}review/\allowbreak{}}에 분리한다. 이번 실행의 Review record는 1,202건이다.
+\DocNeedspace{5\baselineskip}
+\item \textbf{실패와 품질:} 처리 실패 원인과 품질 리포트는 각각 \texttt{failed/\allowbreak{}}, \texttt{quality/\allowbreak{}} 하위 prefix에 남긴다. 이번 실행의 실패 invocation은 0건이다.
+\end{itemize}
+
+\DocNeedspace{8\baselineskip}
+추가 확인이 필요하면 02 프로젝트 담당 스레드에 아래 프롬프트를 전달한다.
+
+\begin{quote}
+\footnotesize
+\textbf{확인 요청 프롬프트}\quad
+\texttt{02\_\allowbreak{}lovv\_\allowbreak{}data\_\allowbreak{}collect}의 KR 입력 날짜 \texttt{YYYYMMDD} 전처리 실행 기준으로, \texttt{kr-\allowbreak{}pipeline-\allowbreak{}transform}이 \texttt{raw/\allowbreak{}KR/\allowbreak{}details/\allowbreak{}YYYYMMDD/\allowbreak{}}를 읽어 \texttt{processed/\allowbreak{}KR/\allowbreak{}details/\allowbreak{}YYYYMMDD/\allowbreak{}passed/\allowbreak{}}, \texttt{review/\allowbreak{}}, \texttt{failed/\allowbreak{}}, \texttt{quality/\allowbreak{}}에 쓰는 정확한 S3 write 단계, manifest 생성 주체, 각 prefix별 JSON 스키마와 count 산정 기준을 확인해 주세요. 예시는 \texttt{YYYYMMDD=20260629}이며, 현재 보고서에는 raw 240개, \texttt{passed/\allowbreak{}} 8,010 item, Review record 1,202건, S3 URL 치환 6,975건으로 반영하려 합니다.
+\end{quote}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{2. 최종 판단}
+\addcontentsline{toc}{section}{2. 최종 판단}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\ReportSubsection{2.1 완료 판단}
+
+\DocNeedspace{3\baselineskip}
+\ReportCallout{\textbf{판단: 전처리 산출물 생성은 완료다.}\quad raw detail 240개가 모두 성공 처리됐고 전처리 실패 invocation은 0건이다. 남은 항목은 실패 복구가 아니라 품질 검토 queue와 외부 보강 정책 결정이다.}
+
+
+\ReportSubsection{2.2 핵심 지표}
+
+\DocNeedspace{24\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.42}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.724\linewidth}>{\centering\arraybackslash}m{0.248\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.724\linewidth}}{\textbf{판단 항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.248\linewidth}}{\textbf{결과}} \\
+\midrule
+\endhead
+전처리 대상 raw detail & 240개 \\
+\texttt{kr-\allowbreak{}pipeline-\allowbreak{}transform} 성공 & 240개 \\
+\texttt{kr-\allowbreak{}pipeline-\allowbreak{}transform} 실패 & 0건 \\
+\texttt{passed/\allowbreak{}} 산출 item & 8,010건 \\
+Review record & 1,202건 \\
+Wikipedia matched & 181건 \\
+Wikipedia missing & 59건 \\
+S3 URL 치환 완료 & 6,975건 \\
+외부 image URL 잔존 & 0건 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\ReportSubsection{2.3 완료 기준}
+
+\DocNeedspace{3\baselineskip}
+완료 기준은 raw detail 240개가 모두 성공 처리되고, \texttt{passed/\allowbreak{}}, \texttt{review/\allowbreak{}}, \texttt{failed/\allowbreak{}}, \texttt{quality/\allowbreak{}} 산출물이 생성되었으며, 전처리 실패 invocation이 0건인 상태다.
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{3. 전처리 결과}
+\addcontentsline{toc}{section}{3. 전처리 결과}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\ReportSubsection{3.1 Lambda 실행 결과}
+
+\DocNeedspace{3\baselineskip}
+\SectionLead{실행 성공 여부와 S3 산출물 위치를 분리해, 처리 결과와 저장 위치를 각각 확인할 수 있게 정리했다.}
+
+\texttt{kr-\allowbreak{}pipeline-\allowbreak{}transform}은 2026-06-29 raw detail 240개를 모두 처리했다.
+
+
+\DocNeedspace{18\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.42}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.724\linewidth}>{\centering\arraybackslash}m{0.248\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.724\linewidth}}{\textbf{항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.248\linewidth}}{\textbf{값}} \\
+\midrule
+\endhead
+Manifest record count & 240 \\
+Lambda invoked & 240 \\
+Lambda succeeded & 240 \\
+Failed invocations & 0 \\
+Duplicate city ids & 0 \\
+Failed raw keys & 0 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\ReportSubsection{3.2 S3 산출물}
+
+\DocNeedspace{3\baselineskip}
+S3 산출물은 다음 prefix에 생성되었다.
+
+
+\DocNeedspace{14\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.42}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.742\linewidth}>{\centering\arraybackslash}m{0.230\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.742\linewidth}}{\textbf{Prefix}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.230\linewidth}}{\textbf{JSON files}} \\
+\midrule
+\endhead
+\texttt{processed/\allowbreak{}KR/\allowbreak{}details/\allowbreak{}20260629/\allowbreak{}passed/\allowbreak{}} & 240 \\
+\texttt{processed/\allowbreak{}KR/\allowbreak{}details/\allowbreak{}20260629/\allowbreak{}review/\allowbreak{}} & 240 \\
+\texttt{processed/\allowbreak{}KR/\allowbreak{}details/\allowbreak{}20260629/\allowbreak{}failed/\allowbreak{}} & 240 \\
+\texttt{processed/\allowbreak{}KR/\allowbreak{}details/\allowbreak{}20260629/\allowbreak{}quality/\allowbreak{}} & 240 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{4. Wikipedia 보강 상태}
+\addcontentsline{toc}{section}{4. Wikipedia 보강 상태}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+\ReportSubsection{4.1 매칭 현황}
+
+\SectionLead{Wikipedia 보강 항목은 전처리 실패가 아니라 city key와 raw 후보의 연결 상태로 해석한다.}
+
+\DocNeedspace{12\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.42}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.704\linewidth}>{\centering\arraybackslash}m{0.268\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.704\linewidth}}{\textbf{항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.268\linewidth}}{\textbf{값}} \\
+\midrule
+\endhead
+City metadata & 240 \\
+Wikipedia matched & 181 \\
+Wikipedia missing & 59 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\ReportSubsection{4.2 미매칭 원인}
+
+\DocNeedspace{3\baselineskip}
+\texttt{wiki\_\allowbreak{}status=missing} 59건은 전처리 실패가 아니라 Wikipedia raw와 city key가 연결되지 않은 상태다.\newline 후속 실사 기준으로 48건은 raw 후보가 있으나 \texttt{-\allowbreak{}GU}, \texttt{-\allowbreak{}GUN} 등 영문 key suffix 차이로 매칭되지 않았고, 11건은 raw 후보 자체가 없다.
+
+
+\ReportSubsection{4.3 Raw 후보 없음 key}
+
+\DocNeedspace{3\baselineskip}
+Raw 후보가 없는 11개 key는 다음과 같다.
+
+
+\DocNeedspace{12\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{4pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.35}
+\begin{longtable}{@{}>{\ttfamily\RaggedRight\arraybackslash}m{0.466\linewidth}>{\ttfamily\RaggedRight\arraybackslash}m{0.466\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.466\linewidth}}{\textbf{Raw 후보 없음 key}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.466\linewidth}}{\textbf{Raw 후보 없음 key}} \\
+\midrule
+\endhead
+BUK-\allowbreak{}GU & BUKJEJU \\
+CHEONGWON-\allowbreak{}GUN & DONG-\allowbreak{}GU \\
+GANGSEO-\allowbreak{}GU & JINHAE \\
+JUNG-\allowbreak{}GU & MASAN \\
+NAM-\allowbreak{}GU & NAMJEJU \\
+SEO-\allowbreak{}GU &  \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{5. 이미지 S3 URL 치환 상태}
+\addcontentsline{toc}{section}{5. 이미지 S3 URL 치환 상태}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+\ReportSubsection{5.1 URL 치환 현황}
+
+\SectionLead{이미지 URL 치환은 외부 URL 잔존 여부와 원천 이미지 부재 항목을 분리해 확인한다.}
+
+\DocNeedspace{18\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.42}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.724\linewidth}>{\centering\arraybackslash}m{0.248\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.724\linewidth}}{\textbf{항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.248\linewidth}}{\textbf{값}} \\
+\midrule
+\endhead
+관광지/축제 image 대상 & 7,422 \\
+S3 URL 치환 완료 & 6,975 \\
+외부 image URL 잔존 & 0 \\
+\texttt{source\_\allowbreak{}image\_\allowbreak{}url} 보존 & 6,975 \\
+원천 이미지 없음 & 447 \\
+이미지 다운로드/업로드 실패 & 0 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\ReportSubsection{5.2 이미지 버킷 검증}
+
+\DocNeedspace{3\baselineskip}
+이미지 버킷 검증 결과, 2026-06-29 13:00Z 이후 생성된 \texttt{images/\allowbreak{}KR/\allowbreak{}} 객체는 6,975개다. 총 크기는 2,009,551,566 bytes, 약 2.01 GB다.
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{6. Review 산출물 상태}
+\addcontentsline{toc}{section}{6. Review 산출물 상태}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\ReportSubsection{6.1 Review queue 현황}
+
+\DocNeedspace{3\baselineskip}
+\SectionLead{\texttt{review/\allowbreak{}} 산출물은 queue 기준과 entity type 기준으로 나누어, 검토 대상의 성격을 빠르게 구분할 수 있게 정리했다.}
+
+\texttt{review/\allowbreak{}} prefix에는 1,202건이 분리되어 있다.
+
+
+\DocNeedspace{12\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.42}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.734\linewidth}>{\centering\arraybackslash}m{0.238\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.734\linewidth}}{\textbf{Review queue}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.238\linewidth}}{\textbf{Count}} \\
+\midrule
+\endhead
+\texttt{source\_\allowbreak{}review} & 1,184 \\
+\texttt{location\_\allowbreak{}review} & 18 \\
+\texttt{classification\_\allowbreak{}review} & 1 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\ReportSubsection{6.2 Entity type 현황}
+
+\DocNeedspace{3\baselineskip}
+Review queue count 합계가 1,202보다 1건 많은 이유는 1개 record가 복수 queue를 가진 것으로 판단한다.\newline Review record 자체는 1,202건이다.
+
+
+\DocNeedspace{14\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.42}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.596\linewidth}>{\centering\arraybackslash}m{0.376\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.596\linewidth}}{\textbf{Entity type}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.376\linewidth}}{\textbf{Review records}} \\
+\midrule
+\endhead
+\texttt{excluded} & 1,184 \\
+\texttt{attraction} & 16 \\
+\texttt{festival} & 2 \\
+합계 & 1,202 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{7. 남은 리스크와 후속 작업}
+\addcontentsline{toc}{section}{7. 남은 리스크와 후속 작업}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+\ReportSubsection{7.1 후속 작업 목록}
+
+\SectionLead{남은 항목은 전처리 실패가 아니라 검토 정책과 보강 기준을 확정해야 하는 작업이다.}
+
+\DocNeedspace{12\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.42}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.272\linewidth}>{\centering\arraybackslash}m{0.158\linewidth}>{\RaggedRight\arraybackslash}m{0.529\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.272\linewidth}}{\textbf{항목}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.158\linewidth}}{\textbf{현재 상태}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.529\linewidth}}{\textbf{후속 작업}} \\
+\midrule
+\endhead
+Wikipedia missing 59건 & 검토 필요 & suffix normalize 적용 여부와 raw 후보가 없는 11개 key의 보강 여부 결정 \\
+No source image 447건 & 검토 필요 & 이미지 없는 상태 허용 또는 대체 이미지 수집 정책 결정 \\
+Review record 1,202건 & 검토 필요 & \texttt{source\_\allowbreak{}review}\newline \texttt{location\_\allowbreak{}review}\newline \texttt{classification\_\allowbreak{}review}별 분류 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{8. 결론}
+\addcontentsline{toc}{section}{8. 결론}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\ReportSubsection{8.1 전처리 완료 결론}
+
+\DocNeedspace{3\baselineskip}
+\ReportCallout{\textbf{결론: 20260629 KR 데이터 전처리는 완료됐다.}\quad 2026-06-29 raw detail 240개는 모두 \texttt{kr-\allowbreak{}pipeline-\allowbreak{}transform}에서 성공 처리됐고, \texttt{passed/\allowbreak{}} 기준 8,010개 산출 item이 생성됐다.}
+
+
+\ReportSubsection{8.2 품질 검토 우선순위}
+
+\DocNeedspace{3\baselineskip}
+현재 남은 작업은 전처리 품질 검토다. 우선순위는 Wikipedia missing 59건의 suffix normalization 및 raw 후보 보강 여부 결정, 원천 이미지가 없는 447건의 허용 정책 결정, review record 1,202건의 queue별 분류다.
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{9. 변경 이력}
+\addcontentsline{toc}{section}{9. 변경 이력}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\ReportSubsection{9.1 변경 이력}
+
+\DocNeedspace{8\baselineskip}
+\begin{footnotesize}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.48}
+\begin{longtable}{@{}>{\centering\arraybackslash}m{0.104\linewidth}>{\centering\arraybackslash}m{0.170\linewidth}>{\centering\arraybackslash}m{0.133\linewidth}>{\RaggedRight\arraybackslash}m{0.540\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.104\linewidth}}{\textbf{버전}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.170\linewidth}}{\textbf{날짜}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.133\linewidth}}{\textbf{작성자}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.540\linewidth}}{\textbf{변경 내용}} \\
+\midrule
+\endhead
+v1.0 & {\footnotesize 2026-\allowbreak{}06-\allowbreak{}29} & Codex & KR 20260629 상세 데이터 전처리 결과를 전처리 보고서 범위로 재정리하고 PDF 가독성을 보정 \\
+\bottomrule
+\end{longtable}
+\end{footnotesize}
+
+
+\end{document}

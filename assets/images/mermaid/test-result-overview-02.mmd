@@ -1,0 +1,23 @@
+%%{init: {"theme": "base", "flowchart": {"nodeSpacing": 54, "rankSpacing": 62, "curve": "basis"}, "themeVariables": {"fontFamily": "Malgun Gothic, Arial, sans-serif", "primaryColor": "#FFF3E7", "primaryBorderColor": "#F26518", "primaryTextColor": "#222222", "lineColor": "#D44A14", "secondaryColor": "#FCE7DB", "tertiaryColor": "#FFFFFF"}}}%%
+flowchart LR
+    A["22개 테스트 케이스<br/>전체 경로와 예외 경로 검증"]
+    B["기능 정상성<br/>추천·일정<br/>축제·예외"]
+    C["비기능 검증<br/>시간·토큰<br/>관측·오류 없음"]
+    D["범위 밖<br/>추천 품질 정답 비교<br/>V2 평가셋 과제"]
+    E["보고서 기록<br/>Pass/Fail 근거 정리"]
+
+    A --> B
+    A --> C
+    A -.-> D
+    B --> E
+    C --> E
+
+    classDef test fill:#FFF3E7,stroke:#F26518,stroke-width:2px,color:#222222;
+    classDef result fill:#FFFFFF,stroke:#F26518,stroke-width:2px,color:#222222;
+    classDef out fill:#F7F7F7,stroke:#666666,stroke-dasharray:4 3,color:#222222;
+    classDef report fill:#FCE7DB,stroke:#D44A14,stroke-width:2px,color:#222222;
+
+    class A test;
+    class B,C result;
+    class D out;
+    class E report;

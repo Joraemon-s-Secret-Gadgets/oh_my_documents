@@ -140,6 +140,15 @@ DOCUMENTS = [
         "검증·운영 문서",
     ),
     Document(
+        "docs/09_ui_ux_guide/09_ui_ux_guide.md",
+        "09_ui_ux_guide.html",
+        "UI/UX Guide",
+        "로브 (Lovv) — UI/UX 가이드",
+        "화면 구성, 인터랙션 흐름, 컴포넌트 규칙, 디자인 토큰, 접근성 기준을 정의합니다.",
+        "초안",
+        "설계·명세 문서",
+    ),
+    Document(
         "docs/11_deployment_ops/supplemental/troubleshooting.md",
         "11_troubleshooting.html",
         "Troubleshooting",
@@ -395,12 +404,16 @@ def render_blocks(markdown: str) -> tuple[str, list[tuple[int, str, str]]]:
                 output.append(f'<p class="doc-p">{inline(title)}</p>')
             continue
 
-        if stripped == "**역할 구분:**":
+        role_distinction = re.match(r"^\*\*역할 구분:\*\*\s*(.*)$", stripped)
+        if role_distinction:
             flush_paragraph()
             flush_list()
             body_lines: list[str] = []
+            inline_body = role_distinction.group(1).strip()
+            if inline_body:
+                body_lines.append(inline_body)
             i += 1
-            while i < len(lines):
+            while not inline_body and i < len(lines):
                 body = lines[i].strip()
                 if body.startswith("#") or body.startswith("|"):
                     break
@@ -655,18 +668,12 @@ def collect_constraint_boxes(lines: list[str], start: int) -> tuple[str, int]:
 
 
 def render_role_distinction_box(body_lines: list[str]) -> str:
-    lead = inline(body_lines[0]) if body_lines else ""
-    role_ids = [line.strip("`") for line in body_lines if line.startswith("`R-")]
-    role_links = ", ".join(f"<code>{html.escape(role_id)}</code>" for role_id in role_ids)
-    reference = (
-        '<a href="#s2">2. 이해관계자</a>의 '
-        f"{role_links} 등 서비스 권한 Role ID와 구분한다."
-    )
+    body = inline(" ".join(body_lines).strip()) if body_lines else ""
+    body = body.replace("2. 이해관계자", '<a href="#s2">2. 이해관계자</a>', 1)
     return (
         '<div class="note-box">'
         "<p><strong>역할 구분:</strong></p>"
-        f"<p>{lead}</p>"
-        f"<p>{reference}</p>"
+        f"<p>{body}</p>"
         "</div>"
     )
 

@@ -8,6 +8,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REQUIREMENTS_PAGE = ROOT / "pages" / "01_requirements.html"
+INDEX_PAGE = ROOT / "index.html"
+UI_UX_PAGE = ROOT / "pages" / "09_ui_ux_guide.html"
 
 
 def run_generator() -> None:
@@ -22,6 +24,12 @@ def read_requirements_page() -> str:
     if not REQUIREMENTS_PAGE.exists():
         raise AssertionError(f"missing generated page: {REQUIREMENTS_PAGE}")
     return REQUIREMENTS_PAGE.read_text(encoding="utf-8")
+
+
+def read_page(path: Path) -> str:
+    if not path.exists():
+        raise AssertionError(f"missing generated page: {path}")
+    return path.read_text(encoding="utf-8")
 
 
 def assert_contains(html: str, needle: str, label: str) -> None:
@@ -73,10 +81,19 @@ def verify_requirements_page(html: str) -> None:
         assert_not_matches(html, pattern, label)
 
 
+def verify_ui_ux_page(index_html: str, page_html: str) -> None:
+    assert_contains(index_html, './pages/09_ui_ux_guide.html', "UI/UX guide index link")
+    assert_contains(index_html, "로브 (Lovv) — UI/UX 가이드", "UI/UX guide index title")
+    assert_contains(page_html, '<h1 id="cover-title" class="s-h1">로브(Lovv) UI/UX 가이드</h1>', "UI/UX guide page title")
+    assert_contains(page_html, "저장 일정 상세 (PLAN DETAIL) 화면", "UI/UX guide body section")
+    assert_contains(page_html, '<a class="doc-nav-home" href="../index.html">문서 홈</a>', "UI/UX guide home nav")
+
+
 def main() -> int:
     try:
         run_generator()
         verify_requirements_page(read_requirements_page())
+        verify_ui_ux_page(read_page(INDEX_PAGE), read_page(UI_UX_PAGE))
     except (AssertionError, subprocess.CalledProcessError) as exc:
         print(f"page structure verification failed: {exc}", file=sys.stderr)
         return 1
