@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로브 (Lovv) — 배포·운영 가이드 v0.5</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/requirements.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside>
+        <div class="aside-brand">
+          <div class="aside-logo">로브</div>
+          <div class="aside-ver">Deployment &amp; Operations · v0.5</div>
+          <div class="aside-status"><div class="status-dot"></div><span>초안</span></div>
+        </div>
+        <nav class="toc">
+          <div class="toc-section"><a class="toc-link active" href="#cover">표지 / 문서 정보</a></div>
+          <div class="toc-section">
+            <div class="toc-section-hd">2. 운영 문서 구성</div>
+            <a class="toc-link" href="#s2">2. 운영 문서 구성</a>
+          </div>
+          <div class="toc-section">
+            <div class="toc-section-hd">3. 운영 원칙</div>
+            <a class="toc-link" href="#s3">3. 운영 원칙</a>
+          </div>
+          <div class="toc-section">
+            <div class="toc-section-hd">4. 현재 우선 운영 항목</div>
+            <a class="toc-link" href="#s4">4. 현재 우선 운영 항목</a>
+            <a class="toc-link" href="#s4-1">4.1 관리자 보안 운영 Runbook</a>
+            <a class="toc-link" href="#s4-2">4.2 로컬 DB 초기화와 migration 운영</a>
+          </div>
+          <div class="toc-section">
+            <div class="toc-section-hd">5. 검증 명령</div>
+            <a class="toc-link" href="#s5">5. 검증 명령</a>
+          </div>
+          <div class="toc-section">
+            <div class="toc-section-hd">6. 변경 이력</div>
+            <a class="toc-link" href="#s6">6. 변경 이력</a>
+          </div>
+        </nav>
+      </aside>
+      <main id="cover">
+        <h1 id="cover-title" class="s-h1">1. 문서 개요</h1>
+        <p class="doc-p">﻿# 로브 (Lovv) 배포·운영 가이드</p>
+        <blockquote>
+        <p class="doc-p">문서 버전: v0.5</p>
+        <p class="doc-p">문서 상태: 초안 (Draft)</p>
+        <p class="doc-p">작성일: 2026-06-12</p>
+        <p class="doc-p">작성자: llm팀</p>
+        <p class="doc-p">기준 문서: <code>../<wbr>06_<wbr>technical_<wbr>spec/<wbr>06_<wbr>technical_<wbr>spec.md</code>, <code>../<wbr>07_<wbr>api_<wbr>spec/<wbr>07_<wbr>api_<wbr>spec.md</code>, <code>../<wbr>08_<wbr>data_<wbr>preprocessing/<wbr>data_<wbr>preprocessing_<wbr>plan.md</code>, <code>../<wbr>04_<wbr>database_<wbr>design/<wbr>04_<wbr>database_<wbr>design.md</code>, <code>supplemental/<wbr>troubleshooting.md</code></p>
+        </blockquote>
+        <p class="doc-p">---</p>
+        <blockquote>
+        <p class="doc-p"><strong>[PRD 반영 v0.1 — 대화형 빌더]</strong> 관측: <strong>OTel + AWS X-Ray + CloudWatch Structured JSON Logs</strong>로</p>
+        <p class="doc-p">노드별 토큰·컨텍스트·레이턴시·I/O 트레이싱(정본: <code>Lovv-agent/<wbr>docs/<wbr>specs/<wbr>LOVV_<wbr>AGENTCORE_<wbr>OBSERVABILITY_<wbr>SPEC.md</code>).</p>
+        <p class="doc-p">CI/CD: 기존 게이트(pytest·compileall·parity·<code>agentcore validate</code>/<code>deploy --dry-run</code>) + 빌더 게이트</p>
+        <p class="doc-p">(무상태 회귀·state serde round-trip·geo-filter·soft floor 폴백·정합성 게이트·interrupt/resume 스모크).</p>
+        <p class="doc-p">상세: <code>../<wbr>98_<wbr>prd/<wbr>interactive_<wbr>builder_<wbr>prd.md</code>.</p>
+        </blockquote>
+        <p class="doc-p">이 문서는 로브(Lovv) 서비스의 배포와 운영 절차를 정리하는 대표 문서다. 현재는 상세 운영 절차가 확정되기 전 단계이므로, 운영 중 확인해야 할 기준 문서와 트러블슈팅 문서를 연결하는 역할을 한다.</p>
+        <h1 id="s2" class="s-h1">2. 운영 문서 구성</h1>
+        <div class="table-wrap"><table class="info-tbl compact-tbl">
+        <thead><tr><th>문서</th><th>역할</th></tr></thead><tbody>
+        <tr><td><code>11_<wbr>deployment_<wbr>ops.md</code></td><td>배포·운영 대표 문서</td></tr>
+        <tr><td><code>supplemental/<wbr>troubleshooting.md</code></td><td>프로젝트 진행 중 발생한 주요 이슈와 대응 기준</td></tr>
+        <tr><td><code>../<wbr>06_<wbr>technical_<wbr>spec/<wbr>06_<wbr>technical_<wbr>spec.md</code></td><td>인프라와 기술 선택 근거</td></tr>
+        <tr><td><code>../<wbr>07_<wbr>api_<wbr>spec/<wbr>07_<wbr>api_<wbr>spec.md</code></td><td>API 계약과 오류 응답 기준</td></tr>
+        <tr><td><code>../<wbr>04_<wbr>database_<wbr>design/<wbr>04_<wbr>database_<wbr>design.md</code></td><td>schema source of truth와 admin migration 적용 순서</td></tr>
+        <tr><td><code>../<wbr>08_<wbr>data_<wbr>preprocessing/<wbr></code></td><td>데이터 전처리와 적재 운영 기준</td></tr>
+        </tbody></table></div>
+        <h1 id="s3" class="s-h1">3. 운영 원칙</h1>
+        <ul class="bullet-list">
+        <li>설계 결정의 &quot;왜&quot;는 기술 명세서에 두고, 이 문서는 &quot;어떻게 배포·운영하는가&quot;에 집중한다.</li>
+        <li>환경 변수와 secret은 실제 값을 문서에 쓰지 않고 관리 방식만 기록한다.</li>
+        <li>장애나 의사결정 이슈는 <code>supplemental/<wbr>troubleshooting.md</code>에 증상, 원인, 판단, 조치, 재발 방지 기준으로 남긴다.</li>
+        <li>HTML/PDF 공유 산출물은 원본 Markdown과 함께 검증한 뒤 배포한다.</li>
+        </ul>
+        <h1 id="s4" class="s-h1">4. 현재 우선 운영 항목</h1>
+        <div class="table-wrap wide extra-wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>영역</th><th>현재 기준</th></tr></thead><tbody>
+        <tr><td>인증·인가</td><td>Cognito Hosted UI/OIDC가 Social Login을 담당하고 Lovv backend는 <code>/<wbr>api/<wbr>v1/<wbr>auth/<wbr>cognito/<wbr>session</code> bridge로 세션 shape를 구성</td></tr>
+        <tr><td>데이터 적재</td><td>KR 상세 데이터는 <code>TourKoreaDomainData</code> 기준</td></tr>
+        <tr><td>검색 인덱스</td><td>S3 vector index <code>kr-tour-domain-v1</code> 구축 기준 수립</td></tr>
+        <tr><td>그래프DB</td><td>현재 직접 도입하지 않고 Lambda 기반 관계 탐색 보조 기능으로 유사 기능 구현 예정. Neptune은 승격 기준 충족 시 재검토</td></tr>
+        <tr><td>관리자 보안</td><td><code>R-ADMIN</code>/<code>R-SUPER-ADMIN</code> role union으로 일반 admin 조회를 허용하고, 고위험 승인·거절 시점에만 최근 5분 TOTP MFA를 요구</td></tr>
+        <tr><td>관리자 DB migration</td><td>기본 product schema는 <code>infra/<wbr>data-stack/<wbr>rds/<wbr>schema.sql</code>을 단일 기준으로 사용하고, admin 보강 migration은 <code>002_<wbr>admin_<wbr>console_<wbr>tables.sql</code> → <code>003_<wbr>admin_<wbr>operations_<wbr>tables.sql</code> → <code>004_<wbr>admin_<wbr>high_<wbr>risk_<wbr>approvals.sql</code> 순서로 적용</td></tr>
+        <tr><td>문서 배포</td><td><code>docs/<wbr></code> Markdown 원본 → <code>pages/<wbr>*.html</code> 생성</td></tr>
+        <tr><td>PDF 배포</td><td>대응 Markdown 원본 → <code>pdf/<wbr>*.tex</code>/<code>pdf/<wbr>*.pdf</code> 생성</td></tr>
+        </tbody></table></div>
+        <h2 id="s4-1" class="s-h2">4.1 관리자 보안 운영 Runbook</h2>
+        <h2 id="최초-super-admin-bootstrap" class="s-h2">최초 Super Admin bootstrap</h2>
+        <p class="doc-p">초기 운영 환경에는 최소 1명의 활성 <code>R-SUPER-ADMIN</code>이 있어야 한다. 최초 부여는 일반 콘솔 승인 플로우를 사용할 수 없으므로 BE 저장소의 <code>scripts/<wbr>bootstrap_<wbr>super_<wbr>admin.py</code>로 수행한다.</p>
+        <pre><code>python scripts/bootstrap_super_admin.py --user-id &lt;USER_UUID&gt; --reason &quot;initial super admin bootstrap&quot;</code></pre>
+        <ul class="bullet-list">
+        <li>실행자는 운영 승인 기록에 작업자, 대상 사용자, 사유, 실행 시각을 남긴다.</li>
+        <li>bootstrap 이후에는 같은 사용자가 MFA 등록을 완료했는지 확인한다.</li>
+        <li>이후 <code>R-SUPER-ADMIN</code> 부여·회수는 고위험 변경 요청과 다른 <code>R-SUPER-ADMIN</code>의 승인으로만 처리한다.</li>
+        </ul>
+        <h2 id="접근-재검토와-권한-조회" class="s-h2">접근 재검토와 권한 조회</h2>
+        <p class="doc-p">분기별 access attestation은 활성 역할·지역 할당 전체를 대상으로 한다. 증적에는 토큰, 쿠키, MFA secret, recovery code, 민감 원문을 포함하지 않는다.</p>
+        <pre><code>python scripts/list_user_authz.py --user-id &lt;USER_UUID&gt;
+        mysql --execute=&quot;source scripts/admin_access_attestation.sql&quot;</code></pre>
+        <ul class="bullet-list">
+        <li>최초 부여자와 다른 최종 확인자가 유지·축소·회수 여부를 승인한다.</li>
+        <li>불필요한 <code>R-ADMIN</code>·<code>R-SUPER-ADMIN</code>은 1영업일 이내 회수하고 권한 캐시·활성 세션을 무효화한다.</li>
+        <li>마지막 활성 <code>R-SUPER-ADMIN</code> 회수는 애플리케이션 트랜잭션에서 거부되어야 한다.</li>
+        </ul>
+        <h2 id="mfa-장애-잠금-대응" class="s-h2">MFA 장애·잠금 대응</h2>
+        <ul class="bullet-list">
+        <li><code>ADMIN_<wbr>MFA_<wbr>ENROLLMENT_<wbr>REQUIRED</code>: 사용자가 MFA 등록을 완료하도록 안내한다.</li>
+        <li><code>ADMIN_<wbr>MFA_<wbr>REQUIRED</code>: <code>/<wbr>admin/<wbr>security/<wbr>mfa/<wbr>verify</code>로 TOTP 세션을 생성한 뒤 승인·거절을 재시도한다.</li>
+        <li><code>ADMIN_<wbr>MFA_<wbr>TOTP_<wbr>REQUIRED</code>: recovery code 세션 또는 5분을 초과한 TOTP 세션이므로 새 TOTP 인증을 요구한다.</li>
+        <li><code>ADMIN_<wbr>MFA_<wbr>LOCKED</code>: 잠금 만료까지 대기하거나 운영 승인 후 MFA 자격 초기화 절차를 수행한다.</li>
+        <li>recovery code는 계정 복구용이며 고위험 승인·거절용 인증 수단이 아니다.</li>
+        </ul>
+        <h2 id="고위험-승인-감사와-rollback-기준" class="s-h2">고위험 승인 감사와 rollback 기준</h2>
+        <p class="doc-p">고위험 승인 성공 시 대상 변경, 요청 상태 전이, 업무 action 감사 로그는 같은 트랜잭션에서 strict 기록한다. 감사 로그 기록이 실패하면 업무 변경도 롤백한다. 권한 거부, MFA 실패, 상태 충돌, 실행 실패는 원장 변경과 분리해 <code>denied</code> 또는 <code>failed</code> 감사 행으로 남긴다.</p>
+        <h2 id="s4-2" class="s-h2">4.2 로컬 DB 초기화와 migration 운영</h2>
+        <p class="doc-p">새 로컬 DB 초기화 순서는 다음과 같다.</p>
+        <ul class="bullet-list">
+        <li><code>infra/<wbr>data-stack/<wbr>rds/<wbr>schema.sql</code></li>
+        <li><code>schema/<wbr>aurora_<wbr>mysql/<wbr>002_<wbr>admin_<wbr>console_<wbr>tables.sql</code></li>
+        <li><code>schema/<wbr>aurora_<wbr>mysql/<wbr>003_<wbr>admin_<wbr>operations_<wbr>tables.sql</code></li>
+        <li><code>schema/<wbr>aurora_<wbr>mysql/<wbr>004_<wbr>admin_<wbr>high_<wbr>risk_<wbr>approvals.sql</code></li>
+        </ul>
+        <p class="doc-p"><code>schema/<wbr>aurora_<wbr>mysql/<wbr>001_<wbr>product_<wbr>api_<wbr>tables.sql</code>은 삭제 유지 대상이다. 새 초기화나 migration 문서에서 필수 단계로 복구하지 않는다. 기존 운영·공유 DB에는 base schema를 재적용하지 않고 필요한 admin migration만 선택 적용한다. BE 저장소의 <code>scripts/<wbr>apply_<wbr>admin_<wbr>migration.py</code>는 적용할 migration 파일을 명시해 사용한다.</p>
+        <h1 id="s5" class="s-h1">5. 검증 명령</h1>
+        <p class="doc-p">HTML 문서 구조 검증:</p>
+        <pre><code>python scripts\generate_pages.py
+        python scripts\verify_pages_structure.py</code></pre>
+        <p class="doc-p">관리자 보안·로컬 DB 문서 정합성 검증:</p>
+        <pre><code>rg -n &quot;001_product_api_tables|전역 MFA|global MFA|MFA 게이트|MFA gate|admin.*MFA.*필수&quot; docs\01_requirements docs\04_database_design docs\07_api_spec docs\09_ui_ux_guide docs\10_test_plan
+        git diff --check</code></pre>
+        <p class="doc-p">BE 저장소에서 확인할 관리자 보안 테스트:</p>
+        <pre><code>$env:PYTHONPATH=&#x27;src&#x27;
+        python -m unittest
+        python -m unittest tests.test_admin_high_risk_app
+        python -m unittest tests.test_admin_mfa_app.AdminMfaAppTest.test_admin_read_routes_need_role_only_and_mfa_status_is_accessible</code></pre>
+        <p class="doc-p">admin_web 저장소에서 확인할 프론트 검증:</p>
+        <pre><code>npm.cmd run lint
+        npm.cmd test
+        npm.cmd run build</code></pre>
+        <p class="doc-p">opt-in 실DB 통합 테스트는 일반 unittest에서 skip되는 별도 검증이다. 실행하지 않았다면 완료로 표기하지 않는다.</p>
+        <pre><code>$env:RUN_ADMIN_DB_INTEGRATION=&#x27;1&#x27;
+        $env:RUN_RDS_DATA_API_INTEGRATION=&#x27;1&#x27;
+        python -m unittest</code></pre>
+        <p class="doc-p"><code>docker compose config</code>는 compose 파일이 있는 BE/admin_web 작업 폴더에서 실행한다. 이 문서 저장소에 compose 파일이 없으면 실행 불가로 구분 기록한다.</p>
+        <p class="doc-p">PDF 문서 검증:</p>
+        <pre><code>cd pdf
+        xelatex -interaction=nonstopmode -halt-on-error &lt;target&gt;.tex
+        xelatex -interaction=nonstopmode -halt-on-error &lt;target&gt;.tex</code></pre>
+        <h1 id="s6" class="s-h1">6. 변경 이력</h1>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
+        <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+        <tr><td>v0.5</td><td>2026-07-02</td><td>Codex</td><td>관리자 Super Admin bootstrap, access attestation, MFA 장애 대응, strict audit rollback, 로컬 DB 초기화·admin migration 순서와 opt-in 실DB 테스트 구분 추가</td></tr>
+        <tr><td>v0.3</td><td>2026-06-12</td><td>llm팀</td><td>그래프DB 직접 도입 대신 Lambda 기반 관계 탐색 보조 기능 구현 예정으로 운영 기준 조정</td></tr>
+        <tr><td>v0.2</td><td>2026-06-12</td><td>llm팀</td><td>Cognito/Social Login 운영 기준을 현재 우선 운영 항목에 추가</td></tr>
+        <tr><td>v0.1</td><td>2026-06-12</td><td>llm팀</td><td>배포·운영 대표 문서 초안 작성 및 트러블슈팅 문서 연결</td></tr>
+        </tbody></table></div>
+        <nav class="doc-nav" aria-label="이전 다음 문서">
+          <a class="doc-nav-home" href="../index.html">문서 홈</a>
+          <div class="doc-nav-pager">
+            <a class="doc-nav-link" href="./10_test_plan.html">이전 문서<br><strong>테스트 계획서</strong></a>
+            <a class="doc-nav-link" href="./11_troubleshooting.html">다음 문서<br><strong>트러블슈팅 문서</strong></a>
+          </div>
+        </nav>
+      </main>
+    </div>
+    <script src="../assets/js/requirements.js" defer></script>
+  </body>
+</html>
