@@ -19,6 +19,8 @@
 ```text
 11_deployment_ops.md  배포·운영 대표 문서
 supplemental/troubleshooting.md    프로젝트 진행 중 발생한 주요 이슈와 대응 기준
+supplemental/kr_lambda_sfn_batch_reset_completion_20260630.md  KR Lambda/SFN batch reset 및 rebuild 운영 완료 보고
+supplemental/kr_lambda_sfn_batch_reset_next_session_handoff_20260630.md  KR Lambda/SFN batch reset 다음 세션 handoff
 ```
 
 ## Scope Boundary (06 vs 11)

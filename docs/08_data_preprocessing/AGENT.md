@@ -23,6 +23,13 @@ supplemental/kr_preprocessing_detail_design.md      한국(KR) ELT 전처리 상
 supplemental/kr_preprocessing_code_based_design.md  한국(KR) 전처리 설계 (tour-api-korea 샘플 코드 산출물 기준)
 supplemental/preprocessing_report.md                KR 상세 데이터 전처리 완료 보고서
 supplemental/korea_data_preprocessing_result_report.md  한국 데이터 전처리 결과보고서 (DynamoDB 적재 결과 확정본)
+supplemental/kr_20260629_preprocessing_redesign_spec.md  20260629 raw 기반 V2 전처리 재설계 근거
+supplemental/kr_20260629_preprocessing_report.md    20260629 raw detail 전체 전처리 결과 및 적재 예측 보고서
+supplemental/kr_20260630_preprocessing_completion_report.md  20260630 DynamoDB V2 및 S3 Vector V2 적재 완료 보고서
+supplemental/kr_vector_count_discrepancy_analysis_20260630.md  KR Vector count 차이 분석 보고서
+supplemental/kr_vector_metadata_refresh_plan_20260630.md  KR Vector metadata refresh 계획
+supplemental/lambda_titan_vector_enrichment_analysis_20260630.md  Lambda/Titan 기반 vector enrichment 운영 분석
+supplemental/vector_search_v2_guide.md              S3 Vector V2 검색 사용 가이드
 supplemental/s3_vector_index_plan.md                KR 전처리 산출물 기반 S3 vector index 구축안 (기준: supplemental/korea_data_preprocessing_result_report.md)
 ```
 

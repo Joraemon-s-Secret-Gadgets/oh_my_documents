@@ -23,8 +23,11 @@
 | 원본 | 대상 위치 | 판단 |
 | --- | --- | --- |
 | `docs/reports/kr_data_acquisition_report_20260629.md` | `data_collect_kr_data_acquisition_report_20260629.md` | KR raw 취득/보정 완료 근거 |
+| `docs/reports/kr_20260629_preprocessing_report.md` | `data_collect_kr_20260629_preprocessing_report.md` | 20260629 raw detail 전체 전처리 결과 및 적재 예측 보고 |
 | `docs/specs/kr_20260629_preprocessing_redesign_spec.md` | `data_collect_kr_20260629_preprocessing_redesign_spec.md` | 20260629 raw 기반 V2 전처리 설계 근거 |
 | `docs/reports/kr_20260630_preprocessing_completion_report.md` | `data_collect_kr_20260630_preprocessing_completion_report.md` | 전처리, DynamoDB V2, Vector V2 완료 보고 |
+| `docs/reports/korea_data_preprocessing_result_report.md` | `data_collect_korea_data_preprocessing_result_report.md` | 20260610 KR 상세 Raw JSON 전처리 결과 보고 |
+| `docs/reports/preprocessing_report.md` | `data_collect_preprocessing_report.md` | KR 상세 데이터 전처리 완료 보고 |
 | `docs/reports/kr_vector_count_discrepancy_analysis_20260630.md` | `data_collect_kr_vector_count_discrepancy_analysis_20260630.md` | Vector count 차이 분석 근거 |
 | `docs/reports/kr_vector_metadata_refresh_plan_20260630.md` | `data_collect_kr_vector_metadata_refresh_plan_20260630.md` | Vector metadata refresh 계획 |
 | `docs/guides/dynamodb_v2_query_guide.md` | `data_collect_dynamodb_v2_query_guide.md` | `TourKoreaDomainDataV2` 조회 계약 |
@@ -39,8 +42,32 @@
 ## 보안 처리
 
 - 복사본의 12자리 AWS account id는 `<AWS_ACCOUNT_ID>`로 마스킹했다.
+- 2026-07-03에 추가 복사한 전처리 보고서들도 동일한 마스킹 규칙을 적용했다.
 - `.env`, `.env.local`, 로그, 원천 데이터 파일, 코드 파일은 복사하지 않았다.
 - S3 bucket, DynamoDB table, Vector index 이름은 문서의 운영 의미를 유지하기 위해 보존했다.
+
+## 정식 docs 적재 완료
+
+2026-07-03에 루트 전달 패키지의 문서를 현재 `docs/` 폴더 구조에 맞게 아래 위치로 적재했다. 원문 보존용 전달 패키지는 삭제하지 않는다.
+
+| 전달 패키지 파일 | 정식 적재 위치 |
+| --- | --- |
+| `data_collect_kr_data_acquisition_report_20260629.md` | `docs/03_data_collect_plan/supplemental/kr_data_acquisition_report_20260629.md` |
+| `data_collect_dynamodb_v2_query_guide.md` | `docs/04_database_design/supplemental/dynamodb_v2_query_guide.md` |
+| `data_collect_dynamodb_vector_v2_usage_guide.md` | `docs/04_database_design/supplemental/dynamodb_vector_v2_usage_guide.md` |
+| `data_collect_agentcore_v1_dynamodb_query_guide.md` | `docs/05_agent_spec/supplemental/agentcore_v1_dynamodb_query_guide.md` |
+| `data_collect_agentcore_v1_vector_guide.md` | `docs/05_agent_spec/supplemental/agentcore_v1_vector_guide.md` |
+| `data_collect_korea_data_preprocessing_result_report.md` | `docs/08_data_preprocessing/supplemental/korea_data_preprocessing_result_report.md` |
+| `data_collect_kr_20260629_preprocessing_redesign_spec.md` | `docs/08_data_preprocessing/supplemental/kr_20260629_preprocessing_redesign_spec.md` |
+| `data_collect_kr_20260629_preprocessing_report.md` | `docs/08_data_preprocessing/supplemental/kr_20260629_preprocessing_report.md` |
+| `data_collect_kr_20260630_preprocessing_completion_report.md` | `docs/08_data_preprocessing/supplemental/kr_20260630_preprocessing_completion_report.md` |
+| `data_collect_kr_vector_count_discrepancy_analysis_20260630.md` | `docs/08_data_preprocessing/supplemental/kr_vector_count_discrepancy_analysis_20260630.md` |
+| `data_collect_kr_vector_metadata_refresh_plan_20260630.md` | `docs/08_data_preprocessing/supplemental/kr_vector_metadata_refresh_plan_20260630.md` |
+| `data_collect_lambda_titan_vector_enrichment_analysis_20260630.md` | `docs/08_data_preprocessing/supplemental/lambda_titan_vector_enrichment_analysis_20260630.md` |
+| `data_collect_preprocessing_report.md` | `docs/08_data_preprocessing/supplemental/preprocessing_report.md` |
+| `data_collect_vector_search_v2_guide.md` | `docs/08_data_preprocessing/supplemental/vector_search_v2_guide.md` |
+| `data_collect_kr_lambda_sfn_batch_reset_completion_20260630.md` | `docs/11_deployment_ops/supplemental/kr_lambda_sfn_batch_reset_completion_20260630.md` |
+| `data_collect_kr_lambda_sfn_batch_reset_next_session_handoff_20260630.md` | `docs/11_deployment_ops/supplemental/kr_lambda_sfn_batch_reset_next_session_handoff_20260630.md` |
 
 ## 제외
 
