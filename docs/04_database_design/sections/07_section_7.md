@@ -8,3 +8,6 @@
 - [ ] S3 vector index 재색인 배치가 DynamoDB 정규화 문서와 S3 Raw 원본 기준으로 재생성되는가?
 - [ ] Lambda 관계 탐색 보조 기능이 공용 콘텐츠 관계만 읽고 사용자 개인정보를 캐시하지 않는가?
 - [ ] PoC 로컬 스토리지 대체 코드와 Production DB 연동 코드의 전환 지점을 분리했는가?
+- [ ] 로컬 DB 초기화 문서가 `infra/data-stack/rds/schema.sql` → `002_admin_console_tables.sql` → `003_admin_operations_tables.sql` → `004_admin_high_risk_approvals.sql` 순서와 일치하는가?
+- [ ] `admin_high_risk_change_requests`, `admin_mfa_credentials`, `admin_mfa_sessions`가 `004_admin_high_risk_approvals.sql`에만 정의되고 `002_admin_console_tables.sql`에 중복 정의되지 않는가?
+- [ ] 삭제된 `schema/aurora_mysql/001_product_api_tables.sql`을 로컬 초기화나 migration 문서에서 필수 단계로 참조하지 않는가?

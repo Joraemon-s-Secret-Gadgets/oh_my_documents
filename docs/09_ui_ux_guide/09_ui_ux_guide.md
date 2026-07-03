@@ -1,6 +1,6 @@
-# 로브(Lovv) UI/UX 가이드
+﻿# 로브(Lovv) UI/UX 가이드
 
-> 문서 버전: v0.1
+> 문서 버전: v0.2
 > 문서 상태: 초안 (Draft)
 > 기준 문서: `../01_requirements/01_requirements.md`, `../02_service_flow/02_service_flow.md`, `../06_technical_spec/06_technical_spec.md`, `../07_api_spec/07_api_spec.md`
 > 색상 기준: 저장소 루트 `color-map.md`
@@ -73,8 +73,41 @@
 - 마커는 텍스트 대안(장소명·순서)을 제공하고, 색상만으로 활성 상태를 구분하지 않는다(확대·테두리 등 형태 단서 병행).
 - 본문 텍스트는 `Dark Charcoal` 기준으로 배경 대비를 확보한다. 이동시간/클룩 등 색상 칩도 대비 기준을 만족시킨다.
 
-## 3. 변경 이력
+## 3. 관리자 콘솔 권한 승인 화면
+
+admin_web 관리자 콘솔에는 `권한 승인` 탭을 둔다. 이 탭은 역할·지역 부여·회수와 월간 여행지 대량 게시 같은 고위험 변경 요청을 조회하고, 허용된 역할에게만 요청 생성 또는 승인·거절 액션을 제공한다.
+
+### 3.1 탭과 badge
+
+- 로그인 직후 `GET /api/v1/admin/high-risk-requests?status=pending&limit=50`으로 pending 목록을 eager loading한다.
+- 목록 조회와 pending count badge 로딩은 MFA 없이 role union 권한만으로 수행한다.
+- pending count가 50건 이상이면 badge는 `50+`로 표시한다.
+- `R-ADMIN` 또는 `R-SUPER-ADMIN` 중 하나라도 활성인 사용자는 `권한 승인` 탭을 볼 수 있다.
+
+### 3.2 역할별 액션 노출
+
+| 역할 | 목록 조회 | 요청 생성 | 승인·거절 버튼 |
+| --- | --- | --- | --- |
+| `R-ADMIN` | 허용 | 허용 | 비노출 |
+| `R-SUPER-ADMIN` | 허용 | 허용 | 노출 |
+
+역할이 여러 개인 사용자는 role union 기준으로 탭과 액션을 연다. 단, 승인·거절은 backend의 `R-SUPER-ADMIN` 검증, 자기 요청 거부, 최근 TOTP 세션 검증을 최종 기준으로 삼는다.
+
+### 3.3 Decision-time MFA 모달
+
+- 승인·거절 버튼 클릭 후 backend가 `ADMIN_MFA_REQUIRED`, `ADMIN_MFA_TOTP_REQUIRED`, `ADMIN_MFA_ENROLLMENT_REQUIRED`, `ADMIN_MFA_LOCKED`를 반환하면 MFA 모달 또는 상태별 안내를 표시한다.
+- TOTP 입력 모달은 `/api/v1/admin/security/mfa/verify`를 먼저 호출해 세션을 만든 뒤, 원래 approve/reject 요청을 재시도한다.
+- approve/reject 요청 본문에는 TOTP code를 넣지 않는다.
+- recovery code는 복구 플로우에서만 제공하고, 고위험 승인 수단으로 노출하지 않는다.
+- `SUPER_ADMIN_REQUIRED`는 MFA 모달이 아니라 권한 부족 오류로 표시한다.
+
+### 3.4 개발 preview
+
+`VITE_LOVV_USE_SAMPLE_DATA=true` 개발 preview가 제공되는 경우, 샘플 pending 목록과 badge는 레이아웃·상태 확인용으로만 사용한다. 샘플 모드는 실제 권한 판정, 실제 MFA 인증, 실제 승인·거절 결과로 해석하지 않는다.
+
+## 4. 변경 이력
 
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 | --- | --- | --- | --- |
+| v0.2 | 2026-07-02 | Codex | admin_web `권한 승인` 탭, pending eager loading, `50+` badge, 역할별 버튼 노출, decision-time TOTP MFA 모달 규칙 추가 |
 | v0.1 | 2026-06-18 | 로브 기획팀 | 가이드 신설. 저장 일정 상세(PLAN DETAIL) 화면 규칙 정리 — 레이아웃, 긴 스크롤 해소(Day 탭 + 지도 점선 동선 + 접이식 카드), 컴포넌트·인터랙션·상태·접근성. `../95_aha_moment/plan-detail.md` §4.1 및 `plan-detail-wireframe.html`과 연동 |

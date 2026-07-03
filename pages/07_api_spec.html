@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — API 명세서 v0.4</title>
+    <title>로브 (Lovv) — API 명세서 v0.8</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -16,18 +16,14 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">로브</div>
-          <div class="aside-ver">API Spec · v0.4</div>
+          <div class="aside-ver">API Spec · v0.8</div>
           <div class="aside-status"><div class="status-dot"></div><span>기획 단계</span></div>
         </div>
         <nav class="toc">
           <div class="toc-section"><a class="toc-link active" href="#cover">표지 / 문서 정보</a></div>
-          <div class="toc-section">
-            <div class="toc-section-hd">1. 문서 개요</div>
-            <a class="toc-link" href="#s1">1. 문서 개요</a>
             <a class="toc-link" href="#s1-1">1.1 목적</a>
             <a class="toc-link" href="#s1-2">1.2 공통 규칙</a>
             <a class="toc-link" href="#s1-3">1.3 Lambda 라우팅 기준</a>
-          </div>
           <div class="toc-section">
             <div class="toc-section-hd">2. 공통 오류 응답</div>
             <a class="toc-link" href="#s2">2. 공통 오류 응답</a>
@@ -70,6 +66,11 @@
           <div class="toc-section">
             <div class="toc-section-hd">9. 운영·검토 API</div>
             <a class="toc-link" href="#s9">9. 운영·검토 API</a>
+            <a class="toc-link" href="#s9-1">9.1 관리자 인가 규칙</a>
+            <a class="toc-link" href="#s9-2">9.2 데이터 제안 검토 — <code>PATCH /<wbr>admin/<wbr>data-submissions/<wbr>{submissionId}/<wbr>review</code></a>
+            <a class="toc-link" href="#s9-3">9.3 관리자 Step-up MFA</a>
+            <a class="toc-link" href="#s9-4">9.4 고위험 변경 요청</a>
+            <a class="toc-link" href="#s9-5">9.5 관리자 감사 로그 조회 — <code>GET /<wbr>admin/<wbr>audit-logs</code></a>
           </div>
           <div class="toc-section">
             <div class="toc-section-hd">10. 변경 이력</div>
@@ -78,18 +79,18 @@
         </nav>
       </aside>
       <main id="cover">
-        <h1 id="cover-title" class="s-h1">로브 (Lovv) API 명세서</h1>
+        <h1 id="cover-title" class="s-h1">1. 문서 개요</h1>
+        <p class="doc-p">﻿# 로브 (Lovv) API 명세서</p>
         <blockquote>
-        <p class="doc-p">문서 버전: v0.4</p>
+        <p class="doc-p">문서 버전: v0.8</p>
         <p class="doc-p">문서 상태: 기획 단계 (Planning)</p>
-        <p class="doc-p">기준 문서: 요구사항 명세서 v1.7, 서비스 흐름 명세서 v0.2, 데이터베이스 설계 명세서 v0.5, Agent 명세서 v0.4, 기술 명세서 v0.4, 배포·운영 트러블슈팅 v0.2</p>
+        <p class="doc-p">기준 문서: 요구사항 명세서 v3.0, 서비스 흐름 명세서 v0.2, 데이터베이스 설계 명세서 v1.0, Agent 명세서 v0.4, 기술 명세서 v0.4, 배포·운영 가이드 v0.5</p>
         </blockquote>
         <blockquote>
         <p class="doc-p"><strong>[PRD 반영 v0.1 — 대화형 빌더]</strong> 대화형 빌더용 API 계약 추가 필요: <strong>반경 후보 조회</strong>(anchor+필터→2티어</p>
         <p class="doc-p">후보), <strong>후보 선택/일정 추가</strong>(interrupt resume), <strong>서브 윈도우 오픈 플래그</strong>, 빌더 상태 재개(thread_id).</p>
         <p class="doc-p">동선=선택 순서. 상세: <code>../<wbr>98_<wbr>prd/<wbr>interactive_<wbr>builder_<wbr>prd.md</code>.</p>
         </blockquote>
-        <h1 id="s1" class="s-h1">1. 문서 개요</h1>
         <h2 id="s1-1" class="s-h2">1.1 목적</h2>
         <p class="doc-p">본 문서는 로브 서비스의 프론트엔드, 백엔드, 추천 Agent, 운영 화면이 사용하는 API 계약을 정의한다. 엔드포인트는 Production 기준의 목표 계약이며, PoC에서는 일부를 정적 데이터 또는 로컬 스토리지로 대체할 수 있다.</p>
         <h2 id="s1-2" class="s-h2">1.2 공통 규칙</h2>
@@ -123,6 +124,7 @@
         <tr><td>422</td><td>AUTH_MAPPING_ERROR</td><td>Cognito 필수 claim은 있으나 Lovv 사용자/role 매핑이 불가능</td></tr>
         <tr><td>500</td><td>INTERNAL_ERROR</td><td>서버 오류</td></tr>
         </tbody></table></div>
+        <p class="doc-p"><code>/<wbr>admin/<wbr>*</code> 운영·검토 API의 인가 실패는 본 공통 오류 응답 형식을 따르되, 세부 오류 코드는 <code>9.1 관리자 인가 규칙</code>의 관리자 인가 오류 코드 표준을 우선 적용한다.</p>
         <pre><code>{
           &quot;error&quot;: {
             &quot;code&quot;: &quot;VALIDATION_ERROR&quot;,
@@ -232,7 +234,7 @@
           &quot;displayName&quot;: &quot;홍길동&quot;,
           &quot;roles&quot;: [&quot;R-USER&quot;]
         }</code></pre>
-        <p class="doc-p">역할 enum은 <code>R-USER</code>, <code>R-ADMIN</code>, <code>R-LOCAL-OPERATOR</code>, <code>R-DATA-PROVIDER</code>를 사용한다. Cognito Group은 큰 권한 구분만 담당하고, 담당 지역·provider 소유권·세부 permission은 Lovv DB와 Backend에서 다시 검증한다.</p>
+        <p class="doc-p">역할 enum은 <code>R-USER</code>, <code>R-ADMIN</code>, <code>R-SUPER-ADMIN</code>, <code>R-LOCAL-OPERATOR</code>, <code>R-DATA-PROVIDER</code>를 사용한다. <code>R-SUPER-ADMIN</code>은 기관에 종속되지 않는 전역 역할이며 일반 <code>R-ADMIN</code> 권한을 자동 상속하지 않는다. Cognito Group은 큰 권한 구분만 담당하고, 담당 지역·provider 소유권·세부 permission은 Lovv DB와 Backend에서 다시 검증한다.</p>
         <h2 id="s3-5" class="s-h2">3.5 <code>POST /<wbr>auth/<wbr>logout</code></h2>
         <p class="doc-p">로그아웃은 Lovv logout과 Cognito logout을 분리한다.</p>
         <div class="table-wrap"><table class="info-tbl compact-tbl">
@@ -464,10 +466,150 @@
         <tr><td>POST</td><td><code>/<wbr>admin/<wbr>data-submissions</code></td><td>Operator/DataProvider</td><td>데이터 제안 등록</td></tr>
         <tr><td>PATCH</td><td><code>/<wbr>admin/<wbr>data-submissions/<wbr>{submissionId}/<wbr>review</code></td><td>Admin</td><td>승인, 반려, 수정 요청</td></tr>
         <tr><td>GET</td><td><code>/<wbr>admin/<wbr>audit-logs</code></td><td>Admin</td><td>검토·승인 이력 조회</td></tr>
+        <tr><td>GET</td><td><code>/<wbr>admin/<wbr>security/<wbr>mfa/<wbr>status</code></td><td>Admin/SuperAdmin</td><td>관리자 MFA 등록·세션 인증 상태 조회</td></tr>
+        <tr><td>POST</td><td><code>/<wbr>admin/<wbr>security/<wbr>mfa/<wbr>enroll</code></td><td>Admin/SuperAdmin</td><td>관리자 MFA 등록 시작</td></tr>
+        <tr><td>POST</td><td><code>/<wbr>admin/<wbr>security/<wbr>mfa/<wbr>confirm</code></td><td>Admin/SuperAdmin</td><td>TOTP 코드 확인 및 복구 코드 발급</td></tr>
+        <tr><td>POST</td><td><code>/<wbr>admin/<wbr>security/<wbr>mfa/<wbr>verify</code></td><td>Admin/SuperAdmin</td><td>현재 관리자 세션 MFA 인증</td></tr>
+        <tr><td>POST</td><td><code>/<wbr>admin/<wbr>security/<wbr>mfa/<wbr>recover</code></td><td>Admin/SuperAdmin</td><td>복구 코드로 현재 관리자 세션 인증</td></tr>
+        <tr><td>POST</td><td><code>/<wbr>admin/<wbr>high-risk-requests</code></td><td>Admin/SuperAdmin</td><td>역할·지역·대량 게시 고위험 변경 요청 생성</td></tr>
+        <tr><td>GET</td><td><code>/<wbr>admin/<wbr>high-risk-requests?status=pending&amp;limit=50</code></td><td>Admin/SuperAdmin</td><td>고위험 변경 pending 목록 조회</td></tr>
+        <tr><td>POST</td><td><code>/<wbr>admin/<wbr>high-risk-requests/<wbr>{requestId}/<wbr>approve</code></td><td>SuperAdmin</td><td>다른 요청자의 고위험 변경 승인·실행</td></tr>
+        <tr><td>POST</td><td><code>/<wbr>admin/<wbr>high-risk-requests/<wbr>{requestId}/<wbr>reject</code></td><td>SuperAdmin</td><td>다른 요청자의 고위험 변경 거절</td></tr>
         </tbody></table></div>
+        <h2 id="s9-1" class="s-h2">9.1 관리자 인가 규칙</h2>
+        <p class="doc-p">모든 <code>/<wbr>admin/<wbr>*</code> 엔드포인트는 다음 규칙을 서버에서 강제한다. (요구사항 <code>FR-ADMIN-001</code>~<code>FR-ADMIN-003</code>, <code>FR-ADMIN-009</code>)</p>
+        <ul class="bullet-list">
+        <li>인증 이후에도 요청마다 역할과 리소스 범위를 서버 데이터(서비스 DB의 활성 역할 할당)로 재검증한다. 요청 본문의 <code>roles</code>, <code>regionIds</code>, <code>organizationId</code>, <code>reviewerId</code> 등 권한·소유권 필드는 신뢰하지 않는다.</li>
+        <li>관리자 역할(<code>R-ADMIN</code>·<code>R-SUPER-ADMIN</code>·<code>R-DATA-PROVIDER</code>·<code>R-LOCAL-OPERATOR</code>) 중 해당 API에 허용된 활성 역할이 하나도 없으면 fail-closed로 거부한다.</li>
+        <li>외부 인증 그룹(Cognito Group 등)은 보조 신호로만 사용하고, 활성 DB 할당이 없거나 정지 상태면 관리자 권한을 부여하지 않는다.</li>
+        <li>복수 역할 사용자의 권한은 역할별 허용 작업의 합집합으로 계산하고, 범위 제한(<code>Own</code>/<code>Assigned</code>/<code>All</code>)은 역할마다 따로 적용한다.</li>
+        <li><code>require_<wbr>admin_<wbr>access</code> 계층의 일반 관리자 읽기·목록 API는 <code>R-ADMIN</code> 또는 <code>R-SUPER-ADMIN</code> 활성 역할만 확인한다. MFA 미인증만으로 403을 반환하지 않는다.</li>
+        <li>관리자 MFA는 전역 admin gate가 아니다. MFA 등록·상태·검증 API는 MFA 미인증 상태에서도 접근 가능해야 하며, 고위험 변경 승인·거절 시점에만 최근 5분 이내 TOTP 세션을 요구한다.</li>
+        <li>복구 코드로 만든 MFA 세션은 계정 복구용이다. 고위험 변경 승인·거절에는 사용할 수 없다.</li>
+        </ul>
+        <p class="doc-p"><code>/<wbr>admin/<wbr>*</code> 인가 실패는 다음 표준 코드로 응답한다.</p>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>HTTP Status</th><th>Code</th><th>조건</th></tr></thead><tbody>
+        <tr><td>401</td><td>UNAUTHENTICATED</td><td>인증 정보 없음</td></tr>
+        <tr><td>401</td><td>TOKEN_EXPIRED</td><td>액세스 토큰 만료</td></tr>
+        <tr><td>403</td><td>ADMIN_ACCESS_REQUIRED</td><td>활성 관리자 역할 없음</td></tr>
+        <tr><td>403</td><td>ROLE_FORBIDDEN</td><td>역할은 있으나 해당 작업 권한 없음</td></tr>
+        <tr><td>403</td><td>SUPER_ADMIN_REQUIRED</td><td><code>R-SUPER-ADMIN</code> 전용 작업을 다른 역할이 시도</td></tr>
+        <tr><td>403</td><td>REGION_SCOPE_FORBIDDEN</td><td><code>R-LOCAL-OPERATOR</code>의 담당 지역(Assigned) 밖 요청</td></tr>
+        <tr><td>403</td><td>ORGANIZATION_SCOPE_FORBIDDEN</td><td><code>R-DATA-PROVIDER</code>의 소속 기관(Own) 밖 요청</td></tr>
+        <tr><td>403</td><td>SELF_REVIEW_FORBIDDEN</td><td>제안 작성자 본인이 동일 제안을 검토</td></tr>
+        <tr><td>404</td><td>NOT_FOUND</td><td>리소스 없음(존재 여부 비노출)</td></tr>
+        <tr><td>409</td><td>ROLE_ASSIGNMENT_CONFLICT</td><td>역할·지역 할당 충돌</td></tr>
+        <tr><td>409</td><td>INVALID_PROPOSAL_STATE</td><td>검토 불가 상태에서의 전이 시도</td></tr>
+        </tbody></table></div>
+        <h2 id="s9-2" class="s-h2">9.2 데이터 제안 검토 — <code>PATCH /<wbr>admin/<wbr>data-submissions/<wbr>{submissionId}/<wbr>review</code></h2>
+        <p class="doc-p">승인·반려·수정 요청 처리 시 서버는 다음을 추가로 검증한다. (요구사항 <code>FR-ADMIN-006</code>, <code>FR-ADMIN-009</code>, <code>FR-ADMIN-014</code>)</p>
+        <ul class="bullet-list">
+        <li>검토 결정(승인·반려·수정 요청)은 <code>R-ADMIN</code>만 수행한다. <code>R-DATA-PROVIDER</code>·<code>R-LOCAL-OPERATOR</code>는 거부한다.</li>
+        <li>제안 작성자 본인(<code>createdBy</code>가 요청자와 동일)이 같은 제안을 검토하면 거부한다(이해충돌 방지).</li>
+        <li>대상 제안이 검토 가능한 상태가 아니면 거부한다.</li>
+        <li>오류 메시지에 타 사용자 ID·기관명·지역 할당·리소스 존재 여부를 노출하지 않는다.</li>
+        </ul>
+        <h2 id="s9-3" class="s-h2">9.3 관리자 Step-up MFA</h2>
+        <p class="doc-p">관리자 MFA는 기존 로그인 경로를 바꾸지 않고 고위험 변경 승인·거절 직전에만 step-up으로 적용한다. 일반 admin 읽기·목록 경로와 MFA 상태 조회는 활성 관리자 역할만 있으면 접근 가능하다. (요구사항 <code>FR-ADMIN-017</code>)</p>
+        <h2 id="상태-조회-get-admin-security-mfa-status" class="s-h2">상태 조회 — <code>GET /<wbr>admin/<wbr>security/<wbr>mfa/<wbr>status</code></h2>
+        <p class="doc-p">응답은 <code>mfa.enrolled</code>, <code>mfa.credentialStatus</code>, <code>mfa.sessionVerified</code>, <code>mfa.sessionVerifiedAt</code>, <code>mfa.sessionExpiresAt</code>, <code>mfa.recoveryCodesRemaining</code>을 포함한다.</p>
+        <h2 id="등록-시작-post-admin-security-mfa-enroll" class="s-h2">등록 시작 — <code>POST /<wbr>admin/<wbr>security/<wbr>mfa/<wbr>enroll</code></h2>
+        <p class="doc-p">서버는 사용자별 TOTP secret을 생성하고 암호화해 <code>pending</code> 상태로 저장한다. 응답은 <code>enrollment.secret</code>, <code>enrollment.provisioningUri</code>를 포함한다.</p>
+        <h2 id="등록-확인-post-admin-security-mfa-confirm" class="s-h2">등록 확인 — <code>POST /<wbr>admin/<wbr>security/<wbr>mfa/<wbr>confirm</code></h2>
+        <p class="doc-p">요청 본문은 <code>code</code>를 포함한다. 서버는 TOTP 코드를 검증하고 MFA 자격을 <code>active</code>로 전환한 뒤 복구 코드를 1회 표시한다. 응답은 <code>status</code>, <code>recoveryCodes</code>를 포함한다.</p>
+        <h2 id="세션-인증-post-admin-security-mfa-verify" class="s-h2">세션 인증 — <code>POST /<wbr>admin/<wbr>security/<wbr>mfa/<wbr>verify</code></h2>
+        <p class="doc-p">요청 본문은 <code>code</code>를 포함한다. 서버는 TOTP 재사용을 거부하고 현재 로그인 세션에 관리자 MFA 인증 만료 시각과 인증 방법 <code>totp</code>를 기록한다. 고위험 승인·거절은 이 엔드포인트로 만든 최근 5분 이내 TOTP 세션을 별도로 확인하며, approve/reject 본문에는 TOTP code를 넣지 않는다. 응답은 <code>mfa</code> 상태를 포함한다.</p>
+        <h2 id="복구-인증-post-admin-security-mfa-recover" class="s-h2">복구 인증 — <code>POST /<wbr>admin/<wbr>security/<wbr>mfa/<wbr>recover</code></h2>
+        <p class="doc-p">요청 본문은 <code>recoveryCode</code>를 포함한다. 서버는 복구 코드를 1회 사용 처리하고 현재 로그인 세션을 복구 인증 상태로 전환한다. 이 세션은 계정 복구용이며 고위험 변경 승인·거절에는 사용할 수 없다. 응답은 <code>mfa</code> 상태를 포함한다.</p>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>HTTP Status</th><th>Code</th><th>조건</th></tr></thead><tbody>
+        <tr><td>400</td><td>INVALID_ADMIN_MFA_PAYLOAD</td><td>필수 <code>code</code> 또는 <code>recoveryCode</code> 누락</td></tr>
+        <tr><td>403</td><td>ADMIN_MFA_REQUIRED</td><td>고위험 승인·거절 시점에 현재 세션의 MFA 인증 없음</td></tr>
+        <tr><td>403</td><td>ADMIN_MFA_ENROLLMENT_REQUIRED</td><td>활성 MFA 자격 없음</td></tr>
+        <tr><td>403</td><td>ADMIN_MFA_CODE_INVALID</td><td>TOTP 또는 복구 코드 불일치</td></tr>
+        <tr><td>403</td><td>ADMIN_MFA_SESSION_REQUIRED</td><td>MFA 인증을 기록할 로그인 세션 식별자 없음</td></tr>
+        <tr><td>409</td><td>ADMIN_MFA_ALREADY_ENROLLED</td><td>이미 활성 MFA 자격이 있음</td></tr>
+        <tr><td>409</td><td>ADMIN_MFA_STATE_CONFLICT</td><td>MFA 자격 상태가 요청 전이와 맞지 않음</td></tr>
+        <tr><td>409</td><td>ADMIN_MFA_CODE_REUSED</td><td>이미 사용한 TOTP counter 또는 복구 코드 재사용</td></tr>
+        <tr><td>429</td><td>ADMIN_MFA_LOCKED</td><td>연속 실패로 MFA 검증 일시 잠금</td></tr>
+        <tr><td>500</td><td>ADMIN_MFA_NOT_CONFIGURED</td><td>MFA 암호화 키 또는 저장소 설정 누락</td></tr>
+        </tbody></table></div>
+        <h2 id="s9-4" class="s-h2">9.4 고위험 변경 요청</h2>
+        <p class="doc-p">역할·지역 할당과 월간 여행지 대량 게시는 직접 변경 API 없이 고위험 요청으로 처리한다. 생성·목록은 <code>R-ADMIN</code> 또는 <code>R-SUPER-ADMIN</code>, 승인·거절은 <code>R-SUPER-ADMIN</code>만 허용한다. <code>R-SUPER-ADMIN</code>은 일반 <code>R-ADMIN</code> 권한을 자동 상속하지 않지만, 이 절의 생성·목록 API는 두 역할을 모두 허용한다.</p>
+        <h2 id="요청-생성-post-admin-high-risk-requests" class="s-h2">요청 생성 — <code>POST /<wbr>admin/<wbr>high-risk-requests</code></h2>
+        <p class="doc-p">공통 필드는 <code>operationType</code>, <code>reason</code>이다. 작업별 요청 필드는 다음과 같다.</p>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th><code>operationType</code></th><th>추가 필드</th><th>검증 규칙</th></tr></thead><tbody>
+        <tr><td><code>role_<wbr>grant</code></td><td><code>targetUserId</code>, <code>roleCode</code>, 선택 <code>organizationId</code>, <code>validUntil</code></td><td>역할 enum만 허용, <code>R-SUPER-ADMIN</code>은 <code>organizationId</code> 금지</td></tr>
+        <tr><td><code>role_<wbr>revoke</code></td><td><code>targetUserId</code>, <code>roleCode</code>, 선택 <code>organizationId</code></td><td>활성 할당 필요, 마지막 활성 <code>R-SUPER-ADMIN</code> 회수 금지</td></tr>
+        <tr><td><code>region_<wbr>grant</code></td><td><code>targetUserId</code>, <code>regionId</code>, 선택 <code>organizationId</code>, <code>validUntil</code></td><td>대상 사용자 존재 필요</td></tr>
+        <tr><td><code>region_<wbr>revoke</code></td><td><code>targetUserId</code>, <code>regionId</code>, 선택 <code>organizationId</code></td><td>활성 할당 필요</td></tr>
+        <tr><td><code>bulk_<wbr>publish</code></td><td><code>destinationIds</code></td><td>중복 제거 후 고유 ID 10~100개</td></tr>
+        </tbody></table></div>
+        <p class="doc-p"><strong>Response 201</strong></p>
+        <pre><code>{
+          &quot;request&quot;: {
+            &quot;id&quot;: &quot;uuid&quot;,
+            &quot;operationType&quot;: &quot;role_grant&quot;,
+            &quot;targetUserId&quot;: &quot;uuid&quot;,
+            &quot;payload&quot;: {
+              &quot;operationType&quot;: &quot;role_grant&quot;,
+              &quot;reason&quot;: &quot;운영 담당자 권한 부여&quot;,
+              &quot;targetUserId&quot;: &quot;uuid&quot;,
+              &quot;roleCode&quot;: &quot;R-LOCAL-OPERATOR&quot;,
+              &quot;organizationId&quot;: null,
+              &quot;validUntil&quot;: null
+            },
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;reason&quot;: &quot;운영 담당자 권한 부여&quot;,
+            &quot;requestedBy&quot;: &quot;uuid&quot;,
+            &quot;decidedBy&quot;: null,
+            &quot;decisionReason&quot;: null,
+            &quot;requestedAt&quot;: &quot;2026-06-30T02:00:00Z&quot;,
+            &quot;decidedAt&quot;: null,
+            &quot;executedAt&quot;: null,
+            &quot;executionSummary&quot;: {},
+            &quot;updatedAt&quot;: &quot;2026-06-30T02:00:00Z&quot;
+          }
+        }</code></pre>
+        <h2 id="목록-조회-get-admin-high-risk-requests" class="s-h2">목록 조회 — <code>GET /<wbr>admin/<wbr>high-risk-requests</code></h2>
+        <p class="doc-p">선택 query는 <code>status</code>(<code>pending</code>, <code>executed</code>, <code>rejected</code>), <code>operationType</code>, <code>limit</code>이다. admin_web pending 목록은 <code>GET /<wbr>api/<wbr>v1/<wbr>admin/<wbr>high-risk-requests?status=pending&amp;limit=50</code>을 사용한다. 목록 조회는 MFA가 필요 없고 역할 인증만 필요하다. <code>limit</code>은 서버에서 최대 50으로 clamp하며, 50건 초과 여부와 관계없이 현재 응답의 <code>nextCursor</code>는 <code>null</code>이다.</p>
+        <h2 id="승인-실행-post-admin-high-risk-requests-requestid-approve" class="s-h2">승인·실행 — <code>POST /<wbr>admin/<wbr>high-risk-requests/<wbr>{requestId}/<wbr>approve</code></h2>
+        <p class="doc-p">요청 본문은 선택 <code>decisionReason</code>만 허용하며 TOTP <code>code</code>를 포함하지 않는다. 요청자와 다른 <code>R-SUPER-ADMIN</code>이 <code>/<wbr>admin/<wbr>security/<wbr>mfa/<wbr>verify</code>로 최근 5분 이내 TOTP 재인증한 경우에만 승인한다. 승인 시 대상 변경과 감사 로그를 같은 트랜잭션에서 실행하고 응답 상태를 <code>executed</code>로 반환한다. 복구 코드로 인증한 MFA 세션은 허용하지 않는다.</p>
+        <h2 id="거절-post-admin-high-risk-requests-requestid-reject" class="s-h2">거절 — <code>POST /<wbr>admin/<wbr>high-risk-requests/<wbr>{requestId}/<wbr>reject</code></h2>
+        <p class="doc-p">요청 본문은 필수 <code>decisionReason</code>만 포함하며 TOTP <code>code</code>를 포함하지 않는다. 승인과 같은 역할 분리·최근 TOTP 조건을 적용하며, 대상 변경 없이 상태를 <code>rejected</code>로 반환한다.</p>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>HTTP Status</th><th>Code</th><th>조건</th></tr></thead><tbody>
+        <tr><td>400</td><td>INVALID_HIGH_RISK_PAYLOAD</td><td>생성 본문·작업 유형·필드·대량 게시 건수 오류</td></tr>
+        <tr><td>400</td><td>INVALID_HIGH_RISK_FILTER</td><td>목록 필터 오류</td></tr>
+        <tr><td>400</td><td>INVALID_HIGH_RISK_DECISION</td><td>결정 본문 또는 필수 거절 사유 오류</td></tr>
+        <tr><td>403</td><td>SUPER_ADMIN_REQUIRED</td><td><code>R-SUPER-ADMIN</code>이 아닌 사용자의 승인·거절 시도</td></tr>
+        <tr><td>403</td><td>ADMIN_MFA_REQUIRED</td><td>현재 세션의 MFA 인증 없음</td></tr>
+        <tr><td>403</td><td>ADMIN_MFA_ENROLLMENT_REQUIRED</td><td>활성 MFA 자격 없음</td></tr>
+        <tr><td>403</td><td>ADMIN_MFA_TOTP_REQUIRED</td><td>최근 5분 TOTP가 아니거나 복구 코드 인증 세션</td></tr>
+        <tr><td>404</td><td>HIGH_RISK_REQUEST_NOT_FOUND</td><td>요청 없음</td></tr>
+        <tr><td>404</td><td>USER_NOT_FOUND</td><td>역할·지역 대상 사용자 없음</td></tr>
+        <tr><td>404</td><td>MONTHLY_DESTINATION_NOT_FOUND</td><td>대량 게시 대상 중 존재하지 않는 항목이 있음</td></tr>
+        <tr><td>409</td><td>SELF_APPROVAL_FORBIDDEN</td><td>요청자가 자신의 요청을 승인·거절</td></tr>
+        <tr><td>409</td><td>HIGH_RISK_REQUEST_ALREADY_DECIDED</td><td>이미 실행·거절된 요청 재결정</td></tr>
+        <tr><td>409</td><td>HIGH_RISK_REQUEST_STATE_CONFLICT</td><td>동시 결정으로 상태가 변경됨</td></tr>
+        <tr><td>409</td><td>ACTIVE_ASSIGNMENT_NOT_FOUND</td><td>회수할 활성 역할·지역 할당 없음</td></tr>
+        <tr><td>409</td><td>LAST_SUPER_ADMIN_REQUIRED</td><td>마지막 활성 <code>R-SUPER-ADMIN</code> 회수 시도</td></tr>
+        <tr><td>409</td><td>MONTHLY_TRANSITION_FORBIDDEN</td><td>게시 가능한 상태가 아닌 월간 여행지 포함</td></tr>
+        <tr><td>429</td><td>ADMIN_MFA_LOCKED</td><td>연속 실패로 MFA 검증 일시 잠금</td></tr>
+        </tbody></table></div>
+        <h2 id="s9-5" class="s-h2">9.5 관리자 감사 로그 조회 — <code>GET /<wbr>admin/<wbr>audit-logs</code></h2>
+        <p class="doc-p"><code>R-ADMIN</code> 또는 <code>R-SUPER-ADMIN</code>이 조회한다. 선택 query는 <code>action</code>, <code>resourceType</code>, <code>result</code>, <code>actorUserId</code>, <code>limit</code>이며 응답은 <code>items</code>, <code>nextCursor: null</code>을 반환한다. 조회에는 MFA를 요구하지 않는다. 고위험 변경에서는 <code>high_<wbr>risk_<wbr>request.create/<wbr>approve/<wbr>reject</code>, <code>role_<wbr>grant.execute</code>, <code>role_<wbr>revoke.execute</code>, <code>region_<wbr>grant.execute</code>, <code>region_<wbr>revoke.execute</code>, <code>bulk_<wbr>publish.execute</code>를 조회할 수 있어야 한다.</p>
+        <p class="doc-p">감사 항목은 행위자·세션, 역할·기관·지역 스냅샷, action, 리소스, <code>allowed</code>/<code>denied</code>/<code>succeeded</code>/<code>failed</code> 결과, 사유 코드, 요청 ID, 비민감 변경 전·후 요약을 포함한다. 토큰, 쿠키, TOTP secret·코드, 복구 코드와 민감 원문은 반환하지 않는다.</p>
         <h1 id="s10" class="s-h1">10. 변경 이력</h1>
         <div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
         <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+        <tr><td>v0.8</td><td>2026-07-02</td><td>Codex</td><td>관리자 MFA 범위를 고위험 승인·거절 시점으로 정정하고 pending 목록 조회, TOTP 별도 검증, 복구 코드 승인 불가, limit 50 clamp 계약 반영</td></tr>
+        <tr><td>v0.7</td><td>2026-06-30</td><td>Codex</td><td><code>R-SUPER-ADMIN</code> 역할 enum, 고위험 변경 생성·조회·승인·거절 API, 최근 TOTP·자기 결정 금지·오류 코드와 C4 감사 로그 조회 계약 추가</td></tr>
+        <tr><td>v0.6</td><td>2026-06-30</td><td>Codex</td><td>관리자 Step-up MFA 상태·등록·확인·인증·복구 API와 오류 코드 추가</td></tr>
+        <tr><td>v0.5</td><td>2026-06-30</td><td>Codex</td><td>관리자 운영 API 인가 규칙, 자기검토 금지 오류 코드, <code>/<wbr>admin/<wbr>*</code> 오류 코드 교차참조 반영</td></tr>
+        <tr><td>v0.4</td><td>2026-06-22</td><td>로브 기획팀</td><td>대화형 빌더 API placeholder 반영: 반경 후보 조회, 후보 선택·일정 추가, 서브 윈도우 플래그, 빌더 상태 재개 계약 후보 기록</td></tr>
         <tr><td>v0.3</td><td>2026-06-12</td><td>로브 기획팀</td><td>Cognito bridge 인증 흐름 추가, Google/Kakao 직접 검증 API legacy 처리, role enum과 logout 책임 경계 반영</td></tr>
         <tr><td>v0.2</td><td>2026-06-08</td><td>로브 기획팀</td><td>AWS SAM 기반 Auth, Map, AgentCore Lambda별 API 라우팅과 Google/Kakao 인증, 세션, 지도 상세, 저장 없는 Agent 답변 API 추가</td></tr>
         <tr><td>v0.1</td><td>2026-05-29</td><td>로브 기획팀</td><td>API 명세서 초안 작성</td></tr>

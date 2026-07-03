@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로브 (Lovv) — 테스트 계획서 v0.2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/requirements.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside>
+        <div class="aside-brand">
+          <div class="aside-logo">로브</div>
+          <div class="aside-ver">Test Plan · v0.2</div>
+          <div class="aside-status"><div class="status-dot"></div><span>초안</span></div>
+        </div>
+        <nav class="toc">
+          <div class="toc-section"><a class="toc-link active" href="#cover">표지 / 문서 정보</a></div>
+          <div class="toc-section">
+            <div class="toc-section-hd">2. 테스트 범위</div>
+            <a class="toc-link" href="#s2">2. 테스트 범위</a>
+          </div>
+          <div class="toc-section">
+            <div class="toc-section-hd">3. 현재 반영된 평가 산출물</div>
+            <a class="toc-link" href="#s3">3. 현재 반영된 평가 산출물</a>
+          </div>
+          <div class="toc-section">
+            <div class="toc-section-hd">4. 공통 검증 원칙</div>
+            <a class="toc-link" href="#s4">4. 공통 검증 원칙</a>
+            <a class="toc-link" href="#s4-1">4.1 관리자 MFA·고위험 승인 검증 명령</a>
+          </div>
+          <div class="toc-section">
+            <div class="toc-section-hd">5. 후속 작성 항목</div>
+            <a class="toc-link" href="#s5">5. 후속 작성 항목</a>
+          </div>
+          <div class="toc-section">
+            <div class="toc-section-hd">6. 변경 이력</div>
+            <a class="toc-link" href="#s6">6. 변경 이력</a>
+          </div>
+        </nav>
+      </aside>
+      <main id="cover">
+        <h1 id="cover-title" class="s-h1">1. 문서 목적</h1>
+        <p class="doc-p">﻿# 로브 (Lovv) 테스트 계획서</p>
+        <blockquote>
+        <p class="doc-p">문서 버전: v0.2</p>
+        <p class="doc-p">문서 상태: 초안 (Draft)</p>
+        <p class="doc-p">작성일: 2026-06-23</p>
+        <p class="doc-p">문서 성격: 대표 Markdown</p>
+        <p class="doc-p">기준 문서: <code>../<wbr>01_<wbr>requirements/<wbr>01_<wbr>requirements.md</code>, <code>../<wbr>05_<wbr>agent_<wbr>spec/<wbr>05_<wbr>agent_<wbr>spec.md</code>, <code>../<wbr>06_<wbr>technical_<wbr>spec/<wbr>06_<wbr>technical_<wbr>spec.md</code>, <code>../<wbr>07_<wbr>api_<wbr>spec/<wbr>07_<wbr>api_<wbr>spec.md</code>, <code>../<wbr>11_<wbr>deployment_<wbr>ops/<wbr>11_<wbr>deployment_<wbr>ops.md</code></p>
+        </blockquote>
+        <p class="doc-p">이 문서는 Lovv 전체 테스트 범위를 대표 문서에서 관리하기 위한 상위 계획서다. 현재 확정된 검증 산출물은 Candidate Evidence Agent 검색 평가이며, Planner 일정 생성, Festival Verifier, API E2E, 배포·운영 검증은 후속 계획 범위로 둔다.</p>
+        <p class="doc-p"><code>docs/<wbr>10_<wbr>test_<wbr>plan/<wbr></code>의 보조 Markdown은 개별 평가 계획과 결과 보고서로 관리한다. 보조 문서의 범위가 전체 시스템 테스트 기준으로 승격되면 이 대표 문서에 요약 반영한다.</p>
+        <h1 id="s2" class="s-h1">2. 테스트 범위</h1>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>구분</th><th>현재 문서화 상태</th><th>대표 문서 반영 기준</th></tr></thead><tbody>
+        <tr><td>Candidate Evidence 검색</td><td>계획·결과 문서화 완료</td><td>현재 문서의 3장에 요약</td></tr>
+        <tr><td>Planner 일정 생성</td><td>후속 작성 필요</td><td><code>05_<wbr>agent_<wbr>spec.md</code>, <code>planner_<wbr>agent.md</code>, <code>itinerary_<wbr>flow.md</code> 기준으로 테스트 계획 작성</td></tr>
+        <tr><td>Festival Verifier</td><td>후속 작성 필요</td><td><code>festival_<wbr>verifier_<wbr>agent.md</code> 기준으로 날짜·출처 검증 테스트 작성</td></tr>
+        <tr><td>API E2E</td><td>후속 작성 필요</td><td><code>07_<wbr>api_<wbr>spec.md</code> 기준으로 인증, 추천, 저장, 피드백, 운영 API 시나리오 작성</td></tr>
+        <tr><td>UI/UX 수용 테스트</td><td>후속 작성 필요</td><td><code>09_<wbr>ui_<wbr>ux_<wbr>guide.md</code> 기준으로 주요 사용자 여정 검증</td></tr>
+        <tr><td>배포·운영 검증</td><td>후속 작성 필요</td><td><code>11_<wbr>deployment_<wbr>ops.md</code> 기준으로 배포, 롤백, 모니터링, 장애 대응 검증</td></tr>
+        <tr><td>관리자 MFA·고위험 승인</td><td>명령·범위 문서화 완료, 실행 결과는 별도 기록 필요</td><td><code>01_<wbr>requirements.md</code>, <code>07_<wbr>api_<wbr>spec.md</code>, <code>11_<wbr>deployment_<wbr>ops.md</code> 기준으로 role-only admin read, decision-time TOTP, recovery code 승인 불가, 2인 승인 검증</td></tr>
+        </tbody></table></div>
+        <h1 id="s3" class="s-h1">3. 현재 반영된 평가 산출물</h1>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>보조 문서</th><th>범위</th><th>상태</th></tr></thead><tbody>
+        <tr><td><code>supplemental/<wbr>candidate_<wbr>evidence_<wbr>search_<wbr>test_<wbr>plan.md</code></td><td>Candidate Evidence Agent의 도시 및 관광지 검색 테스트 계획</td><td>Review</td></tr>
+        <tr><td><code>supplemental/<wbr>candidate_<wbr>evidence_<wbr>evaluation_<wbr>results.md</code></td><td>Baseline Simple RAG와 Candidate Evidence Agent Ours 비교 결과</td><td>Review</td></tr>
+        </tbody></table></div>
+        <p class="doc-p">Candidate Evidence 평가는 도시 선정, 관광지·음식점 후보 검색, scoring, quota, fallback, audit 구조를 검증한다. Planner 일정 품질, Festival 검증, LangGraph 전체 trajectory, API E2E는 해당 평가의 범위 밖이다.</p>
+        <h1 id="s4" class="s-h1">4. 공통 검증 원칙</h1>
+        <ul class="bullet-list">
+        <li>테스트 범위는 요구사항 ID, Agent 입출력, API 계약, 데이터 모델과 연결한다.</li>
+        <li>부분 평가 문서는 전체 시스템 합격으로 해석하지 않는다.</li>
+        <li>실행 결과는 통과·실패 수치뿐 아니라 범위, 제외 항목, 해석 한계를 함께 기록한다.</li>
+        <li>LLM judge나 합성 fixture를 사용하는 경우 실제 사용자 검증을 대체하지 않는다고 명시한다.</li>
+        <li>성능, 비용, observability 항목은 기술 명세서와 배포·운영 문서의 기준을 따른다.</li>
+        <li>관리자 보안 테스트는 role 인증, MFA 세션, 고위험 승인 트랜잭션, 감사 로그를 분리해 기록한다. 일반 admin 읽기·목록 경로는 MFA 없이 role 인증만 요구하는지 별도 확인한다.</li>
+        <li>opt-in 실DB 통합 테스트는 일반 unittest와 구분한다. <code>RUN_<wbr>ADMIN_<wbr>DB_<wbr>INTEGRATION=1</code> 또는 <code>RUN_<wbr>RDS_<wbr>DATA_<wbr>API_<wbr>INTEGRATION=1</code>을 켜지 않았다면 실행 완료로 기록하지 않는다.</li>
+        </ul>
+        <h2 id="s4-1" class="s-h2">4.1 관리자 MFA·고위험 승인 검증 명령</h2>
+        <p class="doc-p">BE 일반 테스트:</p>
+        <pre><code>$env:PYTHONPATH=&#x27;src&#x27;
+        python -m unittest</code></pre>
+        <p class="doc-p">BE 고위험/MFA 핵심 테스트:</p>
+        <pre><code>python -m unittest tests.test_admin_high_risk_app
+        python -m unittest tests.test_admin_mfa_app.AdminMfaAppTest.test_admin_read_routes_need_role_only_and_mfa_status_is_accessible</code></pre>
+        <p class="doc-p">admin_web 검증:</p>
+        <pre><code>npm.cmd run lint
+        npm.cmd test
+        npm.cmd run build</code></pre>
+        <p class="doc-p">opt-in 실DB 통합 테스트:</p>
+        <pre><code>$env:RUN_ADMIN_DB_INTEGRATION=&#x27;1&#x27;
+        $env:RUN_RDS_DATA_API_INTEGRATION=&#x27;1&#x27;
+        python -m unittest</code></pre>
+        <p class="doc-p">위 opt-in 테스트는 실제 DB 연결·자격 증명·격리된 테스트 데이터가 준비된 경우에만 실행한다. 문서 작업 또는 일반 unittest 실행만으로는 완료 처리하지 않는다.</p>
+        <h1 id="s5" class="s-h1">5. 후속 작성 항목</h1>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>우선순위</th><th>항목</th><th>기준 문서</th></tr></thead><tbody>
+        <tr><td>P1</td><td>Planner 일정 생성 테스트 계획</td><td><code>../<wbr>05_<wbr>agent_<wbr>spec/<wbr>supplemental/<wbr>planner_<wbr>agent.md</code>, <code>../<wbr>05_<wbr>agent_<wbr>spec/<wbr>supplemental/<wbr>itinerary_<wbr>flow.md</code></td></tr>
+        <tr><td>P1</td><td>API 추천·저장 E2E 테스트 계획</td><td><code>../<wbr>07_<wbr>api_<wbr>spec/<wbr>07_<wbr>api_<wbr>spec.md</code></td></tr>
+        <tr><td>P2</td><td>Festival Verifier 날짜·출처 검증 테스트</td><td><code>../<wbr>05_<wbr>agent_<wbr>spec/<wbr>supplemental/<wbr>festival_<wbr>verifier_<wbr>agent.md</code></td></tr>
+        <tr><td>P2</td><td>UI 주요 여정 수용 테스트</td><td><code>../<wbr>09_<wbr>ui_<wbr>ux_<wbr>guide/<wbr>09_<wbr>ui_<wbr>ux_<wbr>guide.md</code></td></tr>
+        <tr><td>P3</td><td>배포·운영 smoke 및 rollback 테스트</td><td><code>../<wbr>11_<wbr>deployment_<wbr>ops/<wbr>11_<wbr>deployment_<wbr>ops.md</code></td></tr>
+        <tr><td>P1</td><td>admin_web <code>권한 승인</code> 탭 수용 테스트</td><td>pending eager loading, <code>50+</code> badge, <code>R-ADMIN</code> 승인 버튼 비노출, <code>R-SUPER-ADMIN</code> decision-time MFA 모달</td></tr>
+        <tr><td>P1</td><td>관리자 DB migration smoke</td><td><code>infra/<wbr>data-stack/<wbr>rds/<wbr>schema.sql</code> 후 admin migration 002→003→004 적용, 001 삭제 유지, 004의 MFA·고위험 테이블 단일 정의 확인</td></tr>
+        </tbody></table></div>
+        <h1 id="s6" class="s-h1">6. 변경 이력</h1>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
+        <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+        <tr><td>v0.2</td><td>2026-07-02</td><td>Codex</td><td>관리자 MFA·고위험 승인 BE/admin_web 검증 명령, role-only admin read 핵심 테스트, opt-in 실DB 테스트 실행 여부 구분 추가</td></tr>
+        <tr><td>v0.1</td><td>2026-06-23</td><td>로브 기획팀</td><td>테스트 계획 대표 문서 생성, Candidate Evidence 평가 산출물과 후속 테스트 범위 정리</td></tr>
+        </tbody></table></div>
+        <nav class="doc-nav" aria-label="이전 다음 문서">
+          <a class="doc-nav-home" href="../index.html">문서 홈</a>
+          <div class="doc-nav-pager">
+            <a class="doc-nav-link" href="./09_ui_ux_guide.html">이전 문서<br><strong>UI/UX 가이드</strong></a>
+            <a class="doc-nav-link" href="./11_deployment_ops.html">다음 문서<br><strong>배포·운영 가이드</strong></a>
+          </div>
+        </nav>
+      </main>
+    </div>
+    <script src="../assets/js/requirements.js" defer></script>
+  </body>
+</html>

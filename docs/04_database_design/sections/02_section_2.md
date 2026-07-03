@@ -8,6 +8,7 @@
 | 저장 일정 | 사용자가 저장한 여행 일정과 저장 당시의 조건 스냅샷 | Itinerary |
 | 일정 항목 | 일정에 포함된 장소, 방문 순서, 이동 힌트, 추천 이유 | ItineraryItem |
 | 일정 반응 | 사용자가 일정에 남긴 좋아요/싫어요 등 가벼운 반응 | PlanReaction |
+| 관리자 권한·고위험 변경 | 역할·지역 할당, 2인 승인 요청, 실행 결과와 감사 추적 | RoleAssignment, RegionAssignment, HighRiskChangeRequest, AdminAuditLog |
 | 수집·검색 보조 | RDB 원장이 아닌 DynamoDB/S3 vector/Lambda 관계 탐색 기반 검색·로그 보조 데이터 | ContentDocument, S3VectorIndex, RelationGraphSnapshot |
 | Agent·로그 | Agent 실행, 비동기 작업, API 호출, 사용자 이벤트, 운영 trace | AgentRun, AsyncJob, EventLog |
 | RAG 검색 | 검색 문서, chunk, embedding, metadata filter | RagDocument, RagChunk, S3VectorIndex |

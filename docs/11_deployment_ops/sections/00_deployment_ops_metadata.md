@@ -1,10 +1,10 @@
 # 로브 (Lovv) 배포·운영 가이드
 
-> 문서 버전: v0.4
+> 문서 버전: v0.5
 > 문서 상태: 초안 (Draft)
 > 작성일: 2026-06-12
 > 작성자: llm팀
-> 기준 문서: `../06_technical_spec/06_technical_spec.md`, `../07_api_spec/07_api_spec.md`, `../08_data_preprocessing/data_preprocessing_plan.md`, `supplemental/troubleshooting.md`
+> 기준 문서: `../06_technical_spec/06_technical_spec.md`, `../07_api_spec/07_api_spec.md`, `../08_data_preprocessing/data_preprocessing_plan.md`, `../04_database_design/04_database_design.md`, `supplemental/troubleshooting.md`
 
 ---
 

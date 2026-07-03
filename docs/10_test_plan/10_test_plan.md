@@ -1,10 +1,10 @@
-# 로브 (Lovv) 테스트 계획서
+﻿# 로브 (Lovv) 테스트 계획서
 
-> 문서 버전: v0.1
+> 문서 버전: v0.2
 > 문서 상태: 초안 (Draft)
 > 작성일: 2026-06-23
 > 문서 성격: 대표 Markdown
-> 기준 문서: `../01_requirements/01_requirements.md`, `../05_agent_spec/05_agent_spec.md`, `../06_technical_spec/06_technical_spec.md`, `../07_api_spec/07_api_spec.md`
+> 기준 문서: `../01_requirements/01_requirements.md`, `../05_agent_spec/05_agent_spec.md`, `../06_technical_spec/06_technical_spec.md`, `../07_api_spec/07_api_spec.md`, `../11_deployment_ops/11_deployment_ops.md`
 # 1. 문서 목적
 
 이 문서는 Lovv 전체 테스트 범위를 대표 문서에서 관리하기 위한 상위 계획서다. 현재 확정된 검증 산출물은 Candidate Evidence Agent 검색 평가이며, Planner 일정 생성, Festival Verifier, API E2E, 배포·운영 검증은 후속 계획 범위로 둔다.
@@ -20,6 +20,7 @@
 | API E2E | 후속 작성 필요 | `07_api_spec.md` 기준으로 인증, 추천, 저장, 피드백, 운영 API 시나리오 작성 |
 | UI/UX 수용 테스트 | 후속 작성 필요 | `09_ui_ux_guide.md` 기준으로 주요 사용자 여정 검증 |
 | 배포·운영 검증 | 후속 작성 필요 | `11_deployment_ops.md` 기준으로 배포, 롤백, 모니터링, 장애 대응 검증 |
+| 관리자 MFA·고위험 승인 | 명령·범위 문서화 완료, 실행 결과는 별도 기록 필요 | `01_requirements.md`, `07_api_spec.md`, `11_deployment_ops.md` 기준으로 role-only admin read, decision-time TOTP, recovery code 승인 불가, 2인 승인 검증 |
 # 3. 현재 반영된 평가 산출물
 
 | 보조 문서 | 범위 | 상태 |
@@ -35,6 +36,42 @@ Candidate Evidence 평가는 도시 선정, 관광지·음식점 후보 검색, 
 - 실행 결과는 통과·실패 수치뿐 아니라 범위, 제외 항목, 해석 한계를 함께 기록한다.
 - LLM judge나 합성 fixture를 사용하는 경우 실제 사용자 검증을 대체하지 않는다고 명시한다.
 - 성능, 비용, observability 항목은 기술 명세서와 배포·운영 문서의 기준을 따른다.
+- 관리자 보안 테스트는 role 인증, MFA 세션, 고위험 승인 트랜잭션, 감사 로그를 분리해 기록한다. 일반 admin 읽기·목록 경로는 MFA 없이 role 인증만 요구하는지 별도 확인한다.
+- opt-in 실DB 통합 테스트는 일반 unittest와 구분한다. `RUN_ADMIN_DB_INTEGRATION=1` 또는 `RUN_RDS_DATA_API_INTEGRATION=1`을 켜지 않았다면 실행 완료로 기록하지 않는다.
+
+## 4.1 관리자 MFA·고위험 승인 검증 명령
+
+BE 일반 테스트:
+
+```powershell
+$env:PYTHONPATH='src'
+python -m unittest
+```
+
+BE 고위험/MFA 핵심 테스트:
+
+```powershell
+python -m unittest tests.test_admin_high_risk_app
+python -m unittest tests.test_admin_mfa_app.AdminMfaAppTest.test_admin_read_routes_need_role_only_and_mfa_status_is_accessible
+```
+
+admin_web 검증:
+
+```powershell
+npm.cmd run lint
+npm.cmd test
+npm.cmd run build
+```
+
+opt-in 실DB 통합 테스트:
+
+```powershell
+$env:RUN_ADMIN_DB_INTEGRATION='1'
+$env:RUN_RDS_DATA_API_INTEGRATION='1'
+python -m unittest
+```
+
+위 opt-in 테스트는 실제 DB 연결·자격 증명·격리된 테스트 데이터가 준비된 경우에만 실행한다. 문서 작업 또는 일반 unittest 실행만으로는 완료 처리하지 않는다.
 # 5. 후속 작성 항목
 
 | 우선순위 | 항목 | 기준 문서 |
@@ -44,8 +81,11 @@ Candidate Evidence 평가는 도시 선정, 관광지·음식점 후보 검색, 
 | P2 | Festival Verifier 날짜·출처 검증 테스트 | `../05_agent_spec/supplemental/festival_verifier_agent.md` |
 | P2 | UI 주요 여정 수용 테스트 | `../09_ui_ux_guide/09_ui_ux_guide.md` |
 | P3 | 배포·운영 smoke 및 rollback 테스트 | `../11_deployment_ops/11_deployment_ops.md` |
+| P1 | admin_web `권한 승인` 탭 수용 테스트 | pending eager loading, `50+` badge, `R-ADMIN` 승인 버튼 비노출, `R-SUPER-ADMIN` decision-time MFA 모달 |
+| P1 | 관리자 DB migration smoke | `infra/data-stack/rds/schema.sql` 후 admin migration 002→003→004 적용, 001 삭제 유지, 004의 MFA·고위험 테이블 단일 정의 확인 |
 # 6. 변경 이력
 
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 | --- | --- | --- | --- |
+| v0.2 | 2026-07-02 | Codex | 관리자 MFA·고위험 승인 BE/admin_web 검증 명령, role-only admin read 핵심 테스트, opt-in 실DB 테스트 실행 여부 구분 추가 |
 | v0.1 | 2026-06-23 | 로브 기획팀 | 테스트 계획 대표 문서 생성, Candidate Evidence 평가 산출물과 후속 테스트 범위 정리 |
