@@ -183,6 +183,7 @@ DynamoDB는 사용자 원장을 대체하지 않는다.
 | `lovv_api_logs` | `pk` = `API#{yyyyMMdd}#{endpoint_group}` | `sk` = `created_at#{request_id}` | `method`, `path`, `status`, `latency_ms`, `user_id_hash`, `error_code` | `expires_at` |
 | `lovv_content_documents` | `pk` = `CONTENT#{country}#{entity_type}` | `sk` = `ENTITY#{entity_id}` | `city_id`, `source_type`, `source_url`, `normalized_payload`, `quality_status`, `raw_s3_uri`, `updated_at` | 없음 |
 | `lovv_visitor_statistics` | `pk` = `CITY#{city_id}` | `sk` = `STAT#{period}#{source_type}` | `country`, `period`, `visitor_type`, `value`, `unit`, `source_url`, `collected_at`, `quality_status` | 없음 |
+| `lovv_anonymous_travel_segment_stats` | `pk` = 세그먼트 식별자 | `sk` = 기간/집계 기준 | 익명 연령·성별·여행 선호 segment별 통계. 개인정보 원장이 아니라 추천 fallback용 집계 조회 모델 | 없음 |
 
 ## 3.4 S3 vector index 논리 모델
 

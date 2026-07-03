@@ -9,7 +9,7 @@
 
 Data Stack의 DynamoDB TTL 설정과 애플리케이션 쓰기 경로 사이의 갭을 단계적으로 줄인다.
 
-현재 6개 Data Stack TTL 테이블 중 `lovv_auth_sessions`는 애플리케이션 writer가 `expiresAt`를 기록한다. 나머지 5개 테이블(`lovv_user_event_logs`, `lovv_agent_runs`, `lovv_festival_verify_cache`, `lovv_async_jobs`, `lovv_api_logs`)은 `TimeToLiveSpecification`만 있고 실제 `expires_at` writer가 없다.
+현재 6개 Data Stack TTL 테이블 중 `lovv_auth_sessions`는 애플리케이션 writer가 `expiresAt`를 기록한다. 나머지 5개 테이블(`lovv_user_event_logs`, `lovv_agent_runs`, `lovv_festival_verify_cache`, `lovv_async_jobs`, `lovv_api_logs`)은 최초 분석 당시 `TimeToLiveSpecification`만 있고 실제 `expires_at` writer가 없었다. 이번 실행 범위에서는 5개 테이블의 라이브러리 수준 writer와 단위 테스트까지 추가됐지만, 제품 Lambda caller, SAM 환경변수, IAM 배선은 아직 연결하지 않는다.
 
 이번 실행 목표는 즉시 안전한 회귀 방지와 라이브러리 수준 writer 구현까지 완료하는 것이다. 실제 제품 호출자가 아직 없는 상태이므로 SAM 환경변수/IAM 배선과 Lambda 호출 연결은 추가하지 않는다.
 
@@ -144,10 +144,10 @@ When a real Lambda caller starts using one of these writers, add template tests 
   - Verify: `python -m pytest tests/test_session_repository.py`
   - Files: `tests/test_session_repository.py`
 
-- [x] Task: Defer five non-auth writer implementation until callers exist
-  - Acceptance: No SAM env/IAM wiring is introduced without a real Lambda caller.
+- [x] Task: Defer five non-auth runtime wiring until callers exist
+  - Acceptance: Library-level writers exist, but no SAM env/IAM wiring is introduced without a real Lambda caller.
   - Verify: `rg -n "USER_EVENT_LOGS_TABLE_NAME|AGENT_RUNS_TABLE_NAME|FESTIVAL_VERIFY_CACHE_TABLE_NAME|ASYNC_JOBS_TABLE_NAME|API_LOGS_TABLE_NAME" template.yaml`
-  - Files: none in this execution
+  - Files: none for runtime wiring in this execution
 
 - [x] Task: Add shared TTL helper and retention constants
   - Acceptance: `ttl_epoch()` returns integer epoch seconds and retention constants match the spec.
