@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — 데이터베이스 설계 명세서 v1.0</title>
+    <title>로브 (Lovv) — 데이터베이스 설계 명세서 v1.1</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -16,7 +16,7 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">로브</div>
-          <div class="aside-ver">Database Design · v1.0</div>
+          <div class="aside-ver">Database Design · v1.1</div>
           <div class="aside-status"><div class="status-dot"></div><span>설계 진행중</span></div>
         </div>
         <nav class="toc">
@@ -24,6 +24,7 @@
             <a class="toc-link" href="#s1-1">1.1 목적</a>
             <a class="toc-link" href="#s1-2">1.2 설계 기준</a>
             <a class="toc-link" href="#s1-3">1.3 저장소 책임</a>
+            <a class="toc-link" href="#s1-4">1.4 현재 AWS 구조 확인 기준</a>
           <div class="toc-section">
             <div class="toc-section-hd">2. 개념 설계</div>
             <a class="toc-link" href="#s2">2. 개념 설계</a>
@@ -82,7 +83,7 @@
         <h1 id="cover-title" class="s-h1">1. 문서 개요</h1>
         <p class="doc-p">﻿# 로브 (Lovv) 데이터베이스 설계 명세서</p>
         <blockquote>
-        <p class="doc-p">문서 버전: v1.0</p>
+        <p class="doc-p">문서 버전: v1.1</p>
         <p class="doc-p">문서 상태: 설계 진행중 (Designing)</p>
         <p class="doc-p">기준 문서: 요구사항 명세서 v3.0, 데이터 수집 계획서 v0.7, Agent 명세서 v0.6, 기술 명세서 v0.4, API 명세서 v0.8</p>
         <p class="doc-p">보조 문서: 데이터베이스 보존 기간·Neptune 비용 업데이트 초안, Neptune 대체 설계 명세서</p>
@@ -113,6 +114,15 @@
         <tr><td>S3 vector index</td><td>의미 검색 인덱스</td><td>목적지·축제·관광지 문서 chunk, embedding, source reference, metadata filter</td></tr>
         <tr><td>Lambda 관계 탐색</td><td>그래프DB 대체 기능 (PoC/Prod 1차)</td><td>도시-테마, 도시-축제, 인접 도시, 일정 항목-장소 후보 관계를 DynamoDB 인접 리스트와 Lambda 인메모리 그래프로 탐색. Neptune은 고도화 단계 승격 옵션</td></tr>
         <tr><td>Object Storage</td><td>원본 수집 파일과 대용량 정적 산출물</td><td>S3 Raw 수집 원본, 전처리 결과, 이미지/첨부 파일</td></tr>
+        </tbody></table></div>
+        <h2 id="s1-4" class="s-h2">1.4 현재 AWS 구조 확인 기준</h2>
+        <p class="doc-p">2026-07-03 기준으로 <code>us-east-1</code> live AWS와 인접 구현 저장소를 확인한 결과, 저장소 경계는 다음처럼 분리되어 있다. 문서에는 공개 공유를 고려해 RDS endpoint, secret ARN, 계정 상세 식별자는 싣지 않고 리소스 역할과 물리 이름만 기록한다.</p>
+        <div class="table-wrap wide extra-wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>경계</th><th>현재 확인 기준</th><th>핵심 리소스</th></tr></thead><tbody>
+        <tr><td>Backend Data Stack</td><td><code>03_<wbr>lovv_<wbr>BE/<wbr>infra/<wbr>data-stack/<wbr>template.yaml</code>, CloudFormation <code>lovv-dev-data-stack</code></td><td>RDS MySQL <code>lovv-dev-mysql</code>, DynamoDB <code>lovv_<wbr>dev_<wbr>*</code>, S3 image bucket <code>lovv-image-dev-925273580929</code></td></tr>
+        <tr><td>Data Collect Pipeline</td><td><code>02_<wbr>lovv_<wbr>data_<wbr>collect/<wbr>infrastructure/<wbr>terraform</code></td><td>S3 raw/processed bucket <code>lovv-data-pipeline-dev-925273580929</code>, image pipeline bucket <code>lovv-pipeline-images-dev-925273580929</code>, DynamoDB <code>TourKoreaDomainData</code>, <code>TourKoreaDomainDataV2</code></td></tr>
+        <tr><td>Vector Retrieval</td><td>Terraform S3 Vector shim과 live <code>s3vectors get-index</code></td><td><code>lovv-vector-dev</code> / <code>kr-tour-domain-v2</code>, <code>lovv-agentcore-v1-vector</code> / <code>kr-agentcore-v1</code></td></tr>
+        <tr><td>Network Access</td><td>Backend data stack VPC endpoint 및 선택 NAT instance</td><td>RDS는 private subnet에 배치하고, S3/DynamoDB는 Gateway VPC Endpoint, Secrets Manager/SSM은 Interface VPC Endpoint로 접근</td></tr>
         </tbody></table></div>
         <h1 id="s2" class="s-h1">2. 개념 설계</h1>
         <h2 id="s2-1" class="s-h2">2.1 핵심 도메인</h2>
@@ -146,18 +156,21 @@
         <thead><tr><th>영역</th><th>테이블</th><th>책임</th></tr></thead><tbody>
         <tr><td>사용자</td><td><code>users</code></td><td>서비스 사용자 프로필의 기준 원장</td></tr>
         <tr><td>소셜 계정</td><td><code>social_<wbr>accounts</code></td><td>소셜 로그인 제공자 계정과 서비스 사용자 연결</td></tr>
+        <tr><td>사용자 취향</td><td><code>user_<wbr>preferences</code></td><td>온보딩·마이페이지 취향 원장</td></tr>
         <tr><td>저장 일정</td><td><code>itineraries</code></td><td>사용자가 저장한 최종 여행 일정과 요청·선호 스냅샷</td></tr>
         <tr><td>일정 항목</td><td><code>itinerary_<wbr>items</code></td><td>일정에 포함된 세부 장소와 방문 순서</td></tr>
         <tr><td>일정 반응</td><td><code>plan_<wbr>reactions</code></td><td>일정에 대한 사용자 반응</td></tr>
+        <tr><td>관리자 조직·운영</td><td><code>admin_<wbr>organizations</code>, <code>admin_<wbr>notices</code>, <code>admin_<wbr>recommendation_<wbr>policies</code></td><td>관리자 콘솔의 기관, 공지, 추천 정책 운영 원장</td></tr>
         <tr><td>관리자 역할</td><td><code>user_<wbr>role_<wbr>assignments</code></td><td>사용자별 활성 역할과 유효기간, 부여자 원장</td></tr>
         <tr><td>관리자 지역</td><td><code>user_<wbr>region_<wbr>assignments</code></td><td>사용자별 담당 지역과 유효기간, 부여자 원장</td></tr>
+        <tr><td>관리자 데이터 검수</td><td><code>admin_<wbr>data_<wbr>proposals</code>, <code>admin_<wbr>data_<wbr>proposal_<wbr>history</code>, <code>monthly_<wbr>curated_<wbr>destinations</code>, <code>admin_<wbr>publish_<wbr>jobs</code>, <code>destination_<wbr>metrics_<wbr>daily</code></td><td>지역 큐레이터 제안, 변경 이력, 월간 큐레이션, 게시 작업, 목적지 지표 원장</td></tr>
         <tr><td>관리자 감사</td><td><code>admin_<wbr>audit_<wbr>logs</code></td><td>관리자 작업의 행위자·권한 스냅샷·결과 원장</td></tr>
         <tr><td>고위험 변경</td><td><code>admin_<wbr>high_<wbr>risk_<wbr>change_<wbr>requests</code></td><td>역할·지역·대량 게시의 요청, 독립 결정, 실행 결과 원장</td></tr>
         <tr><td>관리자 MFA</td><td><code>admin_<wbr>mfa_<wbr>credentials</code>, <code>admin_<wbr>mfa_<wbr>sessions</code></td><td>암호화 자격과 로그인 세션별 Step-up 인증 원장</td></tr>
         </tbody></table></div>
         <figure class="doc-figure"><img src="../assets/images/mermaid/04-database-design-04-database-design-01.png" alt="MySQL 논리 ERD" loading="lazy" /><figcaption>MySQL 논리 ERD</figcaption></figure>
         <h2 id="s3-2" class="s-h2">3.2 RDB 사용자 설계</h2>
-        <p class="doc-p">사용자 RDB 설계는 첨부 ERD 기준의 계정 기반 저장을 담당한다. PoC에서는 로컬 스토리지로 대체할 수 있으나, Production에서는 아래 5개 테이블을 기준으로 마이페이지의 저장 일정과 반응 API를 구현한다.</p>
+        <p class="doc-p">사용자 RDB 설계는 첨부 ERD 기준의 계정 기반 저장을 담당한다. PoC에서는 로컬 스토리지로 대체할 수 있으나, Production에서는 <code>infra/<wbr>data-stack/<wbr>rds/<wbr>schema.sql</code>의 6개 product table을 기준으로 마이페이지의 계정·취향·저장 일정·반응 API를 구현한다.</p>
         <h2 id="s3-2-1" class="s-h2">3.2.1 <code>users</code></h2>
         <div class="table-wrap wide scroll-table"><table class="info-tbl db-schema-tbl">
         <thead><tr><th>컬럼</th><th>타입</th><th>제약</th><th>설명</th></tr></thead><tbody>
@@ -177,7 +190,23 @@
         <tr><td><code>created_<wbr>at</code></td><td>datetime</td><td>not null</td><td>연결 시각</td></tr>
         </tbody></table></div>
         <p class="doc-p">Unique: (<code>provider</code>, <code>provider_<wbr>user_<wbr>id</code>)</p>
-        <h2 id="s3-2-3" class="s-h2">3.2.3 <code>itineraries</code></h2>
+        <h2 id="s3-2-3" class="s-h2">3.2.3 <code>user_<wbr>preferences</code></h2>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl db-schema-tbl">
+        <thead><tr><th>컬럼</th><th>타입</th><th>제약</th><th>설명</th></tr></thead><tbody>
+        <tr><td><code>id</code></td><td>char(36)</td><td>PK</td><td>취향 레코드 ID</td></tr>
+        <tr><td><code>user_<wbr>id</code></td><td>char(36)</td><td>FK, unique</td><td><code>users.id</code></td></tr>
+        <tr><td><code>country_<wbr>track</code></td><td>varchar(30)</td><td>not null</td><td><code>KR</code>, <code>JP</code>, <code>BOTH</code></td></tr>
+        <tr><td><code>mapped_<wbr>themes</code></td><td>json</td><td>nullable</td><td>온보딩/마이페이지에서 정규화한 테마</td></tr>
+        <tr><td><code>preferred_<wbr>regions</code></td><td>json</td><td>nullable</td><td>선호 지역 목록</td></tr>
+        <tr><td><code>pace</code></td><td>varchar(30)</td><td>nullable</td><td>여행 속도</td></tr>
+        <tr><td><code>trip_<wbr>days</code></td><td>int</td><td>nullable</td><td>선호 여행 일수</td></tr>
+        <tr><td><code>companion_<wbr>style</code></td><td>varchar(50)</td><td>nullable</td><td>동행 스타일</td></tr>
+        <tr><td><code>travel_<wbr>styles</code></td><td>json</td><td>nullable</td><td>여행 스타일 배열</td></tr>
+        <tr><td><code>onboarding_<wbr>completed</code></td><td>boolean</td><td>not null</td><td>온보딩 완료 여부</td></tr>
+        <tr><td><code>created_<wbr>at</code>, <code>updated_<wbr>at</code></td><td>datetime</td><td>not null</td><td>생성·수정 시각</td></tr>
+        </tbody></table></div>
+        <p class="doc-p">Unique: (<code>user_<wbr>id</code>)</p>
+        <h2 id="s3-2-4" class="s-h2">3.2.4 <code>itineraries</code></h2>
         <div class="table-wrap wide scroll-table"><table class="info-tbl db-schema-tbl">
         <thead><tr><th>컬럼</th><th>타입</th><th>제약</th><th>설명</th></tr></thead><tbody>
         <tr><td><code>id</code></td><td>char(36)</td><td>PK</td><td>일정 ID</td></tr>
@@ -193,7 +222,7 @@
         <tr><td><code>created_<wbr>at</code></td><td>datetime</td><td>not null</td><td>레코드 생성 시각</td></tr>
         </tbody></table></div>
         <p class="doc-p">Index: (<code>user_<wbr>id</code>, <code>saved_<wbr>at</code> desc)</p>
-        <h2 id="s3-2-4" class="s-h2">3.2.4 <code>itinerary_<wbr>items</code></h2>
+        <h2 id="s3-2-5" class="s-h2">3.2.5 <code>itinerary_<wbr>items</code></h2>
         <div class="table-wrap wide scroll-table"><table class="info-tbl db-schema-tbl">
         <thead><tr><th>컬럼</th><th>타입</th><th>제약</th><th>설명</th></tr></thead><tbody>
         <tr><td><code>id</code></td><td>char(36)</td><td>PK</td><td>세부 일정 ID</td></tr>
@@ -205,7 +234,7 @@
         <tr><td><code>recommendation_<wbr>reason</code></td><td>text</td><td>nullable</td><td>추천 이유</td></tr>
         </tbody></table></div>
         <p class="doc-p">Unique: (<code>itinerary_<wbr>id</code>, <code>sort_<wbr>order</code>)</p>
-        <h2 id="s3-2-5" class="s-h2">3.2.5 <code>plan_<wbr>reactions</code></h2>
+        <h2 id="s3-2-6" class="s-h2">3.2.6 <code>plan_<wbr>reactions</code></h2>
         <div class="table-wrap wide scroll-table"><table class="info-tbl db-schema-tbl">
         <thead><tr><th>컬럼</th><th>타입</th><th>제약</th><th>설명</th></tr></thead><tbody>
         <tr><td><code>id</code></td><td>char(36)</td><td>PK</td><td>반응 ID</td></tr>
@@ -238,6 +267,22 @@
         <tr><td><code>lovv_<wbr>api_<wbr>logs</code></td><td><code>pk</code> = <code>API#<wbr>{yyyyMMdd}#<wbr>{endpoint_<wbr>group}</code></td><td><code>sk</code> = <code>created_<wbr>at#<wbr>{request_<wbr>id}</code></td><td><code>method</code>, <code>path</code>, <code>status</code>, <code>latency_<wbr>ms</code>, <code>user_<wbr>id_<wbr>hash</code>, <code>error_<wbr>code</code></td><td><code>expires_<wbr>at</code></td></tr>
         <tr><td><code>lovv_<wbr>content_<wbr>documents</code></td><td><code>pk</code> = <code>CONTENT#<wbr>{country}#<wbr>{entity_<wbr>type}</code></td><td><code>sk</code> = <code>ENTITY#<wbr>{entity_<wbr>id}</code></td><td><code>city_<wbr>id</code>, <code>source_<wbr>type</code>, <code>source_<wbr>url</code>, <code>normalized_<wbr>payload</code>, <code>quality_<wbr>status</code>, <code>raw_<wbr>s3_<wbr>uri</code>, <code>updated_<wbr>at</code></td><td>없음</td></tr>
         <tr><td><code>lovv_<wbr>visitor_<wbr>statistics</code></td><td><code>pk</code> = <code>CITY#<wbr>{city_<wbr>id}</code></td><td><code>sk</code> = <code>STAT#<wbr>{period}#<wbr>{source_<wbr>type}</code></td><td><code>country</code>, <code>period</code>, <code>visitor_<wbr>type</code>, <code>value</code>, <code>unit</code>, <code>source_<wbr>url</code>, <code>collected_<wbr>at</code>, <code>quality_<wbr>status</code></td><td>없음</td></tr>
+        <tr><td><code>lovv_<wbr>anonymous_<wbr>travel_<wbr>segment_<wbr>stats</code></td><td><code>pk</code> = 세그먼트 식별자</td><td><code>sk</code> = 기간/집계 기준</td><td>익명 연령·성별·여행 선호 segment별 통계. 개인정보 원장이 아니라 추천 fallback용 집계 조회 모델</td><td>없음</td></tr>
+        </tbody></table></div>
+        <p class="doc-p">현재 live 구조에서는 backend 운영 테이블과 수집 파이프라인 테이블이 별도 경계로 운영된다.</p>
+        <div class="table-wrap wide extra-wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>용도</th><th>Live 물리 테이블</th><th>Key/GSI</th><th>TTL/PITR</th><th>확인 결과</th></tr></thead><tbody>
+        <tr><td>사용자 이벤트 로그</td><td><code>lovv_<wbr>dev_<wbr>user_<wbr>event_<wbr>logs</code></td><td><code>pk</code>/<code>sk</code>, <code>GSI1RequestLookup</code>, <code>GSI3EventTypeDaily</code>, <code>GSI4RecommendationLookup</code></td><td>TTL <code>expires_<wbr>at</code> enabled</td><td>ACTIVE, PAY_PER_REQUEST</td></tr>
+        <tr><td>Agent 실행 trace</td><td><code>lovv_<wbr>dev_<wbr>agent_<wbr>runs</code></td><td><code>pk</code>/<code>sk</code>, <code>GSI1RequestLookup</code>, <code>GSI2AgentRunLookup</code>, <code>GSI4RecommendationLookup</code></td><td>TTL <code>expires_<wbr>at</code> enabled</td><td>ACTIVE, PAY_PER_REQUEST</td></tr>
+        <tr><td>축제 검증 캐시</td><td><code>lovv_<wbr>dev_<wbr>festival_<wbr>verify_<wbr>cache</code></td><td><code>pk</code>/<code>sk</code></td><td>TTL <code>expires_<wbr>at</code> enabled</td><td>ACTIVE, PAY_PER_REQUEST</td></tr>
+        <tr><td>비동기 작업</td><td><code>lovv_<wbr>dev_<wbr>async_<wbr>jobs</code></td><td><code>pk</code>/<code>sk</code></td><td>TTL <code>expires_<wbr>at</code> enabled</td><td>ACTIVE, PAY_PER_REQUEST</td></tr>
+        <tr><td>API 로그</td><td><code>lovv_<wbr>dev_<wbr>api_<wbr>logs</code></td><td><code>pk</code>/<code>sk</code>, <code>GSI1RequestLookup</code></td><td>TTL <code>expires_<wbr>at</code> enabled</td><td>ACTIVE, PAY_PER_REQUEST</td></tr>
+        <tr><td>Auth refresh session</td><td><code>lovv_<wbr>dev_<wbr>auth_<wbr>sessions</code></td><td><code>sessionId</code>, <code>GSI1RefreshTokenHashLookup</code></td><td>TTL <code>expiresAt</code> enabled</td><td>ACTIVE, PAY_PER_REQUEST</td></tr>
+        <tr><td>콘텐츠 문서 보조</td><td><code>lovv_<wbr>dev_<wbr>content_<wbr>documents</code></td><td><code>pk</code>/<code>sk</code></td><td>TTL 없음</td><td>ACTIVE, 현재 dev 항목 없음</td></tr>
+        <tr><td>방문 통계 보조</td><td><code>lovv_<wbr>dev_<wbr>visitor_<wbr>statistics</code></td><td><code>pk</code>/<code>sk</code></td><td>TTL 없음</td><td>ACTIVE, 현재 dev 항목 없음</td></tr>
+        <tr><td>익명 세그먼트 통계</td><td><code>lovv_<wbr>dev_<wbr>anonymous_<wbr>travel_<wbr>segment_<wbr>stats</code></td><td><code>pk</code>/<code>sk</code></td><td>TTL 없음</td><td>ACTIVE, 현재 dev 항목 없음</td></tr>
+        <tr><td>KR 수집 V1</td><td><code>TourKoreaDomainData</code></td><td><code>PK</code>/<code>SK</code>, <code>GSI1</code>, <code>GSI2</code>, <code>GSI3</code>, <code>FestivalMonthIndex</code></td><td>PITR enabled</td><td>ACTIVE, live 항목 약 8천 건</td></tr>
+        <tr><td>KR 수집 V2</td><td><code>TourKoreaDomainDataV2</code></td><td><code>PK</code>/<code>SK</code>, <code>CityDomainIndex</code>, <code>ProvinceDomainIndex</code>, <code>EntityTypeDomainIndex</code>, <code>FestivalMonthIndex</code></td><td>PITR enabled</td><td>ACTIVE, live 항목 약 1만 건</td></tr>
         </tbody></table></div>
         <h2 id="s3-4" class="s-h2">3.4 S3 vector index 논리 모델</h2>
         <p class="doc-p">S3 vector index는 수집 원천과 일정 저장 스냅샷을 검색용으로 복제한 인덱스다. S3 vector index의 데이터는 원본이 아니며, 장애 복구나 재색인은 MySQL 일정 스냅샷, DynamoDB 정규화 문서, S3 Raw 원본을 기준으로 수행한다. 별도 벡터 DB 제품 도입은 현재 설계의 기본 범위가 아니며, 그래프DB 직접 도입 대신 관계 탐색은 Lambda 기반 보조 기능으로 구현한다.</p>
@@ -245,11 +290,11 @@
         <thead><tr><th>인덱스 대상</th><th>원본</th><th>S3 vector metadata</th></tr></thead><tbody>
         <tr><td>목적지</td><td>DynamoDB 정규화 문서, S3 Raw 원본</td><td><code>destination_<wbr>id</code>, <code>country</code>, <code>region</code>, <code>themes</code>, <code>recommended_<wbr>months</code></td></tr>
         <tr><td>축제</td><td>DynamoDB 정규화 문서, S3 Raw 원본</td><td><code>festival_<wbr>id</code>, <code>destination_<wbr>id</code>, <code>start_<wbr>date</code>, <code>end_<wbr>date</code>, <code>season_<wbr>tags</code></td></tr>
-        <tr><td>방문·관광 통계</td><td><code>lovv_<wbr>visitor_<wbr>statistics</code>, S3 Raw 원본</td><td><code>city_<wbr>id</code>, <code>period</code>, <code>visitor_<wbr>type</code>, <code>trend_<wbr>summary</code>, <code>source_<wbr>type</code></td></tr>
+        <tr><td>방문·관광 통계</td><td>DynamoDB <code>visitor_<wbr>statistics</code>, S3 Raw 원본</td><td>직접 vector 대상이 아니며, 도시·월별 feature와 랭킹 보조 조회로 사용</td></tr>
         <tr><td>관광지·체험</td><td>DynamoDB 정규화 문서, S3 Raw 원본</td><td><code>content_<wbr>id</code>, <code>destination_<wbr>id</code>, <code>content_<wbr>type</code>, <code>theme_<wbr>tags</code></td></tr>
         <tr><td>출처 문서</td><td>object storage</td><td><code>source_<wbr>id</code>, <code>source_<wbr>url</code>, <code>collected_<wbr>at</code>, <code>license_<wbr>type</code></td></tr>
         </tbody></table></div>
-        <p class="doc-p">Agent 추천 검색은 S3 vector metadata에 <code>city_<wbr>id</code>, <code>country</code>, <code>latitude</code>, <code>longitude</code>, <code>theme_<wbr>tags</code>, <code>content_<wbr>type</code>, <code>recommended_<wbr>months</code>를 포함해야 한다. <code>active_<wbr>required_<wbr>themes</code>, 거리 기반 1차 필터, 콘텐츠 타입 균형, 임베딩 유사도 재랭킹은 이 metadata와 MySQL 일정 스냅샷 필드를 함께 사용한다.</p>
+        <p class="doc-p">Agent 추천 검색은 S3 vector metadata에 <code>city_<wbr>id</code>, <code>country</code>, <code>latitude</code>, <code>longitude</code>, <code>theme_<wbr>tags</code>, <code>content_<wbr>type</code>, <code>recommended_<wbr>months</code>를 포함해야 한다. 현재 <code>kr-tour-domain-v2</code> 재색인 기준에서는 <code>visitor_<wbr>statistics</code>를 S3 Vector에 넣지 않고 DynamoDB에서 별도 조회한다. <code>active_<wbr>required_<wbr>themes</code>, 거리 기반 1차 필터, 콘텐츠 타입 균형, 임베딩 유사도 재랭킹은 이 metadata와 MySQL 일정 스냅샷 필드를 함께 사용한다.</p>
         <h2 id="s3-5" class="s-h2">3.5 Lambda 관계 탐색 논리 모델</h2>
         <p class="doc-p">Lambda 관계 탐색은 S3 vector index의 의미 검색 결과를 도시·축제·테마·장소 관계로 확장·검증하는 보조 기능이다. 관계 데이터는 원본이 아니며, DynamoDB 정규화 문서, S3 Raw 원본, 운영 검증 결과를 기준으로 재생성할 수 있어야 한다.</p>
         <blockquote>
@@ -298,6 +343,7 @@
         <tr><td>JSON</td><td>추천 조건 스냅샷, 점수 상세, 일정 경로처럼 유연한 구조는 MySQL <code>JSON</code>을 사용한다.</td></tr>
         <tr><td>외래키</td><td>사용자, 소셜 계정, 일정, 일정 항목, 일정 반응 사이에는 FK를 둔다. 대량 로그는 FK 대신 참조 ID 문자열만 둔다.</td></tr>
         </tbody></table></div>
+        <p class="doc-p">현재 dev RDS는 CloudFormation <code>lovv-dev-data-stack</code>의 <code>LovvRDSInstance</code>로 생성된 <code>lovv-dev-mysql</code>이다. live 확인 기준은 MySQL 8.0 계열, <code>db.t4g.micro</code>, 20 GiB, storage encrypted, public access disabled, backup retention 7일, deletion protection enabled, RDS managed master user secret 사용이다. RDS endpoint와 secret ARN은 공유 문서에 기록하지 않는다.</p>
         <h2 id="s4-2" class="s-h2">4.2 주요 인덱스</h2>
         <div class="table-wrap"><table class="info-tbl compact-tbl">
         <thead><tr><th>조회 패턴</th><th>인덱스 후보</th></tr></thead><tbody>
@@ -324,6 +370,7 @@
         <tr><td><code>GSI3EventTypeDaily</code></td><td><code>event_<wbr>type#<wbr>yyyyMMdd</code></td><td><code>created_<wbr>at</code></td><td>이벤트 타입별 일자 분석</td></tr>
         <tr><td><code>GSI4RecommendationLookup</code></td><td><code>recommendation_<wbr>request_<wbr>id</code></td><td><code>created_<wbr>at</code></td><td>추천 요청과 로그 연결</td></tr>
         </tbody></table></div>
+        <p class="doc-p">수집 V2 테이블 <code>TourKoreaDomainDataV2</code>는 별도 Terraform 경계에서 관리하며, <code>PK</code>/<code>SK</code> 기본키와 <code>CityDomainIndex</code>, <code>ProvinceDomainIndex</code>, <code>EntityTypeDomainIndex</code>, <code>FestivalMonthIndex</code>를 사용한다. <code>TourKoreaDomainData</code> legacy 테이블은 <code>GSI1</code>, <code>GSI2</code>, <code>GSI3</code>, <code>FestivalMonthIndex</code>를 유지한다. 두 테이블 모두 live에서 PAY_PER_REQUEST와 PITR enabled 상태를 확인했다.</p>
         <h2 id="s4-5" class="s-h2">4.5 S3 vector index 물리 설계 기준</h2>
         <div class="table-wrap wide scroll-table"><table class="info-tbl">
         <thead><tr><th>기준</th><th>결정</th></tr></thead><tbody>
@@ -332,6 +379,15 @@
         <tr><td>Metadata filter</td><td><code>country</code>, <code>destination_<wbr>id</code>, <code>city_<wbr>id</code>, <code>content_<wbr>type</code>, <code>theme_<wbr>tags</code>, <code>recommended_<wbr>months</code>, <code>source_<wbr>type</code>을 필터로 둔다.</td></tr>
         <tr><td>원본 참조</td><td>각 vector record에는 <code>raw_<wbr>s3_<wbr>uri</code>, DynamoDB 정규화 문서 ID, 또는 MySQL 일정 ID를 함께 둔다.</td></tr>
         <tr><td>개인정보</td><td>사용자 ID, 대화 전문, 비공개 운영 메모는 metadata에 저장하지 않는다.</td></tr>
+        </tbody></table></div>
+        <p class="doc-p">현재 live S3/S3 Vector 구조는 다음과 같다.</p>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>저장소</th><th>물리 이름</th><th>용도</th><th>확인된 설정</th></tr></thead><tbody>
+        <tr><td>Data pipeline bucket</td><td><code>lovv-data-pipeline-dev-925273580929</code></td><td>KR raw/processed/failed/review/quality 산출물, vector manifest</td><td>Versioning enabled, SSE-S3 AES256, public access block enabled, <code>raw/<wbr>KR/<wbr></code> 30일 STANDARD_IA·60일 GLACIER 전환</td></tr>
+        <tr><td>Backend image bucket</td><td><code>lovv-image-dev-925273580929</code></td><td>avatar/content/tmp 이미지 원본, CloudFront OAC read-only origin</td><td>Versioning enabled, SSE-S3 AES256, public access block enabled, <code>tmp/<wbr></code> 7일 만료</td></tr>
+        <tr><td>Pipeline image bucket</td><td><code>lovv-pipeline-images-dev-925273580929</code></td><td>수집 파이프라인 이미지 다운로드 산출물</td><td>SSE-S3 AES256, live public access block 값은 현재 false로 관측됨. Terraform 정의는 public access block enabled이므로 drift 확인 대상</td></tr>
+        <tr><td>KR S3 Vector index</td><td><code>lovv-vector-dev</code> / <code>kr-tour-domain-v2</code></td><td>KR 관광 domain V2 의미 검색</td><td>float32, 1024 dimension, cosine, SSE-S3 AES256, non-filterable metadata <code>raw_<wbr>s3_<wbr>uri</code>, <code>ddb_<wbr>pk</code>, <code>ddb_<wbr>sk</code>, <code>embedding_<wbr>model</code></td></tr>
+        <tr><td>AgentCore v1 S3 Vector index</td><td><code>lovv-agentcore-v1-vector</code> / <code>kr-agentcore-v1</code></td><td>강원/경북 AgentCore v1 검색</td><td>float32, 1024 dimension, cosine, SSE-S3 AES256</td></tr>
         </tbody></table></div>
         <h2 id="s4-6" class="s-h2">4.6 Lambda 관계 탐색 물리 설계 기준</h2>
         <div class="table-wrap wide scroll-table"><table class="info-tbl">
@@ -374,7 +430,7 @@
         <p class="doc-p">주요 조회 인덱스는 <code>admin_<wbr>mfa_<wbr>sessions(user_<wbr>id, expires_<wbr>at)</code>이며, 만료 세션 정리는 운영 배치 또는 주기적 청소 작업에서 수행한다.</p>
         <h2 id="s4-8" class="s-h2">4.8 관리자 고위험 변경·감사 테이블</h2>
         <h2 id="admin-high-risk-change-requests" class="s-h2"><code>admin_<wbr>high_<wbr>risk_<wbr>change_<wbr>requests</code></h2>
-        <p class="doc-p"><code>admin_<wbr>high_<wbr>risk_<wbr>change_<wbr>requests</code>의 DDL source of truth는 <code>schema/<wbr>aurora_<wbr>mysql/<wbr>004_<wbr>admin_<wbr>high_<wbr>risk_<wbr>approvals.sql</code>이다. 기본 product tables는 <code>infra/<wbr>data-stack/<wbr>rds/<wbr>schema.sql</code>을 단일 기준으로 두며, 삭제된 <code>schema/<wbr>aurora_<wbr>mysql/<wbr>001_<wbr>product_<wbr>api_<wbr>tables.sql</code>을 다시 생성하거나 로컬 초기화 순서에 포함하지 않는다.</p>
+        <p class="doc-p"><code>admin_<wbr>high_<wbr>risk_<wbr>change_<wbr>requests</code>의 DDL source of truth는 <code>schema/<wbr>aurora_<wbr>mysql/<wbr>004_<wbr>admin_<wbr>high_<wbr>risk_<wbr>approvals.sql</code>이다. 기본 product tables는 <code>infra/<wbr>data-stack/<wbr>rds/<wbr>schema.sql</code>을 단일 기준으로 두며, <code>schema/<wbr>aurora_<wbr>mysql/<wbr>001_<wbr>product_<wbr>api_<wbr>tables.sql</code>이 checkout에 남아 있더라도 로컬 초기화 순서에 포함하지 않는다.</p>
         <div class="table-wrap wide scroll-table"><table class="info-tbl">
         <thead><tr><th>컬럼</th><th>타입</th><th>설명</th></tr></thead><tbody>
         <tr><td><code>id</code></td><td><code>CHAR(36)</code></td><td>고위험 변경 요청 PK</td></tr>
@@ -414,7 +470,7 @@
         <li><code>schema/<wbr>aurora_<wbr>mysql/<wbr>003_<wbr>admin_<wbr>operations_<wbr>tables.sql</code></li>
         <li><code>schema/<wbr>aurora_<wbr>mysql/<wbr>004_<wbr>admin_<wbr>high_<wbr>risk_<wbr>approvals.sql</code></li>
         </ul>
-        <p class="doc-p"><code>schema/<wbr>aurora_<wbr>mysql/<wbr>001_<wbr>product_<wbr>api_<wbr>tables.sql</code> 삭제는 유지한다. 기존 운영·공유 DB에는 base schema를 재적용하지 않고, 필요한 admin migration만 선택 적용한다. <code>scripts/<wbr>apply_<wbr>admin_<wbr>migration.py</code>를 사용할 때는 대상 migration 파일을 명시해 적용 범위를 제한한다.</p>
+        <p class="doc-p"><code>schema/<wbr>aurora_<wbr>mysql/<wbr>001_<wbr>product_<wbr>api_<wbr>tables.sql</code>이 checkout에 남아 있더라도 최신 product base schema의 source of truth로 사용하지 않는다. 기존 운영·공유 DB에는 base schema를 재적용하지 않고, 필요한 admin migration만 선택 적용한다. <code>scripts/<wbr>apply_<wbr>admin_<wbr>migration.py</code>를 사용할 때는 대상 migration 파일을 명시해 적용 범위를 제한한다.</p>
         <h1 id="s5" class="s-h1">5. 보존 정책 및 권한</h1>
         <div class="table-wrap wide scroll-table"><table class="info-tbl">
         <thead><tr><th>데이터</th><th>보존 정책</th><th>사용자 통제</th></tr></thead><tbody>
@@ -456,31 +512,36 @@
         </tbody></table></div>
         <h1 id="s7" class="s-h1">7. 구현 체크리스트</h1>
         <ul class="bullet-list">
-        <li>[ ] MySQL에 <code>users</code>, <code>social_<wbr>accounts</code>, <code>itineraries</code>, <code>itinerary_<wbr>items</code>, <code>plan_<wbr>reactions</code> 테이블을 생성했는가?</li>
+        <li>[ ] MySQL에 <code>users</code>, <code>social_<wbr>accounts</code>, <code>user_<wbr>preferences</code>, <code>itineraries</code>, <code>itinerary_<wbr>items</code>, <code>plan_<wbr>reactions</code> 테이블을 생성했는가?</li>
         <li>[ ] 마이페이지 저장 일정 조회·삭제 API가 MySQL 원장 테이블 기준으로 동작하는가?</li>
         <li>[ ] 일정 반응 저장·집계 로직이 <code>plan_<wbr>reactions</code>와 API 응답 필드에 연결되어 있는가?</li>
         <li>[ ] DynamoDB 이벤트·trace 테이블에 <code>expires_<wbr>at</code> TTL과 해시 저장 로직을 적용했는가?</li>
+        <li>[ ] <code>lovv_<wbr>dev_<wbr>auth_<wbr>sessions</code>는 <code>expiresAt</code>, 운영 로그성 테이블은 <code>expires_<wbr>at</code> 기준 TTL로 구분되어 있는가?</li>
+        <li>[ ] 익명 세그먼트 통계(<code>lovv_<wbr>dev_<wbr>anonymous_<wbr>travel_<wbr>segment_<wbr>stats</code>)는 사용자 원장이나 개인정보 원문이 아니라 집계 조회 모델만 저장하는가?</li>
         <li>[ ] 사용자 대화 전문, 민감 자유 입력, 비공개 운영 메모가 장기 저장소에 남지 않도록 차단했는가?</li>
         <li>[ ] S3 vector index 재색인 배치가 DynamoDB 정규화 문서와 S3 Raw 원본 기준으로 재생성되는가?</li>
         <li>[ ] Lambda 관계 탐색 보조 기능이 공용 콘텐츠 관계만 읽고 사용자 개인정보를 캐시하지 않는가?</li>
         <li>[ ] PoC 로컬 스토리지 대체 코드와 Production DB 연동 코드의 전환 지점을 분리했는가?</li>
         <li>[ ] 로컬 DB 초기화 문서가 <code>infra/<wbr>data-stack/<wbr>rds/<wbr>schema.sql</code> → <code>002_<wbr>admin_<wbr>console_<wbr>tables.sql</code> → <code>003_<wbr>admin_<wbr>operations_<wbr>tables.sql</code> → <code>004_<wbr>admin_<wbr>high_<wbr>risk_<wbr>approvals.sql</code> 순서와 일치하는가?</li>
         <li>[ ] <code>admin_<wbr>high_<wbr>risk_<wbr>change_<wbr>requests</code>, <code>admin_<wbr>mfa_<wbr>credentials</code>, <code>admin_<wbr>mfa_<wbr>sessions</code>가 <code>004_<wbr>admin_<wbr>high_<wbr>risk_<wbr>approvals.sql</code>에만 정의되고 <code>002_<wbr>admin_<wbr>console_<wbr>tables.sql</code>에 중복 정의되지 않는가?</li>
-        <li>[ ] 삭제된 <code>schema/<wbr>aurora_<wbr>mysql/<wbr>001_<wbr>product_<wbr>api_<wbr>tables.sql</code>을 로컬 초기화나 migration 문서에서 필수 단계로 참조하지 않는가?</li>
+        <li>[ ] <code>schema/<wbr>aurora_<wbr>mysql/<wbr>001_<wbr>product_<wbr>api_<wbr>tables.sql</code>이 checkout에 남아 있더라도 최신 product base schema 또는 로컬 초기화 필수 단계로 참조하지 않는가?</li>
+        <li>[ ] <code>lovv-pipeline-images-dev-925273580929</code>의 public access block live drift를 Terraform 정의와 맞췄는가?</li>
         </ul>
         <h1 id="s8" class="s-h1">8. 후속 작업</h1>
         <ul class="bullet-list">
-        <li><code>users</code>, <code>social_<wbr>accounts</code>, <code>itineraries</code>, <code>itinerary_<wbr>items</code>, <code>plan_<wbr>reactions</code> 기준으로 MySQL DDL 초안을 작성한다.</li>
+        <li><code>infra/<wbr>data-stack/<wbr>rds/<wbr>schema.sql</code>의 <code>users</code>, <code>social_<wbr>accounts</code>, <code>user_<wbr>preferences</code>, <code>itineraries</code>, <code>itinerary_<wbr>items</code>, <code>plan_<wbr>reactions</code>와 API 문서의 필드 매핑을 계속 동기화한다.</li>
         <li>DynamoDB <code>lovv_<wbr>user_<wbr>event_<wbr>logs</code>, <code>lovv_<wbr>agent_<wbr>runs</code>, <code>lovv_<wbr>async_<wbr>jobs</code>, <code>lovv_<wbr>api_<wbr>logs</code>의 TTL 기간을 확정한다. (5.1절에 권고·잠정값 반영 완료, 법무·보안 검토로 최종 확정 예정)</li>
         <li>API 명세의 <code>/<wbr>me/<wbr>itineraries</code>, <code>/<wbr>me/<wbr>itineraries/<wbr>{itineraryId}</code>, <code>/<wbr>me/<wbr>itineraries/<wbr>{itineraryId}/<wbr>reactions</code> 응답 필드와 테이블 컬럼을 1:1로 매핑한다.</li>
-        <li>S3 vector index의 prefix, vector ID, metadata filter, 재색인 배치 기준을 기술 명세와 맞춘다.</li>
+        <li>S3 vector index의 prefix, vector ID, metadata filter, 재색인 배치 기준을 기술 명세와 맞추고, <code>visitor_<wbr>statistics</code>는 vector 제외·DynamoDB 조회 기준을 유지한다.</li>
         <li>Lambda 관계 탐색 보조 기능의 <code>City</code>, <code>Festival</code>, <code>Theme</code>, <code>Place</code> 관계 ID와 인접 리스트 생성 기준을 기술 명세와 맞춘다.</li>
         <li>구현 체크리스트를 기준으로 개발 완료 항목을 점검하고 미구현 항목을 백로그에 등록한다.</li>
         <li>BE 저장소의 <code>schema/<wbr>aurora_<wbr>mysql/<wbr>002_<wbr>admin_<wbr>console_<wbr>tables.sql</code>에 고위험 승인·MFA 테이블 중복 정의가 없는지 확인하고, <code>scripts/<wbr>apply_<wbr>admin_<wbr>migration.py</code>의 선택 적용 사용법을 운영 문서와 맞춘다.</li>
+        <li><code>lovv-pipeline-images-dev-925273580929</code> public access block live 값이 Terraform 정의와 다른 원인을 확인하고 적용 또는 예외 사유를 남긴다.</li>
         </ul>
         <h1 id="s9" class="s-h1">9. 변경 이력</h1>
         <div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
         <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+        <tr><td>v1.1</td><td>2026-07-03</td><td>Codex</td><td>live AWS 기준 RDS, DynamoDB, S3/S3 Vector 구조 확인 결과와 Backend/Data Collect 저장소 경계, <code>user_<wbr>preferences</code>, auth session, 익명 세그먼트, pipeline image bucket drift를 반영</td></tr>
         <tr><td>v1.0</td><td>2026-07-02</td><td>Codex</td><td><code>001_<wbr>product_<wbr>api_<wbr>tables.sql</code> 삭제 유지, base schema 단일 기준, admin migration 002→003→004 적용 순서와 004의 MFA·고위험 테이블 source of truth 명시</td></tr>
         <tr><td>v0.9</td><td>2026-06-30</td><td>Codex</td><td><code>R-SUPER-ADMIN</code> 역할·지역 할당, 고위험 변경 요청 상태·제약·인덱스와 C4 감사 로그 action 커버리지 반영</td></tr>
         <tr><td>v0.8</td><td>2026-06-30</td><td>Codex</td><td>관리자 Step-up MFA 자격·세션 테이블과 보존 기준 추가</td></tr>

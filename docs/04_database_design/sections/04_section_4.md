@@ -10,6 +10,10 @@
 | JSON | 추천 조건 스냅샷, 점수 상세, 일정 경로처럼 유연한 구조는 MySQL `JSON`을 사용한다. |
 | 외래키 | 사용자, 소셜 계정, 일정, 일정 항목, 일정 반응 사이에는 FK를 둔다. 대량 로그는 FK 대신 참조 ID 문자열만 둔다. |
 
+현재 dev RDS는 CloudFormation `lovv-dev-data-stack`의 `LovvRDSInstance`로 생성된 `lovv-dev-mysql`이다.
+live 확인 기준은 MySQL 8.0 계열, `db.t4g.micro`, 20 GiB, storage encrypted, public access disabled, backup retention 7일, deletion protection enabled, RDS managed master user secret 사용이다.
+RDS endpoint와 secret ARN은 공유 문서에 기록하지 않는다.
+
 ## 4.2 주요 인덱스
 
 | 조회 패턴 | 인덱스 후보 |
@@ -39,6 +43,10 @@
 | `GSI3EventTypeDaily` | `event_type#yyyyMMdd` | `created_at` | 이벤트 타입별 일자 분석 |
 | `GSI4RecommendationLookup` | `recommendation_request_id` | `created_at` | 추천 요청과 로그 연결 |
 
+수집 V2 테이블 `TourKoreaDomainDataV2`는 별도 Terraform 경계에서 관리하며, `PK`/`SK` 기본키와 `CityDomainIndex`, `ProvinceDomainIndex`, `EntityTypeDomainIndex`, `FestivalMonthIndex`를 사용한다.
+`TourKoreaDomainData` legacy 테이블은 `GSI1`, `GSI2`, `GSI3`, `FestivalMonthIndex`를 유지한다.
+두 테이블 모두 live에서 PAY_PER_REQUEST와 PITR enabled 상태를 확인했다.
+
 ## 4.5 S3 vector index 물리 설계 기준
 
 | 기준 | 결정 |
@@ -48,6 +56,16 @@
 | Metadata filter | `country`, `destination_id`, `city_id`, `content_type`, `theme_tags`, `recommended_months`, `source_type`을 필터로 둔다. |
 | 원본 참조 | 각 vector record에는 `raw_s3_uri`, DynamoDB 정규화 문서 ID, 또는 MySQL 일정 ID를 함께 둔다. |
 | 개인정보 | 사용자 ID, 대화 전문, 비공개 운영 메모는 metadata에 저장하지 않는다. |
+
+현재 live S3/S3 Vector 구조는 다음과 같다.
+
+| 저장소 | 물리 이름 | 용도 | 확인된 설정 |
+| --- | --- | --- | --- |
+| Data pipeline bucket | `lovv-data-pipeline-dev-925273580929` | KR raw/processed/failed/review/quality 산출물, vector manifest | Versioning enabled, SSE-S3 AES256, public access block enabled, `raw/KR/` 30일 STANDARD_IA·60일 GLACIER 전환 |
+| Backend image bucket | `lovv-image-dev-925273580929` | avatar/content/tmp 이미지 원본, CloudFront OAC read-only origin | Versioning enabled, SSE-S3 AES256, public access block enabled, `tmp/` 7일 만료 |
+| Pipeline image bucket | `lovv-pipeline-images-dev-925273580929` | 수집 파이프라인 이미지 다운로드 산출물 | SSE-S3 AES256, live public access block 값은 현재 false로 관측됨. Terraform 정의는 public access block enabled이므로 drift 확인 대상 |
+| KR S3 Vector index | `lovv-vector-dev` / `kr-tour-domain-v2` | KR 관광 domain V2 의미 검색 | float32, 1024 dimension, cosine, SSE-S3 AES256, non-filterable metadata `raw_s3_uri`, `ddb_pk`, `ddb_sk`, `embedding_model` |
+| AgentCore v1 S3 Vector index | `lovv-agentcore-v1-vector` / `kr-agentcore-v1` | 강원/경북 AgentCore v1 검색 | float32, 1024 dimension, cosine, SSE-S3 AES256 |
 
 ## 4.6 Lambda 관계 탐색 물리 설계 기준
 
@@ -99,7 +117,7 @@
 
 ### `admin_high_risk_change_requests`
 
-`admin_high_risk_change_requests`의 DDL source of truth는 `schema/aurora_mysql/004_admin_high_risk_approvals.sql`이다. 기본 product tables는 `infra/data-stack/rds/schema.sql`을 단일 기준으로 두며, 삭제된 `schema/aurora_mysql/001_product_api_tables.sql`을 다시 생성하거나 로컬 초기화 순서에 포함하지 않는다.
+`admin_high_risk_change_requests`의 DDL source of truth는 `schema/aurora_mysql/004_admin_high_risk_approvals.sql`이다. 기본 product tables는 `infra/data-stack/rds/schema.sql`을 단일 기준으로 두며, `schema/aurora_mysql/001_product_api_tables.sql`이 checkout에 남아 있더라도 로컬 초기화 순서에 포함하지 않는다.
 
 | 컬럼 | 타입 | 설명 |
 | --- | --- | --- |
@@ -145,4 +163,4 @@
 3. `schema/aurora_mysql/003_admin_operations_tables.sql`
 4. `schema/aurora_mysql/004_admin_high_risk_approvals.sql`
 
-`schema/aurora_mysql/001_product_api_tables.sql` 삭제는 유지한다. 기존 운영·공유 DB에는 base schema를 재적용하지 않고, 필요한 admin migration만 선택 적용한다. `scripts/apply_admin_migration.py`를 사용할 때는 대상 migration 파일을 명시해 적용 범위를 제한한다.
+`schema/aurora_mysql/001_product_api_tables.sql`이 checkout에 남아 있더라도 최신 product base schema의 source of truth로 사용하지 않는다. 기존 운영·공유 DB에는 base schema를 재적용하지 않고, 필요한 admin migration만 선택 적용한다. `scripts/apply_admin_migration.py`를 사용할 때는 대상 migration 파일을 명시해 적용 범위를 제한한다.

@@ -2,6 +2,7 @@
 
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 | --- | --- | --- | --- |
+| v1.1 | 2026-07-03 | Codex | live AWS 기준 RDS, DynamoDB, S3/S3 Vector 구조 확인 결과와 Backend/Data Collect 저장소 경계, `user_preferences`, auth session, 익명 세그먼트, pipeline image bucket drift를 반영 |
 | v1.0 | 2026-07-02 | Codex | `001_product_api_tables.sql` 삭제 유지, base schema 단일 기준, admin migration 002→003→004 적용 순서와 004의 MFA·고위험 테이블 source of truth 명시 |
 | v0.9 | 2026-06-30 | Codex | `R-SUPER-ADMIN` 역할·지역 할당, 고위험 변경 요청 상태·제약·인덱스와 C4 감사 로그 action 커버리지 반영 |
 | v0.8 | 2026-06-30 | Codex | 관리자 Step-up MFA 자격·세션 테이블과 보존 기준 추가 |
