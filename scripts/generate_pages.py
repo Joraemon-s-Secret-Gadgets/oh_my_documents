@@ -8,6 +8,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PAGES = ROOT / "pages"
+TROUBLESHOOTING_SOURCE = "docs/11_deployment_ops/supplemental/troubleshooting.md"
+TROUBLESHOOTING_DETAIL_DIR = ROOT / "docs/11_deployment_ops/supplemental/troubleshooting"
 
 
 @dataclass(frozen=True)
@@ -170,6 +172,89 @@ DOCUMENTS = [
 
 def read_text(path: str) -> str:
     return (ROOT / path).read_text(encoding="utf-8")
+
+
+def is_internal_markdown_target(target: str) -> bool:
+    normalized = target.strip().lower()
+    if normalized.startswith(("http://", "https://", "mailto:", "#")):
+        return False
+    return normalized.split("#", 1)[0].endswith(".md")
+
+
+def remove_internal_markdown_links(markdown: str) -> str:
+    def replace_link(match: re.Match[str]) -> str:
+        label = match.group(1)
+        target = match.group(2)
+        if is_internal_markdown_target(target):
+            return label
+        return match.group(0)
+
+    return re.sub(r"\[([^\]]+)\]\(([^)]+)\)", replace_link, markdown)
+
+
+def remove_table_last_column(line: str) -> str:
+    cells = split_table_row(line)
+    if len(cells) <= 1:
+        return line
+    return "| " + " | ".join(cells[:-1]) + " |"
+
+
+def remove_troubleshooting_detail_column(markdown: str) -> str:
+    lines = markdown.splitlines()
+    output: list[str] = []
+    in_summary_table = False
+
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("| ID |") and "상세 문서" in stripped:
+            in_summary_table = True
+            output.append(remove_table_last_column(line))
+            continue
+        if in_summary_table:
+            if stripped.startswith("|"):
+                output.append(remove_table_last_column(line))
+                continue
+            in_summary_table = False
+        output.append(line)
+
+    return "\n".join(output)
+
+
+def remove_troubleshooting_detail_index(markdown: str) -> str:
+    lines = markdown.splitlines()
+    output: list[str] = []
+    skip = False
+
+    for line in lines:
+        if line.strip() == "# 3. 상세 문서 인덱스":
+            skip = True
+            continue
+        if skip and line.startswith("# "):
+            skip = False
+        if not skip:
+            output.append(line)
+
+    return "\n".join(output)
+
+
+def troubleshooting_detail_markdown() -> str:
+    sections: list[str] = []
+    for path in sorted(TROUBLESHOOTING_DETAIL_DIR.glob("ts-*.md")):
+        sections.append(path.read_text(encoding="utf-8").strip())
+    if not sections:
+        return ""
+    return "\n\n---\n\n# 6. 상세 트러블슈팅\n\n" + "\n\n---\n\n".join(sections)
+
+
+def source_markdown(doc: Document) -> str:
+    markdown = read_text(doc.source)
+    if doc.source != TROUBLESHOOTING_SOURCE:
+        return markdown
+
+    markdown = remove_troubleshooting_detail_column(markdown)
+    markdown = remove_troubleshooting_detail_index(markdown)
+    markdown = markdown.rstrip() + troubleshooting_detail_markdown()
+    return remove_internal_markdown_links(markdown)
 
 
 def meta_value(markdown: str, key: str) -> str:
@@ -492,9 +577,14 @@ def render_blocks(markdown: str) -> tuple[str, list[tuple[int, str, str]]]:
 
         bullet = re.match(r"^[-*]\s+(.+)$", stripped)
         ordered = re.match(r"^\d+\.\s+(.+)$", stripped)
-        if bullet or ordered:
+        if bullet:
             flush_paragraph()
-            list_items.append((bullet or ordered).group(1))
+            list_items.append(bullet.group(1))
+            i += 1
+            continue
+        if ordered:
+            flush_paragraph()
+            list_items.append(ordered.group(1))
             i += 1
             continue
 
@@ -707,7 +797,7 @@ def indent_block(value: str, spaces: int) -> str:
 
 
 def render_page(doc: Document) -> str:
-    markdown = read_text(doc.source)
+    markdown = source_markdown(doc)
     title = title_value(markdown)
     version = meta_value(markdown, "문서 버전")
     status = meta_value(markdown, "문서 상태")
@@ -769,7 +859,7 @@ def render_index() -> str:
     for title, docs in grouped.items():
         cards = []
         for doc in docs:
-            markdown = read_text(doc.source)
+            markdown = source_markdown(doc)
             version = plain_version(meta_value(markdown, "문서 버전"))
             cards.append(
                 f"""          <a class="doc-card primary" href="./pages/{html.escape(doc.target)}">

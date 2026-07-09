@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>로브 (Lovv) — 트러블슈팅 문서 v0.3</title>
+    <title>로브 (Lovv) — 트러블슈팅 문서 v0.14</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@600;700&display=swap"
@@ -16,7 +16,7 @@
       <aside>
         <div class="aside-brand">
           <div class="aside-logo">로브</div>
-          <div class="aside-ver">Troubleshooting · v0.3</div>
+          <div class="aside-ver">Troubleshooting · v0.14</div>
           <div class="aside-status"><div class="status-dot"></div><span>초안</span></div>
         </div>
         <nav class="toc">
@@ -30,74 +30,116 @@
             <a class="toc-link" href="#s2">2. 요약</a>
           </div>
           <div class="toc-section">
-            <div class="toc-section-hd">3. TS-01 Neptune 도입 범위 판단</div>
-            <a class="toc-link" href="#s3">3. TS-01 Neptune 도입 범위 판단</a>
-            <a class="toc-link" href="#s3-1">3.1 증상</a>
-            <a class="toc-link" href="#s3-2">3.2 원인</a>
-            <a class="toc-link" href="#s3-3">3.3 판단</a>
-            <a class="toc-link" href="#s3-4">3.4 조치</a>
-            <a class="toc-link" href="#s3-5">3.5 승격 기준</a>
+            <div class="toc-section-hd">4. 발표용 트러블슈팅 요약 문구</div>
+            <a class="toc-link" href="#s4">4. 발표용 트러블슈팅 요약 문구</a>
           </div>
           <div class="toc-section">
-            <div class="toc-section-hd">4. TS-02 KR 전처리 적재 기준 정리</div>
-            <a class="toc-link" href="#s4">4. TS-02 KR 전처리 적재 기준 정리</a>
-            <a class="toc-link" href="#s4-1">4.1 증상</a>
-            <a class="toc-link" href="#s4-2">4.2 원인</a>
-            <a class="toc-link" href="#s4-3">4.3 조치</a>
-            <a class="toc-link" href="#s4-4">4.4 재발 방지</a>
+            <div class="toc-section-hd">5. 변경 이력</div>
+            <a class="toc-link" href="#s5">5. 변경 이력</a>
           </div>
           <div class="toc-section">
-            <div class="toc-section-hd">5. TS-03 S3 vector index 계약 정합성</div>
-            <a class="toc-link" href="#s5">5. TS-03 S3 vector index 계약 정합성</a>
-            <a class="toc-link" href="#s5-1">5.1 증상</a>
-            <a class="toc-link" href="#s5-2">5.2 원인</a>
-            <a class="toc-link" href="#s5-3">5.3 조치</a>
-            <a class="toc-link" href="#s5-4">5.4 재발 방지</a>
+            <div class="toc-section-hd">6. 상세 트러블슈팅</div>
+            <a class="toc-link" href="#s6">6. 상세 트러블슈팅</a>
           </div>
           <div class="toc-section">
-            <div class="toc-section-hd">6. TS-04 HTML 공유 문서 생성물 불일치</div>
-            <a class="toc-link" href="#s6">6. TS-04 HTML 공유 문서 생성물 불일치</a>
-            <a class="toc-link" href="#s6-1">6.1 증상</a>
-            <a class="toc-link" href="#s6-2">6.2 원인</a>
-            <a class="toc-link" href="#s6-3">6.3 조치</a>
-            <a class="toc-link" href="#s6-4">6.4 재발 방지</a>
+            <div class="toc-section-hd">TS-01 Neptune 도입 범위 판단</div>
+            <a class="toc-link" href="#ts-01-neptune-도입-범위-판단">TS-01 Neptune 도입 범위 판단</a>
+            <a class="toc-link" href="#s1">1. 요약</a>
+            <a class="toc-link" href="#s2">2. 증상</a>
+            <a class="toc-link" href="#s3">3. 조사 범위</a>
+            <a class="toc-link" href="#s4">4. 원인</a>
+            <a class="toc-link" href="#s5">5. AWS 서비스 조사 결과</a>
+            <a class="toc-link" href="#s6">6. 현재 Lovv 질의 패턴 분석</a>
+            <a class="toc-link" href="#s7">7. 대체 아키텍처</a>
+            <a class="toc-link" href="#s8">8. 판단</a>
+            <a class="toc-link" href="#s9">9. 조치</a>
+            <a class="toc-link" href="#s10">10. 승격 기준</a>
+            <a class="toc-link" href="#s11">11. 조사 결론</a>
+            <a class="toc-link" href="#s12">12. 출처 및 근거</a>
+            <a class="toc-link" href="#s13">13. 변경 이력</a>
           </div>
           <div class="toc-section">
-            <div class="toc-section-hd">7. TS-05 PDF 산출물 생성·검증</div>
-            <a class="toc-link" href="#s7">7. TS-05 PDF 산출물 생성·검증</a>
-            <a class="toc-link" href="#s7-1">7.1 증상</a>
-            <a class="toc-link" href="#s7-2">7.2 조치</a>
-            <a class="toc-link" href="#s7-3">7.3 재발 방지</a>
+            <div class="toc-section-hd">TS-02 S3 vector index 계약 정합성</div>
+            <a class="toc-link" href="#ts-02-s3-vector-index-계약-정합성">TS-02 S3 vector index 계약 정합성</a>
+            <a class="toc-link" href="#s1">1. 증상</a>
+            <a class="toc-link" href="#s2">2. 원인</a>
+            <a class="toc-link" href="#s3">3. 조치</a>
+            <a class="toc-link" href="#s4">4. 재발 방지</a>
+            <a class="toc-link" href="#s5">5. 출처 및 근거</a>
+            <a class="toc-link" href="#s6">6. 변경 이력</a>
           </div>
           <div class="toc-section">
-            <div class="toc-section-hd">8. TS-06 발표 HTML 검증 중 임시 파일 발생</div>
-            <a class="toc-link" href="#s8">8. TS-06 발표 HTML 검증 중 임시 파일 발생</a>
-            <a class="toc-link" href="#s8-1">8.1 증상</a>
-            <a class="toc-link" href="#s8-2">8.2 판단</a>
-            <a class="toc-link" href="#s8-3">8.3 조치</a>
-            <a class="toc-link" href="#s8-4">8.4 재발 방지</a>
+            <div class="toc-section-hd">TS-03 PDF 산출물 생성·검증</div>
+            <a class="toc-link" href="#ts-03-pdf-산출물-생성-검증">TS-03 PDF 산출물 생성·검증</a>
+            <a class="toc-link" href="#s1">1. 증상</a>
+            <a class="toc-link" href="#s2">2. 조치</a>
+            <a class="toc-link" href="#s3">3. 재발 방지</a>
+            <a class="toc-link" href="#s4">4. 출처 및 근거</a>
+            <a class="toc-link" href="#s5">5. 변경 이력</a>
           </div>
           <div class="toc-section">
-            <div class="toc-section-hd">9. TS-07 Cognito / Social Login 책임 경계 충돌</div>
-            <a class="toc-link" href="#s9">9. TS-07 Cognito / Social Login 책임 경계 충돌</a>
-            <a class="toc-link" href="#s9-1">9.1 배경</a>
-            <a class="toc-link" href="#s9-2">9.2 문제 1: 기존 Social Login API와 Cognito 흐름 충돌</a>
-            <a class="toc-link" href="#s9-3">9.3 문제 2: Cognito 로그인 후 Lovv 세션 shape 필요</a>
-            <a class="toc-link" href="#s9-4">9.4 문제 3: Provider Verifier 재사용 금지</a>
-            <a class="toc-link" href="#s9-5">9.5 문제 4: Cognito claims 누락 시 500 발생 가능</a>
-            <a class="toc-link" href="#s9-6">9.6 문제 5: Handler route와 SAM template route 불일치</a>
-            <a class="toc-link" href="#s9-7">9.7 문제 6: Logout 의미 분리</a>
-            <a class="toc-link" href="#s9-8">9.8 문제 7: Role을 Cognito Group만으로 처리하면 복잡해짐</a>
-            <a class="toc-link" href="#s9-9">9.9 문제 8: API 명세 재정리 필요</a>
-            <a class="toc-link" href="#s9-10">9.10 최종 정리</a>
+            <div class="toc-section-hd">TS-04 Cognito / Social Login 책임 경계 충돌</div>
+            <a class="toc-link" href="#ts-04-cognito-social-login-책임-경계-충돌">TS-04 Cognito / Social Login 책임 경계 충돌</a>
+            <a class="toc-link" href="#s1">1. 배경</a>
+            <a class="toc-link" href="#s2">2. 문제 1: 기존 Social Login API와 Cognito 흐름 충돌</a>
+            <a class="toc-link" href="#s3">3. 문제 2: Cognito 로그인 후 Lovv 세션 shape 필요</a>
+            <a class="toc-link" href="#s4">4. 문제 3: Provider Verifier 재사용 금지</a>
+            <a class="toc-link" href="#s5">5. 문제 4: Cognito claims 누락 시 500 발생 가능</a>
+            <a class="toc-link" href="#s6">6. 문제 5: Handler route와 SAM template route 불일치</a>
+            <a class="toc-link" href="#s7">7. 문제 6: Logout 의미 분리</a>
+            <a class="toc-link" href="#s8">8. 문제 7: Role을 Cognito Group만으로 처리하면 복잡해짐</a>
+            <a class="toc-link" href="#s9">9. 문제 8: API 명세 재정리 필요</a>
+            <a class="toc-link" href="#s10">10. 최종 정리</a>
+            <a class="toc-link" href="#s11">11. 출처 및 근거</a>
+            <a class="toc-link" href="#s12">12. 변경 이력</a>
           </div>
           <div class="toc-section">
-            <div class="toc-section-hd">10. 발표용 트러블슈팅 요약 문구</div>
-            <a class="toc-link" href="#s10">10. 발표용 트러블슈팅 요약 문구</a>
+            <div class="toc-section-hd">TS-05 식당 데이터 취득 범위 조정</div>
+            <a class="toc-link" href="#ts-05-식당-데이터-취득-범위-조정">TS-05 식당 데이터 취득 범위 조정</a>
           </div>
           <div class="toc-section">
-            <div class="toc-section-hd">11. 변경 이력</div>
-            <a class="toc-link" href="#s11">11. 변경 이력</a>
+            <div class="toc-section-hd">1. 요약</div>
+            <a class="toc-link" href="#s1">1. 요약</a>
+          </div>
+          <div class="toc-section">
+            <div class="toc-section-hd">2. 문제</div>
+            <a class="toc-link" href="#s2">2. 문제</a>
+          </div>
+          <div class="toc-section">
+            <div class="toc-section-hd">3. 원인</div>
+            <a class="toc-link" href="#s3">3. 원인</a>
+          </div>
+          <div class="toc-section">
+            <div class="toc-section-hd">4. 해결 과정</div>
+            <a class="toc-link" href="#s4">4. 해결 과정</a>
+          </div>
+          <div class="toc-section">
+            <div class="toc-section-hd">5. 결과</div>
+            <a class="toc-link" href="#s5">5. 결과</a>
+          </div>
+          <div class="toc-section">
+            <div class="toc-section-hd">6. 출처 및 근거</div>
+            <a class="toc-link" href="#s6">6. 출처 및 근거</a>
+          </div>
+          <div class="toc-section">
+            <div class="toc-section-hd">7. 변경 이력</div>
+            <a class="toc-link" href="#s7">7. 변경 이력</a>
+          </div>
+          <div class="toc-section">
+            <div class="toc-section-hd">TS-06 일본 데이터 취득 포기</div>
+            <a class="toc-link" href="#ts-06-일본-데이터-취득-포기">TS-06 일본 데이터 취득 포기</a>
+            <a class="toc-link" href="#s1">1. 요약</a>
+            <a class="toc-link" href="#s2">2. 문제</a>
+            <a class="toc-link" href="#s3">3. 원인</a>
+            <a class="toc-link" href="#s4">4. JATO 조사 결과</a>
+            <a class="toc-link" href="#s5">5. 일본 정부·공공 운영 출처 조사 결과</a>
+            <a class="toc-link" href="#s6">6. 해결 과정</a>
+            <a class="toc-link" href="#s7">7. 결과</a>
+            <a class="toc-link" href="#s8">8. 재발 방지</a>
+            <a class="toc-link" href="#s9">9. 조사 결론</a>
+            <a class="toc-link" href="#s10">10. 라이센스 원문 첨부</a>
+            <a class="toc-link" href="#s11">11. 출처 및 근거</a>
+            <a class="toc-link" href="#s12">12. 변경 이력</a>
           </div>
         </nav>
       </aside>
@@ -108,7 +150,7 @@
         <p class="doc-p">대표 문서: <code>../<wbr>11_<wbr>deployment_<wbr>ops.md</code></p>
         </blockquote>
         <blockquote>
-        <p class="doc-p">문서 버전: v0.3</p>
+        <p class="doc-p">문서 버전: v0.14</p>
         <p class="doc-p">문서 상태: 초안 (Draft)</p>
         <p class="doc-p">작성일: 2026-06-12</p>
         <p class="doc-p">작성자: llm팀</p>
@@ -130,82 +172,212 @@
         <h1 id="s2" class="s-h1">2. 요약</h1>
         <div class="table-wrap wide scroll-table"><table class="info-tbl">
         <thead><tr><th>ID</th><th>이슈</th><th>현재 상태</th><th>핵심 조치</th></tr></thead><tbody>
-        <tr><td>TS-01</td><td>Neptune 도입 범위 판단</td><td>Lambda 대체 구현 예정</td><td>그래프DB 직접 도입 대신 RDS JOIN, DynamoDB 인접 리스트, 사전계산 후보 테이블, Lambda 인메모리 그래프로 유사 기능 구현</td></tr>
-        <tr><td>TS-02</td><td>KR 전처리 적재 기준 정리</td><td>완료</td><td><code>TourKoreaDomainData</code> 기준으로 재적재, GSI 3종 활성화, legacy 테이블 제거</td></tr>
-        <tr><td>TS-03</td><td>S3 vector index 계약 정합성</td><td>진행 기준 확정</td><td>Titan V2 1024/cosine, 3분절 vector ID, GSI3 export 기준 확정</td></tr>
-        <tr><td>TS-04</td><td>HTML 공유 문서 생성물 불일치</td><td>대응 완료</td><td>Markdown 원본 기준으로 <code>generate_<wbr>pages.py</code> 재실행 후 구조 검증</td></tr>
-        <tr><td>TS-05</td><td>PDF 산출물 생성·검증</td><td>대응 완료</td><td><code>xelatex</code> 2회 실행, PDF/TeX 산출물과 <code>pdf/<wbr>AGENT.md</code> 목록 동기화</td></tr>
-        <tr><td>TS-06</td><td>발표 HTML 검증 중 임시 파일 발생</td><td>대응 완료</td><td><code>.chrome-*</code> 브라우저 프로필 ignore, 검증 캡처만 산출물로 보관</td></tr>
-        <tr><td>TS-07</td><td>Cognito / Social Login 책임 경계 충돌</td><td>기준 확정</td><td>Google/Kakao 직접 검증 API는 legacy로 내리고 Cognito bridge API를 신설</td></tr>
+        <tr><td>TS-01</td><td>Neptune 도입 범위 판단</td><td>Lambda 대체 구현 예정</td><td>그래프DB 직접 도입 대신 DynamoDB 인접 리스트, 사전계산 후보 테이블, Lambda 인메모리 그래프로 유사 기능 구현</td></tr>
+        <tr><td>TS-02</td><td>S3 vector index 계약 정합성</td><td>진행 기준 확정</td><td>Titan V2 1024/cosine, 3분절 vector ID, GSI3 export 기준 확정</td></tr>
+        <tr><td>TS-03</td><td>PDF 산출물 생성·검증</td><td>대응 완료</td><td><code>xelatex</code> 2회 실행, PDF/TeX 산출물과 <code>pdf/<wbr>AGENT.md</code> 목록 동기화</td></tr>
+        <tr><td>TS-04</td><td>Cognito / Social Login 책임 경계 충돌</td><td>기준 확정</td><td>Google/Kakao 직접 검증 API는 legacy로 내리고 Cognito bridge API를 신설</td></tr>
+        <tr><td>TS-05</td><td>식당 데이터 취득 범위 조정</td><td>기준 확정</td><td>식당 데이터 직접 취득 대신 Kakao Map API 조회로 대체</td></tr>
+        <tr><td>TS-06</td><td>일본 데이터 취득 포기</td><td>기준 확정</td><td>CC BY 4.0 기준으로 처리하려던 일본 데이터 후보를 세부 규약 제한으로 취득 중단</td></tr>
         </tbody></table></div>
-        <h1 id="s3" class="s-h1">3. TS-01 Neptune 도입 범위 판단</h1>
-        <h2 id="s3-1" class="s-h2">3.1 증상</h2>
+        <h1 id="s4" class="s-h1">4. 발표용 트러블슈팅 요약 문구</h1>
+        <p class="doc-p">중간발표에서 한 장으로 설명할 때는 다음 구조로 축약한다.</p>
+        <pre><code>이슈: 그래프DB가 필요해 보였지만 PoC 관계는 대부분 1~2-hop이었다.
+        판단: Neptune은 지금 넣으면 비용과 운영 복잡도가 먼저 커진다.
+        대응: 그래프DB 직접 도입 대신 Lambda로 유사 관계 탐색 기능을 구현한다.
+        구현: DynamoDB 인접 리스트, 사전계산 후보 테이블, Lambda 인메모리 그래프를 조합한다.
+        기준: 3-hop 이상 관계 탐색이나 실시간 그래프 쓰기가 병목이 되면 Neptune으로 승격한다.</code></pre>
+        <h1 id="s5" class="s-h1">5. 변경 이력</h1>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
+        <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+        <tr><td>v0.14</td><td>2026-07-09</td><td>llm팀</td><td>TS-02~TS-05에 공식 문서 및 로컬 대표 문서 기반 출처·근거 섹션 추가</td></tr>
+        <tr><td>v0.13</td><td>2026-07-09</td><td>llm팀</td><td>TS-06에 CC BY 4.0, PDL 1.0 및 관련 출처별 라이센스·규약 원문 링크를 첨부</td></tr>
+        <tr><td>v0.12</td><td>2026-07-09</td><td>llm팀</td><td>TS-06 요약을 CC BY 4.0 처리 후보가 세부 규약 제한으로 중단된 흐름으로 정정</td></tr>
+        <tr><td>v0.11</td><td>2026-07-09</td><td>llm팀</td><td>TS-06 요약에서 일본 데이터 전체를 오픈 라이센스로 일반화하지 않도록 표현 정정</td></tr>
+        <tr><td>v0.10</td><td>2026-07-09</td><td>llm팀</td><td>TS-06에 일본 정부·공공 운영 출처의 이용조건 조사 결과를 추가</td></tr>
+        <tr><td>v0.9</td><td>2026-07-09</td><td>llm팀</td><td>TS-06에 JATO 공식 사이트와 회원규약 조사 결과를 보강</td></tr>
+        <tr><td>v0.8</td><td>2026-07-09</td><td>llm팀</td><td>일본 데이터 라이센스와 데이터 규약 불일치로 취득을 포기한 사례를 TS-06으로 추가</td></tr>
+        <tr><td>v0.7</td><td>2026-07-09</td><td>llm팀</td><td>개인/작업 방식 이슈였던 기존 TS-03, TS-05를 제거하고 후속 TS 항목을 TS-03~TS-05로 재번호 매김</td></tr>
+        <tr><td>v0.6</td><td>2026-07-09</td><td>llm팀</td><td>개인 로컬 환경 이슈였던 기존 KR 전처리 적재 기준 항목을 제거하고 후속 TS 항목을 재번호 매김</td></tr>
+        <tr><td>v0.5</td><td>2026-07-09</td><td>llm팀</td><td>TS 상세 내용을 하위 문서로 분리하고 본 문서를 인덱스 중심으로 재정리</td></tr>
+        <tr><td>v0.4</td><td>2026-07-09</td><td>llm팀</td><td>식당 데이터 취득 범위 조정 이슈를 추가하고 하위 상세 문서 연결</td></tr>
+        <tr><td>v0.3</td><td>2026-06-12</td><td>llm팀</td><td>그래프DB 직접 도입 대신 Lambda 기반 관계 탐색 보조 기능 구현 예정으로 TS-01 방향 명확화</td></tr>
+        <tr><td>v0.2</td><td>2026-06-12</td><td>llm팀</td><td>Cognito/Social Login 책임 경계, bridge session API, claims 검증, SAM route, logout, role scope, API 명세 반영 기준 추가</td></tr>
+        <tr><td>v0.1</td><td>2026-06-12</td><td>llm팀</td><td>Neptune 도입 판단, KR 전처리, S3 vector index, HTML/PDF 산출물, 발표 HTML 검증 이슈를 트러블슈팅 문서로 초안화</td></tr>
+        </tbody></table></div>
+        <p class="doc-p">---</p>
+        <h1 id="s6" class="s-h1">6. 상세 트러블슈팅</h1>
+        <h1 id="ts-01-neptune-도입-범위-판단" class="s-h1">TS-01 Neptune 도입 범위 판단</h1>
+        <blockquote>
+        <p class="doc-p">문서 성격: 트러블슈팅 하위 Markdown</p>
+        <p class="doc-p">상위 문서: <code>../<wbr>troubleshooting.md</code></p>
+        </blockquote>
+        <blockquote>
+        <p class="doc-p">문서 버전: v0.2</p>
+        <p class="doc-p">문서 상태: 초안 (Draft)</p>
+        <p class="doc-p">작성일: 2026-07-09</p>
+        <p class="doc-p">작성자: llm팀</p>
+        <p class="doc-p">문서 목적: <code>TS-01</code> 이슈의 문제, 원인, 판단, 조치, 재발 방지 기준을 본 문서에서 분리해 상세 관리한다.</p>
+        </blockquote>
+        <p class="doc-p">---</p>
+        <h2 id="s1" class="s-h2">1. 요약</h2>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl decision-tbl">
+        <thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
+        <tr><td>문제</td><td>추천 후보 확장에 도시, 축제, 테마, 장소 관계가 필요해 Neptune 도입을 검토했다.</td></tr>
+        <tr><td>조사 결론</td><td>현재 Lovv의 관계 탐색은 대부분 1~2-hop, 읽기 위주, 배치 재생성 가능한 공용 콘텐츠 관계라 전용 그래프DB를 바로 둘 필요성이 낮다. 비용 측면에서도 Neptune은 최소 NCU 기반 고정비와 storage/I/O 비용 축이 추가되어 초기 예산 대비 부담이 크다.</td></tr>
+        <tr><td>결정</td><td>PoC와 Production 1차에서는 Neptune을 직접 도입하지 않고 Lambda 관계 탐색 보조 기능으로 대체한다.</td></tr>
+        <tr><td>대체 구성</td><td>DynamoDB 인접 리스트, 사전계산 후보 테이블, Lambda 인메모리 그래프, S3 vector metadata filter를 조합한다.</td></tr>
+        <tr><td>승격 조건</td><td>3-hop 이상 임의 경로 탐색, 대규모 실시간 그래프 쓰기, 복잡한 그래프 알고리즘이 실제 병목으로 확인될 때 Neptune을 재검토한다.</td></tr>
+        </tbody></table></div>
+        <h2 id="s2" class="s-h2">2. 증상</h2>
         <p class="doc-p">추천 시스템에서 도시, 테마, 축제, 인접 도시 관계를 다루기 때문에 그래프DB인 Neptune을 도입할 수 있다는 의견이 있었다.</p>
         <p class="doc-p">그러나 중간발표 PoC 범위에서는 대부분의 관계 탐색이 1~2-hop 수준이었다. 이 단계에서 Neptune을 바로 넣으면 기능 검증보다 운영 비용과 복잡도가 먼저 증가할 위험이 있었다.</p>
-        <h2 id="s3-2" class="s-h2">3.2 원인</h2>
+        <h2 id="s3" class="s-h2">3. 조사 범위</h2>
+        <p class="doc-p">이번 조사는 다음 질문에 답하는 방식으로 진행했다.</p>
+        <div class="table-wrap"><table class="info-tbl compact-tbl">
+        <thead><tr><th>질문</th><th>확인한 기준</th></tr></thead><tbody>
+        <tr><td>Neptune이 필요한 질의인가?</td><td>현재 질의가 깊은 임의 경로 탐색인지, 단순 후보 확장인지 확인</td></tr>
+        <tr><td>현재 데이터 성격은 무엇인가?</td><td>실시간 쓰기 그래프인지, S3 Raw/DynamoDB 기준으로 배치 재생성 가능한 관계 인덱스인지 확인</td></tr>
+        <tr><td>비용 부담이 합리적인가?</td><td>초기 예산과 Neptune 최소 운영 형상의 고정비를 비교</td></tr>
+        <tr><td>대체 구현이 가능한가?</td><td>DynamoDB 인접 리스트, 사전계산 후보, Lambda 인메모리 그래프, S3 vector metadata filter로 대체 가능한지 확인</td></tr>
+        <tr><td>언제 승격할 것인가?</td><td>Neptune 도입을 다시 판단할 측정 기준 정의</td></tr>
+        </tbody></table></div>
+        <h2 id="s4" class="s-h2">4. 원인</h2>
         <div class="table-wrap"><table class="info-tbl compact-tbl decision-tbl">
         <thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
         <tr><td>관계 깊이</td><td>PoC의 주요 질의는 도시-테마, 도시-축제, 도시-장소 수준이다.</td></tr>
-        <tr><td>비용</td><td>Neptune Serverless도 최소 NCU 기반 고정비가 발생한다.</td></tr>
-        <tr><td>운영 복잡도</td><td>RDS, DynamoDB, S3 vector 외에 별도 그래프 저장소 운영이 추가된다.</td></tr>
+        <tr><td>비용</td><td>Neptune Serverless는 최소 시작 용량이 1 NCU이며, 저장소와 I/O도 별도 과금된다. 초기 저트래픽에서는 고정비 비율이 커진다.</td></tr>
+        <tr><td>운영 복잡도</td><td>DynamoDB, S3 vector, Lambda 외에 별도 그래프 저장소 운영이 추가된다.</td></tr>
         <tr><td>재생성성</td><td>현재 관계 데이터는 원본 저장소보다 파생 인덱스로 두는 편이 안전하다.</td></tr>
+        <tr><td>질의 패턴</td><td>추천 후보 확장은 대부분 필터링, 1-hop 조회, 제한된 2-hop 확장, 재랭킹으로 끝난다.</td></tr>
+        <tr><td>원본성</td><td>관계 탐색 결과는 원장이 아니라 DynamoDB 정규화 문서와 S3 Raw 원본에서 재생성 가능한 파생 데이터다.</td></tr>
         </tbody></table></div>
-        <h2 id="s3-3" class="s-h2">3.3 판단</h2>
+        <h2 id="s5" class="s-h2">5. AWS 서비스 조사 결과</h2>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>항목</th><th>조사 결과</th><th>Lovv 판단</th></tr></thead><tbody>
+        <tr><td>Neptune 성격</td><td>Neptune은 property graph와 RDF graph를 지원하고 Gremlin, openCypher, SPARQL 질의에 적합한 관리형 그래프DB다.</td><td>깊은 관계 그래프를 운영할 때는 적합하지만, 현재 후보 확장에는 과하다.</td></tr>
+        <tr><td>Neptune Serverless 용량</td><td>Serverless는 NCU 기준으로 과금되며 시작 용량은 1 NCU다. 공식 문서상 최소 NCU도 1.0이다.</td><td>scale-to-zero로 볼 수 없으므로 초기 저트래픽 PoC의 비용 절감 수단으로 보기 어렵다.</td></tr>
+        <tr><td>Neptune 비용 구조</td><td>데이터베이스 인스턴스/용량 외에 storage, I/O, backup, data transfer 비용을 고려해야 한다.</td><td>기존 DynamoDB, S3 vector, Lambda에 비해 별도 운영 비용 축이 추가된다.</td></tr>
+        <tr><td>S3 vector 역할</td><td>S3 vector는 embedding similarity search와 metadata filtering을 제공한다.</td><td>의미 검색과 1차 metadata filter는 S3 vector로 처리하고, 그래프 관계 확정은 별도 관계 탐색 보조에서 수행한다.</td></tr>
+        <tr><td>S3 vector 한계</td><td>S3 vector는 유사도 검색과 metadata filter에 강하지만 그래프 경로 탐색 엔진은 아니다.</td><td>S3 vector 결과를 단독 확정하지 않고 DynamoDB 정규화 문서와 Lambda 관계 탐색으로 검증한다.</td></tr>
+        </tbody></table></div>
+        <h2 id="s6" class="s-h2">6. 현재 Lovv 질의 패턴 분석</h2>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>질의/기능</th><th>그래프 관점</th><th>현재 대체 방식</th></tr></thead><tbody>
+        <tr><td>도시별 축제 후보</td><td><code>City -&gt; Festival</code> 1-hop</td><td>DynamoDB 정규화 문서, 축제 검증 캐시</td></tr>
+        <tr><td>도시별 장소 후보</td><td><code>City -&gt; Place</code> 1-hop</td><td>DynamoDB 조회, S3 vector metadata filter</td></tr>
+        <tr><td>테마/계절 적합성</td><td><code>City/<wbr>Place -&gt; Theme</code>, <code>SeasonalFit</code></td><td>S3 vector metadata의 <code>theme_<wbr>tags</code>, <code>recommended_<wbr>months</code>, DynamoDB 속성</td></tr>
+        <tr><td>인접 도시 후보</td><td><code>City -&gt; NearCity</code> 1-hop</td><td>좌표 기반 Haversine 거리 배치 사전계산</td></tr>
+        <tr><td>후보 확장·재랭킹</td><td>제한된 2-hop</td><td>사전계산 후보 테이블 또는 Lambda 인메모리 그래프</td></tr>
+        <tr><td>자연어 유사 장소 검색</td><td>그래프 질의 아님</td><td>S3 vector similarity search</td></tr>
+        </tbody></table></div>
+        <p class="doc-p">현재 범위에서는 임의 길이 경로 탐색보다, 이미 정의된 관계 타입을 기준으로 후보를 좁히고 재랭킹하는 일이 중심이다.</p>
+        <h2 id="s7" class="s-h2">7. 대체 아키텍처</h2>
         <p class="doc-p">PoC와 Production 1차에서는 Neptune을 직접 도입하지 않는다. 현재 방향은 그래프DB와 유사한 관계 탐색 기능을 Lambda로 구현하는 것이다.</p>
         <p class="doc-p">현재는 다음 대체 방식으로 충분하다.</p>
         <div class="table-wrap"><table class="info-tbl compact-tbl">
         <thead><tr><th>대체 방식</th><th>적용 범위</th></tr></thead><tbody>
-        <tr><td>RDS JOIN</td><td>도시, 테마, 장소, 축제의 정형 관계 조회</td></tr>
         <tr><td>DynamoDB 인접 리스트</td><td>도메인 item 단위 빠른 조회와 서비스 운영 조회</td></tr>
         <tr><td>사전계산 후보 테이블</td><td>추천 후보 확장과 반복 질의 비용 절감</td></tr>
         <tr><td>Lambda 인메모리 그래프</td><td>요청 시 소규모 관계 탐색, 2-hop 확장, 그래프 재랭킹 보조</td></tr>
         <tr><td>S3 vector index</td><td>자연어·분위기 기반 후보 검색</td></tr>
         </tbody></table></div>
-        <h2 id="s3-4" class="s-h2">3.4 조치</h2>
+        <h2 id="s7-1" class="s-h2">7.1 관계 데이터 예시</h2>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>관계</th><th>저장 방식</th><th>재생성 기준</th></tr></thead><tbody>
+        <tr><td><code>City -&gt; Theme</code></td><td>DynamoDB 인접 리스트 또는 S3 vector metadata</td><td>수집 정규화 문서</td></tr>
+        <tr><td><code>City -&gt; Festival</code></td><td>DynamoDB 정규화 문서, 검증 캐시</td><td>축제 원천 데이터, S3 Raw</td></tr>
+        <tr><td><code>City -&gt; Place</code></td><td>DynamoDB 정규화 문서</td><td>관광지/장소 원천 데이터</td></tr>
+        <tr><td><code>City -&gt; NearCity</code></td><td>배치 사전계산 edge</td><td>도시 좌표</td></tr>
+        <tr><td><code>Candidate -&gt; Candidate</code></td><td>사전계산 후보 테이블</td><td>scoring batch 결과</td></tr>
+        </tbody></table></div>
+        <h2 id="s7-2" class="s-h2">7.2 요청 처리 흐름</h2>
+        <pre><code>사용자 조건
+        ↓
+        S3 vector similarity search + metadata filter
+        ↓
+        DynamoDB 정규화 문서 재조회
+        ↓
+        Lambda 관계 탐색 보조로 도시·축제·테마·장소 관계 확장
+        ↓
+        사전계산 후보 또는 인메모리 그래프 재랭킹
+        ↓
+        최종 후보 반환</code></pre>
+        <h2 id="s8" class="s-h2">8. 판단</h2>
+        <p class="doc-p">현재 단계에서는 Neptune을 도입하지 않는 판단이 타당하다.</p>
+        <div class="table-wrap"><table class="info-tbl compact-tbl">
+        <thead><tr><th>판단 기준</th><th>결론</th></tr></thead><tbody>
+        <tr><td>기능 적합성</td><td>현재 요구는 대부분 1~2-hop 후보 확장이라 DynamoDB/Lambda/S3 vector 조합으로 구현 가능하다.</td></tr>
+        <tr><td>비용 효율</td><td>Neptune은 최소 용량과 storage/I/O 비용 축이 추가되어 초기 예산에서 고정비 부담이 크다.</td></tr>
+        <tr><td>운영 단순성</td><td>기존 저장소와 Lambda를 재사용하면 배포, 모니터링, 장애 대응 표면을 줄일 수 있다.</td></tr>
+        <tr><td>데이터 원본성</td><td>그래프는 원장이 아니라 재생성 가능한 파생 관계 인덱스이므로 전용 그래프DB의 내구 원장 역할이 필요하지 않다.</td></tr>
+        <tr><td>확장성</td><td>추후 3-hop 이상 경로 탐색이나 실시간 그래프 쓰기가 병목이 되면 Neptune으로 승격할 수 있다.</td></tr>
+        </tbody></table></div>
+        <h2 id="s9" class="s-h2">9. 조치</h2>
         <ul class="bullet-list">
         <li>Neptune은 원본 저장소가 아니라 향후 승격 가능한 파생 관계 인덱스로만 정의한다.</li>
-        <li>현재 설계는 RDS, DynamoDB, S3 vector index, Lambda 관계 탐색 보조 기능을 기준으로 작성한다.</li>
+        <li>현재 설계는 DynamoDB, S3 vector index, Lambda 관계 탐색 보조 기능을 기준으로 작성한다.</li>
         <li>Lambda는 DynamoDB 인접 리스트와 사전계산 후보를 읽어 그래프DB와 유사한 후보 확장·재랭킹 기능을 수행한다.</li>
         <li>발표에서는 &quot;도입 실패&quot;가 아니라 &quot;비용·범위 검토 후 보류한 기술 판단&quot;으로 설명한다.</li>
         </ul>
-        <h2 id="s3-5" class="s-h2">3.5 승격 기준</h2>
+        <h2 id="s10" class="s-h2">10. 승격 기준</h2>
         <p class="doc-p">다음 조건 중 하나가 실제 요구사항으로 확인되면 Neptune 도입을 재검토한다.</p>
         <div class="table-wrap"><table class="info-tbl compact-tbl">
         <thead><tr><th>승격 조건</th><th>설명</th></tr></thead><tbody>
         <tr><td>3-hop 이상 임의 경로 탐색</td><td>사용자-도시-테마-축제-인접도시처럼 경로가 깊어짐</td></tr>
         <tr><td>대규모 실시간 그래프 쓰기</td><td>사용자 행동, co-visit, 선호 관계가 지속적으로 누적됨</td></tr>
         <tr><td>복잡한 그래프 알고리즘</td><td>PageRank류 중요도, 커뮤니티 탐지, 경로 추천이 필요해짐</td></tr>
-        <tr><td>RDS/DynamoDB 대체 구현 한계</td><td>JOIN 또는 사전계산 방식이 운영상 병목이 됨</td></tr>
+        <tr><td>DynamoDB/Lambda 대체 구현 한계</td><td>인접 리스트 조회, 사전계산 후보, Lambda 인메모리 그래프 방식이 운영상 병목이 됨</td></tr>
         </tbody></table></div>
-        <h1 id="s4" class="s-h1">4. TS-02 KR 전처리 적재 기준 정리</h1>
-        <h2 id="s4-1" class="s-h2">4.1 증상</h2>
-        <p class="doc-p">초기 문서와 일부 설계에는 legacy 테이블명인 <code>TourKoreaData</code>가 남아 있었고, 실제 운영 기준은 <code>TourKoreaDomainData</code>로 전환됐다.</p>
-        <p class="doc-p">이 상태를 방치하면 전처리 결과, DynamoDB 조회, S3 vector index 입력 기준이 서로 달라질 수 있었다.</p>
-        <h2 id="s4-2" class="s-h2">4.2 원인</h2>
-        <ul class="bullet-list">
-        <li>초기 설계와 실제 구현이 다른 시점에 갱신됐다.</li>
-        <li>Raw JSON 적재, domain loader, Terraform, 문서가 각각 다른 기준을 참조할 수 있었다.</li>
-        <li>ingest manifest가 실제 domain load 이력을 완전히 대표하지 못했다.</li>
-        </ul>
-        <h2 id="s4-3" class="s-h2">4.3 조치</h2>
+        <p class="doc-p">추가로 다음 지표를 관찰한다.</p>
         <div class="table-wrap"><table class="info-tbl compact-tbl">
-        <thead><tr><th>항목</th><th>조치</th></tr></thead><tbody>
-        <tr><td>테이블 기준</td><td><code>TourKoreaDomainData</code>를 운영 기준으로 확정</td></tr>
-        <tr><td>적재 결과</td><td>S3 Raw 40개 파일 기준 4,334 items 적재</td></tr>
-        <tr><td>GSI</td><td>도시, 도/광역, entity type 조회용 GSI 3종 활성화</td></tr>
-        <tr><td>legacy 정리</td><td><code>TourKoreaData</code> Terraform resource와 AWS table 제거</td></tr>
-        <tr><td>검증</td><td>전처리 테스트 18개 통과, Lambda 부분 실패 경로 테스트 추가</td></tr>
+        <thead><tr><th>지표</th><th>재검토 신호</th></tr></thead><tbody>
+        <tr><td>요청당 관계 탐색 depth</td><td>평균 2-hop을 넘어 3-hop 이상이 상시 필요</td></tr>
+        <tr><td>후보 확장 latency</td><td>Lambda 관계 탐색과 DynamoDB 반복 조회가 목표 latency를 지속 초과</td></tr>
+        <tr><td>관계 edge 수</td><td>배치 사전계산 후보 테이블이 관리하기 어려운 수준으로 증가</td></tr>
+        <tr><td>그래프 업데이트 빈도</td><td>관계 쓰기가 실시간 사용자 행동 기반으로 지속 발생</td></tr>
+        <tr><td>알고리즘 요구</td><td>최단경로, 중심성, 커뮤니티 탐지 등 그래프 전용 알고리즘이 서비스 핵심 기능이 됨</td></tr>
         </tbody></table></div>
-        <h2 id="s4-4" class="s-h2">4.4 재발 방지</h2>
-        <ul class="bullet-list">
-        <li>문서에는 현재 운영 기준 테이블명을 먼저 적고, 과거 명칭은 migration 맥락에서만 언급한다.</li>
-        <li>신규 검색 인덱스나 API 문서는 <code>korea_<wbr>data_<wbr>preprocessing_<wbr>result_<wbr>report.md</code>를 기준 보고서로 참조한다.</li>
-        <li>manifest는 Raw ingest와 domain load를 분리해 기록한다.</li>
-        </ul>
-        <h1 id="s5" class="s-h1">5. TS-03 S3 vector index 계약 정합성</h1>
-        <h2 id="s5-1" class="s-h2">5.1 증상</h2>
+        <h2 id="s11" class="s-h2">11. 조사 결론</h2>
+        <p class="doc-p">TS-01의 결론은 기존과 동일하게 유지한다.</p>
+        <p class="doc-p">Neptune은 그래프 질의 자체에는 적합한 서비스지만, 현재 Lovv의 PoC/Production 1차 범위에서는 관계 규모와 질의 깊이가 작고, 관계 데이터도 재생성 가능한 파생 인덱스다.</p>
+        <p class="doc-p">비용 측면에서도 Neptune을 바로 도입하면 최소 NCU 기반 고정비, storage, I/O, backup, data transfer 비용 축이 기존 DynamoDB, S3 vector, Lambda 스택 위에 추가된다. 초기 트래픽과 예산 규모에서는 이 고정비가 기능 검증보다 먼저 부담으로 작용할 가능성이 높다.</p>
+        <p class="doc-p">따라서 현재는 DynamoDB 인접 리스트, 사전계산 후보 테이블, Lambda 인메모리 그래프, S3 vector metadata filter를 조합해 구현하고, Neptune은 고도화 단계의 승격 옵션으로 둔다.</p>
+        <h2 id="s12" class="s-h2">12. 출처 및 근거</h2>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>구분</th><th>근거</th></tr></thead><tbody>
+        <tr><td>로컬 설계</td><td><code>docs/<wbr>04_<wbr>database_<wbr>design/<wbr>supplemental/<wbr>neptune_<wbr>alternative.md</code></td></tr>
+        <tr><td>로컬 비용 검토</td><td><code>docs/<wbr>04_<wbr>database_<wbr>design/<wbr>supplemental/<wbr>database_<wbr>design_<wbr>retention_<wbr>neptune_<wbr>update.md</code></td></tr>
+        <tr><td>Agent 검색 계약</td><td><code>docs/<wbr>05_<wbr>agent_<wbr>spec/<wbr>05_<wbr>agent_<wbr>spec.md</code></td></tr>
+        <tr><td>기술 명세</td><td><code>docs/<wbr>06_<wbr>technical_<wbr>spec/<wbr>06_<wbr>technical_<wbr>spec.md</code></td></tr>
+        <tr><td>AWS Neptune 공식 문서</td><td><a href="https://docs.aws.amazon.com/neptune/latest/userguide/intro.html">What Is Amazon Neptune?</a> - Gremlin, openCypher, SPARQL을 지원하는 관리형 그래프DB</td></tr>
+        <tr><td>AWS Neptune 비용 문서</td><td><a href="https://aws.amazon.com/neptune/pricing/">Amazon Neptune pricing</a> - Serverless NCU 과금, 시작 용량 1 NCU, storage/I/O 별도 과금</td></tr>
+        <tr><td>AWS Neptune Serverless scaling</td><td><a href="https://docs.aws.amazon.com/neptune/latest/userguide/neptune-serverless-capacity-scaling.html">Capacity scaling in a Neptune Serverless DB cluster</a> - 최소 NCU 1.0, 최대 NCU 128.0 기준</td></tr>
+        <tr><td>AWS S3 Vectors 공식 문서</td><td><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-vectors.html">Working with S3 Vectors and vector buckets</a> - embedding similarity search와 metadata filtering 제공</td></tr>
+        <tr><td>AWS S3 Vectors metadata filter</td><td><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-vectors-metadata-filtering.html">Metadata filtering</a> - similarity 조건과 metadata 조건을 함께 필터링 가능</td></tr>
+        </tbody></table></div>
+        <h2 id="s13" class="s-h2">13. 변경 이력</h2>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
+        <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+        <tr><td>v0.2</td><td>2026-07-09</td><td>llm팀</td><td>Neptune 도입 판단의 로컬 설계 근거, AWS 공식 근거, 대체 아키텍처, 승격 지표를 상세화</td></tr>
+        <tr><td>v0.1</td><td>2026-07-09</td><td>llm팀</td><td>본 트러블슈팅 문서에서 TS-01 상세 내용을 하위 문서로 분리</td></tr>
+        </tbody></table></div>
+        <p class="doc-p">---</p>
+        <h1 id="ts-02-s3-vector-index-계약-정합성" class="s-h1">TS-02 S3 vector index 계약 정합성</h1>
+        <blockquote>
+        <p class="doc-p">문서 성격: 트러블슈팅 하위 Markdown</p>
+        <p class="doc-p">상위 문서: <code>../<wbr>troubleshooting.md</code></p>
+        </blockquote>
+        <blockquote>
+        <p class="doc-p">문서 버전: v0.2</p>
+        <p class="doc-p">문서 상태: 초안 (Draft)</p>
+        <p class="doc-p">작성일: 2026-07-09</p>
+        <p class="doc-p">작성자: llm팀</p>
+        <p class="doc-p">문서 목적: <code>TS-02</code> 이슈의 문제, 원인, 판단, 조치, 재발 방지 기준을 본 문서에서 분리해 상세 관리한다.</p>
+        </blockquote>
+        <p class="doc-p">---</p>
+        <h2 id="s1" class="s-h2">1. 증상</h2>
         <p class="doc-p">S3 vector index 생성 기준을 정리하는 과정에서 <code>city_<wbr>id</code>, vector ID, embedding dimension, metadata filter 기준이 초기 설계와 실제 적재 데이터 사이에서 어긋날 수 있었다.</p>
-        <h2 id="s5-2" class="s-h2">5.2 원인</h2>
+        <h2 id="s2" class="s-h2">2. 원인</h2>
         <div class="table-wrap"><table class="info-tbl compact-tbl">
         <thead><tr><th>항목</th><th>초기 위험</th></tr></thead><tbody>
         <tr><td><code>city_<wbr>id</code></td><td>과거 설계는 <code>KR-GB-ANDONG</code> 계열을 가정했지만 실제 데이터는 <code>KR-Andong</code> 형식</td></tr>
@@ -213,7 +385,7 @@
         <tr><td>Embedding</td><td>dimension과 metric은 index 생성 후 변경이 어려움</td></tr>
         <tr><td>Metadata</td><td>filterable 2KB 제한을 넘길 수 있음</td></tr>
         </tbody></table></div>
-        <h2 id="s5-3" class="s-h2">5.3 조치</h2>
+        <h2 id="s3" class="s-h2">3. 조치</h2>
         <ul class="bullet-list">
         <li><code>city_<wbr>id</code>는 실데이터 기준 <code>KR-{CityNameEn}</code> 형식으로 확정한다.</li>
         <li>Vector ID는 <code>{source_<wbr>type}#<wbr>{source_<wbr>id}#<wbr>{chunk_<wbr>no}</code> 3분절로 통일한다.</li>
@@ -221,34 +393,44 @@
         <li><code>visitor_<wbr>statistics</code>는 개별 vector가 아니라 city chunk의 보조 문맥으로만 반영한다.</li>
         <li>CEA 검색 요구에 맞춰 restaurant chunk에는 주소를 포함한다.</li>
         </ul>
-        <h2 id="s5-4" class="s-h2">5.4 재발 방지</h2>
+        <h2 id="s4" class="s-h2">4. 재발 방지</h2>
         <ul class="bullet-list">
         <li>index 생성 전에 dimension, metric, non-filterable key를 문서와 IaC에서 대조한다.</li>
         <li>GSI3 entity type별 export 결과로 원천 수량을 manifest에 남긴다.</li>
         <li>S3 vector 결과는 DynamoDB <code>ddb_<wbr>pk</code>/<code>ddb_<wbr>sk</code>로 재검증하는 것을 기본 계약으로 둔다.</li>
         </ul>
-        <h1 id="s6" class="s-h1">6. TS-04 HTML 공유 문서 생성물 불일치</h1>
-        <h2 id="s6-1" class="s-h2">6.1 증상</h2>
-        <p class="doc-p">Markdown 원본은 정상인데 <code>pages/<wbr>*.html</code> 생성물이 중간에 끊기거나 오래된 내용을 표시할 수 있었다.</p>
-        <h2 id="s6-2" class="s-h2">6.2 원인</h2>
-        <ul class="bullet-list">
-        <li>Markdown 원본 수정 후 HTML 생성 스크립트를 다시 실행하지 않았다.</li>
-        <li>표나 긴 문단이 HTML 변환 과정에서 깨졌는지 확인하지 않았다.</li>
-        </ul>
-        <h2 id="s6-3" class="s-h2">6.3 조치</h2>
-        <p class="doc-p">HTML 공유 문서를 갱신한 뒤 다음 명령을 실행한다.</p>
-        <pre><code>python scripts\generate_pages.py
-        python scripts\verify_pages_structure.py</code></pre>
-        <h2 id="s6-4" class="s-h2">6.4 재발 방지</h2>
-        <ul class="bullet-list">
-        <li>본문 의미 변경은 항상 <code>docs/<wbr></code> Markdown 원본에서 먼저 수행한다.</li>
-        <li><code>pages/<wbr>*.html</code>은 생성물로 보고 직접 수정하지 않는다.</li>
-        <li>커밋 전 <code>git diff -- pages/<wbr>*.html</code>에서 끊긴 표, 깨진 코드블록, 이전/다음 링크를 확인한다.</li>
-        </ul>
-        <h1 id="s7" class="s-h1">7. TS-05 PDF 산출물 생성·검증</h1>
-        <h2 id="s7-1" class="s-h2">7.1 증상</h2>
+        <h2 id="s5" class="s-h2">5. 출처 및 근거</h2>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>출처</th><th>확인 내용</th><th>TS-02 반영</th></tr></thead><tbody>
+        <tr><td><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-vectors.html">AWS S3 Vectors - Working with S3 Vectors and vector buckets</a></td><td>S3 Vectors는 vector bucket/index에 embedding을 저장하고 similarity query와 metadata filtering을 제공한다.</td><td>S3 vector index를 원본 저장소가 아니라 검색 인덱스로 두고, DynamoDB/S3 Raw 재조회 키를 함께 보존한다.</td></tr>
+        <tr><td><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-vectors-metadata-filtering.html">AWS S3 Vectors - Metadata filtering</a></td><td>filterable metadata는 similarity query에서 필터로 사용할 수 있고, 필터 가능한 metadata 크기 제한을 고려해야 한다.</td><td>metadata filter key를 사전에 제한하고, 큰 설명/본문은 filterable metadata가 아니라 vector text 또는 원본 재조회 대상으로 분리한다.</td></tr>
+        <tr><td><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/titan-embedding-models.html">Amazon Bedrock - Titan Text Embeddings models</a></td><td><code>amazon.titan-embed-text-v2:0</code>은 텍스트 검색과 유사도에 사용할 수 있는 embedding 모델이며 1024차원 vector를 제공한다.</td><td>Titan Text Embeddings V2, 1024 dimension, cosine 기준을 index 계약으로 고정한다.</td></tr>
+        <tr><td>data_preprocessing_plan.md</td><td>V2 기준에서 <code>TourKoreaDomainDataV2</code>, <code>kr-tour-domain-v2</code>, vector 대상 entity, 7,606 unique vector 기준을 정리한다.</td><td>문서의 <code>city_<wbr>id</code>, entity type, visitor statistics 제외, 원본 재조회 계약과 동기화한다.</td></tr>
+        <tr><td>s3_vector_index_plan.md</td><td>KR 전처리 산출물 기반 S3 vector index 구축안과 vector ID, embedding, metadata 기준을 정리한다.</td><td>TS-02의 vector ID 3분절, Titan V2 1024/cosine, GSI3 export 기준의 직접 근거로 사용한다.</td></tr>
+        </tbody></table></div>
+        <h2 id="s6" class="s-h2">6. 변경 이력</h2>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
+        <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+        <tr><td>v0.2</td><td>2026-07-09</td><td>llm팀</td><td>S3 Vectors, metadata filtering, Titan Text Embeddings V2 공식 문서와 로컬 전처리 기준 문서 근거 추가</td></tr>
+        <tr><td>v0.1</td><td>2026-07-09</td><td>llm팀</td><td>S3 vector index 계약 정합성 이슈 초안 작성</td></tr>
+        </tbody></table></div>
+        <p class="doc-p">---</p>
+        <h1 id="ts-03-pdf-산출물-생성-검증" class="s-h1">TS-03 PDF 산출물 생성·검증</h1>
+        <blockquote>
+        <p class="doc-p">문서 성격: 트러블슈팅 하위 Markdown</p>
+        <p class="doc-p">상위 문서: <code>../<wbr>troubleshooting.md</code></p>
+        </blockquote>
+        <blockquote>
+        <p class="doc-p">문서 버전: v0.2</p>
+        <p class="doc-p">문서 상태: 초안 (Draft)</p>
+        <p class="doc-p">작성일: 2026-07-09</p>
+        <p class="doc-p">작성자: llm팀</p>
+        <p class="doc-p">문서 목적: <code>TS-03</code> 이슈의 문제, 원인, 판단, 조치, 재발 방지 기준을 본 문서에서 분리해 상세 관리한다.</p>
+        </blockquote>
+        <p class="doc-p">---</p>
+        <h2 id="s1" class="s-h2">1. 증상</h2>
         <p class="doc-p">새 결과보고서 Markdown을 추가했지만 PDF/TeX 산출물 또는 <code>pdf/<wbr>AGENT.md</code> 목록이 함께 갱신되지 않으면 배포용 문서와 원본 문서가 어긋난다.</p>
-        <h2 id="s7-2" class="s-h2">7.2 조치</h2>
+        <h2 id="s2" class="s-h2">2. 조치</h2>
         <p class="doc-p">새 PDF 문서를 추가할 때는 다음을 함께 갱신한다.</p>
         <div class="table-wrap"><table class="info-tbl compact-tbl">
         <thead><tr><th>항목</th><th>경로 예시</th></tr></thead><tbody>
@@ -261,32 +443,41 @@
         <pre><code>cd pdf
         xelatex -interaction=nonstopmode -halt-on-error korea_data_preprocessing_result_report.tex
         xelatex -interaction=nonstopmode -halt-on-error korea_data_preprocessing_result_report.tex</code></pre>
-        <h2 id="s7-3" class="s-h2">7.3 재발 방지</h2>
+        <h2 id="s3" class="s-h2">3. 재발 방지</h2>
         <ul class="bullet-list">
         <li>목차와 outline 경고가 있으면 2회 빌드한다.</li>
         <li><code>pdf/<wbr>*.aux</code>, <code>pdf/<wbr>*.log</code>, <code>pdf/<wbr>*.out</code>, <code>pdf/<wbr>*.toc</code>는 중간 산출물이므로 커밋하지 않는다.</li>
         <li>PDF 본문 의미가 바뀌면 먼저 대응 Markdown을 수정한다.</li>
         </ul>
-        <h1 id="s8" class="s-h1">8. TS-06 발표 HTML 검증 중 임시 파일 발생</h1>
-        <h2 id="s8-1" class="s-h2">8.1 증상</h2>
-        <p class="doc-p">중간발표 HTML을 Playwright/Chrome으로 검증하는 과정에서 <code>html_<wbr>export/<wbr>.chrome-*</code> 브라우저 프로필 디렉터리가 생성됐다.</p>
-        <h2 id="s8-2" class="s-h2">8.2 판단</h2>
-        <p class="doc-p">검증 캡처는 발표 품질 확인 근거로 보관할 수 있지만, 브라우저 프로필은 로컬 실행 cache이므로 저장소 산출물이 아니다.</p>
-        <h2 id="s8-3" class="s-h2">8.3 조치</h2>
-        <div class="table-wrap"><table class="info-tbl compact-tbl">
-        <thead><tr><th>항목</th><th>처리</th></tr></thead><tbody>
-        <tr><td><code>html_<wbr>export/<wbr>captures/<wbr></code></td><td>발표 검증 산출물로 보관 가능</td></tr>
-        <tr><td><code>html_<wbr>export/<wbr>.chrome-*</code></td><td><code>.gitignore</code>로 제외</td></tr>
-        <tr><td><code>lovv_<wbr>midterm_<wbr>presentation_<wbr>native.html</code></td><td>실제 발표 HTML 산출물로 보관</td></tr>
+        <h2 id="s4" class="s-h2">4. 출처 및 근거</h2>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>출처</th><th>확인 내용</th><th>TS-03 반영</th></tr></thead><tbody>
+        <tr><td><a href="https://latexref.xyz/Command-line-options.html">LaTeX2e reference - Command line options</a></td><td><code>nonstopmode</code>는 오류가 발생해도 가능한 범위에서 처리를 계속하며, <code>halt-on-error</code>는 첫 오류에서 중단하도록 하는 실행 옵션이다.</td><td>자동 빌드에서는 <code>-interaction=nonstopmode -halt-on-error</code> 조합을 사용해 로그를 남기되 실패를 명확히 중단한다.</td></tr>
+        <tr><td><a href="https://www.tug.org/texlive/portable.html">TeX Live Guide</a></td><td>TeX Live 실행과 오류 처리 옵션은 로그 파일과 명령행 실행 결과로 확인할 수 있다.</td><td>PDF 생성 실패 시 <code>.log</code>를 확인하고, 성공 산출물만 목록에 반영한다.</td></tr>
+        <tr><td>pdf/AGENT.md</td><td><code>pdf/<wbr></code> 디렉터리의 관리 대상 산출물 목록과 생성물 관리 기준을 제공한다.</td><td>새 PDF/TeX 산출물을 추가할 때 <code>pdf/<wbr>AGENT.md</code> 목록을 함께 갱신한다.</td></tr>
+        <tr><td>korea_data_preprocessing_result_report.md</td><td>PDF로 변환되는 원본 Markdown 결과보고서다.</td><td>PDF 본문 의미 변경은 먼저 원본 Markdown에서 수행하고, 이후 TeX/PDF 산출물을 갱신한다.</td></tr>
         </tbody></table></div>
-        <h2 id="s8-4" class="s-h2">8.4 재발 방지</h2>
-        <ul class="bullet-list">
-        <li>브라우저 자동화는 전용 임시 프로필을 쓰되, 저장소에 남으면 ignore 대상인지 확인한다.</li>
-        <li>발표 HTML을 수정한 뒤에는 주요 슬라이드와 전체 흐름 캡처를 남긴다.</li>
-        <li>전체 화면, 키보드 조작, 내부 애니메이션 상태를 함께 확인한다.</li>
-        </ul>
-        <h1 id="s9" class="s-h1">9. TS-07 Cognito / Social Login 책임 경계 충돌</h1>
-        <h2 id="s9-1" class="s-h2">9.1 배경</h2>
+        <h2 id="s5" class="s-h2">5. 변경 이력</h2>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
+        <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+        <tr><td>v0.2</td><td>2026-07-09</td><td>llm팀</td><td>XeLaTeX 실행 옵션, TeX Live 오류 처리, 로컬 PDF 산출물 관리 기준 근거 추가</td></tr>
+        <tr><td>v0.1</td><td>2026-07-09</td><td>llm팀</td><td>PDF 산출물 생성·검증 이슈 초안 작성</td></tr>
+        </tbody></table></div>
+        <p class="doc-p">---</p>
+        <h1 id="ts-04-cognito-social-login-책임-경계-충돌" class="s-h1">TS-04 Cognito / Social Login 책임 경계 충돌</h1>
+        <blockquote>
+        <p class="doc-p">문서 성격: 트러블슈팅 하위 Markdown</p>
+        <p class="doc-p">상위 문서: <code>../<wbr>troubleshooting.md</code></p>
+        </blockquote>
+        <blockquote>
+        <p class="doc-p">문서 버전: v0.2</p>
+        <p class="doc-p">문서 상태: 초안 (Draft)</p>
+        <p class="doc-p">작성일: 2026-07-09</p>
+        <p class="doc-p">작성자: llm팀</p>
+        <p class="doc-p">문서 목적: <code>TS-04</code> 이슈의 문제, 원인, 판단, 조치, 재발 방지 기준을 본 문서에서 분리해 상세 관리한다.</p>
+        </blockquote>
+        <p class="doc-p">---</p>
+        <h2 id="s1" class="s-h2">1. 배경</h2>
         <p class="doc-p">초기 Lovv Auth 구조는 프론트가 Google/Kakao에서 받은 provider token을 백엔드로 전달하고, 백엔드가 직접 검증하는 방식이었다.</p>
         <pre><code>POST /api/v1/auth/google
         POST /api/v1/auth/kakao
@@ -299,7 +490,7 @@
         ↓
         refresh session 저장</code></pre>
         <p class="doc-p">하지만 Cognito를 도입하면 Google/Kakao 인증은 Cognito Hosted UI 또는 OIDC IdP가 담당한다. 백엔드는 provider token을 직접 검증하는 대신 Cognito가 검증한 JWT claims 또는 API Gateway Authorizer claims를 기준으로 Lovv 사용자와 세션 응답을 구성해야 한다.</p>
-        <h2 id="s9-2" class="s-h2">9.2 문제 1: 기존 Social Login API와 Cognito 흐름 충돌</h2>
+        <h2 id="s2" class="s-h2">2. 문제 1: 기존 Social Login API와 Cognito 흐름 충돌</h2>
         <div class="table-wrap wide scroll-table"><table class="info-tbl">
         <thead><tr><th>항목</th><th>기존 방식</th><th>Cognito 방식</th></tr></thead><tbody>
         <tr><td>Google/Kakao 인증</td><td>Lovv 백엔드가 provider token 직접 검증</td><td>Cognito가 Hosted UI/OIDC IdP로 처리</td></tr>
@@ -314,7 +505,7 @@
         <tr><td><code>POST /<wbr>api/<wbr>v1/<wbr>auth/<wbr>kakao</code></td><td>legacy/deprecated</td><td>provider token 직접 검증 방식 보존</td></tr>
         <tr><td><code>POST /<wbr>api/<wbr>v1/<wbr>auth/<wbr>cognito/<wbr>session</code></td><td>신규</td><td>Cognito claims를 Lovv session 응답으로 변환</td></tr>
         </tbody></table></div>
-        <h2 id="s9-3" class="s-h2">9.3 문제 2: Cognito 로그인 후 Lovv 세션 shape 필요</h2>
+        <h2 id="s3" class="s-h2">3. 문제 2: Cognito 로그인 후 Lovv 세션 shape 필요</h2>
         <p class="doc-p">Cognito가 인증을 처리해도 프론트는 Lovv 서비스 상태가 필요하다.</p>
         <p class="doc-p">프론트가 필요한 값은 다음과 같다.</p>
         <div class="table-wrap"><table class="info-tbl compact-tbl">
@@ -342,7 +533,7 @@
         onboardingCompleted 계산
         ↓
         session response 반환</code></pre>
-        <h2 id="s9-4" class="s-h2">9.4 문제 3: Provider Verifier 재사용 금지</h2>
+        <h2 id="s4" class="s-h2">4. 문제 3: Provider Verifier 재사용 금지</h2>
         <p class="doc-p">Cognito bridge endpoint에서 기존 Google/Kakao provider verifier를 재사용하면 안 된다. Cognito 흐름에서는 이미 Cognito가 provider 인증을 완료했기 때문이다.</p>
         <div class="table-wrap"><table class="info-tbl compact-tbl">
         <thead><tr><th>경로</th><th>verifier 사용</th></tr></thead><tbody>
@@ -350,7 +541,7 @@
         <tr><td><code>/<wbr>auth/<wbr>kakao</code></td><td>Kakao provider verifier 사용</td></tr>
         <tr><td><code>/<wbr>auth/<wbr>cognito/<wbr>session</code></td><td>provider verifier 사용 금지. Cognito claims만 매핑</td></tr>
         </tbody></table></div>
-        <h2 id="s9-5" class="s-h2">9.5 문제 4: Cognito claims 누락 시 500 발생 가능</h2>
+        <h2 id="s5" class="s-h2">5. 문제 4: Cognito claims 누락 시 500 발생 가능</h2>
         <p class="doc-p">개발 중 missing claims 테스트에서 401이 아니라 500이 발생할 수 있었다.</p>
         <h2 id="원인" class="s-h2">원인</h2>
         <p class="doc-p">Cognito claims 검증보다 repository 초기화가 먼저 실행되면, 인증 정보가 없는 요청인데 DB/repository 초기화 실패가 먼저 드러나 내부 서버 오류처럼 보인다.</p>
@@ -366,7 +557,7 @@
         <tr><td>필수 claim 매핑 불가</td><td><code>422 AUTH_<wbr>MAPPING_<wbr>ERROR</code> 또는 명확한 auth mapping error</td></tr>
         <tr><td>DB 초기화 실패</td><td>claims 검증 이후 <code>500 INTERNAL_<wbr>ERROR</code></td></tr>
         </tbody></table></div>
-        <h2 id="s9-6" class="s-h2">9.6 문제 5: Handler route와 SAM template route 불일치</h2>
+        <h2 id="s6" class="s-h2">6. 문제 5: Handler route와 SAM template route 불일치</h2>
         <p class="doc-p"><code>src/<wbr>auth/<wbr>app.py</code>에 <code>/<wbr>api/<wbr>v1/<wbr>auth/<wbr>cognito/<wbr>session</code> 처리를 추가해도 <code>template.yaml</code>에 API Gateway route가 없으면 실제 배포 API에서는 접근할 수 없다.</p>
         <h2 id="해결-방향" class="s-h2">해결 방향</h2>
         <p class="doc-p">코드 테스트뿐 아니라 template route 테스트를 추가한다.</p>
@@ -378,7 +569,7 @@
         <tr><td>API 명세</td><td><code>docs/<wbr>07_<wbr>api_<wbr>spec/<wbr>07_<wbr>api_<wbr>spec.md</code>의 path와 일치</td></tr>
         <tr><td>Authorizer</td><td>Cognito User Pool/JWT Authorizer 연결은 별도 Task로 추적</td></tr>
         </tbody></table></div>
-        <h2 id="s9-7" class="s-h2">9.7 문제 6: Logout 의미 분리</h2>
+        <h2 id="s7" class="s-h2">7. 문제 6: Logout 의미 분리</h2>
         <p class="doc-p">Cognito 도입 후 logout을 단순히 백엔드 session 삭제로만 설명하면 부족하다. Cognito access token은 JWT이므로 이미 발급된 token은 만료 전까지 유효할 수 있다.</p>
         <div class="table-wrap"><table class="info-tbl compact-tbl">
         <thead><tr><th>구분</th><th>설명</th></tr></thead><tbody>
@@ -386,7 +577,7 @@
         <tr><td>Cognito logout</td><td>Cognito Hosted UI logout URL로 이동해 Hosted UI 세션 종료</td></tr>
         </tbody></table></div>
         <p class="doc-p">백엔드가 Cognito token 자체를 즉시 무효화한다고 표현하지 않는다. 프론트는 필요하면 Cognito logout URL로 redirect한다.</p>
-        <h2 id="s9-8" class="s-h2">9.8 문제 7: Role을 Cognito Group만으로 처리하면 복잡해짐</h2>
+        <h2 id="s8" class="s-h2">8. 문제 7: Role을 Cognito Group만으로 처리하면 복잡해짐</h2>
         <p class="doc-p">Lovv Admin에는 일반 사용자 외에도 여러 운영 role이 필요하다.</p>
         <div class="table-wrap"><table class="info-tbl compact-tbl">
         <thead><tr><th>Role</th><th>의미</th></tr></thead><tbody>
@@ -403,7 +594,7 @@
         <li>Lambda/API에서도 role을 검증한다.</li>
         <li>지역 운영자의 담당 지역 scope는 DB에서 확인한다.</li>
         </ul>
-        <h2 id="s9-9" class="s-h2">9.9 문제 8: API 명세 재정리 필요</h2>
+        <h2 id="s9" class="s-h2">9. 문제 8: API 명세 재정리 필요</h2>
         <p class="doc-p">기존 OpenAPI/API 명세는 custom social login 기준이라 Cognito bridge 흐름을 설명하지 못했다.</p>
         <p class="doc-p">반영 기준:</p>
         <div class="table-wrap"><table class="info-tbl compact-tbl">
@@ -415,7 +606,7 @@
         <tr><td>Preferences</td><td><code>selectedThemeIds</code> alias 추가</td></tr>
         <tr><td>Role enum</td><td><code>R-USER</code>, <code>R-ADMIN</code>, <code>R-LOCAL-OPERATOR</code>, <code>R-DATA-PROVIDER</code></td></tr>
         </tbody></table></div>
-        <h2 id="s9-10" class="s-h2">9.10 최종 정리</h2>
+        <h2 id="s10" class="s-h2">10. 최종 정리</h2>
         <p class="doc-p">Cognito 도입의 핵심은 Google/Kakao 로그인을 백엔드가 직접 처리하는 구조에서 벗어나, Cognito가 인증을 담당하고 Lovv 백엔드는 Cognito claims를 서비스 사용자/session shape로 변환하는 것이다.</p>
         <p class="doc-p">현재 방향:</p>
         <ul class="bullet-list">
@@ -426,19 +617,213 @@
         <li>Role은 Cognito Group과 Lovv DB scope 조합으로 처리한다.</li>
         <li>프론트는 Cognito token 기반으로 session/me를 호출해 서비스 상태를 복구한다.</li>
         </ul>
-        <h1 id="s10" class="s-h1">10. 발표용 트러블슈팅 요약 문구</h1>
-        <p class="doc-p">중간발표에서 한 장으로 설명할 때는 다음 구조로 축약한다.</p>
-        <pre><code>이슈: 그래프DB가 필요해 보였지만 PoC 관계는 대부분 1~2-hop이었다.
-        판단: Neptune은 지금 넣으면 비용과 운영 복잡도가 먼저 커진다.
-        대응: 그래프DB 직접 도입 대신 Lambda로 유사 관계 탐색 기능을 구현한다.
-        구현: RDS JOIN, DynamoDB 인접 리스트, 사전계산 후보 테이블, Lambda 인메모리 그래프를 조합한다.
-        기준: 3-hop 이상 관계 탐색이나 실시간 그래프 쓰기가 병목이 되면 Neptune으로 승격한다.</code></pre>
-        <h1 id="s11" class="s-h1">11. 변경 이력</h1>
+        <h2 id="s11" class="s-h2">11. 출처 및 근거</h2>
+        <div class="table-wrap wide extra-wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>출처</th><th>확인 내용</th><th>TS-04 반영</th></tr></thead><tbody>
+        <tr><td><a href="https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-managed-login.html">Amazon Cognito - User pool managed login</a></td><td>Cognito managed login은 사용자 인증과 JWT 기반 인증 흐름을 제공한다.</td><td>Google/Kakao 인증 책임은 Cognito Hosted UI/OIDC로 이동하고, Lovv backend는 검증된 claims를 서비스 session shape로 변환한다.</td></tr>
+        <tr><td><a href="https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-social-idp.html">Amazon Cognito - Using social identity providers with a user pool</a></td><td>Cognito user pool은 social IdP와 연동해 외부 provider 인증 결과를 user pool 사용자와 연결한다.</td><td>기존 <code>/<wbr>auth/<wbr>google</code>, <code>/<wbr>auth/<wbr>kakao</code> provider token 직접 검증 API는 legacy로 두고, 신규 흐름은 Cognito bridge로 분리한다.</td></tr>
+        <tr><td><a href="https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-tokens-with-identity-providers.html">Amazon Cognito - Understanding user pool JSON web tokens</a></td><td>ID token과 access token은 사용자 식별, scope, claims 정보를 포함한다.</td><td>백엔드는 provider token이 아니라 Cognito JWT claims의 <code>sub</code>, <code>email</code>, <code>cognito:groups</code>를 기준으로 사용자/session을 구성한다.</td></tr>
+        <tr><td><a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-jwt-authorizer.html">API Gateway - HTTP API JWT authorizer</a></td><td>API Gateway JWT authorizer는 Cognito 같은 IdP가 발급한 JWT를 검증하고 API 접근을 제어할 수 있다.</td><td><code>/<wbr>auth/<wbr>cognito/<wbr>session</code>은 API Gateway/JWT Authorizer가 검증한 claims를 전제로 처리한다.</td></tr>
+        <tr><td>07_api_spec.md</td><td><code>/<wbr>auth/<wbr>cognito/<wbr>session</code>, legacy social login, role enum, logout 책임 경계, Cognito bearer auth 기준을 정의한다.</td><td>TS-04의 API 경로, 응답 shape, role 처리, logout 의미 분리 기준과 동기화한다.</td></tr>
+        <tr><td>01_requirements.md</td><td>최종 권한은 Lovv 서비스 DB의 활성 역할 할당을 기준으로 판단하고 Cognito Group은 보조 신호로만 사용한다고 정의한다.</td><td>Cognito Group만으로 관리자 권한을 확정하지 않고 Lovv DB scope와 조합해 검증한다.</td></tr>
+        </tbody></table></div>
+        <h2 id="s12" class="s-h2">12. 변경 이력</h2>
         <div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
         <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
-        <tr><td>v0.3</td><td>2026-06-12</td><td>llm팀</td><td>그래프DB 직접 도입 대신 Lambda 기반 관계 탐색 보조 기능 구현 예정으로 TS-01 방향 명확화</td></tr>
-        <tr><td>v0.2</td><td>2026-06-12</td><td>llm팀</td><td>Cognito/Social Login 책임 경계, bridge session API, claims 검증, SAM route, logout, role scope, API 명세 반영 기준 추가</td></tr>
-        <tr><td>v0.1</td><td>2026-06-12</td><td>llm팀</td><td>Neptune 도입 판단, KR 전처리, S3 vector index, HTML/PDF 산출물, 발표 HTML 검증 이슈를 트러블슈팅 문서로 초안화</td></tr>
+        <tr><td>v0.2</td><td>2026-07-09</td><td>llm팀</td><td>Cognito managed login, social IdP, JWT token, API Gateway JWT authorizer 공식 문서와 로컬 API/요구사항 근거 추가</td></tr>
+        <tr><td>v0.1</td><td>2026-07-09</td><td>llm팀</td><td>Cognito / Social Login 책임 경계 충돌 이슈 초안 작성</td></tr>
+        </tbody></table></div>
+        <p class="doc-p">---</p>
+        <h1 id="ts-05-식당-데이터-취득-범위-조정" class="s-h1">TS-05 식당 데이터 취득 범위 조정</h1>
+        <blockquote>
+        <p class="doc-p">문서 성격: 트러블슈팅 하위 Markdown</p>
+        <p class="doc-p">상위 문서: <code>../<wbr>troubleshooting.md</code></p>
+        </blockquote>
+        <blockquote>
+        <p class="doc-p">문서 버전: v0.2</p>
+        <p class="doc-p">문서 상태: 초안 (Draft)</p>
+        <p class="doc-p">작성일: 2026-07-09</p>
+        <p class="doc-p">작성자: llm팀</p>
+        <p class="doc-p">문서 목적: 경북·강원 관광지와 축제 데이터 취득 과정에서 식당 데이터를 직접 취득하지 않고 Kakao Map API로 대체한 판단 근거를 정리한다.</p>
+        </blockquote>
+        <p class="doc-p">---</p>
+        <h1 id="s1" class="s-h1">1. 요약</h1>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl decision-tbl">
+        <thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
+        <tr><td>문제</td><td>경북·강원 관광지·축제 데이터 취득 시 식당 데이터도 함께 취득해 실제로 사용했으나, 의미 있는 결과가 나오지 않았고 S3 vector 변환 작업 시간이 증가했다.</td></tr>
+        <tr><td>원인</td><td>식당 데이터 수량이 방대하고, DynamoDB 저장·인덱스·조회 비용, DB 운영 문제, S3 vector 변환·인덱싱 부담이 증가할 수 있었다.</td></tr>
+        <tr><td>해결 과정</td><td>식당 데이터는 직접 취득 대상에서 제외하고, Kakao Map API를 통해 사용자 맥락에 맞게 조회하는 방식으로 전환했다.</td></tr>
+        <tr><td>결과</td><td>프로젝트 보유 데이터는 관광지·축제 중심으로 유지하고, 식당 데이터는 외부 API 연동 대상으로 정리했다.</td></tr>
+        </tbody></table></div>
+        <h1 id="s2" class="s-h1">2. 문제</h1>
+        <p class="doc-p">경북·강원 관광지와 축제 데이터를 취득하는 과정에서 식당 데이터도 함께 취득 대상으로 검토했고, 당시에는 식당 데이터를 실제로 취득해 사용하였다.</p>
+        <p class="doc-p">그러나 취득한 식당 데이터를 적용했을 때 추천·검색 품질 측면에서 의미 있는 결과가 나오지 않았다. 또한 식당 데이터는 관광지·축제 데이터보다 수량이 많아 S3 vector로 변환하는 작업 시간이 증가하는 문제가 발생했다.</p>
+        <p class="doc-p">이 상태로 식당 데이터를 계속 직접 보유하면 수집, 정제, S3 vector 변환, 갱신, 품질 검증 부담이 프로젝트 범위를 넘어설 수 있었다.</p>
+        <h1 id="s3" class="s-h1">3. 원인</h1>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>원인</th><th>내용</th></tr></thead><tbody>
+        <tr><td>데이터 규모</td><td>식당 데이터는 관광지나 축제보다 후보 수가 많아 전체 취득량과 전처리 비용이 커진다.</td></tr>
+        <tr><td>DynamoDB 비용 증가</td><td>식당 데이터를 모두 DynamoDB에 적재하면 저장 용량, GSI, 조회 요청량이 함께 증가해 DB 운영 비용이 커질 수 있다.</td></tr>
+        <tr><td>DB 운영 문제</td><td>대량 식당 데이터가 누적되면 파티션 키 설계, GSI 관리, 조회 패턴 관리, 데이터 갱신 주기 관리가 복잡해져 핵심 관광지·축제 데이터 운영에도 영향을 줄 수 있다.</td></tr>
+        <tr><td>S3 vector 변환 부담</td><td>식당 데이터까지 S3 vector로 변환하면 embedding 생성 대상이 크게 늘어나 작업 시간이 증가하고, S3 vector index 생성·검증·재생성 비용도 함께 커진다.</td></tr>
+        <tr><td>품질 기준의 주관성</td><td>식당 후기는 개인 취향, 방문 목적, 동행 유형, 가격 민감도에 따라 평가가 크게 달라진다.</td></tr>
+        <tr><td>최신성 요구</td><td>영업 여부, 메뉴, 가격, 평점, 후기 변화가 잦아 정적 데이터로 보관할 경우 빠르게 낡을 수 있다.</td></tr>
+        <tr><td>서비스 맥락</td><td>식당 추천은 사용자 위치, 일정, 시간대, 선호도와 결합되어야 의미가 커진다.</td></tr>
+        </tbody></table></div>
+        <h1 id="s4" class="s-h1">4. 해결 과정</h1>
+        <ul class="bullet-list">
+        <li>관광지·축제 데이터와 식당 데이터의 성격을 분리해 검토했다.</li>
+        <li>관광지·축제는 프로젝트 도메인 데이터로 직접 취득·정제하는 쪽이 적합하다고 판단했다.</li>
+        <li>식당 데이터는 정적 데이터로 직접 취득하면 DynamoDB 비용과 DB 운영 부담이 커질 수 있다고 판단했다.</li>
+        <li>식당 데이터는 사용자의 위치, 일정, 시간대, 선호도에 따라 실시간으로 달라지는 성격이 강하다고 정리했다.</li>
+        <li>식당 데이터는 직접 취득 대상에서 제외하고, Kakao Map API를 통해 사용자 맥락에 맞게 조회하는 방향으로 전환했다.</li>
+        </ul>
+        <h1 id="s5" class="s-h1">5. 결과</h1>
+        <p class="doc-p">식당 데이터는 프로젝트 내부 데이터셋으로 대량 취득하지 않는다.</p>
+        <p class="doc-p">대신 관광지·축제 데이터는 직접 취득·정제 대상으로 유지하고, 식당 데이터는 Kakao Map API를 통해 필요 시점에 조회하는 외부 API 연동 대상으로 정리한다. 이를 통해 데이터 보유 범위, DynamoDB 운영 비용, S3 vector 변환 부담을 줄이고, 식당 데이터의 최신성과 사용자 취향 반영 가능성을 확보한다.</p>
+        <h1 id="s6" class="s-h1">6. 출처 및 근거</h1>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>출처</th><th>확인 내용</th><th>TS-05 반영</th></tr></thead><tbody>
+        <tr><td><a href="https://developers.kakao.com/docs/en/local/dev-guide">Kakao Developers - Local REST API</a></td><td>Kakao Local API는 주소-좌표 변환, 좌표-주소 변환, 키워드 기반 장소 검색 등을 REST API로 제공한다.</td><td>식당 데이터를 직접 보유하지 않고, 사용자 위치·일정·검색어에 따라 API 조회로 대체한다.</td></tr>
+        <tr><td><a href="https://developers.kakao.com/docs/latest/en/local/common">Kakao Developers - Local Concepts</a></td><td>Local API는 장소 검색, 카테고리 기반 검색, 좌표 기반 주소/행정구역 조회를 제공한다.</td><td>식당 추천은 정적 데이터셋보다 위치와 맥락 기반 실시간 조회가 적합하다는 판단 근거로 사용한다.</td></tr>
+        <tr><td><a href="https://aws.amazon.com/dynamodb/pricing/">Amazon DynamoDB Pricing</a></td><td>DynamoDB 비용은 저장 용량, 읽기/쓰기 요청, 용량 모드, 부가 기능 사용에 따라 증가한다.</td><td>식당 대량 적재는 저장 비용과 요청 비용, GSI 운영 비용을 증가시킬 수 있으므로 직접 취득 범위를 줄인다.</td></tr>
+        <tr><td><a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/capacity-mode.html">DynamoDB throughput capacity</a></td><td>On-demand mode는 요청 단위 과금이고, provisioned mode는 설정한 처리량 기준으로 운영된다.</td><td>식당 데이터 조회량이 커질 경우 테이블 처리량과 비용이 핵심 운영 리스크가 된다.</td></tr>
+        <tr><td><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-vectors.html">AWS S3 Vectors - Working with S3 Vectors</a></td><td>S3 Vectors는 embedding 저장과 similarity query를 제공하며, vector 생성·저장·조회 대상이 늘수록 운영 범위가 커진다.</td><td>식당 데이터를 S3 vector 변환 대상에서 제외해 embedding 생성 시간과 index 검증 부담을 줄인다.</td></tr>
+        <tr><td>korea_data_acquisition_plan_updated.md</td><td>미식·노포 테마는 관광식당 코드로 제한하고 일반 음식점, 카페, 주점 등은 제외하는 수집 기준을 명시한다.</td><td>식당 전체가 아니라 관광 도메인에 필요한 제한된 범위만 검토하고, 일반 식당은 API 조회 대상으로 분리한다.</td></tr>
+        <tr><td>data_preprocessing_plan.md</td><td>V2 운영 계약에서 <code>restaurant</code>를 활성 entity로 복원하지 않고, vector 생성 대상도 <code>city_<wbr>metadata</code>, <code>attraction</code>, <code>festival</code> 중심으로 둔다.</td><td>프로젝트 보유 데이터셋은 관광지·축제 중심으로 유지하고 식당 데이터 직접 적재를 제외한다.</td></tr>
+        </tbody></table></div>
+        <h1 id="s7" class="s-h1">7. 변경 이력</h1>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
+        <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+        <tr><td>v0.2</td><td>2026-07-09</td><td>llm팀</td><td>Kakao Local API, DynamoDB 비용/처리량, S3 Vectors, 로컬 취득·전처리 기준 근거 추가</td></tr>
+        <tr><td>v0.1</td><td>2026-07-09</td><td>llm팀</td><td>식당 데이터 취득 범위 조정 이슈 초안 작성</td></tr>
+        </tbody></table></div>
+        <p class="doc-p">---</p>
+        <h1 id="ts-06-일본-데이터-취득-포기" class="s-h1">TS-06 일본 데이터 취득 포기</h1>
+        <blockquote>
+        <p class="doc-p">문서 성격: 트러블슈팅 하위 Markdown</p>
+        <p class="doc-p">상위 문서: <code>../<wbr>troubleshooting.md</code></p>
+        </blockquote>
+        <blockquote>
+        <p class="doc-p">문서 버전: v0.6</p>
+        <p class="doc-p">문서 상태: 초안 (Draft)</p>
+        <p class="doc-p">작성일: 2026-07-09</p>
+        <p class="doc-p">작성자: llm팀</p>
+        <p class="doc-p">문서 목적: 일본 데이터 취득 검토 과정에서 CC BY 4.0 기준으로 처리하려던 후보가 JATO 및 일본 정부·공공 운영 출처의 세부 규약 확인 과정에서 제한되는 문제를 확인하고, 취득을 포기한 판단 근거를 정리한다.</p>
+        </blockquote>
+        <p class="doc-p">---</p>
+        <h2 id="s1" class="s-h2">1. 요약</h2>
+        <div class="table-wrap wide extra-wide scroll-table"><table class="info-tbl decision-tbl">
+        <thead><tr><th>항목</th><th>내용</th></tr></thead><tbody>
+        <tr><td>문제</td><td>일본 데이터 후보는 초기 검토에서 CC BY 4.0 기준으로 처리 가능한 것으로 보아 취득 후보에 포함했으나, 본격 취득 전 세부 규약을 확인하면서 실제 저장·가공·재배포·서비스 활용 범위가 제한되는 것을 확인했다.</td></tr>
+        <tr><td>원인</td><td>CC BY 4.0 또는 CC BY 호환 조건으로 볼 수 있는 출처라도 별도 데이터 규약이 동일한 범위의 이용 허용을 보장하지 않았다. JATO 회원규약은 협의회 발행 자료·데이터의 무단 게재, 양도, 판매, 공표를 제한했고, 정부·공공 출처도 출처 표기, 제3자 권리, API/외부 DB 조건, 신청·허가 절차를 별도로 확인해야 했다.</td></tr>
+        <tr><td>해결 과정</td><td>CC BY 4.0 기준만으로 취득을 진행하지 않고, JATO 공식 사이트, 입회 안내, 회원규약과 일본 정부·공공 데이터 이용조건을 확인한 뒤 취득 리스크를 검토했다.</td></tr>
+        <tr><td>결과</td><td>CC BY 4.0 기준으로 일괄 처리하려던 일본 데이터 취득은 중단한다. JATO 자료는 명시적 허가 전까지 Raw 적재, DynamoDB 적재, S3 vector 생성 대상에서 제외하고, 정부·공공 출처도 개별 규약을 충족하는 경우에만 별도 후보로 재검토한다.</td></tr>
+        </tbody></table></div>
+        <h2 id="s2" class="s-h2">2. 문제</h2>
+        <p class="doc-p">일본 데이터는 최초 검토 시 CC BY 4.0 또는 CC BY 4.0과 호환되는 공개 조건으로 처리 가능한 것으로 보고 취득 후보에 포함되었다.</p>
+        <p class="doc-p">그러나 본격적인 데이터 취득을 진행하기 전에 제한 사항을 확인하는 과정에서 별도 데이터 규약을 검토했고, CC BY 4.0 기준으로만 보면 가능해 보이던 이용 범위가 실제 규약에서는 제한될 수 있음을 확인했다.</p>
+        <p class="doc-p">이 상태에서 데이터를 취득하면 CC BY 4.0 라이센스 기준만 보고 사용 가능하다고 판단한 내용과, 제공처의 실제 데이터 규약 사이에 충돌이 발생할 수 있었다.</p>
+        <p class="doc-p">특히 JATO(Japan Adventure Tourism Organization, 일반사단법인 일본 어드벤처 투어리즘 협의회) 자료는 관광 관련 정보로 활용 가능해 보일 수 있으나, 공식 페이지 확인 결과 오픈데이터 제공처라기보다 회원 기반 협의회와 활동 안내 성격이 강했다. 따라서 공개 웹 페이지에 접근 가능하다는 이유만으로 수집, 저장, 벡터화, 서비스 제공에 활용할 수 있다고 판단하기 어렵다.</p>
+        <p class="doc-p">추가로 일본 정부가 직접 운영하거나 정부 산하·공공기관이 운영하는 관광 관련 출처도 함께 확인했다. 정부 운영 출처는 PDL 1.0 또는 정부 표준 이용규약을 통해 CC BY 4.0 호환 조건으로 볼 수 있는 경우가 있었지만, 모든 정부·공공 사이트가 동일하게 자유 취득 가능한 것은 아니었다. 예를 들어 일본 관광청(JTA) 사이트는 별도 명시가 없는 콘텐츠에 Public Data License 1.0을 적용하지만, JNTO의 Japan Tourism Statistics는 다운로드 과정에서 사용 신청 또는 이용 허가 확인 절차를 요구한다. 따라서 CC BY 4.0 기준으로 내부 처리했더라도, 최종 취득 가능 여부는 출처별 세부 규약을 기준으로 판단해야 한다.</p>
+        <h2 id="s3" class="s-h2">3. 원인</h2>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>원인</th><th>내용</th></tr></thead><tbody>
+        <tr><td>CC BY 4.0 기준과 규약의 충돌</td><td>초기에는 CC BY 4.0 기준으로 처리 가능하다고 보았지만, 별도 데이터 규약은 저장·가공·재배포·API/API 외부 DB 사용에 추가 제한을 포함할 수 있었다.</td></tr>
+        <tr><td>검토 기준 부족 가능성</td><td>CC BY 4.0 문구만 보면 취득 가능해 보이나, 데이터셋 제공처의 세부 규약과 신청 절차까지 확인해야 실제 사용 가능 범위를 판단할 수 있었다.</td></tr>
+        <tr><td>서비스 활용 리스크</td><td>데이터 규약이 CC BY 4.0 기준보다 보수적으로 해석될 경우, 서비스 데이터로 저장·가공·배포하는 과정에서 문제가 발생할 수 있었다.</td></tr>
+        <tr><td>사후 정정 비용</td><td>취득 후 규약 문제가 확인되면 이미 수집한 Raw, 전처리 산출물, DynamoDB 적재 데이터, S3 vector index를 모두 제거하거나 재구성해야 한다.</td></tr>
+        <tr><td>JATO 자료 재사용 제한</td><td>JATO 회원규약은 협의회가 발행하는 자료와 데이터의 무단 외부 게재, 제3자 양도·판매, 공표를 제한하고 있어 서비스 데이터셋으로 직접 취득하기 어렵다.</td></tr>
+        <tr><td>정부·공공 출처별 조건 차이</td><td>일본 정부·공공 출처는 PDL 1.0, 정부 표준 이용규약, 개별 사이트 정책, API 조건, 신청·허가 절차가 혼재되어 있어 정부 운영 여부만으로 일괄 취득 판단을 할 수 없다.</td></tr>
+        </tbody></table></div>
+        <h2 id="s4" class="s-h2">4. JATO 조사 결과</h2>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>확인 항목</th><th>조사 내용</th><th>판단</th></tr></thead><tbody>
+        <tr><td>조직 성격</td><td>JATO는 Japan Adventure Tourism Organization의 약칭이며, 공식 사이트는 일본 어드벤처 투어리즘 협의회의 활동, 뉴스, 회원 안내를 제공한다.</td><td>오픈데이터 카탈로그가 아니라 협의회/회원 기반 정보 제공처로 본다.</td></tr>
+        <tr><td>회원 기반 제공</td><td>입회 안내는 JATO 행사 참여, 전문가 지원, 웹사이트 게재, 상호·상표 이용, 후원 명의 사용, 관련 사업 참여를 회원 혜택으로 설명한다.</td><td>오픈데이터 라이센스가 아니라 회원 권리와 이용 조건의 범위로 해석해야 한다.</td></tr>
+        <tr><td>상호·상표 사용</td><td>회원이 JATO 상호와 상표를 이용할 때도 이사회 승인이 필요하다고 규정되어 있다.</td><td>명칭과 브랜드 활용 자체도 자유 이용으로 보기 어렵다.</td></tr>
+        <tr><td>자료·데이터 제한</td><td>회원규약은 협의회가 발행하는 모든 자료와 데이터에 대해 무단으로 다른 매체에 게재하거나 제3자에게 양도·판매·공표할 수 없다고 규정한다.</td><td>Raw 수집, DynamoDB 적재, S3 vector 생성, 서비스 검색·추천 활용은 명시적 허가 전까지 중단한다.</td></tr>
+        <tr><td>규약 변경 가능성</td><td>회원규약은 이사회 결의로 변경될 수 있고, 웹사이트 게시 시점부터 효력을 가진다고 규정한다.</td><td>취득 시점의 라이센스만 저장해 두는 방식으로는 운영 리스크를 관리하기 어렵다.</td></tr>
+        <tr><td>최종 판단</td><td>JATO 자료는 관광 도메인상 유용해 보이지만, 공식 규약 기준으로 재사용 범위가 제한적이다.</td><td>프로젝트 데이터 취득 대상에서 제외하고, 필요 시 명시적 허가를 받은 뒤 별도 재검토한다.</td></tr>
+        </tbody></table></div>
+        <h2 id="s5" class="s-h2">5. 일본 정부·공공 운영 출처 조사 결과</h2>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>확인 항목</th><th>조사 내용</th><th>판단</th></tr></thead><tbody>
+        <tr><td>디지털청 오픈데이터 기준</td><td>디지털청은 국가·지방자치단체 등 공공기관 웹사이트와 오픈데이터에 적용할 수 있는 Public Data License 1.0과 정부 표준 이용규약을 안내한다.</td><td>일본 정부 운영 데이터는 PDL 1.0 또는 CC BY 4.0 호환 여부를 우선 확인한다.</td></tr>
+        <tr><td>PDL 1.0 허용 범위</td><td>PDL 1.0은 조건을 준수하면 콘텐츠의 자유 이용, 복제, 공중송신, 번역, 변형과 상업적 이용을 허용하고 CC BY 4.0 호환을 안내한다.</td><td>CC BY 4.0 기준으로 처리하려면 출처 표기와 편집 사실 표시를 전제로 후보에 둘 수 있다.</td></tr>
+        <tr><td>PDL 1.0 예외</td><td>PDL 1.0은 로고, 심볼, 캐릭터 디자인, 별도 이용조건이 명시된 콘텐츠, 제3자 권리가 포함된 콘텐츠, API/외부 DB 연계 콘텐츠에는 추가 확인이 필요하다고 안내한다.</td><td>정부 사이트라도 로고·사진·지도·외부 DB·API는 자동 수집 대상에서 제외하거나 별도 조건을 확인한다.</td></tr>
+        <tr><td>일본 관광청(JTA)</td><td>JTA는 국토교통성의 외국으로 설치된 관광청이며, 사이트 정책에서 별도 명시가 없는 콘텐츠에 PDL 1.0을 적용한다고 안내한다.</td><td>JTA 콘텐츠는 PDL 1.0 조건을 충족하는 경우 재검토 가능하지만, 출처 표기와 편집 표시, 예외 콘텐츠 확인이 필요하다.</td></tr>
+        <tr><td>JNTO Japan Tourism Statistics</td><td>JNTO 통계 사이트는 CSV/PDF 다운로드 기능을 제공하지만, 다운로드 전 Usage Application Form 제출과 개인/미디어 용도별 절차를 안내한다.</td><td>JNTO 통계는 정부·공공 성격이 있더라도 신청·허가 절차가 붙는 출처로 보고, 무조건 자동 취득 대상으로 두지 않는다.</td></tr>
+        <tr><td>e-Stat</td><td>일본 정부통계 포털 e-Stat은 정부 표준 이용규약 기반이며 CC BY 4.0 호환을 안내하지만, API와 GIS에는 별도 이용조건이 적용된다.</td><td>통계성 데이터는 후보로 둘 수 있으나 API·GIS·외부 DB 조건을 별도로 확인한 뒤 취득한다.</td></tr>
+        <tr><td>최종 판단</td><td>정부 운영 또는 공공기관 운영 출처라도 CC BY 4.0 처리 가능 여부는 출처별 이용조건에 따라 달라진다.</td><td>일본 데이터는 CC BY 4.0 기준으로 일괄 취득하지 않고, 개별 제한을 검토한 출처만 재검토한다.</td></tr>
+        </tbody></table></div>
+        <h2 id="s6" class="s-h2">6. 해결 과정</h2>
+        <ul class="bullet-list">
+        <li>일본 데이터를 취득 후보로 두고 CC BY 4.0 또는 CC BY 4.0 호환 조건으로 처리 가능한지 1차로 확인했다.</li>
+        <li>JATO 공식 사이트에서 JATO가 Japan Adventure Tourism Organization이며, 일본 어드벤처 투어리즘 협의회라는 점을 확인했다.</li>
+        <li>JATO 입회 안내와 회원규약을 확인해 회원 혜택, 상호·상표 이용 조건, 자료·데이터 재사용 제한을 검토했다.</li>
+        <li>일본 정부·공공 운영 출처를 추가로 확인해 디지털청 PDL 1.0, 일본 관광청(JTA), JNTO Japan Tourism Statistics, e-Stat의 이용조건 차이를 검토했다.</li>
+        <li>데이터 규약이 라이센스 문구와 다르게 해석될 수 있고, JATO 자료는 오픈 라이센스 대상이 아니라 무단 재게시·양도·판매·공표 제한에 걸릴 수 있음을 확인했다.</li>
+        <li>정부·공공 출처도 CC BY 4.0 호환 여부와 별도로 출처 표기, 편집 표시, 제3자 권리, API/외부 DB 조건, 신청·허가 절차를 확인해야 한다고 판단했다.</li>
+        <li>CC BY 4.0 기준과 세부 규약이 충돌할 수 있는 상태에서 데이터를 취득·가공·적재하지 않기로 결정했다.</li>
+        <li>일본 데이터는 취득 대상에서 제외하고, KR 데이터 중심의 전처리·검색·추천 범위를 우선 유지했다.</li>
+        </ul>
+        <h2 id="s7" class="s-h2">7. 결과</h2>
+        <p class="doc-p">일본 데이터는 본격적인 취득을 진행하지 않는다.</p>
+        <p class="doc-p">CC BY 4.0 또는 CC BY 4.0 호환 조건만으로 취득 여부를 확정하지 않고, 데이터 규약까지 확인한 뒤 취득 포기를 결정했다. 이 판단을 통해 규약 위반 가능성, 사후 데이터 제거 비용, 운영 문서와 실제 데이터 사용 조건의 불일치 위험을 줄였다.</p>
+        <p class="doc-p">JATO 관련 자료는 명시적 허가 전까지 수집 대상, Raw 적재 대상, DynamoDB 적재 대상, S3 vector 생성 대상에서 제외한다. 향후 일본 관광 데이터를 다시 검토할 경우 JATO 자료를 직접 취득 대상으로 두지 않고, 공공 오픈데이터 포털이나 API 제공 조건이 명확한 출처를 우선 검토한다.</p>
+        <p class="doc-p">일본 정부·공공 운영 출처는 취득 포기 대상과 재검토 가능 대상을 분리한다. PDL 1.0 또는 CC BY 4.0 호환 조건이 명시되고, 출처 표기·편집 표시·제3자 권리·API 조건을 충족할 수 있는 데이터는 후보로 남긴다. 반대로 신청·허가 절차가 있거나, API/외부 DB의 별도 약관이 있거나, 사진·로고·지도처럼 제3자 권리 확인이 필요한 자료는 CC BY 4.0으로 내부 처리했더라도 자동 수집·벡터화 대상에서 제외한다.</p>
+        <h2 id="s8" class="s-h2">8. 재발 방지</h2>
+        <ul class="bullet-list">
+        <li>외부 데이터를 취득하기 전 라이센스와 데이터 규약을 반드시 함께 확인한다.</li>
+        <li>CC BY 4.0 또는 CC BY 4.0 호환 조건으로 보이더라도 별도 규약, 신청 절차, API 약관이 더 엄격하면 취득을 보류한다.</li>
+        <li>취득 전 확인 항목에 저장, 가공, 재배포, API 제공, 벡터화, 상용 서비스 활용 가능 여부를 포함한다.</li>
+        <li>규약 해석이 애매한 경우 Raw 적재, DynamoDB 적재, S3 vector 생성 전 단계에서 중단한다.</li>
+        <li>협회, 단체, 회원 기반 사이트의 자료는 공공 오픈데이터 포털과 구분해서 검토한다.</li>
+        <li>회원규약, 상호·상표 사용 조건, 자료·데이터 재사용 조항을 별도 확인한다.</li>
+        <li>정부·공공 운영 출처라도 CC BY 4.0 호환 여부, API 약관, 신청·허가 절차를 출처별로 확인한다.</li>
+        <li>정부 자료를 편집·가공해 사용할 경우 출처 표기와 편집 사실 표시를 함께 남긴다.</li>
+        </ul>
+        <h2 id="s9" class="s-h2">9. 조사 결론</h2>
+        <p class="doc-p">TS-06의 핵심은 일본 데이터 후보를 CC BY 4.0 기준으로 처리하려 했지만, 실제 데이터 규약을 함께 확인했을 때 동일한 범위의 사용 허용으로 보기 어려웠다는 점이다.</p>
+        <p class="doc-p">JATO 조사 결과, JATO는 Japan Adventure Tourism Organization으로 확인되며 공식 사이트와 입회 안내는 협의회 활동 및 회원 혜택 중심으로 구성되어 있었다. 또한 회원규약상 협의회가 발행하는 자료·데이터는 무단으로 다른 매체에 게재하거나 제3자에게 양도·판매·공표할 수 없으므로, 명시적 허가 없이 프로젝트 데이터셋으로 취득하는 것은 적절하지 않다.</p>
+        <p class="doc-p">일본 정부·공공 운영 출처까지 포함해 확인한 결과, CC BY 4.0 또는 CC BY 4.0 호환 조건 자체가 취득 가능성을 보장하지는 않는다. 일본 관광청(JTA)처럼 PDL 1.0을 적용하는 출처는 CC BY 4.0 호환 기준으로 재검토 가능성이 있지만, JNTO Japan Tourism Statistics처럼 사용 신청 또는 허가 절차가 붙는 출처도 있다. 또한 e-Stat처럼 정부 표준 이용규약과 CC BY 4.0 호환을 안내하는 경우에도 API·GIS 등 별도 조건이 존재한다.</p>
+        <p class="doc-p">따라서 일본 데이터는 수집을 강행하지 않고 취득 대상에서 제외하는 것이 맞다. 이후 재검토 시에는 JATO와 같은 협의회 자료는 제외하고, 일본 정부·공공 출처 중 CC BY 4.0 호환 조건이 명확하며 프로젝트의 Raw 저장, DynamoDB 적재, S3 vector 생성, 서비스 제공 범위를 세부 규약상 충족하는 데이터만 별도 후보로 분리한다.</p>
+        <h2 id="s10" class="s-h2">10. 라이센스 원문 첨부</h2>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>구분</th><th>라이센스/규약 원문</th><th>원문상 확인한 핵심</th><th>TS-06 판단</th></tr></thead><tbody>
+        <tr><td>CC BY 4.0</td><td><a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International Deed</a>, <a href="https://creativecommons.org/licenses/by/4.0/legalcode.en">Legal Code</a></td><td>공유, 재배포, 변형, 상업적 이용이 가능하지만 저작자 표시, 라이센스 링크, 변경 여부 표시가 필요하다. 또한 퍼블리시티권, 개인정보권, 저작인격권 등 다른 권리가 사용을 제한할 수 있다고 안내한다.</td><td>내부 검토 기준은 CC BY 4.0으로 두되, 실제 취득 전 다른 권리와 세부 규약을 별도 확인해야 한다.</td></tr>
+        <tr><td>Public Data License 1.0</td><td><a href="https://www.digital.go.jp/en/resources/open_data/public_data_license_v1.0">디지털청 Public Data License 1.0</a></td><td>공공기관 콘텐츠의 자유 이용, 복제, 공중송신, 번역, 변형과 상업적 이용을 허용하며 CC BY 4.0 호환을 명시한다. 다만 출처 표기, 편집 사실 표시, 제3자 권리, API/외부 DB 조건, 예외 콘텐츠 확인을 요구한다.</td><td>CC BY 4.0 호환으로 처리할 수 있으나, 프로젝트의 Raw 저장, DynamoDB 적재, S3 vector 생성에는 세부 조건 확인이 필요하다.</td></tr>
+        <tr><td>일본 관광청(JTA) 사이트 정책</td><td><a href="https://www.mlit.go.jp/kankocho/en/sitepolicy.html">About the Copyright Link / Disclaimer</a></td><td>별도 명시가 없는 JTA 콘텐츠에는 PDL 1.0이 적용된다. 출처 표기와 편집 사실 표시가 필요하며, 로고·심볼·캐릭터 디자인과 별도 이용조건이 명시된 콘텐츠는 적용 대상에서 제외된다.</td><td>JTA 콘텐츠는 CC BY 4.0 호환 후보이나, 예외 콘텐츠와 표기 조건을 충족할 수 있는 경우에만 재검토한다.</td></tr>
+        <tr><td>JNTO Japan Tourism Statistics</td><td><a href="https://statistics.jnto.go.jp/en/">Japan Tourism Statistics</a>, <a href="https://statistics.jnto.go.jp/en/faq/">FAQ</a></td><td>통계 데이터 다운로드 전 Usage Application Form 제출 절차가 있고, 미디어 이용은 상세 목적 제출 후 허가 여부 통지를 받는 구조다. FAQ는 JNTO 자료 사용 시 출처 표기를 요구하고, 미디어의 데이터셋·차트 사용은 Data Usage Application Form 제출을 안내한다.</td><td>CC BY 4.0 기준만으로 자동 취득하지 않고, 신청·허가 절차가 필요한 제한 출처로 처리한다.</td></tr>
+        <tr><td>e-Stat 이용약관</td><td><a href="https://www.e-stat.go.jp/en/terms-of-use">Portal Site of Official Statistics of Japan Terms of Use</a></td><td>정부 표준 이용규약 기반이며 CC BY 4.0 호환을 안내한다. 다만 외부 DB API 조건, 로고 등 제외 콘텐츠, API/GIS 별도 이용조건을 명시한다.</td><td>통계 데이터는 후보가 될 수 있으나, API/GIS와 외부 DB 조건 확인 전에는 자동 적재하지 않는다.</td></tr>
+        <tr><td>JATO 회원규약</td><td><a href="https://japanat.org/manage/wp-content/uploads/2025/04/2023.5.26%E4%BC%9A%E5%93%A1%E8%A6%8F%E7%B4%84.pdf">JATO 회원규약 PDF</a></td><td>협의회가 발행하는 자료·데이터의 무단 외부 게재, 제3자 양도·판매, 공표를 제한한다. 상호·상표 이용도 이사회 승인이 필요하다.</td><td>CC BY 4.0 처리 대상이 아니며, 명시적 허가 전까지 취득 대상에서 제외한다.</td></tr>
+        </tbody></table></div>
+        <h2 id="s11" class="s-h2">11. 출처 및 근거</h2>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl">
+        <thead><tr><th>출처</th><th>확인 내용</th></tr></thead><tbody>
+        <tr><td><a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International Deed</a></td><td>CC BY 4.0의 공유, 변형, 상업적 이용 가능 범위와 저작자 표시, 변경 표시, 추가 권리 제한 가능성 확인</td></tr>
+        <tr><td><a href="https://creativecommons.org/licenses/by/4.0/legalcode.en">Creative Commons Attribution 4.0 International Legal Code</a></td><td>CC BY 4.0의 법적 원문, 라이센스 부여 범위, 저작자 표시 조건, 데이터베이스 권리, 다른 권리 제한 확인</td></tr>
+        <tr><td><a href="https://japanat.org/">JATO 공식 사이트</a></td><td>일본 어드벤처 투어리즘 협의회의 공식 사이트 및 활동 성격 확인</td></tr>
+        <tr><td><a href="https://japanat.org/application">JATO 입회 안내</a></td><td>Japan Adventure Tourism Organization 약칭 JATO, 회원 혜택, 상호·상표 이용 항목 확인</td></tr>
+        <tr><td><a href="https://japanat.org/manage/wp-content/uploads/2025/04/2023.5.26%E4%BC%9A%E5%93%A1%E8%A6%8F%E7%B4%84.pdf">JATO 회원규약 PDF</a></td><td>상호·상표 이용 승인, 협의회 발행 자료·데이터 재사용 제한, 규약 변경 가능성 확인</td></tr>
+        <tr><td><a href="https://www.digital.go.jp/en/resources/open_data">디지털청 Open data</a></td><td>공공기관 웹사이트와 오픈데이터에 적용되는 Public Data License 및 정부 표준 이용규약 안내 확인</td></tr>
+        <tr><td><a href="https://www.digital.go.jp/en/resources/open_data/public_data_license_v1.0">Public Data License 1.0</a></td><td>상업적 이용 허용, 출처 표기, 편집 사실 표시, 제3자 권리, API/외부 DB 조건, 예외 콘텐츠 확인</td></tr>
+        <tr><td><a href="https://www.mlit.go.jp/kankocho/en/sitepolicy.html">일본 관광청(JTA) 사이트 정책</a></td><td>JTA 콘텐츠의 PDL 1.0 적용, 출처 표기, 편집 표시, 로고·별도 조건 예외 확인</td></tr>
+        <tr><td><a href="https://www.mlit.go.jp/kankocho/en/about/index.html">일본 관광청(JTA) 소개</a></td><td>JTA가 국토교통성의 외국으로 설치된 정부 관광청임을 확인</td></tr>
+        <tr><td><a href="https://statistics.jnto.go.jp/en/">JNTO Japan Tourism Statistics</a></td><td>다운로드 전 Usage Application Form 및 용도별 절차 확인</td></tr>
+        <tr><td><a href="https://statistics.jnto.go.jp/en/faq/">JNTO Japan Tourism Statistics FAQ</a></td><td>JNTO 자료 사용 시 출처 표기와 미디어 이용 시 Data Usage Application Form 제출 안내 확인</td></tr>
+        <tr><td><a href="https://www.e-stat.go.jp/en/terms-of-use">e-Stat 이용약관</a></td><td>정부 표준 이용규약 기반, CC BY 4.0 호환, API/GIS 별도 조건 확인</td></tr>
+        </tbody></table></div>
+        <h2 id="s12" class="s-h2">12. 변경 이력</h2>
+        <div class="table-wrap wide scroll-table"><table class="info-tbl change-log-tbl">
+        <thead><tr><th>버전</th><th>날짜</th><th>작성자</th><th>변경 내용</th></tr></thead><tbody>
+        <tr><td>v0.6</td><td>2026-07-09</td><td>llm팀</td><td>CC BY 4.0, PDL 1.0, JTA, JNTO, e-Stat, JATO의 실제 라이센스·규약 원문 링크와 핵심 판단을 첨부</td></tr>
+        <tr><td>v0.5</td><td>2026-07-09</td><td>llm팀</td><td>일본 데이터 후보를 CC BY 4.0 기준으로 처리하려 했으나 세부 규약 제한으로 취득을 중단한 흐름으로 정정</td></tr>
+        <tr><td>v0.4</td><td>2026-07-09</td><td>llm팀</td><td>일본 데이터 후보 전체를 오픈 라이센스로 일반화하지 않도록 JATO, 정부·공공 출처, 신청·허가형 출처를 구분해 표현 정정</td></tr>
+        <tr><td>v0.3</td><td>2026-07-09</td><td>llm팀</td><td>일본 정부·공공 운영 출처(JTA, JNTO, e-Stat, PDL 1.0) 조사 결과를 추가하고 출처별 재검토 기준을 보강</td></tr>
+        <tr><td>v0.2</td><td>2026-07-09</td><td>llm팀</td><td>JATO 공식 사이트, 입회 안내, 회원규약 조사 결과를 반영하고 자료·데이터 재사용 제한 근거를 추가</td></tr>
+        <tr><td>v0.1</td><td>2026-07-09</td><td>llm팀</td><td>일본 데이터 라이센스와 데이터 규약 불일치로 취득을 포기한 사례를 TS-06으로 작성</td></tr>
         </tbody></table></div>
         <nav class="doc-nav" aria-label="이전 다음 문서">
           <a class="doc-nav-home" href="../index.html">문서 홈</a>
