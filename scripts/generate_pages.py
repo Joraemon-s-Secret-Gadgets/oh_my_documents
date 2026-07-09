@@ -142,15 +142,6 @@ DOCUMENTS = [
         "검증·운영 문서",
     ),
     Document(
-        "docs/09_ui_ux_guide/09_ui_ux_guide.md",
-        "09_ui_ux_guide.html",
-        "UI/UX Guide",
-        "로브 (Lovv) — UI/UX 가이드",
-        "화면 구성, 인터랙션 흐름, 컴포넌트 규칙, 디자인 토큰, 접근성 기준을 정의합니다.",
-        "초안",
-        "설계·명세 문서",
-    ),
-    Document(
         "docs/11_deployment_ops/supplemental/troubleshooting.md",
         "11_troubleshooting.html",
         "Troubleshooting",
@@ -171,7 +162,7 @@ DOCUMENTS = [
 ]
 
 def read_text(path: str) -> str:
-    return (ROOT / path).read_text(encoding="utf-8")
+    return (ROOT / path).read_text(encoding="utf-8").lstrip("\ufeff")
 
 
 def is_internal_markdown_target(target: str) -> bool:
