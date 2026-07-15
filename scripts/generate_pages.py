@@ -142,6 +142,15 @@ DOCUMENTS = [
         "검증·운영 문서",
     ),
     Document(
+        "docs/12_llm_result_report/12_llm_result_report.md",
+        "12_llm_result_report.html",
+        "LLM Result Report",
+        "로브 (Lovv) — LLM 연동 웹 애플리케이션 개발 결과 보고서",
+        "LLM/RAG/Agent 기반 여행 추천 웹 애플리케이션의 개발 결과, 시스템 구조, API·데이터 연동, 검증 결과를 정리합니다.",
+        "초안",
+        "결과 보고서",
+    ),
+    Document(
         "docs/11_deployment_ops/supplemental/troubleshooting.md",
         "11_troubleshooting.html",
         "Troubleshooting",

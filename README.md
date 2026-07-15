@@ -19,6 +19,7 @@ docs/08_data_preprocessing/ 수집된 데이터 및 전처리(ELT) 문서
 docs/09_ui_ux_guide/       UI/UX 가이드
 docs/10_test_plan/         테스트 계획서
 docs/11_deployment_ops/    배포·운영 가이드
+docs/12_llm_result_report/ LLM 연동 웹 애플리케이션 개발 결과 보고서
 docs/92_B2C/               B2C 수요 검증과 과금 가설
 docs/93_B2B/               B2B 제휴 전략과 수익 모델
 docs/94_kick/              제품 선택 전환 장치(KICK) 설계
@@ -84,10 +85,13 @@ plans/                     문서 사이트 구축 및 운영 계획
 13. **운영 가이드**
     로그, 장애 대응, 백업, 모니터링, 정기 점검 기준을 정리합니다.
 
-14. **실행 단위 PRD**
+14. **LLM 연동 웹 애플리케이션 개발 결과 보고서**
+    LLM/RAG/Agent 기반 웹 애플리케이션의 개발 결과, 시스템 구조, API·데이터 연동, 검증 결과를 제출용 결과물로 정리합니다.
+
+15. **실행 단위 PRD**
     기능 구현 단위의 목적, 범위, 기능 요구사항, 수용 기준을 정리합니다.
 
-15. **발표 자료**
+16. **발표 자료**
     중간발표와 최종발표를 위한 원본, 변환 산출물, 검증 캡처를 정리합니다.
 
 ### Agent 문서 수정 규칙
@@ -147,6 +151,9 @@ docs/
 │   └── 10_test_plan.md
 ├── 11_deployment_ops/
 │   └── 11_deployment_ops.md
+├── 12_llm_result_report/
+│   ├── AGENT.md
+│   └── 12_llm_result_report.md
 ├── 92_B2C/
 │   └── 92_B2C.md
 ├── 93_B2B/
