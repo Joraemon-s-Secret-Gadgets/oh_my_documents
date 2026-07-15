@@ -3,10 +3,10 @@
 > 문서 성격: 보조 Markdown
 > 대표 문서: `../03_data_collect_plan.md`
 
-> 문서 버전: v0.3
-> 문서 상태: 실제 수집 샘플 코드(tour-api-korea) 산출물 기준으로 최신화
+> 문서 버전: v0.4
+> 문서 상태: KR V2 전처리·적재 기준과 연결되도록 최신화
 > 원본 문서: `oh_my_documents/docs/03_data_collect_plan/supplemental/korea_data_acquisition_plan.md` v0.1
-> 작성일: 2026-06-06 (v0.3 최신화: 2026-06-09)
+> 작성일: 2026-06-06 (v0.4 최신화: 2026-07-03)
 > 작성자: 조동휘
 > 반영 예정 문서: `docs/03_data_collect_plan/03_data_collect_plan.md`
 > 반영 예정 HTML: `pages/03_data_collect_plan.html` (재생성 보류)
@@ -18,12 +18,19 @@
 > 이 문서는 실제 수집 산출물(`data/raw/final/{city_en}.json` + 임베드 통계, 정규화본 `data/city/{city_en}.json`) 및 코드 동작을 기준으로 데이터 모델을 갱신한 것이다.
 > 변경 사항은 `> [변경]` 블록으로 표시하며, v0.3 코드 대조 정정은 `> [코드정정]` 블록으로 표시한다.
 > 신뢰도: 코드 원문에서 직접 확인한 항목은 사실로 기술하고, 코드에 미구현인 설계 의도는 "향후 과제"로 명시한다.
+>
+> **[V2 연계 기준]**
+> 이 문서는 현재 운영 완료 상태를 단독으로 판단하지 않는다. 데이터 취득 문서는 raw 확보·수집 범위·출처·품질 기준을 설명하고, 현재 KR 운영 판단은 V2 전처리 및 적재 문서와 함께 확인한다.
+> 현재 V2 기준은 `raw/KR/details/20260629/`를 입력으로 한 `processed/KR/details/20260629/passed/`, DynamoDB `TourKoreaDomainDataV2`, S3 Vector `lovv-vector-dev/kr-tour-domain-v2`이다.
+> 완료 판단은 `docs/08_data_preprocessing/supplemental/kr_20260630_preprocessing_completion_report.md`, 조회 계약은 `docs/04_database_design/supplemental/dynamodb_v2_query_guide.md`, vector 사용 기준은 `docs/08_data_preprocessing/supplemental/vector_search_v2_guide.md`를 우선한다.
 
 ---
 
 # 1. 목적
 
 본 문서는 여행 추천 Multi-Agent 서비스에서 한국 소도시 추천에 필요한 도시·관광지·축제 데이터를 한 번에 취득하기 위한 범위, 데이터 소스, 검증 방식, 저장 구조를 정의한다.
+
+V2 기준에서 본 문서의 역할은 raw 취득과 취득 품질 기준을 정의하는 것이다. DynamoDB 적재 완료 여부, Vector 적재 완료 여부, Agent/RAG 조회 가능 여부는 전처리·적재 문서의 V2 기준으로 확인한다.
 
 이번 문서의 핵심은 다음과 같다.
 
@@ -373,7 +380,7 @@ Festival은 도시와 1:N 관계를 가지며, 월별 추천과 계절성 추천
 
 ## 5.4 데이터 정규화 규칙
 
-> [변경] Lovv_scraping 포맷 확정에 따라 정규화 규칙을 갱신한다.
+> [변경] 실제 KR 수집 산출물 포맷 확정에 따라 정규화 규칙을 갱신한다.
 
 - **식별자 형식 (코드정정)**:
   - `city_id`: `KR-{GW|GB}-{CITY_EN}` (예: `KR-GW-GANGNEUNG`)
@@ -636,6 +643,8 @@ data/
 
 > [변경] 실제 수집 데이터 및 API 명세 분석을 통해 도출된 검증 항목을 추가한다.
 
+V2 전처리로 넘기는 취득 산출물은 단순 파일 생성 여부가 아니라 `processed/KR/details/20260629/passed/`로 전환 가능한 품질을 만족해야 한다. 취득 문서에서는 raw 단계의 품질 조건을 확인하고, 최종 통과 여부는 전처리 완료 보고서의 `passed/`, DynamoDB V2, Vector V2 검증 결과와 연결해 판단한다.
+
 | 검증 항목 | 기준 |
 | --- | --- |
 | City 매핑 | 모든 Attraction과 Festival은 `data/city/{city_en}.json`의 City와 동일한 유효 `city_id`를 가져야 한다. |
@@ -647,6 +656,7 @@ data/
 | 수량 정합성 | 관광지 3,709건, 축제 106건, 도시 40개, 방문객 통계 480건(40×12)이 확인되어야 한다. |
 | 포항 통합 | 포항시 남구·북구 레코드가 `KR-GB-POHANG`으로 통합되어 있어야 한다. |
 | 행정구역 정합성 | TourAPI 지역 코드와 내부 City ID가 같은 시·군·구를 가리키는지 검증한다. |
+| V2 전처리 연계 | 취득 산출물은 `raw/KR/details/20260629/` 기준으로 전처리 가능해야 하며, 최종 운영 판단은 `TourKoreaDomainDataV2`와 `kr-tour-domain-v2` 검증 결과를 함께 확인한다. |
 
 ---
 
@@ -671,8 +681,9 @@ data/
 2. 한국 데이터 출처는 TourAPI 4.0, DataLabService, Wikipedia/Wikidata의 역할이 명확히 구분되도록 구성한다.
 3. 데이터 취득 흐름은 S3 Raw Bucket 적재 이전까지의 수집 라인과 이후 전처리 라인이 혼동되지 않도록 구분한다.
 4. 품질 관리는 City 매핑, TourAPI 코드 매핑, 출처 기록, 최신성 검증, 수량 검증을 기준으로 운영한다.
-5. 법적 검토는 TourAPI·공공누리·지자체 사이트 이용 조건과 API 키 보안 관리가 함께 확인되도록 정리한다.
-6. 공유용 HTML과 PDF는 확정된 문서 기준을 사용자가 읽기 쉬운 형태로 제공하도록 재생성하고 검수한다.
+5. V2 운영 기준은 `TourKoreaDomainDataV2`, `kr-tour-domain-v2`, `processed/KR/details/20260629/passed/`를 기준으로 전처리 문서와 연결한다.
+6. 법적 검토는 TourAPI·공공누리·지자체 사이트 이용 조건과 API 키 보안 관리가 함께 확인되도록 정리한다.
+7. 공유용 HTML과 PDF는 확정된 문서 기준을 사용자가 읽기 쉬운 형태로 제공하도록 재생성하고 검수한다.
 
 ---
 
@@ -684,7 +695,6 @@ data/
 - 한국관광 데이터랩: https://datalab.visitkorea.or.kr/
 - 기상청 API허브: https://apihub.kma.go.kr/
 - 공공데이터포털: https://www.data.go.kr/
-- Lovv_scraping KR Spec: `Lovv_scraping/docs/specs/kr_attraction_festival_acquisition_spec_ko.md`
 
 ---
 
@@ -692,7 +702,8 @@ data/
 
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 | --- | --- | --- | --- |
-| v0.1 | 2026-06-02 | LLM 파트 | 한국 데이터 취득 계획서 초안 작성 |
-| v0.2 | 2026-06-06 | LLM 파트 | 실제 수집 데이터 및 API 명세 분석 결과 반영: Attraction·Festival·방문객 통계 데이터 모델을 실제 수집 필드 기준으로 갱신, city_id 형식 확정, TourAPI 동작 특성, 5단계 파이프라인, 6대 테마 분류 현황 추가 |
-| v0.3 | 2026-06-07 | LLM 파트 | 실데이터 결측률 분석 및 팀원 설계 피드백 반영: 6대 테마 분류 기준을 lclsSystm 코드로 정정하고 스크립트 내 명시적 제외 조건(should_exclude)과 미식·노포 테마의 관광식당(FD010100) 한정 제한 필터링 규격을 반영한 세부 소분류 매핑 규격표 추가, 6대 테마 비대상 카테고리의 수집 시점 원천 필터링(Drop) 배제 규칙 명시, tel 결측에 따른 intro infocenter 계열 폴백 수집 정의, scalefood/bookingplace 등 100% 결측 필드 제외/Optional화, Boolean 결측치 왜곡 예방 정책 반영, 방문객 통계(VisitorStatistics)를 독립 엔티티 및 파일로 분리 |
+| v0.4 | 2026-07-03 | 로브 기획팀 | KR V2 기준 보강: 취득 문서의 역할을 raw 확보·품질 기준으로 한정하고, 운영 판단은 `raw/KR/details/20260629/`, `processed/KR/details/20260629/passed/`, `TourKoreaDomainDataV2`, `kr-tour-domain-v2` 전처리·적재 문서와 연결하도록 명시 |
 | v0.3 (코드대조) | 2026-06-09 | 조동휘 | `Gloveman/tour-api-korea` 소스 코드 11종 직접 대조로 최신화: City ID `KR-{GW\|GB}-*`, Attraction/Festival ID `ATT-`/`FEST-{contentid}` 정정, 방문통계 엔드포인트 `locgoRegnVisitrDDList`·`touDivCd`(1/2/3)·final 임베드 구조·필드명(`locals_*`/`out_of_town_*`/`foreigners_*`) 정정, 실제 데이터 파일 구조(`data/raw/*`,`data/city/*`,`data/visitor/*`)로 교체, 테마 조회 키 `lclsSystm3 or cat3`·`C01` 제외 명시, 축제 오버라이드 46건의 실제 위치(`filter_existing_lists.py` 하드코딩) 정정, tel 폴백·`prefecture_id`·City 설명/기후/좌표를 코드 미구현(향후 과제)으로 표현 완화, 예시 JSON을 코드 산출물 기준으로 교체. HTML/PDF 재생성 보류. 상세 불일치는 `korea_acquisition_plan_corrections.md` 참조 |
+| v0.3 | 2026-06-07 | LLM 파트 | 실데이터 결측률 분석 및 팀원 설계 피드백 반영: 6대 테마 분류 기준을 lclsSystm 코드로 정정하고 스크립트 내 명시적 제외 조건(should_exclude)과 미식·노포 테마의 관광식당(FD010100) 한정 제한 필터링 규격을 반영한 세부 소분류 매핑 규격표 추가, 6대 테마 비대상 카테고리의 수집 시점 원천 필터링(Drop) 배제 규칙 명시, tel 결측에 따른 intro infocenter 계열 폴백 수집 정의, scalefood/bookingplace 등 100% 결측 필드 제외/Optional화, Boolean 결측치 왜곡 예방 정책 반영, 방문객 통계(VisitorStatistics)를 독립 엔티티 및 파일로 분리 |
+| v0.2 | 2026-06-06 | LLM 파트 | 실제 수집 데이터 및 API 명세 분석 결과 반영: Attraction·Festival·방문객 통계 데이터 모델을 실제 수집 필드 기준으로 갱신, city_id 형식 확정, TourAPI 동작 특성, 5단계 파이프라인, 6대 테마 분류 현황 추가 |
+| v0.1 | 2026-06-02 | LLM 파트 | 한국 데이터 취득 계획서 초안 작성 |
