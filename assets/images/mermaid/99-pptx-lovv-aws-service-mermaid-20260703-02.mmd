@@ -1,0 +1,24 @@
+flowchart TB
+  User["사용자 브라우저"] --> FrontCdn["CloudFront: d3nuef0zacpyj.cloudfront.net<br/>Lovv frontend dev"]
+  User -. "대체/서울 배포" .-> SeoulCdn["CloudFront: dkyiemfaw3g04.cloudfront.net<br/>Lovv frontend dev Seoul"]
+
+  FrontCdn --> FrontS3["S3: lovv-frontend-dev<br/>latest objects: 2026-07-02"]
+  SeoulCdn --> SeoulS3["S3: lovv-frontend-dev-seoul-<AWS_ACCOUNT_ID><br/>latest sampled objects: 2026-07-01"]
+
+  FrontCdn --> Api["API Gateway HTTP API<br/>axpn5imhbc"]
+  SeoulCdn -. "CORS allowlist 확인 필요" .-> Api
+
+  Api --> Auth["Lambda: Auth / Authorizer<br/>Cognito Google/Kakao"]
+  Api --> Map["Lambda: SmallCities / Map<br/>TourKoreaDomainDataV2"]
+  Api --> Feed["Lambda: RecommendationFeed<br/>DynamoDB + Aurora + S3"]
+  Api --> Plans["Lambda: SavedPlans<br/>Aurora MySQL"]
+  Api --> AgentBridge["Lambda: AgentCoreFunction<br/>POST /api/v1/recommendations"]
+  Api --> Admin["Lambda: Admin<br/>관리자/운영 API"]
+
+  Auth --> Cognito["Cognito User Pool"]
+  Map --> DomainDDB["DynamoDB: TourKoreaDomainDataV2"]
+  Feed --> DomainDDB
+  Feed --> RDS["Aurora MySQL: lovvdev"]
+  Plans --> RDS
+  Feed --> ImageCdn["Image CloudFront / S3"]
+  AgentBridge --> AgentRuntime["Bedrock AgentCore Runtime"]
