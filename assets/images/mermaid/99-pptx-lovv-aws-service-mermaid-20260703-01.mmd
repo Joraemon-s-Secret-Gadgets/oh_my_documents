@@ -1,0 +1,20 @@
+flowchart LR
+  TourKorea["TourKorea / 원천 관광 데이터"] --> RawIngest["Lambda: kr-raw-ingest"]
+  RawIngest --> RawS3["S3: lovv-data-pipeline-dev-<AWS_ACCOUNT_ID><br/>raw/KR/details/..."]
+
+  RawS3 --> Transform["Lambda: kr-pipeline-transform<br/>정규화 / 테마 / 분류"]
+  Transform --> ProcessedS3["S3 processed artifacts<br/>manifest / export"]
+
+  ProcessedS3 --> Loader["Lambda: kr-pipeline-loader<br/>DynamoDB load"]
+  Loader --> DomainDDB["DynamoDB: TourKoreaDomainDataV2<br/>10,482 items"]
+
+  ProcessedS3 --> ImagePipe["Lambda: kr-pipeline-image"]
+  ImagePipe --> ImageBucket["S3: lovv-pipeline-images-dev-<AWS_ACCOUNT_ID>"]
+  ImageBucket --> ImageCdn["CloudFront image CDN<br/>det7vj7wxfmim.cloudfront.net"]
+
+  ProcessedS3 --> VectorBuild["Vector build<br/>Lambda path has 900s timeout history"]
+  VectorBuild --> Titan["Bedrock Embeddings<br/>amazon.titan-embed-text-v2:0"]
+  Titan --> S3Vector["S3 Vector: lovv-vector-dev<br/>index: kr-tour-domain-v2<br/>7,606 vectors verified"]
+
+  DomainDDB --> AppRead["API / Agent 데이터 조회"]
+  S3Vector --> AppRead

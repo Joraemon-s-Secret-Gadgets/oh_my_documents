@@ -1,0 +1,954 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=22mm]{geometry}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\usepackage{kotex}
+\usepackage{graphicx}
+\usepackage[table]{xcolor}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{setspace}
+\setmainfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setsansfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setmonofont{Consolas}
+\newfontfamily\jpfont[Path=C:/Windows/Fonts/]{NotoSansJP-VF.ttf}
+\setCJKmainfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setCJKsansfont[Path=C:/Windows/Fonts/, BoldFont=malgunbd.ttf, ItalicFont=malgunsl.ttf]{malgun.ttf}
+\setCJKmonofont[Path=C:/Windows/Fonts/]{malgun.ttf}
+\XeTeXlinebreaklocale "ko"
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\binoppenalty=10000
+\relpenalty=10000
+\emergencystretch=2em
+\sloppy
+\newcommand{\DocNeedspace}[1]{\par\ifdim\dimexpr\pagegoal-\pagetotal\relax<#1\newpage\fi}
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue}
+\definecolor{DarkCharcoal}{HTML}{222222}
+\definecolor{MainOrange}{HTML}{F26518}
+\definecolor{MutedBrown}{HTML}{D44A14}
+\definecolor{SoftBeige}{HTML}{FFF3E7}
+\definecolor{CardPeach}{HTML}{FCE7DB}
+\definecolor{SubTextGray}{HTML}{666666}
+\color{DarkCharcoal}
+\colorlet{LovvGreen}{MutedBrown}
+\colorlet{LovvGreenDark}{DarkCharcoal}
+\colorlet{LovvGold}{MainOrange}
+\colorlet{LovvPaper}{SoftBeige}
+\renewcommand{\arraystretch}{1.35}
+\setlength{\tabcolsep}{2pt}
+\setlength{\LTpre}{6pt}
+\setlength{\LTpost}{10pt}
+\setlength{\LTleft}{\fill}
+\setlength{\LTright}{\fill}
+\setlist[itemize]{leftmargin=*, itemsep=2pt, topsep=2pt}
+\setstretch{1.08}
+\setlength{\headheight}{30pt}
+\setcounter{tocdepth}{2}
+\newcommand{\TocNoChildTight}{\vspace{-0.28em}}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\hbox{\makebox[42pt][c]{\includegraphics[width=38pt,height=13pt,keepaspectratio]{../assets/images/SK-Networks-logo.png}}\hspace{0.7em}\makebox[42pt][c]{\includegraphics[width=44pt,height=15pt,keepaspectratio]{../assets/images/en-core-logo.png}}\hspace{0.7em}\makebox[42pt][c]{\includegraphics[width=38pt,height=13pt,keepaspectratio]{../assets/images/playdata-logo.png}}}}
+\rhead{\scriptsize v0.6 | Draft - 현재 핵심 아키텍처 정리}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{LovvGreen}\leaders\hrule height \headrulewidth\hfill}}
+\begin{document}
+\begin{titlepage}
+\thispagestyle{empty}
+
+\noindent \hbox to\textwidth{\makebox[0.28\textwidth][c]{\includegraphics[width=0.22\textwidth,height=0.82cm,keepaspectratio]{../assets/images/SK-Networks-logo.png}}\hfil \makebox[0.28\textwidth][c]{\includegraphics[width=0.26\textwidth,height=0.98cm,keepaspectratio]{../assets/images/en-core-logo.png}}\hfil \makebox[0.28\textwidth][c]{\includegraphics[width=0.22\textwidth,height=0.82cm,keepaspectratio]{../assets/images/playdata-logo.png}}}
+\vspace{1em}
+\par\noindent\color{LovvGold}\rule{\textwidth}{1.2pt}\color{black}
+
+\centering
+\vspace*{0.16\textheight}
+{\Huge\bfseries 시스템 아키텍처 및 구성도\par}
+
+\vspace{1.5em}
+{\large 로브 서비스\par}
+
+\vfill
+{\Large\bfseries 조라에몽의 만능 도구들\par}\vspace{0.8em}
+{\Large 이창우, 전종혁, 조동휘, 최수아\\[0.8em]{\large 멘토 최민수}\par}
+\vspace{2em}
+{\large 2026-05-30\par}
+\end{titlepage}
+\begingroup
+\fontsize{11.7pt}{12.5pt}\selectfont
+\setlength{\parskip}{0pt}
+\tableofcontents
+\endgroup
+\newpage
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{1. 요약}
+\addcontentsline{toc}{section}{1. 요약}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\DocNeedspace{3\baselineskip}
+이 문서는 Lovv 서비스의 사용자 채널, 프론트엔드, AWS 백엔드, AI 추천, 데이터 저장소, 외부 연동, 네트워크 및 보안 경계, 운영, 배포 흐름을 번호가 부여된 독립 문서로 정리한다.\newline 2026-07-09 live AWS 조회 결과와 2026-07-13 기준 전체 시스템 구성 문서를 함께 반영해 현재 아키텍처 판단 기준을 제시한다.
+
+
+\DocNeedspace{3\baselineskip}
+핵심 내용은 다음과 같다.
+
+
+\DocNeedspace{22\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.46}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.153\linewidth}>{\RaggedRight\arraybackslash}m{0.819\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.153\linewidth}}{\textbf{영역}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.819\linewidth}}{\textbf{핵심 내용}} \\
+\midrule
+\endhead
+대표 도메인 & dev 대표 도메인은 \texttt{https:\allowbreak{}/\allowbreak{}/\allowbreak{}www.\allowbreak{}lovv.\allowbreak{}site}이며, \texttt{https:\allowbreak{}/\allowbreak{}/\allowbreak{}lovv.\allowbreak{}site}는 GoDaddy 301 포워딩 대상으로 관리한다. \\
+프론트엔드 배포 & React 19, TypeScript, Vite 기반 SPA를 Seoul S3 origin과 CloudFront로 제공한다. \\
+Agent\allowbreak{}Core & \texttt{Agent\allowbreak{}Core-\allowbreak{}Lovv\allowbreak{}Agent\allowbreak{}Core-\allowbreak{}v2} 스택과 \texttt{Lovv\allowbreak{}Agent\allowbreak{}Core\_\allowbreak{}Lovv\allowbreak{}Agent\allowbreak{}V2-\allowbreak{}cy3t\allowbreak{}Yk7n\allowbreak{}V4} runtime이 존재하며, 추천 Lambda가 V2 runtime ARN을 바라본다. \\
+V2 도메인 데이터 & \texttt{Tour\allowbreak{}Korea\allowbreak{}Domain\allowbreak{}Data\allowbreak{}V2}는 \texttt{ACTIVE}이고 item count는 \texttt{10,482}이며, 현재 추천/RAG read model 기준이다. \\
+지도/소도시 API & \texttt{Small\allowbreak{}Cities\allowbreak{}Function}은 \texttt{MAP\_\allowbreak{}CITY\_\allowbreak{}SOURCE=dynamodb}, \texttt{MAP\_\allowbreak{}CITY\_\allowbreak{}DYNAMODB\_\allowbreak{}TABLE=Tour\allowbreak{}Korea\allowbreak{}Domain\allowbreak{}Data\allowbreak{}V2}를 사용하며 S3 raw detail fallback 환경도 유지한다. \\
+추천/RAG & \texttt{Tour\allowbreak{}Korea\allowbreak{}Domain\allowbreak{}Data\allowbreak{}V2}와 \texttt{lovv-\allowbreak{}vector-\allowbreak{}dev /\allowbreak{} kr-\allowbreak{}tour-\allowbreak{}domain-\allowbreak{}v2}만 현재 아키텍처 기준 RAG target으로 기록한다. \\
+개인화 프로필 & AgentCore V2는 \texttt{Lovv\allowbreak{}User\allowbreak{}Profile}을 개인화 프로필 저장소로 사용한다. \\
+보안/운영 & public recommendation route, Function URL, Agent session ownership, ORS key 노출, WAF/throttling/alarm/backup 설정은 운영 전 확인해야 할 위험 항목으로 관리한다. \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{3\baselineskip}
+상태 표기는 다음 기준을 사용한다.
+
+
+\DocNeedspace{12\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.46}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.156\linewidth}>{\RaggedRight\arraybackslash}m{0.816\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.156\linewidth}}{\textbf{표시}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.816\linewidth}}{\textbf{의미}} \\
+\midrule
+\endhead
+구현 & 현재 저장소 코드와 템플릿에 구현되어 있음 \\
+배포 확인 & dev 환경에서 실제 호출 또는 배포 정보가 확인됨 \\
+정의 & 템플릿이나 파라미터에는 있으나 해당 환경 배포 여부는 확인되지 않음 \\
+계획 & 설계 문서에만 있고 현재 기본 구현 범위가 아님 \\
+위험/확인 필요 & 운영 전 보완하거나 실제 AWS 설정을 추가 확인해야 함 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{2. 전체 시스템 구성도}
+\addcontentsline{toc}{section}{2. 전체 시스템 구성도}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\DocNeedspace{3\baselineskip}
+아래 이미지는 AWS 권장 아키텍처 다이어그램 관례에 맞춰 Frontend/Edge, SAM API Layer, AgentCore V2/RAG, Data Stack, KR Data Pipeline을 고수준으로 분리해 표현한 전체 구성도다.
+
+
+\DocNeedspace{18\baselineskip}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth,height=0.72\textheight,keepaspectratio]{../docs/13_system_architecture/13-system-architecture-aws-format.png}
+\caption*{Lovv current AWS system architecture}
+\end{figure}
+
+
+\DocNeedspace{3\baselineskip}
+현재 대표 이미지는 「Lovv AWS 시스템 아키텍처」 구성도다.\newline 세부 AWS 경계형 구성도 자산은 문서 관리용 원본과 렌더링 이미지로 별도 보존한다.
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{3. 구성 계층}
+\addcontentsline{toc}{section}{3. 구성 계층}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{3.1 Frontend and CDN}
+\addcontentsline{toc}{subsection}{3.1 Frontend and CDN}
+
+
+\DocNeedspace{20\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.46}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.220\linewidth}>{\RaggedRight\arraybackslash}m{0.392\linewidth}>{\RaggedRight\arraybackslash}m{0.346\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.220\linewidth}}{\textbf{구성}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.392\linewidth}}{\textbf{현재 리소스}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.346\linewidth}}{\textbf{역할}} \\
+\midrule
+\endhead
+Service domain & \texttt{www.\allowbreak{}lovv.\allowbreak{}site} & dev 대표 서비스 도메인, CloudFront 연결 \\
+Apex domain & \texttt{lovv.\allowbreak{}site} & GoDaddy 301 forwarding으로 \texttt{www.\allowbreak{}lovv.\allowbreak{}site} 이동 \\
+Seoul frontend CDN & \texttt{dkyiemfaw3g04.\allowbreak{}cloudfront.\allowbreak{}net} & \texttt{lovv-\allowbreak{}frontend-\allowbreak{}dev-\allowbreak{}seoul-\allowbreak{}925273580929} S3 origin을 제공하는 Seoul frontend \\
+CloudFront distribution & \texttt{E1\allowbreak{}WB4\allowbreak{}Z0\allowbreak{}NNW98\allowbreak{}QR} & Seoul frontend SPA 배포와 invalidation 대상 \\
+Image CDN & \texttt{det7vj7wxfmim.\allowbreak{}cloudfront.\allowbreak{}net} & \texttt{lovv-\allowbreak{}image-\allowbreak{}dev-\allowbreak{}925273580929} 이미지 버킷 read-only 제공 \\
+Frontend bucket & \texttt{lovv-\allowbreak{}frontend-\allowbreak{}dev-\allowbreak{}seoul-\allowbreak{}925273580929} & 정적 웹 자산 저장 \\
+ACM certificate & \texttt{lovv.\allowbreak{}site}, \texttt{*.\allowbreak{}lovv.\allowbreak{}site} & CloudFront custom domain용 \texttt{us-\allowbreak{}east-\allowbreak{}1} 인증서 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{3\baselineskip}
+Frontend는 Seoul CloudFront와 Seoul S3 정적 자산을 기준으로 기록한다.\newline API 호출은 \texttt{lovv-\allowbreak{}dev-\allowbreak{}api} HTTP API로 전달되고, 이미지는 별도 CloudFront 배포와 S3 image bucket을 통해 제공된다.\newline Route 53은 사용하지 않으며 GoDaddy DNS/포워딩과 CloudFront/ACM custom domain을 사용한다.
+
+
+\DocNeedspace{24\baselineskip}
+\subsection*{3.2 API and Lambda}
+\addcontentsline{toc}{subsection}{3.2 API and Lambda}
+
+
+\DocNeedspace{22\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.46}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.220\linewidth}>{\RaggedRight\arraybackslash}m{0.425\linewidth}>{\RaggedRight\arraybackslash}m{0.314\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.220\linewidth}}{\textbf{구성}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.425\linewidth}}{\textbf{현재 리소스}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.314\linewidth}}{\textbf{역할}} \\
+\midrule
+\endhead
+API Gateway & \texttt{lovv-\allowbreak{}dev-\allowbreak{}api}, id \texttt{axpn5imhbc} & HTTP API entrypoint \\
+Auth & \texttt{lovv-\allowbreak{}dev-\allowbreak{}api-\allowbreak{}Auth\allowbreak{}Function-\allowbreak{}*}, \texttt{Auth\allowbreak{}Authorizer\allowbreak{}Function-\allowbreak{}*} & social auth, service session, custom authorizer \\
+Map/\allowbreak{}City & \texttt{lovv-\allowbreak{}dev-\allowbreak{}api-\allowbreak{}Small\allowbreak{}Cities\allowbreak{}Function-\allowbreak{}*} & map markers, city list/detail, city places \\
+Preferences & \texttt{lovv-\allowbreak{}dev-\allowbreak{}api-\allowbreak{}PreferenceFunction-\allowbreak{}*} & user preference API \\
+Saved Plans & \texttt{lovv-\allowbreak{}dev-\allowbreak{}api-\allowbreak{}SavedPlansFunction-\allowbreak{}*} & saved itinerary, public itinerary, reactions, share \\
+Admin & \texttt{lovv-\allowbreak{}dev-\allowbreak{}api-\allowbreak{}Admin\allowbreak{}Function-\allowbreak{}*} & admin data proposals, notices, monthly destinations, metrics, policies \\
+Recommendation & \texttt{lovv-\allowbreak{}dev-\allowbreak{}api-\allowbreak{}AgentCoreFunction-\allowbreak{}*} & Bedrock AgentCore runtime 호출 경계 \\
+Feed & \texttt{lovv-\allowbreak{}dev-\allowbreak{}api-\allowbreak{}RecommendationFeedFunction-\allowbreak{}*} & monthly city and reaction-based feed \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{3\baselineskip}
+API stack은 단일 Lambda가 아니라 기능별 Lambda 그룹으로 나뉘어 있다.\newline RDS가 필요한 Lambda는 VPC private subnet과 보안 그룹을 통해 private MySQL에 접근하고, 공개 조회 성격의 SmallCities/AgentCoreFunction은 VPC 외부 Lambda로 구성되어 있다.\newline API Gateway는 CORS credentials를 허용하고 \texttt{Authorization}, \texttt{Cookie}, \texttt{X-\allowbreak{}CSRF-\allowbreak{}Token} 헤더를 허용한다.\newline dev allowlist에는 \texttt{https:\allowbreak{}/\allowbreak{}/\allowbreak{}www.\allowbreak{}lovv.\allowbreak{}site}가 포함된다.
+
+
+\DocNeedspace{24\baselineskip}
+\subsection*{3.3 Data Stack and Network}
+\addcontentsline{toc}{subsection}{3.3 Data Stack and Network}
+
+
+\DocNeedspace{18\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.46}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.173\linewidth}>{\RaggedRight\arraybackslash}m{0.469\linewidth}>{\RaggedRight\arraybackslash}m{0.316\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.173\linewidth}}{\textbf{구성}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.469\linewidth}}{\textbf{현재 리소스}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.316\linewidth}}{\textbf{상태}} \\
+\midrule
+\endhead
+Data stack & \texttt{lovv-\allowbreak{}dev-\allowbreak{}data-\allowbreak{}stack} & \texttt{UPDATE\_\allowbreak{}COMPLETE} \\
+RDS & \texttt{lovv-\allowbreak{}dev-\allowbreak{}mysql}, MySQL 8.0.45, DB \texttt{lovvdev} & \texttt{available}, \mbox{\texttt{PubliclyAccessible=false}}, encrypted, deletion protection enabled \\
+VPC & \texttt{vpc-\allowbreak{}0ccb7e4be7b11b9fb} & 개발용 VPC \\
+Private subnet & \texttt{subnet-\allowbreak{}0e04f80cfb58e0f35}, \texttt{subnet-\allowbreak{}0b3d1d99edd282504} & RDS와 VPC 연동 Lambda \mbox{영역} \\
+NAT instance & \texttt{i-\allowbreak{}0c6dad9690abd0101}, \texttt{t4g.\allowbreak{}nano} & private subnet outbound 및 운영 접근 보조 \\
+Secret management & Secrets Manager + SSM reference & 실제 secret 값은 문서화하지 않음 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{3\baselineskip}
+저장 일정과 사용자 선호 같은 핵심 서비스 ledger는 RDS MySQL에 둔다.\newline DynamoDB는 세션, run trace, log, async job, content, visitor statistics, verification cache처럼 운영 상태와 조회 모델을 담당한다.
+
+
+\DocNeedspace{24\baselineskip}
+\subsection*{3.4 Domain Data and RAG}
+\addcontentsline{toc}{subsection}{3.4 Domain Data and RAG}
+
+
+\DocNeedspace{14\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.46}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.192\linewidth}>{\RaggedRight\arraybackslash}m{0.523\linewidth}>{\RaggedRight\arraybackslash}m{0.245\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.192\linewidth}}{\textbf{구성}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.523\linewidth}}{\textbf{현재 리소스}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.245\linewidth}}{\textbf{상태/역할}} \\
+\midrule
+\endhead
+V2 domain table & \texttt{TourKoreaDomainDataV2} & \texttt{ACTIVE}, item count \texttt{10,482} \\
+V2 indexes & \texttt{CityDomainIndex}, \texttt{FestivalMonthIndex}, \texttt{ProvinceDomainIndex}, \texttt{EntityTypeDomainIndex} & all \texttt{ACTIVE} \\
+V2 vector index & \texttt{lovv-\allowbreak{}vector-\allowbreak{}dev /\allowbreak{} kr-\allowbreak{}tour-\allowbreak{}domain-\allowbreak{}v2} & V2 추천/RAG 검색 target \\
+Profile table & \texttt{LovvUserProfile} & AgentCore V2 개인화 프로필 저장소 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{3\baselineskip}
+2026-07-09 기준 V2 도메인 데이터는 실제로 적재되어 있으며, 현재 운영 판단에서는 \texttt{ACTIVE /\allowbreak{} 10,482 items} 상태를 기준으로 삼는다.
+
+
+\DocNeedspace{3\baselineskip}
+AgentCore V2는 도메인/RAG target과 별도로 \texttt{Lovv\allowbreak{}User\allowbreak{}Profile}을 개인화 프로필 저장소로 사용한다.
+
+
+\DocNeedspace{24\baselineskip}
+\subsection*{3.5 KR Data Pipeline}
+\addcontentsline{toc}{subsection}{3.5 KR Data Pipeline}
+
+
+\DocNeedspace{16\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.46}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.246\linewidth}>{\RaggedRight\arraybackslash}m{0.443\linewidth}>{\RaggedRight\arraybackslash}m{0.270\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.246\linewidth}}{\textbf{Lambda}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.443\linewidth}}{\textbf{주요 환경}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.270\linewidth}}{\textbf{역할}} \\
+\midrule
+\endhead
+\texttt{kr-\allowbreak{}raw-\allowbreak{}ingest} & pipeline bucket & raw ingest \\
+\texttt{kr-\allowbreak{}pipeline-\allowbreak{}loader} & \texttt{DYNAMODB\_TABLE=\allowbreak{}TourKoreaDomainDataV2} & S3-to-DynamoDB load \\
+\texttt{kr-\allowbreak{}pipeline-\allowbreak{}transform} & \texttt{DYNAMODB\_TABLE=\allowbreak{}TourKoreaDomainDataV2} & raw JSON preprocessing and DynamoDB load \\
+\texttt{kr-\allowbreak{}pipeline-\allowbreak{}image} & image pipeline buckets & city-level image processing \\
+\texttt{kr-\allowbreak{}pipeline-\allowbreak{}vector} & \texttt{VECTOR\_BUCKET=\allowbreak{}lovv-\allowbreak{}vector-\allowbreak{}dev}, \texttt{VECTOR\_INDEX=\allowbreak{}kr-\allowbreak{}tour-\allowbreak{}domain-\allowbreak{}v2}, \texttt{DYNAMODB\_TABLE=\allowbreak{}TourKoreaDomainDataV2} & S3 Vector index build \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{3\baselineskip}
+KR pipeline은 V2 DynamoDB table과 V2 vector index를 바라보는 상태다.\newline \texttt{Small\allowbreak{}Cities\allowbreak{}Function}도 V2 table을 primary city source로 사용하고 S3 raw detail fallback을 유지한다.
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{4. 주요 런타임 흐름}
+\addcontentsline{toc}{section}{4. 주요 런타임 흐름}
+
+\DocNeedspace{3\baselineskip}
+아래 개요는 사용자 요청이 인증, 도시·장소 조회, AgentCore 추천 실행으로 분기되는 현재 런타임 경계를 한 화면에 정리한 것이다.
+
+\DocNeedspace{20\baselineskip}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth,height=0.52\textheight,keepaspectratio]{../docs/13_system_architecture/13-runtime-overview-flow.png}
+\caption*{주요 런타임 흐름 개요}
+\end{figure}
+
+\newpage
+\DocNeedspace{8\baselineskip}
+\subsection*{4.1 사용자 웹/API 흐름}
+\addcontentsline{toc}{subsection}{4.1 사용자 웹/API 흐름}
+
+
+\DocNeedspace{3\baselineskip}
+사용자는 Seoul CloudFront를 통해 정적 프론트엔드에 접근하고, API 요청은 \texttt{lovv-\allowbreak{}dev-\allowbreak{}api} HTTP API로 전달된다.\newline API Gateway는 경로와 인증 상태에 따라 기능별 Lambda 그룹으로 요청을 라우팅하며, 각 Lambda는 필요에 따라 RDS MySQL 또는 DynamoDB 운영 테이블을 조회한 뒤 JSON 응답을 반환한다.
+
+\begin{center}
+\includegraphics[width=0.94\linewidth,height=0.34\textheight,keepaspectratio]{../docs/13_system_architecture/13-runtime-web-api-flow.png}\\[-0.3em]
+{\small 사용자 웹 및 API 요청 흐름}
+\end{center}
+
+
+\newpage
+\DocNeedspace{24\baselineskip}
+\subsection*{4.2 지도/소도시 조회 흐름}
+\addcontentsline{toc}{subsection}{4.2 지도/소도시 조회 흐름}
+
+
+\DocNeedspace{3\baselineskip}
+현재 SmallCities 계열 API는 V2 DynamoDB table을 primary로 쓰는 구성이다.\newline 문서상으로는 S3 raw detail JSON을 완전히 제거된 것으로 쓰면 안 되고, fallback source로 남아 있음을 같이 표현한다.\newline 이미지 자체의 전송 경로를 런타임 흐름에 모두 펼치기보다, city 응답에 이미지 URL이 포함되는 보조 출력으로만 표현한다.
+
+\begin{center}
+\includegraphics[width=0.94\linewidth,height=0.34\textheight,keepaspectratio]{../docs/13_system_architecture/13-runtime-city-route-flow.png}\\[-0.3em]
+{\small 도시 조회와 지도·경로 연동 흐름}
+\end{center}
+
+
+\newpage
+\DocNeedspace{24\baselineskip}
+\subsection*{4.3 추천/AgentCore 흐름}
+\addcontentsline{toc}{subsection}{4.3 추천/AgentCore 흐름}
+
+
+\DocNeedspace{3\baselineskip}
+추천 경계는 API Gateway에서 \texttt{Agent\allowbreak{}Core\allowbreak{}Function}으로 들어오고, 이 Lambda가 Bedrock AgentCore Runtime V2를 호출한다.\newline Runtime 내부의 상세 LangGraph/도구 흐름은 Agent 문서의 책임이고, 이 문서에서는 AWS 구성과 데이터 의존성을 기준으로 표현한다.
+
+\begin{center}
+\includegraphics[width=0.94\linewidth,height=0.46\textheight,keepaspectratio]{../docs/13_system_architecture/13-runtime-agentcore-flow.png}\\[-0.3em]
+{\small 추천과 AgentCore 런타임 의존성 흐름}
+\end{center}
+
+
+\newpage
+\DocNeedspace{24\baselineskip}
+\subsection*{4.4 인증 및 세션 흐름}
+\addcontentsline{toc}{subsection}{4.4 인증 및 세션 흐름}
+
+
+\DocNeedspace{3\baselineskip}
+사용자는 Google, Kakao, Cognito 경로로 로그인한다.\newline 프론트엔드는 provider callback 또는 Cognito callback을 받은 뒤 Auth API에 세션 생성을 요청하고, Auth Lambda는 provider claim/token을 검증해 사용자와 소셜 계정을 MySQL에 upsert한다.\newline Refresh token은 \texttt{Http\allowbreak{}Only; Secure} cookie로 유지하고 DynamoDB session table에는 hash와 TTL을 저장한다.\newline Access token은 짧은 수명의 서비스 JWT로 발급되어 \texttt{Authorization} header로 보호 API에 전달된다.
+
+
+\DocNeedspace{3\baselineskip}
+dev 배포의 Cognito redirect/logout은 각각 \texttt{https:\allowbreak{}/\allowbreak{}/\allowbreak{}www.\allowbreak{}lovv.\allowbreak{}site/\allowbreak{}auth/\allowbreak{}callback/\allowbreak{}cognito}, \texttt{https:\allowbreak{}/\allowbreak{}/\allowbreak{}www.\allowbreak{}lovv.\allowbreak{}site/\allowbreak{}}를 사용한다.\newline prod/poc 파라미터는 외부 issuer/audience 연결 형태로 정의되어 있으나, 실제 prod 배포는 이 문서에서 확인된 상태로 단정하지 않는다.
+
+\begin{center}
+\includegraphics[width=0.94\linewidth,height=0.22\textheight,keepaspectratio]{../docs/13_system_architecture/13-runtime-auth-session-flow.png}\\[-0.3em]
+{\small 인증 및 세션 흐름}
+\end{center}
+
+
+\newpage
+\DocNeedspace{24\baselineskip}
+\subsection*{4.5 AI 일정 생성 및 수정 흐름}
+\addcontentsline{toc}{subsection}{4.5 AI 일정 생성 및 수정 흐름}
+
+
+\DocNeedspace{3\baselineskip}
+AI 일정 생성은 프론트 Planner에서 여행 기간, 월, 축제 여부, 테마, 자연어 조건, 온보딩 프로필, feedback history를 수집해 \texttt{POST /\allowbreak{}api/\allowbreak{}v1/\allowbreak{}recommendations}로 요청하면서 시작한다.\newline \texttt{Agent\allowbreak{}Core\allowbreak{}Function}은 V2 request를 구성해 Bedrock AgentCore Runtime V2를 호출하고, runtime은 V2 domain table, S3 vector index, S3 raw source를 검색 근거로 사용한다.
+
+
+\DocNeedspace{3\baselineskip}
+추가 선택이 필요하면 AgentCore는 \texttt{clarification}, \mbox{\texttt{threadId}}, \mbox{\texttt{recommendationId}}를 반환한다.\newline 사용자가 선택지를 고르면 동일 \mbox{\texttt{sessionId}}/\allowbreak{}\mbox{\texttt{threadId}}/\allowbreak{}\mbox{\texttt{recommendationId}}로 실행을 재개한다.\newline 최종 응답은 destination, itinerary, explainability, links, festival verification, alternative itinerary, expiry를 포함하며, legacy compatibility를 위해 \texttt{explanations}, \texttt{save\allowbreak{}Compatibility}도 유지한다.
+
+
+\DocNeedspace{3\baselineskip}
+일정 수정은 생성 시 확보한 session/thread를 재사용한다.\newline 사용자는 장소, 일차, 전체 일정 단위로 수정 요청을 보내고, backend adapter는 \texttt{entry\allowbreak{}Type=modify}, 현재 일정 순서, 자연어 수정 조건을 AgentCore V2에 전달한다.\newline 최종 저장은 사용자가 명시적으로 저장을 선택한 경우에만 SavedPlans API를 통해 MySQL 원장에 반영한다.
+
+\begin{center}
+\includegraphics[width=0.94\linewidth,height=0.22\textheight,keepaspectratio]{../docs/13_system_architecture/13-runtime-recommendation-flow.png}\\[-0.3em]
+{\small 추천과 AI 일정 생성·수정 흐름}
+\end{center}
+
+
+\newpage
+\DocNeedspace{24\baselineskip}
+\subsection*{4.6 지도·장소·경로 연동}
+\addcontentsline{toc}{subsection}{4.6 지도·장소·경로 연동}
+
+\begin{center}
+\includegraphics[width=0.94\linewidth,height=0.30\textheight,keepaspectratio]{../docs/13_system_architecture/13-runtime-map-place-route-flow.png}\\[-0.3em]
+{\small 지도·장소·경로 연동 흐름}
+\end{center}
+
+
+\DocNeedspace{14\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.46}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.259\linewidth}>{\RaggedRight\arraybackslash}m{0.330\linewidth}>{\RaggedRight\arraybackslash}m{0.370\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.259\linewidth}}{\textbf{연동}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.330\linewidth}}{\textbf{사용 위치}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.370\linewidth}}{\textbf{실패 시 동작}} \\
+\midrule
+\endhead
+Google Maps JavaScript & 상세 일정 지도와 마커 & 지도 미표시 또는 정적 정보 유지 \\
+Kakao Maps/Places & 맛집 검색, 외부 장소 확인 & Kakao 검색 링크 제공 \\
+Open\allowbreak{}Route\allowbreak{}Service & 실제 도로 기반 route geometry/time & 기존 route geometry 또는 직선 경로 fallback \\
+Image CloudFront & 도시·관광지·위시리스트 \mbox{이미지} & 도시 대표 이미지 또는 준비 중 fallback \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{3\baselineskip}
+현재 ORS는 브라우저 키와 백엔드 SSM/환경 변수 경로가 모두 존재한다.\newline 운영에서는 브라우저 키 노출을 줄이기 위해 서버 프록시 또는 provider restriction, quota restriction을 적용해야 한다.
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{5. 프론트엔드/백엔드 구현 책임}
+\addcontentsline{toc}{section}{5. 프론트엔드/백엔드 구현 책임}
+
+
+\DocNeedspace{8\baselineskip}
+\subsection*{5.1 프론트엔드 구성}
+\addcontentsline{toc}{subsection}{5.1 프론트엔드 구성}
+
+
+\DocNeedspace{28\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.46}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.213\linewidth}>{\RaggedRight\arraybackslash}m{0.234\linewidth}>{\RaggedRight\arraybackslash}m{0.512\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.213\linewidth}}{\textbf{영역}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.234\linewidth}}{\textbf{구현}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.512\linewidth}}{\textbf{책임}} \\
+\midrule
+\endhead
+App shell / routing & React Router & 홈, 인증, 지도, 플래너, 상세 일정, 마이페이지 전환 \\
+Server state & TanStack React Query & API 요청, mutation, 캐시 및 오류 상태 \\
+Local/shared state & React state, Zustand & 플래너 단계, 인증 UI, 편집 상태 \\
+Styling & Tailwind CSS & 반응형 UI와 디자인 토큰 \\
+Auth adapter & \texttt{auth\allowbreak{}Api.\allowbreak{}ts} & OAuth/Cognito bridge, session, logout, profile \\
+Recommendation adapter & \texttt{recommendations\allowbreak{}Api.\allowbreak{}ts} & V2 생성·clarify·modify 응답 매핑 \\
+City adapter & \texttt{small\allowbreak{}City\allowbreak{}Api.\allowbreak{}ts} & 도시 목록·상세·장소 조회 \\
+Saved plan adapter & \texttt{saved\allowbreak{}Plans\allowbreak{}Api.\allowbreak{}ts} & 저장·조회·삭제·반응·공유 \\
+Planner & \texttt{use\allowbreak{}Planner.\allowbreak{}ts} & 안내 질문, session/thread 유지, 생성·수정 orchestration \\
+Plan detail & \texttt{Plan\allowbreak{}Detail\allowbreak{}View.\allowbreak{}tsx} & 일정 카드, 수정 챗봇, 드래그 순서, 위시리스트 \\
+Maps/\allowbreak{}routes & Google Maps + ORS & 마커, 실제 도로 경로, 직선 fallback \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{3\baselineskip}
+\texttt{VITE\_\allowbreak{}*} 값은 브라우저 번들에 노출된다.\newline Google/Kakao browser key처럼 공개 클라이언트 키만 사용해야 하며 서버 비밀값을 두어서는 안 된다.\newline 주요 변수는 \texttt{VITE\_\allowbreak{}LOVV\_\allowbreak{}API\_\allowbreak{}BASE\_\allowbreak{}URL}, \texttt{VITE\_\allowbreak{}API\_\allowbreak{}BASE\_\allowbreak{}URL}, \texttt{VITE\_\allowbreak{}COGNITO\_\allowbreak{}DOMAIN}, \texttt{VITE\_\allowbreak{}COGNITO\_\allowbreak{}CLIENT\_\allowbreak{}ID}, \texttt{VITE\_\allowbreak{}GOOGLE\_\allowbreak{}MAPS\_\allowbreak{}API\_\allowbreak{}KEY}, \texttt{VITE\_\allowbreak{}GOOGLE\_\allowbreak{}MAPS\_\allowbreak{}MAP\_\allowbreak{}ID}, \texttt{VITE\_\allowbreak{}KAKAO\_\allowbreak{}MAP\_\allowbreak{}JAVASCRIPT\_\allowbreak{}KEY}, \texttt{VITE\_\allowbreak{}OPENROUTESERVICE\_\allowbreak{}API\_\allowbreak{}KEY}, \texttt{VITE\_\allowbreak{}IMAGE\_\allowbreak{}CDN\_\allowbreak{}BASE\_\allowbreak{}URL}이다.
+
+
+\DocNeedspace{24\baselineskip}
+\subsection*{5.2 백엔드 Lambda 책임}
+\addcontentsline{toc}{subsection}{5.2 백엔드 Lambda 책임}
+
+
+\DocNeedspace{22\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.46}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.215\linewidth}>{\RaggedRight\arraybackslash}m{0.409\linewidth}>{\RaggedRight\arraybackslash}m{0.334\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.215\linewidth}}{\textbf{Lambda}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.409\linewidth}}{\textbf{주요 API/책임}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.334\linewidth}}{\textbf{인증/데이터}} \\
+\midrule
+\endhead
+\texttt{Auth\allowbreak{}Function} & Google/Kakao 로그인, Cognito bridge, session, me, 계정 연결, logout & Public + Token/Cognito authorizer, MySQL, DynamoDB, Secrets Manager \\
+\texttt{Auth\allowbreak{}Authorizer\allowbreak{}Function} & Lovv access JWT 검증과 권한 context & API Gateway Lambda authorizer \\
+\texttt{Preference\allowbreak{}Function} & 사용자 테마/선호 조회·수정 & Token authorizer, MySQL \\
+\texttt{Saved\allowbreak{}Plans\allowbreak{}Function} & 일정 CRUD, 공개 상태, 복제, 좋아요/싫어요 & Token/optional public 조회, MySQL \\
+\texttt{Recommendation\allowbreak{}Feed\allowbreak{}Function} & 월별·인기·사용자 반응 기반 도시 추천 & Public/Token, MySQL + DynamoDB + S3 \\
+\texttt{Small\allowbreak{}Cities\allowbreak{}Function} & 소도시 목록·상세·장소·지도 마커 & Public read, DynamoDB 우선 + S3 fallback \\
+\texttt{Agent\allowbreak{}Core\allowbreak{}Function} & 추천 생성·clarify·modify adapter, V2 응답 매핑, ORS route enrichment & 현재 recommendation route는 authorizer 없음, AgentCore + SSM/ORS \\
+\texttt{Admin\allowbreak{}Function} & 사용자·운영 데이터·콘텐츠 제안/검수 기반 & Token + role/region authorization, MySQL \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{6. 데이터 구성과 원장 경계}
+\addcontentsline{toc}{section}{6. 데이터 구성과 원장 경계}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\DocNeedspace{22\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.46}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.227\linewidth}>{\RaggedRight\arraybackslash}m{0.529\linewidth}>{\RaggedRight\arraybackslash}m{0.203\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.227\linewidth}}{\textbf{저장소}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.529\linewidth}}{\textbf{현재 책임}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.203\linewidth}}{\textbf{원장 여부}} \\
+\midrule
+\endhead
+Aurora/RDS MySQL & users, social\_accounts, user\_preferences, itineraries, itinerary\_items, plan\_reactions, admin tables & 사용자 소유 데이터의 원장 \\
+DynamoDB auth sessions & refresh token hash, session lookup, TTL & 단기 세션 저장소 \\
+DynamoDB authz cache & 관리자 파생 권한 cache, TTL & 원장 아님 \\
+DynamoDB Tour Korea & 도시·관광지·축제 정규화 read model & S3 원천에서 재생성 가능 \\
+S3 raw & 도시 상세 JSON, metadata audit & 관광 원천 보존 \\
+S3 vector & 의미 검색 인덱스 & 재생성 가능한 검색 보조 \\
+S3 frontend/images & SPA 빌드와 이미지 파일 & 배포 산출물/정적 자산 \\
+Agent checkpoint/memory & thread 실행과 clarification 재개 & 단기 실행 상태, 제품 데이터 원장 아님 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{3\baselineskip}
+관광·축제 원천 데이터는 S3 raw JSON으로 보존하고, 수집/정규화 pipeline을 통해 DynamoDB read model과 S3 vector retrieval index로 재생성한다.\newline SmallCities API는 DynamoDB read model을 우선 사용하고 S3 raw detail JSON을 fallback source로 사용한다.\newline AgentCore retrieval은 V2 domain table과 vector index를 함께 사용한다.
+
+
+\DocNeedspace{3\baselineskip}
+진행 중 채팅과 미확정 일정은 기본적으로 서버에 영구 저장하지 않는다.\newline 사용자가 저장을 선택한 최종 일정만 MySQL에 저장한다.
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{7. 보안 신뢰 경계와 위험}
+\addcontentsline{toc}{section}{7. 보안 신뢰 경계와 위험}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\DocNeedspace{3\baselineskip}
+브라우저와 사용자 입력은 신뢰하지 않는 client boundary에 둔다.\newline CloudFront와 API Gateway는 public API boundary이며, public/optional-auth route와 authorizer-protected route를 분리한다.\newline Lambda domain service와 AgentCore runtime은 service trust boundary에 있고, RDS, DynamoDB, S3, Secrets Manager, SSM은 private data boundary로 관리한다.
+
+
+\DocNeedspace{3\baselineskip}
+주요 보안 통제는 HTTPS, CloudFront, API Gateway CORS allowlist, API Gateway Lambda/Cognito authorizer, VPC private subnet과 security group 기반 RDS 접근, Secrets Manager/SSM 비밀값 관리, 최소 권한 IAM policy, refresh token hash + TTL, HttpOnly cookie, 사용자 입력 및 저장 일정 owner 검증이다.
+
+
+\DocNeedspace{22\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.46}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.080\linewidth}>{\RaggedRight\arraybackslash}m{0.440\linewidth}>{\RaggedRight\arraybackslash}m{0.440\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.080\linewidth}}{\textbf{우선순위}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.440\linewidth}}{\textbf{위험}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.440\linewidth}}{\textbf{권장 조치}} \\
+\midrule
+\endhead
+높음 & \texttt{Agent\allowbreak{}Core\allowbreak{}Function}에 \texttt{Function\allowbreak{}Url\allowbreak{}Config Auth\allowbreak{}Type:\allowbreak{} NONE}가 정의됨 & 필요하지 않으면 Function URL 제거; 필요하면 IAM 또는 별도 인증 적용 \\
+높음 & \texttt{/\allowbreak{}api/\allowbreak{}v1/\allowbreak{}recommendations} route에 authorizer가 없음 & quota, rate limit, WAF 또는 사용자/세션 검증 적용 \\
+높음 & Agent session/thread 식별자를 클라이언트가 전달 & actor/session ownership을 백엔드에서 검증 \\
+중간 & 브라우저 ORS key 노출 가능 & 서버 경유 및 provider restriction 적용 \\
+중간 & Agent가 빈 itinerary, 중복 장소, 0분 이동을 반환할 수 있음 & Agent schema validation과 backend fail-closed 처리 \\
+중간 & 프론트의 mock/static fallback이 서버 장애를 가릴 수 있음 & 운영 모드에서 mock 비활성화 및 사용자 오류 상태 명시 \\
+중간 & Lambda SG egress가 \texttt{0.\allowbreak{}0.\allowbreak{}0.\allowbreak{}0/\allowbreak{}0} & 필요한 endpoint/NAT 경로만 허용 가능한지 검토 \\
+확인 필요 & WAF, API throttling, alarms, backup 정책 & 실제 AWS 계정 설정을 점검하고 IaC로 관리 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{8. 운영, 관측성, 배포}
+\addcontentsline{toc}{section}{8. 운영, 관측성, 배포}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\DocNeedspace{3\baselineskip}
+Lambda와 AgentCore는 CloudWatch Logs를 사용한다.\newline AgentCore V2는 node metric, invocation metric, trace id, request id를 기록하고, Lambda는 request id, error type, AgentCore response key/day count 등 구조화 로그를 기록한다.\newline dev log retention은 7일, prod 파라미터는 30일로 정의되어 있다.
+
+
+\DocNeedspace{3\baselineskip}
+운영 대시보드에는 API Gateway 4xx/5xx, Lambda error/throttle/duration, AgentCore latency/error, DynamoDB throttle, RDS connection/error, S3/CloudFront error 지표를 포함해야 한다.\newline recommendation은 장시간 동기 호출이므로 timeout과 사용자 재시도 정책을 함께 관리한다.\newline 백업은 RDS automated backup/PITR, DynamoDB PITR, S3 versioning/lifecycle의 실제 설정 확인이 필요하다.
+
+
+\DocNeedspace{3\baselineskip}
+권장 경보는 Recommendation 5xx 또는 AgentCore runtime error 급증, Recommendation p95 latency 초과, Lambda concurrency/throttle 또는 RDS connection 고갈, DynamoDB throttling 및 session write 실패, CloudFront origin error와 배포 후 SPA asset 404, ORS quota/timeout 증가와 직선 fallback 비율 상승이다.
+
+
+\DocNeedspace{3\baselineskip}
+현재 서울 프론트 dev 배포는 프론트엔드 release script가 Vite를 빌드하고 \texttt{s3:\allowbreak{}/\allowbreak{}/\allowbreak{}lovv-\allowbreak{}frontend-\allowbreak{}dev-\allowbreak{}seoul-\allowbreak{}925273580929}에 업로드한 뒤 CloudFront \texttt{E1\allowbreak{}WB4\allowbreak{}Z0\allowbreak{}NNW98\allowbreak{}QR}을 무효화하는 흐름으로 관리한다.
+
+
+\DocNeedspace{3\baselineskip}
+배포 게이트는 프론트 전체 Vitest, lint, TypeScript build, 주요 화면 browser smoke, 백엔드 unittest, \texttt{sam validate -\allowbreak{}-\allowbreak{}lint}, \texttt{sam build}, API smoke, Agent create/clarify/modify 및 빈 query/빈 itinerary/중복 장소/날씨 대체 계약 테스트, 배포 후 auth session, city list/detail, recommendation, clarification, modify, save/share smoke를 포함한다.\newline 실제 \texttt{.\allowbreak{}env}와 secret 파일은 Git에 포함하지 않는다.
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{9. 환경별 구성과 비기능 특성}
+\addcontentsline{toc}{section}{9. 환경별 구성과 비기능 특성}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\DocNeedspace{12\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.46}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.112\linewidth}>{\RaggedRight\arraybackslash}m{0.112\linewidth}>{\RaggedRight\arraybackslash}m{0.734\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.112\linewidth}}{\textbf{환경}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.112\linewidth}}{\textbf{현재 상태}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.734\linewidth}}{\textbf{주요 특징}} \\
+\midrule
+\endhead
+dev & 배포 확인 & \texttt{www.\allowbreak{}lovv.\allowbreak{}site}, 서울 CloudFront/S3, 미국 동부 \texttt{lovv-\allowbreak{}dev-\allowbreak{}api}·Cognito·RDS/DynamoDB/AgentCore \\
+poc & 정의 & 별도 이름과 7일 로그 보존; 여러 값이 placeholder이므로 배포 준비 필요 \\
+prod & 정의 & 30일 로그 보존, Cognito 자체 생성 비활성; RDS/VPC/secret 값이 placeholder \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{3\baselineskip}
+파라미터 파일의 prod/poc 값은 배포 사실이 아니라 목표 구성이다.\newline 실제 stack, DNS, certificate, WAF, backup, alarm 상태는 AWS 계정에서 별도 확인해야 한다.
+
+
+\DocNeedspace{20\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.46}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.115\linewidth}>{\RaggedRight\arraybackslash}m{0.423\linewidth}>{\RaggedRight\arraybackslash}m{0.423\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.115\linewidth}}{\textbf{특성}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.423\linewidth}}{\textbf{현재 구조}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.423\linewidth}}{\textbf{주요 고려사항}} \\
+\midrule
+\endhead
+확장성 & CloudFront, API Gateway, Lambda, DynamoDB 기반 수평 확장 & RDS connection과 Agent concurrency가 병목 가능 \\
+가용성 & 관리형 서비스와 private subnet 다중 AZ 파라미터 & Lambda가 일부 한 subnet만 사용하는 경로 확인 필요 \\
+성능 & 정적 CDN, DynamoDB read model, Agent retrieval & Agent 동기 추론과 ORS 외부 호출이 latency 지배 \\
+보안 & authorizer, VPC, secret store, IAM & public recommendation/Function URL과 client key 보완 필요 \\
+비용 & serverless 중심, pay-per-request & Agent/model/vector/외부 route 호출 quota 관리 필요 \\
+유지보수 & 도메인 Lambda와 frontend adapter \mbox{분리} & API 문서·Agent V2·frontend 타입 \mbox{동기화} 필요 \\
+복구성 & S3 raw에서 read model/vector 재생성 가능 & RDS/DynamoDB/S3의 실제 PITR/versioning 확인 필요 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\DocNeedspace{3\baselineskip}
+주요 단일 장애 또는 품질 지점은 단일 AgentCore V2 runtime ARN 집중, recommendation adapter가 빈 Agent 응답을 성공으로 전달할 때 프론트 mock이 장애를 숨길 가능성, RDS endpoint와 DB connection 한도가 인증·저장·추천 피드에 공통 영향을 주는 점, ORS 장애 시 직선 경로가 표시되는 점, 장소 영업시간·중복·거리 검증이 불완전할 때 유효하지 않은 일정이 생성될 수 있는 점이다.
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{10. 구현/계획 경계}
+\addcontentsline{toc}{section}{10. 구현/계획 경계}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\DocNeedspace{3\baselineskip}
+이 절에서 \textbf{현재 구현 또는 배포 확인}은 코드·템플릿·실제 dev 리소스 중 하나 이상에서 실행 경로가 확인된 범위를 뜻한다.\newline 설계 문서에만 있거나 도입 후보로 남은 항목은 현재 구성으로 간주하지 않고 계획 또는 미확정 범위로 분리한다.
+
+
+\DocNeedspace{16\baselineskip}
+\subsection*{10.1 현재 구현 및 배포 확인 범위}
+\addcontentsline{toc}{subsection}{10.1 현재 구현 및 배포 확인 범위}
+
+\begin{itemize}
+\item \textbf{사용자 채널과 정적 배포}: React/Vite SPA를 S3 정적 버킷과 CloudFront dev 배포로 제공한다. 프론트엔드 정적 자산과 관광 이미지는 분리된 S3 origin 및 이미지 CDN 경로로 제공한다.
+\item \textbf{HTTP API와 도메인 Lambda}: 브라우저 요청은 API Gateway HTTP API를 단일 진입점으로 사용한다. 인증, 도시·장소 조회, 일정 저장·조회, 추천·AI 일정 어댑터 등 도메인 책임은 Lambda로 분리되어 있다.
+\item \textbf{인증과 세션}: Cognito를 인증 기반으로 사용하고 Google·Kakao 소셜 로그인 경로를 연결한다. 서비스 세션과 권한 확인은 DynamoDB의 auth session·authz cache를 사용하며, 브라우저가 데이터 저장소를 직접 호출하지 않는다.
+\item \textbf{트랜잭션 데이터와 관광 조회 모델}: 사용자, 취향, 저장 일정, 일정 항목과 반응의 원장은 Aurora/RDS MySQL에 둔다. 관광 조회용 read model은 DynamoDB에 두고, 원본 관광 데이터는 S3 raw 계층에서 관리한다. 따라서 사용자 소유 트랜잭션 데이터와 대량 관광 조회를 같은 저장소로 혼합하지 않는다.
+\item \textbf{AI·지도·경로 연동}: 이 문서의 2026-07-09 live 기준에서 Bedrock AgentCore V2는 create, clarify, modify 요청을 처리한다. 지도 표시는 Google/Kakao 지도 경로를 사용하고, 경로 계산은 OpenRouteService와 연동한다. 외부 지도·경로 API 장애 또는 제한은 Lambda 어댑터 경계에서 다룬다.
+\item \textbf{운영 관측}: Lambda와 AgentCore 실행 로그는 CloudWatch에서 확인한다. 이 로그는 요청 실패, Agent 호출 결과, 외부 연동 오류를 추적하는 운영 근거이며, 장기 사용자 원장을 대체하지 않는다.
+\end{itemize}
+
+\DocNeedspace{15\baselineskip}
+\subsection*{10.2 계획 또는 미확정 범위}
+\addcontentsline{toc}{subsection}{10.2 계획 또는 미확정 범위}
+
+\begin{itemize}
+\item \textbf{Neptune 그래프 DB}: 관광 엔터티 관계 탐색과 추천 보강을 위한 고도화 후보다. PoC와 Production 1차에는 직접 도입하지 않으며, 현재 관광 조회의 기준 저장소나 원장으로 사용하지 않는다. 3-hop 이상 임의 경로 탐색, 대규모 실시간 그래프 쓰기, 복잡한 그래프 알고리즘이 실제 병목으로 확인될 때 비용·적재·재생성 전략과 함께 재검토한다.
+\item \textbf{WebSocket 기반 채팅}: 현재 AgentCore 연동은 HTTP 요청·응답 흐름을 기준으로 한다. 실시간 토큰 스트리밍, 다중 턴 연결 유지, 접속 상태 관리는 WebSocket 도입 여부가 결정된 뒤 별도 설계가 필요하다.
+\item \textbf{완전한 CI/CD pipeline}: 테스트·검증 게이트는 문서화돼 있으나, 정적 배포와 서버리스 배포를 잇는 end-to-end 자동화 범위, 승인·롤백 단계, 환경별 배포 권한은 완전한 파이프라인으로 확정되지 않았다.
+\item \textbf{보안·네트워크 고도화}: 현재 dev VPC에는 S3·DynamoDB Gateway 및 SSM·Secrets Manager Interface endpoint와 NAT instance가 존재한다. 다만 endpoint 적용 범위·정책, NAT 경로의 세부 고도화와 egress 통제, WAF는 후속 확정 범위다. 현재 문서에서 이 항목들의 강화된 통제를 이미 적용된 보안 통제로 표시하지 않는다.
+\item \textbf{prod/poc 환경 분리}: dev 외 production 및 PoC stack의 리소스 분리, 파라미터, 데이터 초기화, 접근 권한과 운영 절차는 확정·배포 확인이 필요한 후속 범위다.
+\end{itemize}
+
+\DocNeedspace{10\baselineskip}
+\subsection*{10.3 DNS 및 환경 운영 원칙}
+\addcontentsline{toc}{subsection}{10.3 DNS 및 환경 운영 원칙}
+
+Route 53은 사용하지 않는다.\newline 도메인 관리는 GoDaddy DNS와 apex 도메인의 301 forwarding을 사용하고, 서비스 도메인은 CloudFront custom domain과 ACM 인증서로 제공한다.\newline 따라서 DNS 레코드 변경, apex-to-www 전달, CloudFront 배포 설정, ACM 인증서 갱신은 서로 다른 운영 책임으로 확인해야 하며, Route 53을 전제로 한 배포 자동화나 장애 대응 절차는 이 문서의 현재 범위에 포함하지 않는다.
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{11. 소스 오브 트루스}
+\addcontentsline{toc}{section}{11. 소스 오브 트루스}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\DocNeedspace{3\baselineskip}
+현재 구현 판단은 코드, SAM 템플릿, 파라미터, API adapter, Agent 문서, DB 설계 문서를 우선한다.\newline README와 계획 문서가 코드 또는 SAM 템플릿과 다르면 현재 구현 판단에는 코드와 템플릿을 우선한다.
+
+
+\DocNeedspace{26\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.46}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.200\linewidth}>{\RaggedRight\arraybackslash}m{0.772\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.200\linewidth}}{\textbf{구분}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.772\linewidth}}{\textbf{기준 문서/구현}} \\
+\midrule
+\endhead
+프로젝트 규칙 & AGENTS 문서 \\
+프로젝트 컨텍스트 & Lovv project context 문서 \\
+백엔드 IaC & Lovv backend SAM template \\
+환경 파라미터 & dev, poc, prod parameter files \\
+백엔드 구현 & Lovv backend source \\
+프론트 API 계약 & Frontend shared API adapters \\
+Planner 구현 & Frontend planner feature \\
+API 계약 & MVP confirmed API contract \\
+Agent 사양 & Agent specification \\
+DB 설계 & Database design document \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{12. 현재 아키텍처 운영 기준}
+\addcontentsline{toc}{section}{12. 현재 아키텍처 운영 기준}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\DocNeedspace{22\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.46}
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}m{0.180\linewidth}>{\RaggedRight\arraybackslash}m{0.433\linewidth}>{\RaggedRight\arraybackslash}m{0.346\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.180\linewidth}}{\textbf{영역}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.433\linewidth}}{\textbf{현재 기준}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.346\linewidth}}{\textbf{관리 방식}} \\
+\midrule
+\endhead
+AgentCore runtime & V2 stack/runtime을 추천 실행 기준으로 사용 & recommendation Lambda의 V2 runtime ARN 연결 상태를 배포 후 확인 \\
+Domain Data & \texttt{Tour\allowbreak{}Korea\allowbreak{}Domain\allowbreak{}Data\allowbreak{}V2}와 \texttt{kr-\allowbreak{}tour-\allowbreak{}domain-\allowbreak{}v2}를 추천/RAG 기준 데이터로 사용 & V2 table item count, GSI 상태, vector index 상태를 함께 점검 \\
+SmallCities data source & DynamoDB V2 primary + S3 raw detail fallback & API 응답 품질과 fallback 사용률을 운영 로그로 추적 \\
+Personalization & \texttt{LovvUserProfile}을 개인화 프로필 저장소로 사용 & AgentCore domain/RAG target과 분리해 프로필 데이터만 관리 \\
+Frontend CDN & Seoul CloudFront와 Seoul S3 frontend bucket을 대표 프론트 배포 경로로 사용 & CloudFront invalidation, S3 sync, custom domain 응답을 배포 게이트에 포함 \\
+Public domain & \texttt{www.\allowbreak{}lovv.\allowbreak{}site}를 dev 대표 도메인으로 사용 & GoDaddy forwarding, CloudFront custom domain, ACM 인증서 상태를 함께 검증 \\
+API route surface & auth, map, recommendation, saved-plan, admin, feed route를 도메인별 Lambda로 운영 & CORS, authorizer, route별 smoke test를 배포 검증에 포함 \\
+Security boundary & public recommendation route, Function URL, Agent session ownership을 주요 위험으로 관리 & quota/rate limit/WAF, ownership 검증, Function URL 제거 또는 인증 적용을 후속 조치로 추적 \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{13. 운영상 주의}
+\addcontentsline{toc}{section}{13. 운영상 주의}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\begin{itemize}
+\item 이 문서는 2026-07-09 live AWS 조회와 2026-07-13 전체 시스템 구성 문서 반영 기준이다. AWS 리소스 상태와 Lambda 환경은 배포 후 변경될 수 있다.
+\item \texttt{Tour\allowbreak{}Korea\allowbreak{}Domain\allowbreak{}Data\allowbreak{}V2}와 \texttt{Lovv\allowbreak{}User\allowbreak{}Profile}은 각각 도메인/RAG 데이터와 개인화 프로필 저장소로 구분해 기록한다.
+\item API/Lambda 환경에는 secret 참조와 민감 설정이 섞일 수 있으므로 raw 환경 변수 전체를 문서에 붙여 넣지 않는다.
+\item 현재 AWS identity는 root ARN으로 조회되었다. 실제 운영 변경은 least-privilege IAM 또는 SSO 권한으로 수행해야 한다.
+\item CloudWatch alarm, tracing, runtime smoke test 등 운영 관측성은 별도 검증 문서 또는 운영 가이드에서 보강해야 한다.
+\item \texttt{lovv.\allowbreak{}site} apex 포워딩과 DNS 전파 상태는 시간에 따라 달라질 수 있으므로 배포 직후에는 301/200 응답을 재검증해야 한다.
+\item prod/poc 파라미터는 목표 구성이지 실제 배포 증거가 아니므로 AWS stack, DNS, certificate, WAF, backup, alarm을 별도 확인해야 한다.
+\end{itemize}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{14. 검증에 사용한 조회}
+\addcontentsline{toc}{section}{14. 검증에 사용한 조회}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\DocNeedspace{3\baselineskip}
+아래 명령은 문서 작성 시 사용한 read-only 조회 범위다.\newline 실제 변경, secret 조회, 데이터 쓰기는 포함하지 않으며, 조회 목적별로 나누어 현재 상태를 다시 확인할 수 있게 구성한다.
+
+
+\DocNeedspace{12\baselineskip}
+\subsection*{14.1 실행 주체 및 배포 구성}
+\addcontentsline{toc}{subsection}{14.1 실행 주체 및 배포 구성}
+\textbf{확인 대상}: AWS caller identity, CloudFormation stack, AgentCore V2 stack.\newline
+\textbf{확인 목적}: 조회 계정, 완료 stack, AgentCore runtime 관련 리소스를 확인한다.
+
+\begin{quote}
+\begin{scriptsize}
+\ttfamily
+\RaggedRight
+\setlength{\parskip}{1pt}
+\textcolor{LovvGreen}{\textbf{bash}}\\[0.2em]
+aws sts get-\allowbreak{}caller-\allowbreak{}identity\\
+aws cloudformation list-\allowbreak{}stacks -\allowbreak{}-\allowbreak{}region us-\allowbreak{}east-\allowbreak{}1 -\allowbreak{}-\allowbreak{}stack-\allowbreak{}status-\allowbreak{}filter CREATE\_\allowbreak{}COMPLETE UPDATE\_\allowbreak{}COMPLETE UPDATE\_\allowbreak{}ROLLBACK\_\allowbreak{}COMPLETE\\
+aws cloudformation describe-\allowbreak{}stack-\allowbreak{}resources -\allowbreak{}-\allowbreak{}region us-\allowbreak{}east-\allowbreak{}1 -\allowbreak{}-\allowbreak{}stack-\allowbreak{}name Agent\allowbreak{}Core-\allowbreak{}Lovv\allowbreak{}Agent\allowbreak{}Core-\allowbreak{}v2\\
+\end{scriptsize}
+\end{quote}
+
+
+\DocNeedspace{12\baselineskip}
+\subsection*{14.2 API 및 Lambda 표면}
+\addcontentsline{toc}{subsection}{14.2 API 및 Lambda 표면}
+\textbf{확인 대상}: HTTP API, route, Lambda inventory.\newline
+\textbf{확인 목적}: 외부 진입점과 백엔드 함수 구성을 확인한다.
+
+\begin{quote}
+\begin{scriptsize}
+\ttfamily
+\RaggedRight
+\setlength{\parskip}{1pt}
+\textcolor{LovvGreen}{\textbf{bash}}\\[0.2em]
+aws apigatewayv2 get-\allowbreak{}apis -\allowbreak{}-\allowbreak{}region us-\allowbreak{}east-\allowbreak{}1\\
+aws apigatewayv2 get-\allowbreak{}routes -\allowbreak{}-\allowbreak{}region us-\allowbreak{}east-\allowbreak{}1 -\allowbreak{}-\allowbreak{}api-\allowbreak{}id axpn5imhbc\\
+aws lambda list-\allowbreak{}functions -\allowbreak{}-\allowbreak{}region us-\allowbreak{}east-\allowbreak{}1 -\allowbreak{}-\allowbreak{}query 'Functions[].\{name:FunctionName,runtime:Runtime,modified:LastModified\}'\\
+\end{scriptsize}
+\end{quote}
+
+
+\DocNeedspace{15\baselineskip}
+\subsection*{14.3 데이터 및 검색 계층}
+\addcontentsline{toc}{subsection}{14.3 데이터 및 검색 계층}
+\textbf{확인 대상}: DynamoDB, Aurora/RDS, S3 Vector.\newline
+\textbf{확인 목적}: 도메인 table, 관계형 DB, vector bucket/index 상태를 확인한다.
+
+\begin{quote}
+\begin{scriptsize}
+\ttfamily
+\RaggedRight
+\setlength{\parskip}{1pt}
+\textcolor{LovvGreen}{\textbf{bash}}\\[0.2em]
+aws dynamodb list-\allowbreak{}tables -\allowbreak{}-\allowbreak{}region us-\allowbreak{}east-\allowbreak{}1\\
+aws dynamodb describe-\allowbreak{}table -\allowbreak{}-\allowbreak{}region us-\allowbreak{}east-\allowbreak{}1 -\allowbreak{}-\allowbreak{}table-\allowbreak{}name Tour\allowbreak{}Korea\allowbreak{}Domain\allowbreak{}Data\allowbreak{}V2\\
+aws rds describe-\allowbreak{}db-\allowbreak{}instances -\allowbreak{}-\allowbreak{}region us-\allowbreak{}east-\allowbreak{}1\\
+aws s3vectors list-\allowbreak{}vector-\allowbreak{}buckets -\allowbreak{}-\allowbreak{}region us-\allowbreak{}east-\allowbreak{}1\\
+aws s3vectors list-\allowbreak{}indexes -\allowbreak{}-\allowbreak{}region us-\allowbreak{}east-\allowbreak{}1 -\allowbreak{}-\allowbreak{}vector-\allowbreak{}bucket-\allowbreak{}name lovv-\allowbreak{}vector-\allowbreak{}dev\\
+\end{scriptsize}
+\end{quote}
+
+
+\DocNeedspace{10\baselineskip}
+\subsection*{14.4 Edge 배포}
+\addcontentsline{toc}{subsection}{14.4 Edge 배포}
+\textbf{확인 대상}: CloudFront distribution.\newline
+\textbf{확인 목적}: frontend 및 image CDN 배포 목록을 확인한다.
+
+\begin{quote}
+\begin{scriptsize}
+\ttfamily
+\RaggedRight
+\setlength{\parskip}{1pt}
+\textcolor{LovvGreen}{\textbf{bash}}\\[0.2em]
+aws cloudfront list-\allowbreak{}distributions\\
+\end{scriptsize}
+\end{quote}
+
+
+\newpage
+
+\DocNeedspace{10\baselineskip}
+\section*{15. 변경 이력}
+\addcontentsline{toc}{section}{15. 변경 이력}
+\addtocontents{toc}{\protect\TocNoChildTight}
+
+
+\DocNeedspace{12\baselineskip}
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\setlength{\extrarowheight}{1pt}
+\renewcommand{\arraystretch}{1.52}
+\begin{longtable}{@{}>{\centering\arraybackslash}m{0.100\linewidth}>{\centering\arraybackslash}m{0.145\linewidth}>{\centering\arraybackslash}m{0.080\linewidth}>{\RaggedRight\arraybackslash}m{0.622\linewidth}@{}}
+\toprule
+\multicolumn{1}{>{\centering\arraybackslash}m{0.100\linewidth}}{\textbf{버전}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.145\linewidth}}{\textbf{날짜}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.080\linewidth}}{\textbf{작성자}} & \multicolumn{1}{>{\centering\arraybackslash}m{0.622\linewidth}}{\textbf{반영 내용}} \\
+\midrule
+\endhead
+v0.6 & 2026-\allowbreak{}07-\allowbreak{}13 & 조동휘 & \shortstack[l]{\mbox{10장 구현/계획 경계를 현재 구현·배포 확인 범위,}\\\mbox{계획·미확정 범위, DNS·환경 운영 원칙으로 구체화하고}\\\mbox{각 저장소·인증·AI·지도·운영 책임을 분리}} \\
+v0.5 & 2026-\allowbreak{}07-\allowbreak{}13 & 조동휘 & \shortstack[l]{\mbox{4장 런타임 개요와 4.3 추천/AgentCore,}\\\mbox{4.6 지도·장소·경로 전용 Mermaid}\\\mbox{흐름 이미지를 추가해 4.1\textasciitilde{}4.6 전체}\\\mbox{흐름 이미지 구성을 완성}} \\
+v0.4 & 2026-\allowbreak{}07-\allowbreak{}13 & 조동휘 & \shortstack[l]{\mbox{주요 런타임 흐름을 웹/API, 도시·경로,}\\\mbox{인증·세션, 추천·AI 일정 생성·수정 이미지로}\\\mbox{보강}} \\
+v0.3 & 2026-\allowbreak{}07-\allowbreak{}13 & 조동휘 & \shortstack[l]{\mbox{요약을 현재 핵심 내용 중심으로 정리하고,}\\\mbox{현재 아키텍처 운영 기준 표를 추가}} \\
+v0.2 & 2026-\allowbreak{}07-\allowbreak{}13 & 조동휘 & \shortstack[l]{\mbox{전체 시스템 구성 문서 내용을 반영해 대표 도메인,}\\\mbox{DNS/CloudFront, frontend/backend 책임,}\\\mbox{인증·AI·지도 흐름, 데이터 원장 경계, 보안 위험,}\\\mbox{운영/배포/환경별 구성, 구현/계획 경계를 추가하고}\\\mbox{Mermaid 코드는 제외}} \\
+v0.1 & 2026-\allowbreak{}07-\allowbreak{}09 & 조동휘 & \shortstack[l]{\mbox{\texttt{13\_system\_architecture} 번호 문서 초안 작성.}\\\mbox{V2 AgentCore runtime, V2 domain table 적재 상태,}\\\mbox{SmallCities DynamoDB primary 구성, V2 vector index,}\\\mbox{RDS/Data Stack, CDN/API 구성을 현재 상태 기준으로 정리}} \\
+\bottomrule
+\end{longtable}
+\end{small}
+
+\end{document}

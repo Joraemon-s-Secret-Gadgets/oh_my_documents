@@ -1,0 +1,14 @@
+%%{init: {"themeVariables": {"fontSize": "22px"}}}%%
+flowchart TD
+    User["사용자 지도·일정 화면"] --> SPA["React SPA"]
+    SPA -->|city / place 조회| Gateway["API Gateway"]
+    Gateway --> City["SmallCitiesFunction"]
+    City -->|primary| Dynamo[("TourKoreaDomainDataV2")]
+    City -. fallback detail .-> Raw[("S3 raw detail JSON")]
+    City -->|city·place·image URL 응답| SPA
+    SPA --> Google["Google Maps<br/>지도·마커"]
+    SPA --> Kakao["Kakao Maps / Places<br/>장소 검색"]
+    SPA -->|route enrichment| Agent["AgentCoreFunction"]
+    Agent --> ORS["OpenRouteService<br/>도로 경로·시간"]
+    ORS --> Agent
+    Agent -. 기존 geometry / 직선 fallback .-> SPA

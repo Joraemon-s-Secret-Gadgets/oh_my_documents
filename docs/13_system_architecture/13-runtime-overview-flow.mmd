@@ -1,0 +1,11 @@
+%%{init: {"themeVariables": {"fontSize": "22px"}}}%%
+flowchart TD
+    User["사용자"] --> Edge["CloudFront Seoul CDN<br/>React SPA"]
+    Edge --> Gateway["API Gateway<br/>lovv-dev-api"]
+    Gateway --> Auth["Auth Lambda"]
+    Gateway --> City["SmallCitiesFunction"]
+    Gateway --> Agent["AgentCoreFunction"]
+    Auth --> SessionData[("MySQL 사용자 원장<br/>DynamoDB 세션")]
+    City --> CityData[("TourKoreaDomainDataV2<br/>S3 raw fallback")]
+    Agent --> Runtime["Bedrock AgentCore Runtime V2"]
+    Runtime --> Retrieval[("V2 domain data<br/>S3 Vector index · S3 raw")]

@@ -1,0 +1,17 @@
+%%{init: {"themeVariables": {"fontSize": "22px"}}}%%
+flowchart TD
+    User["사용자"] -->|HTTPS| CDN["CloudFront Seoul CDN"]
+    CDN --> SPA["React SPA"]
+    SPA -->|JSON API| Gateway["API Gateway<br/>lovv-dev-api"]
+    Gateway --> Route{"경로·인증 분기"}
+    Route --> Domain["도메인 Lambda<br/>Auth · City · Saved Plans · Admin"]
+    Route --> Agent["AgentCoreFunction"]
+    Domain --> RDS[("Aurora/RDS MySQL")]
+    Domain --> Dynamo[("DynamoDB 운영 테이블")]
+    Agent --> Runtime["Bedrock AgentCore Runtime V2"]
+    RDS --> Domain
+    Dynamo --> Domain
+    Runtime --> Agent
+    Domain --> Gateway
+    Agent --> Gateway
+    Gateway --> SPA

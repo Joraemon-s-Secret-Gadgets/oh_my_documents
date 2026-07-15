@@ -1,0 +1,9 @@
+%%{init: {"themeVariables": {"fontSize": "22px"}}}%%
+flowchart TD
+    Plan["Plan Detail / Map<br/>화면"] --> Maps["Google Maps JavaScript<br/>지도·마커"]
+    Plan --> Places["Kakao Maps / Places<br/>장소 검색·외부 확인"]
+    Plan --> RouteRequest["AgentCoreFunction<br/>route enrichment"]
+    RouteRequest --> ORS["OpenRouteService<br/>route geometry · time"]
+    ORS --> RouteResult["실제 도로 경로"]
+    RouteRequest -. 기존 geometry / 직선 fallback .-> Fallback["대체 경로 표시"]
+    CDN["Image CloudFront"] --> Plan

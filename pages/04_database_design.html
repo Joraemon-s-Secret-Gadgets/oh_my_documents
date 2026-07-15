@@ -21,10 +21,14 @@
         </div>
         <nav class="toc">
           <div class="toc-section"><a class="toc-link active" href="#cover">표지 / 문서 정보</a></div>
+          <div class="toc-section">
+            <div class="toc-section-hd">1. 문서 개요</div>
+            <a class="toc-link" href="#s1">1. 문서 개요</a>
             <a class="toc-link" href="#s1-1">1.1 목적</a>
             <a class="toc-link" href="#s1-2">1.2 설계 기준</a>
             <a class="toc-link" href="#s1-3">1.3 저장소 책임</a>
             <a class="toc-link" href="#s1-4">1.4 현재 AWS 구조 확인 기준</a>
+          </div>
           <div class="toc-section">
             <div class="toc-section-hd">2. 개념 설계</div>
             <a class="toc-link" href="#s2">2. 개념 설계</a>
@@ -80,8 +84,7 @@
         </nav>
       </aside>
       <main id="cover">
-        <h1 id="cover-title" class="s-h1">1. 문서 개요</h1>
-        <p class="doc-p">﻿# 로브 (Lovv) 데이터베이스 설계 명세서</p>
+        <h1 id="cover-title" class="s-h1">로브 (Lovv) 데이터베이스 설계 명세서</h1>
         <blockquote>
         <p class="doc-p">문서 버전: v1.1</p>
         <p class="doc-p">문서 상태: 설계 진행중 (Designing)</p>
@@ -93,6 +96,7 @@
         <p class="doc-p"><strong>단기 = AgentCore Memory</strong>(빌더 상태 <code>itinerary_<wbr>builder</code> + 세션 + checkpoint, <code>event_<wbr>expiry</code> 자동정리), <strong>장기 = 커스텀 DynamoDB</strong>(① 파생 개인화 프로필: 핫, TTL 없음 ② raw 이벤트: TTL→Streams→Lambda→S3 콜드).</p>
         <p class="doc-p">매핑 테이블·raw PII는 어느 저장소에도 넣지 않고 별도 KMS·IAM, actorId=가명. 상세: <code>../<wbr>98_<wbr>prd/<wbr>interactive_<wbr>builder_<wbr>prd.md</code>, 보존/TTL 라인: 보조 문서 <code>supplemental/<wbr>database_<wbr>design_<wbr>retention_<wbr>neptune_<wbr>update.md</code> §0.</p>
         </blockquote>
+        <h1 id="s1" class="s-h1">1. 문서 개요</h1>
         <h2 id="s1-1" class="s-h2">1.1 목적</h2>
         <p class="doc-p">본 문서는 로브 서비스의 핵심 데이터 모델, 테이블 후보, 관계, 인덱스, 보존 정책을 정의한다. PoC에서는 일부 데이터를 정적 파일과 로컬 스토리지로 대체할 수 있으나, Production 전환 시 본 문서를 기준으로 데이터베이스를 설계한다.</p>
         <h2 id="s1-2" class="s-h2">1.2 설계 기준</h2>

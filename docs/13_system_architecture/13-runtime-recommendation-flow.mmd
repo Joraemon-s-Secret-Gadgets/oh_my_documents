@@ -1,0 +1,9 @@
+%%{init: {"themeVariables": {"fontSize": "22px"}}}%%
+flowchart LR
+    Planner["Planner 입력<br/>기간 · 테마 · 자연어 조건 · 프로필"] --> Adapter["POST recommendations<br/>AgentCoreFunction"]
+    Adapter --> Runtime["Bedrock AgentCore Runtime V2"]
+    Runtime <-->|retrieval| Evidence[("TourKoreaDomainDataV2<br/>S3 Vector · S3 raw")]
+    Runtime --> Outcome["clarification 또는<br/>최종 itinerary 응답"]
+    Outcome --> Save{"사용자가 저장 선택?"}
+    Save -->|예| Ledger[("SavedPlans API<br/>MySQL itineraries")]
+    Save -->|아니오| Expiry["단기 응답 · expiry"]

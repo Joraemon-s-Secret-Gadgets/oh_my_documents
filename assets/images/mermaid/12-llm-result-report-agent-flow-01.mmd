@@ -1,0 +1,8 @@
+flowchart LR
+    A["사용자 입력"] --> B["Backend API\n요청 검증"]
+    B --> C["Intent Agent\n조건 구조화"]
+    C --> D["Candidate Evidence Agent\n후보 검색"]
+    D --> E["Scoring /\nValidation"]
+    E --> F["Planner Agent\n일정 생성"]
+    F --> G["Backend API\n응답 포장"]
+    G --> H["Frontend\n추천 결과 표시"]
