@@ -1,0 +1,7 @@
+%%{init: {"themeVariables": {"fontSize": "22px"}}}%%
+flowchart LR
+    Provider["Google · Kakao · Cognito"] --> Callback["Browser / SPA callback"]
+    Callback --> Auth["Auth API / AuthFunction<br/>provider claim · token 검증"]
+    Auth --> Storage[("MySQL users · social_accounts<br/>DynamoDB session hash · TTL")]
+    Auth --> Token["Access JWT + HttpOnly; Secure refresh cookie"]
+    Token --> Protected["Authorization header<br/>보호 API"]

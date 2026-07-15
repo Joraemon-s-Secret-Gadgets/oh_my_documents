@@ -1,0 +1,10 @@
+%%{init: {"themeVariables": {"fontSize": "22px"}}}%%
+flowchart TD
+    Client["Planner / Recommendation API 요청"] --> Gateway["API Gateway"]
+    Gateway --> Adapter["AgentCoreFunction<br/>V2 request adapter"]
+    Adapter --> Runtime["Bedrock AgentCore Runtime V2"]
+    Runtime --> Domain[("TourKoreaDomainDataV2<br/>정규화 관광·축제 read model")]
+    Runtime --> Vector[("S3 Vector<br/>kr-tour-domain-v2")]
+    Runtime --> Raw[("S3 raw source<br/>재검증·fallback 근거")]
+    Runtime --> Adapter
+    Adapter --> Response["추천 응답 또는 clarification"]

@@ -1,0 +1,268 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1260" viewBox="0 0 1920 1260" role="img" aria-labelledby="title desc">
+  <title id="title">Lovv current AWS system architecture</title>
+  <desc id="desc">AWS style system architecture diagram for Lovv development environment as of 2026-07-09.</desc>
+  <defs>
+    <style>
+      .canvas { fill: #f7f8fa; }
+      .title { font: 700 34px Arial, sans-serif; fill: #232f3e; }
+      .subtitle { font: 16px Arial, sans-serif; fill: #5f6b7a; }
+      .boundary { fill: #ffffff; stroke: #8793a2; stroke-width: 2; rx: 18; }
+      .cloud { fill: #ffffff; stroke: #232f3e; stroke-width: 3; rx: 24; }
+      .region { fill: #fbfcfd; stroke: #527fff; stroke-width: 2.5; rx: 20; }
+      .vpc { fill: #f6fff8; stroke: #2e7d32; stroke-width: 2.5; stroke-dasharray: 10 8; rx: 18; }
+      .subnet-public { fill: #fff8ec; stroke: #d68800; stroke-width: 2; rx: 14; }
+      .subnet-private { fill: #f2fff4; stroke: #2e7d32; stroke-width: 2; rx: 14; }
+      .edge { fill: #eef5ff; stroke: #527fff; stroke-width: 2; rx: 16; }
+      .group-title { font: 700 17px Arial, sans-serif; fill: #232f3e; }
+      .group-subtitle { font: 13px Arial, sans-serif; fill: #5f6b7a; }
+      .svc { fill: #ffffff; stroke: #b8c0cc; stroke-width: 1.6; rx: 10; filter: url(#shadow); }
+      .svc-title { font: 700 14px Arial, sans-serif; fill: #172033; }
+      .svc-small { font: 12px Arial, sans-serif; fill: #4f5b6b; }
+      .badge { fill: #ff9900; rx: 7; }
+      .badge-blue { fill: #527fff; rx: 7; }
+      .badge-green { fill: #3f8624; rx: 7; }
+      .badge-purple { fill: #8c4fff; rx: 7; }
+      .badge-gray { fill: #5f6b7a; rx: 7; }
+      .badge-text { font: 700 12px Arial, sans-serif; fill: #ffffff; text-anchor: middle; dominant-baseline: central; }
+      .arrow { fill: none; stroke: #232f3e; stroke-width: 2.4; marker-end: url(#arrow); }
+      .arrow-soft { fill: none; stroke: #6b7788; stroke-width: 2; marker-end: url(#arrow-soft); }
+      .arrow-dash { fill: none; stroke: #6b7788; stroke-width: 2.1; stroke-dasharray: 8 7; marker-end: url(#arrow-soft); }
+      .label { font: 12px Arial, sans-serif; fill: #232f3e; }
+      .note { font: 13px Arial, sans-serif; fill: #44546a; }
+    </style>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#232f3e"/>
+    </marker>
+    <marker id="arrow-soft" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#6b7788"/>
+    </marker>
+  </defs>
+
+  <rect class="canvas" x="0" y="0" width="1920" height="1260"/>
+  <text class="title" x="70" y="58">Lovv Current AWS System Architecture</text>
+  <text class="subtitle" x="70" y="88">AWS recommended layout: account/cloud, regions, VPC/subnet boundaries, service cards, and directional traffic flows. Snapshot: 2026-07-09.</text>
+
+  <rect class="cloud" x="40" y="115" width="1840" height="1085"/>
+  <text class="group-title" x="70" y="150">AWS Cloud - Account 925273580929</text>
+  <text class="group-subtitle" x="70" y="174">Development environment. Secret values intentionally omitted.</text>
+
+  <rect class="boundary" x="70" y="205" width="250" height="155"/>
+  <text class="group-title" x="96" y="235">External users</text>
+  <rect class="svc" x="98" y="260" width="190" height="70"/>
+  <rect class="badge-blue" x="114" y="276" width="42" height="38"/>
+  <text class="badge-text" x="135" y="295">WEB</text>
+  <text class="svc-title" x="168" y="284">User / Browser</text>
+  <text class="svc-small" x="168" y="304">HTTPS web and API traffic</text>
+
+  <rect class="edge" x="365" y="205" width="445" height="260"/>
+  <text class="group-title" x="392" y="235">AWS Global Edge and Frontend</text>
+  <text class="group-subtitle" x="392" y="258">CloudFront + S3 static assets</text>
+  <rect class="svc" x="392" y="280" width="180" height="70"/>
+  <rect class="badge-blue" x="408" y="296" width="42" height="38"/>
+  <text class="badge-text" x="429" y="315">CF</text>
+  <text class="svc-title" x="462" y="304">CloudFront</text>
+  <text class="svc-small" x="462" y="324">US frontend</text>
+  <text class="svc-small" x="462" y="340">d3nuef0...</text>
+
+  <rect class="svc" x="595" y="280" width="180" height="70"/>
+  <rect class="badge-blue" x="611" y="296" width="42" height="38"/>
+  <text class="badge-text" x="632" y="315">CF</text>
+  <text class="svc-title" x="665" y="304">CloudFront</text>
+  <text class="svc-small" x="665" y="324">Seoul frontend</text>
+  <text class="svc-small" x="665" y="340">dkyiem...</text>
+
+  <rect class="svc" x="392" y="370" width="180" height="70"/>
+  <rect class="badge-green" x="408" y="386" width="42" height="38"/>
+  <text class="badge-text" x="429" y="405">S3</text>
+  <text class="svc-title" x="462" y="394">Frontend buckets</text>
+  <text class="svc-small" x="462" y="414">lovv-frontend-dev</text>
+  <text class="svc-small" x="462" y="430">Seoul frontend S3</text>
+
+  <rect class="svc" x="595" y="370" width="180" height="70"/>
+  <rect class="badge-blue" x="611" y="386" width="42" height="38"/>
+  <text class="badge-text" x="632" y="405">IMG</text>
+  <text class="svc-title" x="665" y="394">Image CDN</text>
+  <text class="svc-small" x="665" y="414">det7vj...</text>
+  <text class="svc-small" x="665" y="430">lovv-image-dev</text>
+
+  <rect class="region" x="850" y="205" width="950" height="900"/>
+  <text class="group-title" x="880" y="238">Region: us-east-1</text>
+  <text class="group-subtitle" x="880" y="262">Primary API, data, AgentCore, RAG, and KR pipeline region</text>
+
+  <rect class="boundary" x="885" y="285" width="420" height="300"/>
+  <text class="group-title" x="912" y="315">Serverless API Stack</text>
+  <text class="group-subtitle" x="912" y="338">CloudFormation: lovv-dev-api</text>
+
+  <rect class="svc" x="912" y="360" width="180" height="70"/>
+  <rect class="badge" x="928" y="376" width="42" height="38"/>
+  <text class="badge-text" x="949" y="395">API</text>
+  <text class="svc-title" x="982" y="384">API Gateway</text>
+  <text class="svc-small" x="982" y="404">HTTP API axpn5imhbc</text>
+
+  <rect class="svc" x="1112" y="360" width="170" height="70"/>
+  <rect class="badge" x="1128" y="376" width="42" height="38"/>
+  <text class="badge-text" x="1149" y="395">λ</text>
+  <text class="svc-title" x="1182" y="384">Auth Lambda</text>
+  <text class="svc-small" x="1182" y="404">login/session/authz</text>
+
+  <rect class="svc" x="912" y="450" width="180" height="70"/>
+  <rect class="badge" x="928" y="466" width="42" height="38"/>
+  <text class="badge-text" x="949" y="485">λ</text>
+  <text class="svc-title" x="982" y="474">SmallCities</text>
+  <text class="svc-small" x="982" y="494">map/city read API</text>
+
+  <rect class="svc" x="1112" y="450" width="170" height="70"/>
+  <rect class="badge" x="1128" y="466" width="42" height="38"/>
+  <text class="badge-text" x="1149" y="485">λ</text>
+  <text class="svc-title" x="1182" y="474">App Lambdas</text>
+  <text class="svc-small" x="1182" y="494">preference/saved/admin/feed</text>
+
+  <rect class="svc" x="1012" y="535" width="180" height="70"/>
+  <rect class="badge" x="1028" y="551" width="42" height="38"/>
+  <text class="badge-text" x="1049" y="570">λ</text>
+  <text class="svc-title" x="1082" y="559">AgentCoreFunction</text>
+  <text class="svc-small" x="1082" y="579">recommendation boundary</text>
+
+  <rect class="vpc" x="885" y="625" width="420" height="420"/>
+  <text class="group-title" x="912" y="655">VPC - lovv-dev-data-stack</text>
+  <text class="group-subtitle" x="912" y="678">Private data layer and network egress</text>
+
+  <rect class="subnet-public" x="915" y="705" width="360" height="95"/>
+  <text class="group-subtitle" x="935" y="730">Public subnet</text>
+  <rect class="svc" x="945" y="745" width="260" height="42"/>
+  <rect class="badge-gray" x="960" y="754" width="34" height="26"/>
+  <text class="badge-text" x="977" y="767">EC2</text>
+  <text class="svc-title" x="1006" y="771">NAT instance i-0c6dad9690abd0101</text>
+
+  <rect class="subnet-private" x="915" y="825" width="360" height="185"/>
+  <text class="group-subtitle" x="935" y="850">Private subnets us-east-1a / us-east-1b</text>
+  <rect class="svc" x="945" y="865" width="260" height="55"/>
+  <rect class="badge-green" x="960" y="876" width="38" height="32"/>
+  <text class="badge-text" x="979" y="892">RDS</text>
+  <text class="svc-title" x="1012" y="886">Private MySQL</text>
+  <text class="svc-small" x="1012" y="904">lovv-dev-mysql / lovvdev</text>
+
+  <rect class="svc" x="945" y="935" width="260" height="55"/>
+  <rect class="badge-gray" x="960" y="946" width="38" height="32"/>
+  <text class="badge-text" x="979" y="962">SEC</text>
+  <text class="svc-title" x="1012" y="956">SSM + Secrets Manager</text>
+  <text class="svc-small" x="1012" y="974">secret references only</text>
+
+  <rect class="boundary" x="1335" y="285" width="420" height="365"/>
+  <text class="group-title" x="1362" y="315">AgentCore and RAG</text>
+  <text class="group-subtitle" x="1362" y="338">V2 runtime with V2 domain data</text>
+
+  <rect class="svc" x="1362" y="360" width="165" height="70"/>
+  <rect class="badge-purple" x="1378" y="376" width="42" height="38"/>
+  <text class="badge-text" x="1399" y="395">AI</text>
+  <text class="svc-title" x="1432" y="384">AgentCore V2</text>
+  <text class="svc-small" x="1432" y="404">LovvAgentCore_LovvAgentV2</text>
+
+  <rect class="svc" x="1557" y="360" width="170" height="70"/>
+  <rect class="badge-green" x="1573" y="376" width="42" height="38"/>
+  <text class="badge-text" x="1594" y="395">DDB</text>
+  <text class="svc-title" x="1627" y="384">UserProfile</text>
+  <text class="svc-small" x="1627" y="404">ACTIVE / 0 items</text>
+
+  <rect class="svc" x="1362" y="455" width="165" height="70"/>
+  <rect class="badge-green" x="1378" y="471" width="42" height="38"/>
+  <text class="badge-text" x="1399" y="490">DDB</text>
+  <text class="svc-title" x="1432" y="479">DomainDataV2</text>
+  <text class="svc-small" x="1432" y="499">10,482 items</text>
+
+  <rect class="svc" x="1557" y="455" width="170" height="70"/>
+  <rect class="badge-green" x="1573" y="471" width="42" height="38"/>
+  <text class="badge-text" x="1594" y="490">VEC</text>
+  <text class="svc-title" x="1627" y="479">S3 Vector</text>
+  <text class="svc-small" x="1627" y="499">kr-tour-domain-v2</text>
+
+  <rect class="svc" x="1457" y="550" width="190" height="70"/>
+  <rect class="badge-gray" x="1473" y="566" width="42" height="38"/>
+  <text class="badge-text" x="1494" y="585">V1</text>
+  <text class="svc-title" x="1527" y="574">Fallback / Reference</text>
+  <text class="svc-small" x="1527" y="594">DomainData + kr-tour-domain-v1</text>
+
+  <rect class="boundary" x="1335" y="680" width="420" height="365"/>
+  <text class="group-title" x="1362" y="710">KR Data Pipeline</text>
+  <text class="group-subtitle" x="1362" y="733">S3 raw/processed, image, and vector build</text>
+
+  <rect class="svc" x="1362" y="755" width="165" height="70"/>
+  <rect class="badge-green" x="1378" y="771" width="42" height="38"/>
+  <text class="badge-text" x="1399" y="790">S3</text>
+  <text class="svc-title" x="1432" y="779">Pipeline bucket</text>
+  <text class="svc-small" x="1432" y="799">lovv-data-pipeline-dev</text>
+
+  <rect class="svc" x="1557" y="755" width="170" height="70"/>
+  <rect class="badge" x="1573" y="771" width="42" height="38"/>
+  <text class="badge-text" x="1594" y="790">λ</text>
+  <text class="svc-title" x="1627" y="779">KR Lambdas</text>
+  <text class="svc-small" x="1627" y="799">loader / transform / vector</text>
+
+  <rect class="svc" x="1362" y="855" width="165" height="70"/>
+  <rect class="badge-green" x="1378" y="871" width="42" height="38"/>
+  <text class="badge-text" x="1399" y="890">S3</text>
+  <text class="svc-title" x="1432" y="879">Pipeline images</text>
+  <text class="svc-small" x="1432" y="899">lovv-pipeline-images-dev</text>
+
+  <rect class="svc" x="1557" y="855" width="170" height="70"/>
+  <rect class="badge-green" x="1573" y="871" width="42" height="38"/>
+  <text class="badge-text" x="1594" y="890">OUT</text>
+  <text class="svc-title" x="1627" y="879">V2 outputs</text>
+  <text class="svc-small" x="1627" y="899">DynamoDB + vector index</text>
+
+  <rect class="region" x="365" y="510" width="445" height="215"/>
+  <text class="group-title" x="392" y="543">Region: ap-northeast-2</text>
+  <text class="group-subtitle" x="392" y="566">Frontend origin and AgentCore support bucket traces</text>
+  <rect class="svc" x="392" y="590" width="180" height="70"/>
+  <rect class="badge-green" x="408" y="606" width="42" height="38"/>
+  <text class="badge-text" x="429" y="625">S3</text>
+  <text class="svc-title" x="462" y="614">Seoul frontend S3</text>
+  <text class="svc-small" x="462" y="634">static origin</text>
+  <rect class="svc" x="595" y="590" width="180" height="70"/>
+  <rect class="badge-purple" x="611" y="606" width="42" height="38"/>
+  <text class="badge-text" x="632" y="625">AI</text>
+  <text class="svc-title" x="665" y="614">AgentCore bucket</text>
+  <text class="svc-small" x="665" y="634">support artifact trace</text>
+
+  <path class="arrow" d="M288 295 C330 295 340 315 392 315"/>
+  <path class="arrow-soft" d="M572 315 L595 315"/>
+  <path class="arrow-soft" d="M482 350 L482 370"/>
+  <path class="arrow-soft" d="M685 350 L685 370"/>
+  <path class="arrow" d="M775 315 C835 315 850 395 912 395"/>
+  <path class="arrow" d="M775 315 C835 315 850 485 912 485"/>
+  <path class="arrow" d="M1092 395 L1112 395"/>
+  <path class="arrow" d="M1092 485 L1112 485"/>
+  <path class="arrow" d="M1192 570 C1245 570 1285 395 1362 395"/>
+  <path class="arrow" d="M1527 395 L1557 395"/>
+  <path class="arrow" d="M1444 430 L1444 455"/>
+  <path class="arrow" d="M1527 490 L1557 490"/>
+  <path class="arrow-dash" d="M1457 585 C1405 585 1385 530 1444 525"/>
+  <path class="arrow" d="M1092 485 C1175 485 1265 490 1362 490"/>
+  <path class="arrow-dash" d="M1060 520 C1050 620 900 700 1362 790"/>
+  <path class="arrow" d="M1197 485 C1255 485 1275 580 1362 790"/>
+  <path class="arrow" d="M1527 790 L1557 790"/>
+  <path class="arrow-soft" d="M1444 825 L1444 855"/>
+  <path class="arrow" d="M1642 825 L1642 855"/>
+  <path class="arrow" d="M1642 925 C1642 980 1510 1015 1444 525"/>
+  <path class="arrow" d="M1642 925 C1700 980 1705 505 1642 525"/>
+  <path class="arrow" d="M1642 925 C1735 1000 1800 455 685 440"/>
+  <path class="arrow" d="M1180 520 C1160 650 1160 785 1075 865"/>
+  <path class="arrow" d="M1180 520 C1210 675 1200 900 1075 935"/>
+  <path class="arrow-soft" d="M572 625 L595 625"/>
+  <path class="arrow-soft" d="M685 590 L685 440"/>
+
+  <text class="label" x="326" y="284">HTTPS</text>
+  <text class="label" x="812" y="363">API calls</text>
+  <text class="label" x="1225" y="364">invoke runtime</text>
+  <text class="label" x="1225" y="482">city reads</text>
+  <text class="label" x="1230" y="758">fallback/raw data</text>
+  <text class="label" x="1215" y="910">private data access</text>
+
+  <rect class="boundary" x="70" y="1080" width="1720" height="85"/>
+  <text class="group-title" x="96" y="1112">Legend and current-state notes</text>
+  <text class="note" x="96" y="1140">Solid arrows: primary request/data flow. Dashed arrows: fallback or reference boundary. Orange badges: compute/API. Green badges: storage/data. Purple badges: AI/AgentCore. Blue badges: edge/user.</text>
+  <text class="note" x="96" y="1162">Current-state caveat: V2 domain/RAG data exists, but LovvAgentCore-LovvUserProfile has 0 items, so personalization readiness is not implied by this diagram.</text>
+</svg>
