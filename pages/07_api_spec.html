@@ -21,9 +21,13 @@
         </div>
         <nav class="toc">
           <div class="toc-section"><a class="toc-link active" href="#cover">표지 / 문서 정보</a></div>
+          <div class="toc-section">
+            <div class="toc-section-hd">1. 문서 개요</div>
+            <a class="toc-link" href="#s1">1. 문서 개요</a>
             <a class="toc-link" href="#s1-1">1.1 목적</a>
             <a class="toc-link" href="#s1-2">1.2 공통 규칙</a>
             <a class="toc-link" href="#s1-3">1.3 Lambda 라우팅 기준</a>
+          </div>
           <div class="toc-section">
             <div class="toc-section-hd">2. 공통 오류 응답</div>
             <a class="toc-link" href="#s2">2. 공통 오류 응답</a>
@@ -79,8 +83,7 @@
         </nav>
       </aside>
       <main id="cover">
-        <h1 id="cover-title" class="s-h1">1. 문서 개요</h1>
-        <p class="doc-p">﻿# 로브 (Lovv) API 명세서</p>
+        <h1 id="cover-title" class="s-h1">로브 (Lovv) API 명세서</h1>
         <blockquote>
         <p class="doc-p">문서 버전: v0.8</p>
         <p class="doc-p">문서 상태: 기획 단계 (Planning)</p>
@@ -91,6 +94,7 @@
         <p class="doc-p">후보), <strong>후보 선택/일정 추가</strong>(interrupt resume), <strong>서브 윈도우 오픈 플래그</strong>, 빌더 상태 재개(thread_id).</p>
         <p class="doc-p">동선=선택 순서. 상세: <code>../<wbr>98_<wbr>prd/<wbr>interactive_<wbr>builder_<wbr>prd.md</code>.</p>
         </blockquote>
+        <h1 id="s1" class="s-h1">1. 문서 개요</h1>
         <h2 id="s1-1" class="s-h2">1.1 목적</h2>
         <p class="doc-p">본 문서는 로브 서비스의 프론트엔드, 백엔드, 추천 Agent, 운영 화면이 사용하는 API 계약을 정의한다. 엔드포인트는 Production 기준의 목표 계약이며, PoC에서는 일부를 정적 데이터 또는 로컬 스토리지로 대체할 수 있다.</p>
         <h2 id="s1-2" class="s-h2">1.2 공통 규칙</h2>
