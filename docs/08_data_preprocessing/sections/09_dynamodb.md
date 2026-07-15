@@ -48,26 +48,41 @@
 | 검색 문서 | 내부 요약문, 출처 링크, 최신성 상태 |
 | 서비스 노출 | 필수 필드 충족, 저작권 위험 없음, `blocked` 아님 |
 
-## 9.5 S3 vector index 생성 기준
+## 9.5 DynamoDB V2 및 S3 Vector V2 생성 기준
 
 Search Index는 DynamoDB 정규화 결과에서 파생되는 S3 vector index를 기준으로 한다. S3 vector index는 원본 저장소가 아니며, S3 Raw와 DynamoDB 정규화 문서를 기준으로 언제든 재생성할 수 있어야 한다.
 
-KR 상세 데이터의 현재 운영 기준은 `TourKoreaDomainData`이며, 한국 데이터 전처리 결과보고서(`supplemental/korea_data_preprocessing_result_report.md`) 기준 `raw/KR/details/20260609/` 40개 도시 전처리 완료 결과를 S3 vector 생성 입력으로 사용한다. 생성 대상은 `city_metadata`, `attraction`, `restaurant`, `festival`이며, `visitor_statistics`(약 480건)는 개별 벡터화 대상에서 제외하고 city chunk의 혼잡도·계절성 보조 문맥으로만 반영한다. `quality_status = passed` 등 서비스 노출 가능한 상태만 index에 반영한다.
+KR 상세 데이터의 현재 운영 기준은 V2이다. 기준 원천은 `raw/KR/details/20260629/`이고, `kr-pipeline-transform`이 생성한 `processed/KR/details/20260629/passed/` 산출물만 DynamoDB V2 적재와 vector rebuild 입력으로 사용한다. 현재 완료 판단은 `supplemental/kr_20260630_preprocessing_completion_report.md`를 우선한다.
 
-`city_id`는 실제 적재 데이터 기준 `KR-{CityNameEn}` 형식(예: `KR-Andong`)을 사용하며, 과거 설계의 도 코드 포함 형식(`KR-GB-ANDONG`)은 사용하지 않는다. 도/광역 구분은 별도 `province` metadata(GSI2와 동일한 한글 표기)로 둔다.
+DynamoDB source of truth는 `TourKoreaDomainDataV2`이다. Entity type은 `city_metadata`, `attraction`, `festival`, `visitor_statistics`를 기준으로 하며, 현재 V2 운영 계약에서는 `restaurant`를 활성 entity로 복원하지 않는다.
+
+S3 Vector V2는 `lovv-vector-dev` bucket 안의 `kr-tour-domain-v2` index를 사용한다. Vector 생성 대상은 `city_metadata`, `attraction`, `festival`이며, `visitor_statistics`는 DynamoDB에는 적재하지만 개별 vector 대상에서는 제외한다. `visitor_statistics`는 city 문맥의 계절성·혼잡도 보조 정보로만 활용한다.
+
+2026-06-30 완료 보고서 기준 현재 V2 검증 결과는 다음과 같다.
+
+| 항목 | 값 |
+| --- | ---: |
+| 전처리 대상 raw detail | 240개 |
+| `kr-pipeline-transform` 성공 | 240개 |
+| DynamoDB V2 live item | 8,010건 |
+| Vector export 대상 | 7,662건 |
+| S3 Vector V2 unique key | 7,606개 |
+| Vector sample query | 성공 |
+| Vector manifest 작성 | 완료 |
 
 | 항목 | 기준 |
 | --- | --- |
 | Vector bucket | `lovv-vector-dev` |
-| Vector index | `kr-tour-domain-v1` |
+| Vector index | `kr-tour-domain-v2` |
+| DynamoDB table | `TourKoreaDomainDataV2` |
 | Embedding | Amazon Titan Text Embeddings V2 (`amazon.titan-embed-text-v2:0`), 1024 차원, cosine 고정 |
 | Vector ID | `{source_type}#{source_id}#{chunk_no}` 3분절. 예: `attraction#126157#001` |
-| 원천 읽기 | GSI3 entity type별 query, 부분 재색인은 `PK = CITY#{city_name_en}` query |
+| 원천 읽기 | `EntityTypeDomainIndex` entity type별 query, 부분 재색인은 `PK = CITY#{CITY_KEY}` query |
 | Metadata filter | `country`, `province`, `city_id`, `city_name_en`, `entity_type`, `content_type`, `content_id`, `theme_tags`, `season_tags`, `recommended_months`, `latitude`/`longitude`, `quality_status`, `source_type`, `index_version` |
 | 원본 재조회 | S3 vector 결과의 `ddb_pk`, `ddb_sk`, `raw_s3_uri`로 DynamoDB와 S3 Raw를 역추적 |
 | 재생성 조건 | embedding model, chunk template, metadata schema, 품질 기준, `city_id` 형식 변경 |
 
-상세 chunk template, metadata allowlist, PutVectors 배치 기준, 샘플 질의 검증 기준은 `supplemental/s3_vector_index_plan.md`를 따른다.
+상세 chunk template, metadata allowlist, PutVectors 배치 기준, 샘플 질의 검증 기준은 `supplemental/kr_20260630_preprocessing_completion_report.md`, `supplemental/vector_search_v2_guide.md`, `supplemental/s3_vector_index_plan.md`를 함께 확인한다. V1 문서(`agentcore_v1_*`)는 AgentCore V1 조회 보조 자료로만 보고, 현재 데이터 전처리·적재 판단의 기준으로 사용하지 않는다.
 
 ## 9.6 Lambda 적재 실패 처리
 
