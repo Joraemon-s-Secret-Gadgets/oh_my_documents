@@ -34,9 +34,9 @@
 | Raw S3 | `s3://lovv-data-pipeline-dev-<AWS_ACCOUNT_ID>/raw/KR/details/20260625/` 211 objects, 27,536,569 bytes |
 | Processed summary | `s3://lovv-data-pipeline-dev-<AWS_ACCOUNT_ID>/processed/KR/domain/20260625/` 211 summary objects |
 | Image S3 | `s3://lovv-pipeline-images-dev-<AWS_ACCOUNT_ID>/images/KR/` 9,163 objects, 2,645,146,287 bytes |
-| S3 Vector | `lovv-vector-dev/kr-tour-domain-v1`, 7,073 vectors, float32 1024 dim cosine |
+| S3 Vector | 현재 추천/RAG 기준은 `lovv-vector-dev/kr-tour-domain-v2`, 7,606 unique vectors, float32 1024 dim cosine이다. 상세 사용 계약은 `docs/04_database_design/supplemental/dynamodb_vector_v2_usage_guide.md`와 `docs/08_data_preprocessing/supplemental/vector_search_v2_guide.md`를 우선한다. |
 | Legacy table | `TourKoreaDomainData`도 ACTIVE이며 8,022 items가 남아 있다. 신규 운영 조회는 V2를 우선한다. |
-| Deployed Lambda default | `kr-pipeline-transform`, `kr-pipeline-loader`, `kr-pipeline-vector`의 기본 `DYNAMODB_TABLE` 환경변수는 `TourKoreaDomainData`이다. V2 기준 실행은 payload `table_name=TourKoreaDomainDataV2` 등 명시적 override를 확인한다. |
+| Deployed Lambda target | V2 기준 실행은 `TourKoreaDomainDataV2`와 `kr-tour-domain-v2`를 대상으로 확인한다. 오래된 payload나 Lambda 환경값이 legacy `TourKoreaDomainData`를 가리키면 V2 운영 판단에 사용하지 않는다. |
 
 ## 키 스키마
 
