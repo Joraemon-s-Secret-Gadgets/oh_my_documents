@@ -173,8 +173,8 @@ def table_to_latex(
     else:
         widths = infer_column_widths(header, body)
     centered_columns = centered_columns or set()
-    table_font = "footnotesize" if column_count >= 4 else "small"
-    table_row_stretch = "1.48" if column_count >= 4 else "1.42"
+    table_font = "footnotesize" if column_count >= 5 else "small"
+    table_row_stretch = "1.52" if column_count >= 4 else "1.46"
     table_needspace = min(38, max(8, 6 + len(body) * 2)) if len(body) <= 15 else 8
     col_specs = []
     for index, width in enumerate(widths):
@@ -227,13 +227,16 @@ def format_table_cell(cell: str, forced_line_breaks: dict[str, list[str]] | None
     if re.search(r"<br\s*/?>", cell, flags=re.IGNORECASE):
         return r"\newline ".join(escape_latex(part.strip()) for part in re.split(r"<br\s*/?>", cell, flags=re.IGNORECASE))
     if cell == "Production":
-        return r"{\footnotesize Production}"
+        return "Production"
     if re.fullmatch(r"[A-Z]+(?:-[A-Z0-9]+)+-\d+", cell):
-        return r"{\footnotesize " + escape_latex(cell).replace("-", r"-\allowbreak{}") + "}"
+        return escape_latex(cell).replace("-", r"-\allowbreak{}")
     if re.fullmatch(r"[A-Za-z]{8,}", cell):
-        return r"{\scriptsize " + add_soft_breaks_to_escaped_token(escape_latex(cell)) + "}"
+        formatted = add_soft_breaks_to_escaped_token(escape_latex(cell))
+        if r"\allowbreak{}" not in formatted and len(cell) > 10:
+            formatted = re.sub(r"([A-Za-z]{7})(?=[A-Za-z])", r"\1\\allowbreak{}", formatted)
+        return formatted
     if re.fullmatch(r"[A-Za-z0-9_./:-]{8,}", cell):
-        return r"{\footnotesize " + add_soft_breaks_to_escaped_token(escape_latex(cell)) + "}"
+        return add_soft_breaks_to_escaped_token(escape_latex(cell))
     return escape_latex(cell)
 
 
@@ -901,7 +904,11 @@ def markdown_to_latex(
         bullet = re.match(r"^\s*[-*]\s+(.+)$", line)
         ordered = re.match(r"^\s*\d+\.\s+(.+)$", line)
         if bullet or ordered:
-            item_text = (bullet or ordered).group(1).strip()
+            item_match = bullet if bullet is not None else ordered
+            if item_match is None:
+                i += 1
+                continue
+            item_text = item_match.group(1).strip()
             if is_project_plan_pdf:
                 item_text = clean_project_plan_pdf_text(item_text)
             if not item_text:
