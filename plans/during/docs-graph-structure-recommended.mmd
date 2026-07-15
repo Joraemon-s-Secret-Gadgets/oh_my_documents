@@ -1,0 +1,59 @@
+flowchart LR
+  %% Recommended conversion: keep the current document tree and add graph metadata.
+
+  subgraph T["기존 정본 Tree 유지"]
+    SEC["docs/<도메인>/sections/*.md<br/>편집 원본"]
+    REP["대표 문서.md<br/>통합 정본"]
+    SUP["supplemental/*.md<br/>근거 / 초안 / 보조 문서"]
+  end
+
+  subgraph G["신규 Graph Metadata Layer: docs/_graph/"]
+    NODES["nodes.yml<br/>문서 ID, 경로, 유형, 발행 대상"]
+    EDGES["edges.yml<br/>문서 간 관계"]
+    VIEWS["views.yml<br/>공개/검증 뷰"]
+    GREADME["README.md<br/>관계 타입과 운영 규칙"]
+  end
+
+  subgraph O["생성 / 활용 Surface"]
+    GEN["scripts/generate_pages.py"]
+    VERIFY["scripts/verify_pages_structure.py"]
+    INDEX["index.html"]
+    PAGES["pages/*.html"]
+    PDF["pdf/*"]
+    SEARCH["관계 검색"]
+    IMPACT["영향도 분석"]
+    MISSING["누락 검증"]
+  end
+
+  SEC -->|"source_of"| REP
+  SUP -->|"source_of / related_to"| REP
+  REP -->|"node 등록"| NODES
+  SUP -->|"중요 보조 문서만 node 등록"| NODES
+
+  NODES --> EDGES
+  EDGES -->|"depends_on"| REP
+  EDGES -->|"summarized_by"| REP
+  EDGES -->|"supersedes / related_to"| SUP
+  NODES --> VIEWS
+  EDGES --> VIEWS
+
+  VIEWS -->|"publishes_to 후보"| GEN
+  GEN --> INDEX
+  GEN --> PAGES
+  REP -->|"Markdown 원본 기반"| PDF
+
+  NODES --> VERIFY
+  EDGES --> VERIFY
+  VIEWS --> VERIFY
+  VERIFY --> MISSING
+
+  EDGES --> SEARCH
+  EDGES --> IMPACT
+
+  classDef tree fill:#eef6f3,stroke:#4b8f7a,color:#17352d,stroke-width:1px
+  classDef graph fill:#fff4dc,stroke:#d0922b,color:#3c2a05,stroke-width:1px
+  classDef surface fill:#eef2f8,stroke:#64748b,color:#172033,stroke-width:1px
+
+  class SEC,REP,SUP tree
+  class NODES,EDGES,VIEWS,GREADME graph
+  class GEN,VERIFY,INDEX,PAGES,PDF,SEARCH,IMPACT,MISSING surface
